@@ -1,0 +1,503 @@
+import {Map} from "../lib/xeokit/viewer/scene/utils/Map.js";
+import {utils} from "../lib/xeokit/viewer/scene/utils.js";
+
+/**
+ * @desc Base class for all xeokit-ui components.
+ */
+class Controller {
+
+    /**
+     * @private
+     */
+    constructor(parent, viewer) {
+
+        this.toolbar = (parent ? (parent.toolbar || parent) : this);
+        
+        this.viewer = parent ? parent.viewer : viewer;
+
+        this._children = [];
+
+        if (parent) {
+            parent._children.push(this);
+        }
+
+        this._subIdMap = null; // Subscription subId pool
+        this._subIdEvents = null; // Subscription subIds mapped to event names
+        this._eventSubs = null; // Event names mapped to subscribers
+        this._events = null; // Maps names to events
+        this._eventCallDepth = 0; // Helps us catch stack overflows from recursive events
+
+        this._active = false; // Used by #setActive() and #getActive()
+    }
+
+    /**
+     * Fires an event on this Controller.
+     *
+     * @param {String} event The event type name
+     * @param {Object} value The event parameters
+     * @param {Boolean} [forget=false] When true, does not retain for subsequent subscribers
+     */
+    fire(event, value, forget) {
+        if (!this._events) {
+            this._events = {};
+        }
+        if (!this._eventSubs) {
+            this._eventSubs = {};
+        }
+        if (forget !== true) {
+            this._events[event] = value || true; // Save notification
+        }
+        const subs = this._eventSubs[event];
+        let sub;
+        if (subs) { // Notify subscriptions
+            for (const subId in subs) {
+                if (subs.hasOwnProperty(subId)) {
+                    sub = subs[subId];
+                    this._eventCallDepth++;
+                    if (this._eventCallDepth < 300) {
+                        sub.callback.call(sub.scope, value);
+                    } else {
+                        this.error("fire: potential stack overflow from recursive event '" + event + "' - dropping this event");
+                    }
+                    this._eventCallDepth--;
+                }
+            }
+        }
+    }
+
+    /**
+     * Subscribes to an event on this Controller.
+     *
+     * The callback is be called with this component as scope.
+     *
+     * @param {String} event The event
+     * @param {Function} callback Called fired on the event
+     * @param {Object} [scope=this] Scope for the callback
+     * @return {String} Handle to the subscription, which may be used to unsubscribe with {@link #off}.
+     */
+    on(event, callback, scope) {
+        if (!this._events) {
+            this._events = {};
+        }
+        if (!this._subIdMap) {
+            this._subIdMap = new Map(); // Subscription subId pool
+        }
+        if (!this._subIdEvents) {
+            this._subIdEvents = {};
+        }
+        if (!this._eventSubs) {
+            this._eventSubs = {};
+        }
+        let subs = this._eventSubs[event];
+        if (!subs) {
+            subs = {};
+            this._eventSubs[event] = subs;
+        }
+        const subId = this._subIdMap.addItem(); // Create unique subId
+        subs[subId] = {
+            callback: callback,
+            scope: scope || this
+        };
+        this._subIdEvents[subId] = event;
+        const value = this._events[event];
+        if (value !== undefined) { // A publication exists, notify callback immediately
+            callback.call(scope || this, value);
+        }
+        return subId;
+    }
+
+    /**
+     * Cancels an event subscription that was previously made with {@link Controller#on} or {@link Controller#once}.
+     *
+     * @param {String} subId Subscription ID
+     */
+    off(subId) {
+        if (subId === undefined || subId === null) {
+            return;
+        }
+        if (!this._subIdEvents) {
+            return;
+        }
+        const event = this._subIdEvents[subId];
+        if (event) {
+            delete this._subIdEvents[subId];
+            const subs = this._eventSubs[event];
+            if (subs) {
+                delete subs[subId];
+            }
+            this._subIdMap.removeItem(subId); // Release subId
+        }
+    }
+
+    /**
+     * Subscribes to the next occurrence of the given event, then un-subscribes as soon as the event is handled.
+     *
+     * This is equivalent to calling {@link Controller#on}, and then calling {@link Controller#off} inside the callback function.
+     *
+     * @param {String} event Data event to listen to
+     * @param {Function} callback Called when fresh data is available at the event
+     * @param {Object} [scope=this] Scope for the callback
+     */
+    once(event, callback, scope) {
+        const self = this;
+        const subId = this.on(event,
+            function (value) {
+                self.off(subId);
+                callback.call(scope || this, value);
+            },
+            scope);
+    }
+
+    /**
+     * Returns ````true```` if there exist any subscribers to the given event on this Controller.
+     *
+     * @param {String} event The event
+     * @return {Boolean} True if there are any subscribers to the given event on this component.
+     */
+    hasSubs(event) {
+        return (this._eventSubs && !!this._eventSubs[event]);
+    }
+
+    /**
+     * Logs a console debugging message for this Controller.
+     *
+     * The console message will have this format: *````[LOG] [<component type> <component id>: <message>````*
+     *
+     * @param {String} message The message to log
+     */
+    log(message) {
+        message = "[LOG]" + this._message(message);
+        window.console.log(message);
+    }
+
+    _message(message) {
+        return " [" + utils.inQuotes(this.id) + "]: " + message;
+    }
+
+    /**
+     * Logs a warning for this Controller to the JavaScript console.
+     *
+     * The console message will have this format: *````[WARN] [<component type> =<component id>: <message>````*
+     *
+     * @param {String} message The message to log
+     */
+    warn(message) {
+        message = "[WARN]" + this._message(message);
+        window.console.warn(message);
+    }
+
+    /**
+     * Logs an error for this Controller to the JavaScript console.
+     *
+     * The console message will have this format: *````[ERROR] [<component type> =<component id>: <message>````*
+     *
+     * @param {String} message The message to log
+     */
+    error(message) {
+        message = "[ERROR]" + this._message(message);
+        window.console.error(message);
+    }
+
+    /**
+     * Given two Controller subclasses that have ````setActive()```` methods, ensures that a maximum of one of them can
+     * be activated at a time.
+     * @param {Controller} controller1 First Controller.
+     * @param {Controller} controller2 Second Controller.
+     * @param {boolean} radio
+     * @protected
+     */
+    _mutexActivation2(controller1, controller2, radio) { // TODO: Generalize for N controllers using arrays
+
+        if (!controller1.setActive || !controller2.setActive) {
+            throw "Controller(s) expected to have #setActive() method";
+        }
+
+        var ignore1 = false;
+        var ignore2 = false;
+
+        controller1.on("active", (active) => {
+            if (!radio && !active) {
+                return;
+            }
+            if (!ignore2) {
+                ignore1 = true;
+                controller2.setActive(!active);
+                ignore1 = false;
+            }
+        });
+
+        controller2.on("active", (active) => {
+            if (!radio && !active) {
+                return;
+            }
+            if (!ignore1) {
+                ignore2 = true;
+                controller1.setActive(!active);
+                ignore2 = false;
+            }
+        });
+    }
+
+    /**
+     * Given three Controllers that have ````setActive()```` methods, ensures that a maximum of one of them can
+     * be activated at a time.
+     * @param {Controller} controller1 First Controller.
+     * @param {Controller} controller2 Second Controller.
+     * @param {Controller} controller3 Third Controller.
+     * @protected
+     */
+    _mutexActivation3(controller1, controller2, controller3) { // TODO: Generalize for N controllers using arrays
+
+        if (!controller1.setActive || !controller2.setActive || !controller3.setActive) {
+            throw "Controller(s) expected to have #setActive() method";
+        }
+
+        var ignore1 = false;
+        var ignore2 = false;
+        var ignore3 = false;
+
+        controller1.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore1) {
+                ignore2 = true;
+                ignore3 = true;
+                controller2.setActive(false);
+                controller3.setActive(false);
+                ignore2 = false;
+                ignore3 = false;
+            }
+        });
+
+        controller2.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore2) {
+                ignore1 = true;
+                ignore3 = true;
+                controller1.setActive(false);
+                controller3.setActive(false);
+                ignore1 = false;
+                ignore3 = false;
+            }
+        });
+
+        controller3.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore3) {
+                ignore1 = true;
+                ignore2 = true;
+                controller1.setActive(false);
+                controller2.setActive(false);
+                ignore1 = false;
+                ignore2 = false;
+            }
+        });
+    }
+
+    _mutexActivation5(controller1, controller2, controller3,controller4, controller5) { // TODO: Generalize for N controllers using arrays
+
+        if (!controller1.setActive || !controller2.setActive || !controller3.setActive|| !controller4.setActive|| !controller5.setActive) {
+            throw "Controller(s) expected to have #setActive() method";
+        }
+
+        var ignore1 = false;
+        var ignore2 = false;
+        var ignore3 = false;
+        var ignore4 = false;
+        var ignore5 = false;
+
+        controller1.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore1) {
+                ignore2 = true;
+                ignore3 = true;
+                ignore4 = true;
+                ignore5 = true;
+                controller2.setActive(false);
+                controller3.setActive(false);
+                controller4.setActive(false);
+                controller5.setActive(false);
+                ignore2 = false;
+                ignore3 = false;
+                ignore4 = false;
+                ignore5 = false;
+            }
+        });
+
+        controller2.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore2) {
+                ignore1 = true;
+                ignore3 = true;
+                ignore4 = true;
+                ignore5 = true;
+                controller1.setActive(false);
+                controller3.setActive(false);
+                controller4.setActive(false);
+                controller5.setActive(false);
+                ignore1 = false;
+                ignore3 = false;
+                ignore4 = false;
+                ignore5 = false;
+            }
+        });
+
+        controller3.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore3) {
+                ignore1 = true;
+                ignore2 = true;
+                ignore4 = true;
+                ignore5 = true;
+                controller1.setActive(false);
+                controller2.setActive(false);
+                controller4.setActive(false);
+                controller5.setActive(false);
+                ignore1 = false;
+                ignore2 = false;
+                ignore4 = false;
+                ignore5 = false;
+            }
+        });
+
+        controller4.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore4) {
+                ignore1 = true;
+                ignore2 = true;
+                ignore3 = true;
+                ignore5 = true;
+                controller1.setActive(false);
+                controller2.setActive(false);
+                controller3.setActive(false);
+                controller5.setActive(false);
+                ignore1 = false;
+                ignore2 = false;
+                ignore3 = false;
+                ignore5 = false;
+            }
+        });
+
+        controller5.on("active", (active) => {
+            if (!active) {
+                return;
+            }
+            if (!ignore5) {
+                ignore1 = true;
+                ignore2 = true;
+                ignore3 = true;
+                ignore4 = true;
+                controller1.setActive(false);
+                controller2.setActive(false);
+                controller3.setActive(false);
+                controller4.setActive(false);
+                ignore1 = false;
+                ignore2 = false;
+                ignore3 = false;
+                ignore4 = false;
+            }
+        });
+    }
+
+    _mutexActivation(controllers) {
+
+        const ignore = [];
+        const numControllers = controllers.length;
+
+        for (let i = 0; i < numControllers; i++) {
+            ignore[i] = false;
+        }
+
+        for (let i = 0; i < numControllers; i++) {
+
+            const controller = controllers[i];
+
+            controller.on("active", (function () {
+
+                const _i = i;
+
+                return function (active) {
+
+                    if (!active || ignore[_i]) {
+                        return;
+                    }
+
+                    for (let j = 0; j < numControllers; j++) {
+                        if (j === _i) {
+                            continue;
+                        }
+                        ignore[j] = true;
+                        controllers[j].setActive(false);
+                        ignore[j] = false;
+                    }
+                };
+            })());
+        }
+    }
+
+
+    /**
+     * Activates or deactivates this Controller.
+     *
+     * Fires an "active" event on update.
+     *
+     * @param {boolean} active Whether or not to activate.
+     */
+    setActive(active) {
+        if (this._active === active) {
+            return;
+        }
+        this._active = active;
+        this.fire("active", this._active);
+    }
+
+    /**
+     * Gets whether or not this Controller is active.
+     * @returns {boolean}
+     */
+    getActive() {
+        return this._active;
+    }
+
+    /**
+     * Destroys this Controller.
+     */
+    destroy() {
+
+        if (this.destroyed) {
+            return;
+        }
+
+        /**
+         * Fired when this Controller is destroyed.
+         * @event destroyed
+         */
+        this.fire("destroyed", this.destroyed = true); 
+        
+        this._subIdMap = null;
+        this._subIdEvents = null;
+        this._eventSubs = null;
+        this._events = null;
+        this._eventCallDepth = 0;
+
+        for (let i = 0, len = this._children.length; i < len; i++) {
+            this._children.destroy();
+        }
+        this._children = [];
+    }
+}
+
+export {Controller};

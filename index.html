@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>BIM Viewer built on xeokit and Bootstrap</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="css/style2.css">
+
+</head>
+
+<body>
+<div class="wrapper">
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>TODO</h3>
+        </div>
+    </nav>
+
+    <div id="content">
+        <div id="toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+            <!-- Reset -->
+
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button id="reset" type="button" class="btn btn-outline-primary fa fa-undo fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Reset view"></button>
+            </div>
+
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button id="tree" type="button" class="btn btn-outline-primary fa fa-sitemap  fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Object explorer"></button>
+            </div>
+
+            <div class="btn-group mr-2" role="group" aria-label="Second group">
+
+                <button id="firstPerson" type="button" class="btn btn-outline-primary fa fa-male  fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="First person mode"></button>
+            </div>
+
+            <div class="btn-group mr-2" role="group" aria-label="Second group">
+                <button id="ortho" type="button" class="btn btn-outline-primary fa fa-cube  fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Orthographic mode"></button>
+            </div>
+
+            <div class="btn-group mr-2" role="group" aria-label="Third group">
+                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Query"></button>
+
+
+                <button id="xray" type="button" class="btn btn-outline-primary fa fa-eye-slash fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="X-Ray"></button>
+
+                <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Hide"></button>
+                <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Select"></button>
+
+                <button id="distance" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Measure distance"></button>
+
+                <button id="angle" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Measure angle"></button>
+
+                <button id="section" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Slice"></button>
+
+                <button id="annotate" type="button" class="btn btn-outline-primary fa fa-map-marker fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="Annotate"></button>
+
+                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bookmark-o fa-2x"
+                        data-toggle="tooltip" data-placement="top" title="BCF"></button>
+            </div>
+
+        </div>
+        <div id="canvasContainer">
+            <canvas id="myCanvas"></canvas>
+        </div>
+    </div>
+
+    <nav id="sidebar2">
+        <div class="sidebar-header">
+            <h3>BCF Viewpoints</h3>
+        </div>
+    </nav>
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+
+</html>
