@@ -14,17 +14,79 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Our Custom CSS -->
-    <link rel="stylesheet" href="css/style2.css">
+    <link href="./lib/inspire-tree/site-min.css" type="text/css" rel="stylesheet"/>
+    <script src="./lib/lodash.js"></script>
+    <script src="./lib/inspire-tree/inspire-tree.min.js"></script>
+    <script src="./lib/inspire-tree/inspire-tree-dom-min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body>
 <div class="wrapper">
-    <!-- Sidebar  -->
+
     <nav id="sidebar">
         <div class="sidebar-header">
             <h3>TODO</h3>
+            <ul class="nav nav-tabs" id="treeTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="models-tab" data-toggle="tab" href="#models" role="tab"
+                       aria-controls="models" aria-selected="true">Models</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  active" id="structure-tab" data-toggle="tab" href="#structure" role="tab"
+                       aria-controls="structure" aria-selected="true">Objects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
+                       aria-controls="classes" aria-selected="false">Classes</a>
+                </li>
+
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show" id="models" role="tabpanel"
+                     aria-labelledby="models-tab">
+
+                    <div id="models-tree" class="tree-panel"></div>
+                </div>
+
+                <div class="tab-pane fade show  active" id="structure" role="tabpanel"
+                     aria-labelledby="structure-tab">
+
+                    <div id="structure-toolbar" class="btn-toolbar" role="toolbar"
+                         aria-label="Toolbar with button groups">
+
+                        <button id="selectAllStructure" type="button" class="btn btn-outline-primary">
+                            Show all
+                        </button>
+                        <button id="deselectAllStructure" type="button" class="btn btn-outline-primary">
+                            Hide all
+                        </button>
+
+                    </div>
+
+                    <div id="structure-tree" class="tree-panel"></div>
+                </div>
+                <div class="tab-pane fade" id="classes" role="tabpanel" aria-labelledby="classes-tab">
+
+                    <div id="classes-toolbar" class="btn-toolbar" role="toolbar"
+                         aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            <button id="selectAllClasses" type="button" class="btn btn-outline-primary">Select all
+                            </button>
+                            <button id="deselectAllClasses" type="button" class="btn btn-outline-primary">Deselect
+                                all
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div id="classes-tree" class="tree-panel"></div>
+                </div>
+
+            </div>
         </div>
     </nav>
 
@@ -92,11 +154,15 @@
     <nav id="sidebar2">
         <div class="sidebar-header">
             <h3>BCF Viewpoints</h3>
+            <div id="annotations-index-panel"></div>
+            <div id="bcf-index-panel"></div>
+
         </div>
     </nav>
-
-
 </div>
+
+<canvas id="myNavCubeCanvas"></canvas>
+<canvas id="mySectionPlanesOverviewCanvas"></canvas>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -117,6 +183,9 @@
         });
     });
 </script>
+
 </body>
+
+<script src="index.js" type="module" defer></script>
 
 </html>

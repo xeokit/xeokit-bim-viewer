@@ -10,8 +10,7 @@ class MeasureAngleMode extends Controller {
 
     /** @private */
     constructor(parent, cfg) {
-        super(parent);
-        this._active = false;
+        super(parent, cfg);
         this._angleMeasurements = new AngleMeasurementsPlugin(this.viewer, {
             container: cfg.container
         });

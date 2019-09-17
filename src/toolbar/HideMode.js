@@ -8,9 +8,8 @@ import {Controller} from "../Controller.js";
 class HideMode extends Controller {
 
     /** @private */
-    constructor(parent) {
-        super(parent);
-        this._active = false;
+    constructor(parent, cfg) {
+        super(parent, cfg);
     }
 
     /**

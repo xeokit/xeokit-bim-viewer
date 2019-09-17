@@ -5,9 +5,7 @@ import {ScreenshotAction} from "./ScreenshotAction.js";
 import {ResetAction} from "./ResetAction.js";
 import {HideMode} from "./HideMode.js";
 import {FirstPersonMode} from "./FirstPersonMode.js";
-import {OrbitMode} from "./OrbitMode.js";
 import {OrthoMode} from "./OrthoMode.js";
-import {PerspectiveMode} from "./PerspectiveMode.js";
 import {NavCubeMode} from "./NavCubeMode.js";
 import {FitAction} from "./FitAction.js";
 import {XRayMode} from "./XRayMode.js";
@@ -26,7 +24,7 @@ class Toolbar extends Controller {
     /** @private */
     constructor(viewer, cfg = {}) {
 
-        super(null, viewer);
+        super(null, cfg, viewer);
 
         /** Resets the viewer.
          * @type {ResetAction}
@@ -45,57 +43,57 @@ class Toolbar extends Controller {
         this.planViews = new PlanViews(this);
 
         /**
-         * Controls orbit mode.
-         * @type {OrbitMode}
-         */
-        this.orbit = new OrbitMode(this);
-
-        /**
          * Controls first person mode.
          * @type {FirstPersonMode}
          */
-        this.firstPerson = new FirstPersonMode(this);
-
-        /**
-         * Controls perspective mode.
-         * @type {PerspectiveMode}
-         */
-        this.perspective = new PerspectiveMode(this);
+        this.firstPerson = new FirstPersonMode(this, {
+            active: false
+        });
 
         /**
          * Controls orthographic mode.
          * @type {OrthoMode}
          */
-        this.ortho = new OrthoMode(this);
+        this.ortho = new OrthoMode(this, {
+            active: false
+        });
 
         /** Click-to-hide mode.
          * @type {HideMode}
          */
-        this.hide = new HideMode(this);
+        this.hide = new HideMode(this, {
+            active: false
+        });
 
         /** Click-to-select mode.
          * @type {SelectMode}
          */
-        this.select = new SelectMode(this);
+        this.select = new SelectMode(this, {
+            active: false
+        });
 
         /** Click-to-query-element mode.
          * @type {QueryMode}
          */
         this.query = new QueryMode(this, {
-            queryPanelId: cfg.queryPanelId
+            queryPanelId: cfg.queryPanelId,
+            active: false
         });
 
         /** Click-to-xray mode.
          * @type {XRayMode}
          */
-        this.xray = new XRayMode(this);
+        this.xray = new XRayMode(this, {
+            active: false
+        });
 
         /**
          * Distance measurement mode.
          * @type {MeasureDistanceMode}
          */
         this.distance = new MeasureDistanceMode(this, {
-            containerId: cfg.containerId
+            containerId: cfg.containerId,
+            active: false
         });
 
         /**
@@ -103,7 +101,8 @@ class Toolbar extends Controller {
          * @type {MeasureAngleMode}
          */
         this.angle = new MeasureAngleMode(this, {
-            containerId: cfg.containerId
+            containerId: cfg.containerId,
+            active: false
         });
 
         /**
@@ -111,7 +110,8 @@ class Toolbar extends Controller {
          * @type {SectionMode}
          */
         this.section = new SectionMode(this, {
-            sectionPlanesOverviewCanvasId: cfg.sectionPlanesOverviewCanvasId
+            sectionPlanesOverviewCanvasId: cfg.sectionPlanesOverviewCanvasId,
+            active: false
         });
 
         /**
@@ -120,7 +120,8 @@ class Toolbar extends Controller {
          */
         this.annotate = new AnnotateMode(this, {
             containerId: cfg.containerId,
-            annotationsPanelId: cfg.annotationsPanelId
+            annotationsPanelId: cfg.annotationsPanelId,
+            active: false
         });
 
         /**
@@ -128,30 +129,31 @@ class Toolbar extends Controller {
          * @type {BCFMode}
          */
         this.bcf = new BCFMode(this, {
-            bcfPanelId: cfg.bcfPanelId
+            bcfPanelId: cfg.bcfPanelId,
+            active: false
         });
 
         /**
          * Controls screenshots.
          * @type {ScreenshotAction}
          */
-        this.screenshot = new ScreenshotAction(this);
+        this.screenshot = new ScreenshotAction(this, {
+            active: false
+        });
 
         /**
          * Controls the NavCube.
          * @type {NavCubeMode}
          */
         this.navCube = new NavCubeMode(this, {
-            navCubeCanvasId: cfg.navCubeCanvasId
+            navCubeCanvasId: cfg.navCubeCanvasId,
+            active: true
         });
 
-        // Ensure mutual exclusion of various modes
-        this._mutexActivation([this.planViews, this.orbit, this.firstPerson], true);
-        this._mutexActivation([this.perspective, this.ortho], true);
-        this._mutexActivation([this.query, this.xray, this.hide, this.select, this.distance, this.angle, this.section, this.annotate]);
+        this._mutexActivation([this.query, this.xray, this.hide, this.select, this.distance, this.angle, this.section, this.annotate, this.bcf]);
 
-        this.orbit.setActive(true);
-        this.perspective.setActive(true);
+        this.firstPerson.setActive(false);
+        // this.ortho.setActive(false);
         this.navCube.setActive(true);
     }
 }

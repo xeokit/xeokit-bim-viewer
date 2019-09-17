@@ -10,8 +10,7 @@ class MeasureDistanceMode extends Controller {
 
     /** @private */
     constructor(parent, cfg={}) {
-        super(parent);
-        this._active = false;
+        super(parent, cfg);
         this._distanceMeasurements = new DistanceMeasurementsPlugin(this.viewer, {
             container: cfg.container
         });

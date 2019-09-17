@@ -16,9 +16,7 @@ class SectionMode extends Controller {
     /** @private */
     constructor(parent, cfg) {
 
-        super(parent);
-
-        this._active = false;
+        super(parent, cfg);
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
             overviewCanvasId: cfg.sectionPlanesOverviewCanvasId

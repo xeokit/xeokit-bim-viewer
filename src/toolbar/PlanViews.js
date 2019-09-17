@@ -43,9 +43,9 @@ import {CameraMemento} from "../../lib/xeokit/viewer/scene/mementos/CameraMement
  */
 class PlanViews extends Controller {
 
-    constructor(parent) {
+    constructor(parent, cfg={}) {
 
-        super(parent);
+        super(parent, cfg);
 
         this._planViewsPlugin = new PlanViewsPlugin(this.viewer, {});
 

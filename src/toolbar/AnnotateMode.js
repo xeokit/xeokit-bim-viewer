@@ -13,7 +13,11 @@ class AnnotateMode extends Controller {
 
     constructor(parent, cfg) {
 
-        super(parent);
+        super(parent, cfg);
+
+        if (!cfg.annotationsPanelId) {
+            throw "Config expected: annotationsPanelId";
+        }
 
         this._element = document.getElementById(cfg.annotationsPanelId);
 

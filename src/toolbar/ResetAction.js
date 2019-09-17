@@ -10,9 +10,9 @@ import {CameraMemento} from "../../lib/xeokit/viewer/scene/mementos/CameraMement
 class ResetAction extends Controller {
 
     /** @private */
-    constructor(parent) {
+    constructor(parent, cfg={}) {
 
-        super(parent);
+        super(parent, cfg);
 
         this._cameraMemento = new CameraMemento();
 
@@ -49,9 +49,8 @@ class ResetAction extends Controller {
         this.toolbar.annotate.clearAnnotations();
         // this.toolbar.bcf.clearViewpoints();
         this.toolbar.planViews.quitPlanView();
-        this.toolbar.orbit.setActive(true);
-        this.toolbar.perspective.setActive(true);
-
+        this.toolbar.firstPerson.setActive(false);
+        this.toolbar.ortho.setActive(false);
         this.toolbar.query.setActive(false);
         this.toolbar.xray.setActive(false);
         this.toolbar.hide.setActive(false);
@@ -60,6 +59,7 @@ class ResetAction extends Controller {
         this.toolbar.angle.setActive(false);
         this.toolbar.section.setActive(false);
         this.toolbar.annotate.setActive(false);
+        this.toolbar.bcf.setActive(false);
 
         this._objectsMemento.restoreObjects(this.viewer.scene);
 

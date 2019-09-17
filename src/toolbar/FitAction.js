@@ -9,8 +9,8 @@ import {Controller} from "../Controller.js";
 class FitAction extends Controller {
 
     /** @private */
-    constructor(parent) {
-        super(parent);
+    constructor(parent, cfg={}) {
+        super(parent, cfg);
     }
 
     /**

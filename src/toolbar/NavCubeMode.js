@@ -10,8 +10,7 @@ class NavCubeMode extends Controller {
 
     /** @private */
     constructor(parent, cfg) {
-        super(parent);
-        this._active = false;
+        super(parent, cfg);
         this._navCube = new NavCubePlugin(this.viewer, {
             canvasId: cfg.navCubeCanvasId
         });

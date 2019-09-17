@@ -8,8 +8,8 @@ import {Controller} from "../Controller.js";
 class ScreenshotAction extends Controller {
 
     /** @private */
-    constructor(parent) {
-        super(parent);
+    constructor(parent, cfg) {
+        super(parent, cfg);
     }
 
     /** @private */

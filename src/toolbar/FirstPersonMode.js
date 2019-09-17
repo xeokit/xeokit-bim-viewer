@@ -51,9 +51,14 @@ const quat = new Float32Array(4);
 class FirstPersonMode extends Controller {
 
     /** @private */
-    constructor(parent) {
+    constructor(parent, cfg) {
 
-        super(parent);
+        super(parent, cfg);
+
+        const cameraControl = this.viewer.cameraControl;
+        cameraControl.firstPerson = false;
+        cameraControl.pivoting = true;
+        cameraControl.panToPointer = true;
 
        // this._cursor = new FirstPersonCursor(this.viewer.scene);
 
@@ -61,7 +66,7 @@ class FirstPersonMode extends Controller {
 
             if (active) {
 
-                this.viewer.scene.canvas.canvas.style.cursor = "default";
+              //  this.viewer.scene.canvas.canvas.style.cursor = "default";
 
                 const cameraControl = this.viewer.cameraControl;
                 cameraControl.firstPerson = true;
@@ -78,8 +83,12 @@ class FirstPersonMode extends Controller {
 
             } else {
 
-                // this.viewer.cameraControl.off(this._onHoverSurface);
-                // this.viewer.cameraControl.off(this._onHoverOff);
+              //  this.viewer.scene.canvas.canvas.style.cursor = "default";
+
+                const cameraControl = this.viewer.cameraControl;
+                cameraControl.firstPerson = false;
+                cameraControl.pivoting = true;
+                cameraControl.panToPointer = true;
             }
         });
     }

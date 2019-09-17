@@ -10,9 +10,8 @@ import {Controller} from "../Controller.js";
 class XRayMode extends Controller {
 
     /** @private */
-    constructor(parent) {
-        super(parent);
-        this._active = false;
+    constructor(parent, cfg) {
+        super(parent, cfg);
     }
 
     /**

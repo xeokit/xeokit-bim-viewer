@@ -10,7 +10,7 @@ import {Controller} from "../Controller.js";
 class BCFMode extends Controller {
 
     constructor(parent, cfg) {
-        super(parent);
+        super(parent, cfg);
         this._element = document.getElementById(cfg.bcfPanelId);
         this._records = [];
         this._recordsMap = {};

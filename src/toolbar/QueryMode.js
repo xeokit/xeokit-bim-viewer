@@ -8,9 +8,9 @@ import {Controller} from "../Controller.js";
 class QueryMode extends Controller {
 
     /** @private */
-    constructor(parent) {
+    constructor(parent, cfg) {
 
-        super(parent);
+        super(parent, cfg);
 
         this.on("active", (active) => {
 
