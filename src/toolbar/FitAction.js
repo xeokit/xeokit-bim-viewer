@@ -1,5 +1,7 @@
 import {Controller} from "../Controller.js";
+import {math} from "../../lib/xeokit/viewer/scene/math/math.js";
 
+const tempVec3 = math.vec3();
 
 /**
  * Flies the camera to show the entire model in view, from the current viewing angle.
@@ -17,7 +19,12 @@ class FitAction extends Controller {
      * Flies the camera to show the entire model in view, from the current viewing angle.
      */
     fit() {
-        this.viewer.cameraFlight.flyTo(this.viewer.scene);
+        const scene = this.viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        this.viewer.cameraFlight.flyTo({
+            aabb: aabb
+        });
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
     }
 
     set fov(fov) {

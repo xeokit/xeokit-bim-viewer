@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>BIM Viewer built on xeokit and Bootstrap</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="./lib/inspire-tree/site-min.css" type="text/css" rel="stylesheet"/>
+    <script src="./lib/lodash.js"></script>
+    <script src="./lib/inspire-tree/inspire-tree.min.js"></script>
+    <script src="./lib/inspire-tree/inspire-tree-dom-min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="leftcol" class="col-sm">
+            <div class="column-content">
+                <ul class="nav nav-tabs" id="treeTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" id="models-tab" data-toggle="tab" href="#models" role="tab"
+                           aria-controls="models" aria-selected="true">Models</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link  active" id="structure-tab" data-toggle="tab" href="#structure" role="tab"
+                           aria-controls="structure" aria-selected="true">Objects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
+                           aria-controls="classes" aria-selected="false">Classes</a>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show" id="models" role="tabpanel"
+                         aria-labelledby="models-tab">
+
+                        <div id="models-tree" class="tree-panel"></div>
+                    </div>
+
+                    <div class="tab-pane fade show  active" id="structure" role="tabpanel"
+                         aria-labelledby="structure-tab">
+
+                        <div id="structure-toolbar" class="btn-toolbar" role="toolbar"
+                             aria-label="Toolbar with button groups">
+
+                            <button id="showAllObjects" type="button" class="btn btn-outline-primary">
+                                Show all
+                            </button>
+                            <button id="hideAllObjects" type="button" class="btn btn-outline-primary">
+                                Hide all
+                            </button>
+
+                        </div>
+
+                        <div id="objects-tree" class="tree-panel"></div>
+                    </div>
+                    <div class="tab-pane fade" id="classes" role="tabpanel" aria-labelledby="classes-tab">
+
+                        <div id="classes-toolbar" class="btn-toolbar" role="toolbar"
+                             aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <button id="showAllClasses" type="button" class="btn btn-outline-primary">Select all
+                                </button>
+                                <button id="hideAllClasses" type="button" class="btn btn-outline-primary">Deselect
+                                    all
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div id="classes-tree" class="tree-panel"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div id="content" class="col-sm-8">
+            <div class="column-content">
+                <div id="toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <button id="reset" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="Reset view">Reset</button>
+                    </div>
+
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <button id="fit" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="Fit model to view">Fit</button>
+                    </div>
+
+                    <div class="btn-group mr-2" role="group" aria-label="Second group">
+                        <!--                        <button id="plan" type="button" class="btn btn-outline-primary">Plan</button>-->
+                        <button id="orbit" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="Orbiting mode">Orbit</button>
+                        <button id="firstPerson" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="First person mode">First person
+                        </button>
+                    </div>
+
+                    <div class="btn-group mr-2" role="group" aria-label="Second group">
+                        <button id="ortho" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="Orthographic projection mode">Ortho</button>
+                        <button id="perspective" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="top" title="Perspective projection mode">Perspective
+                        </button>
+                    </div>
+
+                    <div class="btn-group mr-2" role="group" aria-label="Third group">
+                        <button id="query" type="button" class="btn btn-outline-primary">Query</button>
+                        <button id="xray" type="button" class="btn btn-outline-primary">X-Ray</button>
+                        <button id="hide" type="button" class="btn btn-outline-primary">Hide</button>
+                        <button id="select" type="button" class="btn btn-outline-primary">Select</button>
+                        <button id="distance" type="button" class="btn btn-outline-primary">Distance</button>
+                        <button id="angle" type="button" class="btn btn-outline-primary">Angle</button>
+                        <button id="section" type="button" class="btn btn-outline-primary">Section
+                        </button>
+                        <button id="annotate" type="button" class="btn btn-outline-primary">Annotate
+                        </button>
+                    </div>
+
+                </div>
+                <div id="canvasContainer">
+                    <canvas id="myCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="column-content">
+                <ul class="nav nav-tabs" id="rightTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="bcf-tab" data-toggle="tab" href="#bcf" role="tab"
+                           aria-controls="structure" aria-selected="true">BCF</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="properties-tab" data-toggle="tab" href="#properties" role="tab"
+                           aria-controls="classes" aria-selected="false">Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="sections-tab" data-toggle="tab" href="#sections" role="tab"
+                           aria-controls="classes" aria-selected="false">Sections</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="annotations-tab" data-toggle="tab" href="#annotations" role="tab"
+                           aria-controls="classes" aria-selected="false">Annotations</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent2">
+                    <div class="tab-pane fade show active" id="bcf" role="tabpanel"
+                         aria-labelledby="structure-tab">
+
+                        <div id="bcf-toolbar" class="btn-toolbar" role="toolbar"
+                             aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <button id="createBCF" type="button" class="btn btn-outline-primary">
+                                    New
+                                </button>
+                                <button id="clearBCF" type="button" class="btn btn-outline-primary">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="bcf-index-panel">
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
+                        <div id="properties-panel">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>01 eerst verdieping</td>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td>IfcBuildingStorey</td>
+                                </tr>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>uu78yb888oh877777ovt</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="sections" role="tabpanel" aria-labelledby="classes-tab">
+
+                        <div id="sections-toolbar" class="btn-toolbar" role="toolbar"
+                             aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <button id="clearsections" type="button" class="btn btn-outline-primary">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="sections-panel">
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="annotations" role="tabpanel" aria-labelledby="classes-tab">
+
+                        <div id="annotations-toolbar" class="btn-toolbar" role="toolbar"
+                             aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <button id="clearAnnotations" type="button" class="btn btn-outline-primary">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="annotations-index-panel">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <footer>Footer content</footer>
+        </div>
+    </div>
+</div>
+
+
+
+<canvas id="myNavCubeCanvas"></canvas>
+<canvas id="mySectionPlanesOverviewCanvas"></canvas>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#reset').on('click', function () {
+            $('#leftcol').toggleClass('collapsed');
+            $("#content").toggleClass("col-md-12 col-md-9");
+        });
+
+        $('#bcf').on('click', function () {
+            $('#sidebar2').toggleClass('active');
+        });
+    });
+</script>
+
+</body>
+
+<script src="index.js" type="module" defer></script>
+
+</html>

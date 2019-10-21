@@ -43,23 +43,23 @@ class ResetAction extends Controller {
         // TODO: Restore camera to standard view-fit position?
         // TODO: Capture objects after each model load?
 
-        this.toolbar.angle.clear();
-        this.toolbar.distance.clear();
-        this.toolbar.section.clear();
-        this.toolbar.annotate.clearAnnotations();
+        this.viewerUI.toolbar.angle.clear();
+        this.viewerUI.toolbar.distance.clear();
+        this.viewerUI.toolbar.section.clear();
+        this.viewerUI.toolbar.annotate.clearAnnotations();
         // this.toolbar.bcf.clearViewpoints();
-        this.toolbar.planViews.quitPlanView();
-        this.toolbar.firstPerson.setActive(false);
-        this.toolbar.ortho.setActive(false);
-        this.toolbar.query.setActive(false);
-        this.toolbar.xray.setActive(false);
-        this.toolbar.hide.setActive(false);
-        this.toolbar.select.setActive(false);
-        this.toolbar.distance.setActive(false);
-        this.toolbar.angle.setActive(false);
-        this.toolbar.section.setActive(false);
-        this.toolbar.annotate.setActive(false);
-        this.toolbar.bcf.setActive(false);
+      //  this.viewerUI.toolbar.planViews.quitPlanView();
+        this.viewerUI.toolbar.firstPerson.setActive(false);
+        this.viewerUI.toolbar.ortho.setActive(false);
+        this.viewerUI.toolbar.query.setActive(false);
+        this.viewerUI.toolbar.xray.setActive(false);
+        this.viewerUI.toolbar.hide.setActive(false);
+        this.viewerUI.toolbar.select.setActive(false);
+        this.viewerUI.toolbar.distance.setActive(false);
+        this.viewerUI.toolbar.angle.setActive(false);
+        this.viewerUI.toolbar.section.setActive(false);
+        this.viewerUI.toolbar.annotate.setActive(false);
+        this.viewerUI.toolbar.bcf.setActive(false);
 
         this._objectsMemento.restoreObjects(this.viewer.scene);
 

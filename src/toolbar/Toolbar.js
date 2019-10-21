@@ -22,9 +22,9 @@ import {AnnotateMode} from "./AnnotateMode.js";
 class Toolbar extends Controller {
 
     /** @private */
-    constructor(viewer, cfg = {}) {
+    constructor(parent, cfg = {}) {
 
-        super(null, cfg, viewer);
+        super(parent, cfg);
 
         /** Resets the viewer.
          * @type {ResetAction}
@@ -40,7 +40,7 @@ class Toolbar extends Controller {
          * Controls plan view mode.
          * @type {PlanViews}
          */
-        this.planViews = new PlanViews(this);
+       // this.planViews = new PlanViews(this);
 
         /**
          * Controls first person mode.
@@ -153,7 +153,7 @@ class Toolbar extends Controller {
         this._mutexActivation([this.query, this.xray, this.hide, this.select, this.distance, this.angle, this.section, this.annotate, this.bcf]);
 
         this.firstPerson.setActive(false);
-        // this.ortho.setActive(false);
+        this.ortho.setActive(false);
         this.navCube.setActive(true);
     }
 }

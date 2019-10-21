@@ -13,13 +13,15 @@ body {
     margin: 0;
     width: 100%;
     /*height: 100%;*/
-    min-height: 1000px;
-    overflow-y: hidden;
+    min-height: 100vh;
+    /*overflow-y: hidden;*/
     overflow-x: hidden;
+    pointer-events: all;
 }
 
 
-/*#structure-tree {*/
+
+/*#objects-tree {*/
 /*    padding-top: 15px;*/
 /*    pointer-events: all;*/
 /*    height: 100%;*/
@@ -63,16 +65,18 @@ body {
 
 
 #myCanvas {
+    /*position: absolute;*/
+    /*top: 0;*/
     width: 100%;
     height: 100%;
+    min-height: 100vh;
     background: lightblue;
     cursor: default;
+    pointer-events: all;
+    margin: 0;
 }
 
-#canvasContainer {
-    width: 100%;
-    height: 100%;
-}
+
 
 #myNavCubeCanvas {
     position: absolute;
@@ -169,6 +173,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 10px;
+    pointer-events: all;
 }
 
 #structure-toolbar {
@@ -242,37 +247,18 @@ footer {
 .tree-panel {
     padding: 10px;
     overflow-x: hidden;
+    pointer-events: all;
 }
 
-.wrapper {
-    display: flex;
-    width: 100%;
+#models-list {
+    padding: 10px;
 }
-
-#sidebar {
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 999;
-    background: #7386D5;
-    color: #fff;
-    transition: all 0.3s;
-}
-
-
-
 
 /*
     DEMO STYLE
 */
 
-@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #fafafa;
-}
+
 
 p {
     font-family: 'Poppins', sans-serif;
@@ -319,23 +305,26 @@ a:focus {
 .wrapper {
     display: flex;
     width: 100%;
+    height: 100%;
     align-items: stretch;
+    z-index: 10000;
 }
 
 #sidebar {
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 300px;
+    max-width: 300px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
+    padding: 0;
 }
 
 #sidebar.active {
-    margin-left: -250px;
+    margin-left: -300px;
 }
 
 #sidebar .sidebar-header {
-    padding: 20px;
+    padding: 0px;
     background: #6d7fcc;
 }
 
@@ -379,7 +368,7 @@ a[aria-expanded="true"] {
 }
 
 #sidebar2 .sidebar-header {
-    padding: 20px;
+    padding: 0px;
     background: #6d7fcc;
 }
 
@@ -457,9 +446,11 @@ a.article:hover {
 
 #content {
     width: 100%;
+    height: 100%;
     padding: 0;
     min-height: 100vh;
     transition: all 0.3s;
+    pointer-events: none;
 }
 
 /* ---------------------------------------------------

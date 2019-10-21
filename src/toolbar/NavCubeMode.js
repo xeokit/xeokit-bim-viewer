@@ -12,7 +12,8 @@ class NavCubeMode extends Controller {
     constructor(parent, cfg) {
         super(parent, cfg);
         this._navCube = new NavCubePlugin(this.viewer, {
-            canvasId: cfg.navCubeCanvasId
+            canvasId: cfg.navCubeCanvasId,
+            fitVisible: true
         });
         this._navCube.setVisible(this._active);
         this.on("active", (active) => {

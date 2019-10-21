@@ -9,10 +9,12 @@ class Controller {
     /**
      * @private
      */
-    constructor(parent, cfg, viewer) {
+    constructor(parent, cfg, server, viewer) {
 
-        this.toolbar = (parent ? (parent.toolbar || parent) : this);
-        
+        this.viewerUI = (parent ? (parent.viewerUI || parent) : this);
+
+        this.server = parent ? parent.server : server;
+
         this.viewer = parent ? parent.viewer : viewer;
 
         this._children = [];

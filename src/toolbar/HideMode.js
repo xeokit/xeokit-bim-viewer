@@ -1,4 +1,10 @@
 import {Controller} from "../Controller.js";
+import {math} from "../../lib/xeokit/viewer/scene/math/math.js";
+
+function closeEnough(p, q) {
+    const CLICK_DIST = 4;
+    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
+}
 
 /**
  * Controls click-to-hide mode.
@@ -9,69 +15,58 @@ class HideMode extends Controller {
 
     /** @private */
     constructor(parent, cfg) {
+
         super(parent, cfg);
-    }
 
-    /**
-     * Activates or deactivates hiding mode.
-     *
-     * @param {boolean} active Whether or not to activate hiding mode.
-     */
-    setActive(active) {
+        this.on("active", (active) => {
 
-        if (this._active === active) {
-            return;
-        }
+            if (active) {
 
-        this._active = active;
+                var entity = null;
 
-        if (this._active) {
+                this._onHover = this.viewer.cameraControl.on("hover", (e) => {
+                    if (entity) {
+                        entity.highlighted = false;
+                        entity = null;
+                    }
+                    entity = e.entity;
+                    entity.highlighted = true;
+                });
 
-            var entity = null;
+                this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+                    if (entity) {
+                        entity.highlighted = false;
+                        entity = null;
+                    }
+                });
 
-            this._onHover = this.viewer.cameraControl.on("hover", (e) => {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
+                const lastCoords = math.vec2();
 
-                entity = e.entity;
-                entity.highlighted = true;
-            });
+                this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+                    lastCoords[0] = coords[0];
+                    lastCoords[1] = coords[1];
+                });
 
-            this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+                this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+                    if (entity) {
+                        if (!closeEnough(lastCoords, coords)) {
+                            entity = null;
+                            return;
+                        }
+                        entity.visible = false;
+                        entity.highlighted = false;
+                        entity = null;
+                    }
+                });
 
-                if (entity) {
-                    //entity.opacity = 1.0;
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
+            } else {
 
-            this.viewer.scene.input.on("mouseup", () => {
-                if (entity) {
-                    entity.visible = false;
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
-
-        } else {
-
-            this.viewer.cameraControl.off(this._onHover);
-            this.viewer.cameraControl.off(this._onHoverOff);
-            this.viewer.cameraControl.off(this._onPicked);
-        }
-
-        this.fire("active", this._active);
-    }
-
-    /**
-     * Gets whether or not this UIHide is active.
-     * @returns {boolean}
-     */
-    getActive() {
-        return this._active;
+                this.viewer.cameraControl.off(this._onHover);
+                this.viewer.cameraControl.off(this._onHoverOff);
+                this.viewer.cameraControl.off(this._onMousedown);
+                this.viewer.cameraControl.off(this._onMouseup);
+            }
+        });
     }
 
     /** @private */

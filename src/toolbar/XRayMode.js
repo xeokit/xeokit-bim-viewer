@@ -1,4 +1,10 @@
 import {Controller} from "../Controller.js";
+import {math} from "../../lib/xeokit/viewer/scene/math/math.js";
+
+function closeEnough(p, q) {
+    const CLICK_DIST = 4;
+    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
+}
 
 /**
  * X-rays objects with mouse clicks.
@@ -11,92 +17,71 @@ class XRayMode extends Controller {
 
     /** @private */
     constructor(parent, cfg) {
+
         super(parent, cfg);
-    }
 
-    /**
-     * Activates or deactivates X-ray mode.
-     *
-     * @param {boolean} active Whether or not to activate X-ray mode.
-     */
-    setActive(active) {
+        this.on("active", (active) =>{
+            if (this._active) {
 
-        if (this._active === active) {
-            return;
-        }
+                var entity = null;
+                var down = false;
 
-        this._active = active;
-
-        if (this._active) {
-
-            this.viewer.scene.canvas.canvas.style.cursor = "crosshair";
-
-            var entity = null;
-            var down = false;
-
-            this._onHover = this.viewer.cameraControl.on("hover", (e) => {
-                if (down) {
-                    return;
-                }
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-
-                entity = e.entity;
-                entity.highlighted = true;
-            });
-
-            this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
-                if (down) {
-                    return;
-                }
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
-
-            this.viewer.scene.input.on("mousedown", () => {
-                down = true;
-                if (entity) {
-                    entity.highlighted = false;
-                }
-            });
-
-            this.viewer.scene.input.on("mouseup", () => {
-                down = false;
-                if (entity) {
-                    if (!entity.xrayed) {
-                        entity.xrayed = true;
-                        entity.pickable = false;
-                    } else {
-                        entity.xrayed = false;
-                        entity.pickable = true;
+                this._onHover = this.viewer.cameraControl.on("hover", (e) => {
+                    if (down) {
+                        return;
                     }
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
+                    if (entity) {
+                        entity.highlighted = false;
+                        entity = null;
+                    }
 
-        } else {
+                    entity = e.entity;
+                    entity.highlighted = true;
+                });
 
-          //  this.viewer.scene.canvas.canvas.style.cursor = "default";
+                this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+                    if (down) {
+                        return;
+                    }
+                    if (entity) {
+                        entity.highlighted = false;
+                        entity = null;
+                    }
+                });
 
-            this.viewer.cameraControl.off(this._onHover);
-            this.viewer.cameraControl.off(this._onHoverOff);
-          //  this.viewer.cameraControl.off(this._onPicked);
-        }
+                const lastCoords = math.vec2();
 
-        this.fire("active", this._active);
-    }
+                this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+                    lastCoords[0] = coords[0];
+                    lastCoords[1] = coords[1];
+                    if (entity) {
+                        entity.highlighted = false;
+                    }
+                });
 
-    /**
-     * Gets whether or not X-ray mode is active.
-     * @returns {boolean}
-     */
-    getActive() {
-        return this._active;
+                this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+                    down = false;
+                    if (entity) {
+                        if (!entity.xrayed) {
+                            entity.xrayed = true;
+                            entity.pickable = false;
+                        } else {
+                            entity.xrayed = false;
+                            entity.pickable = true;
+                        }
+                        entity.highlighted = false;
+                        entity = null;
+                    }
+                });
+
+            } else {
+
+                this.viewer.cameraControl.off(this._onHover);
+                this.viewer.cameraControl.off(this._onHoverOff);
+                this.viewer.cameraControl.off(this._onMousedown);
+                this.viewer.cameraControl.off(this._onMouseup);
+            }
+        });
     }
 
     /** @private */

@@ -1,15 +1,8 @@
 import {Viewer} from "./lib/xeokit/viewer/Viewer.js";
-import {XKTLoaderPlugin} from "./lib/xeokit/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-import {Toolbar} from "./src/toolbar/Toolbar.js";
-import {buildClassesTree} from "./src/trees/buildClassesTree.js";
-import {buildStructureTree} from "./src/trees/buildStructureTree.js";
-import {Mesh} from "./lib/xeokit/viewer/scene/mesh/Mesh.js";
-import {ReadableGeometry} from "./lib/xeokit/viewer/scene/geometry/ReadableGeometry.js";
-import {buildPlaneGeometry} from "./lib/xeokit/viewer/scene/geometry/builders/buildPlaneGeometry.js";
-import {PhongMaterial} from "./lib/xeokit/viewer/scene/materials/PhongMaterial.js";
-import {LambertMaterial} from "./lib/xeokit/viewer/scene/materials/LambertMaterial.js";
+import {ViewerUI} from "./src/ViewerUI.js";
 import {DirLight} from "./lib/xeokit/viewer/scene/lights/DirLight.js";
 import {AmbientLight} from "./lib/xeokit/viewer/scene/lights/AmbientLight.js";
+import {Server} from "./src/server/Server.js";
 
 // Create and configure a xeokit Viewer
 
@@ -69,39 +62,16 @@ new DirLight(scene, {
     space: "world"
 });
 
-// Ground plane
+const server = new Server({
 
-// new Mesh(viewer.scene, {
-//     geometry: new ReadableGeometry(viewer.scene, buildPlaneGeometry({
-//         xSize: 1500,
-//         zSize: 1500
-//     })),
-//     material: new LambertMaterial(viewer.scene, {
-//         color: [0.4, 1.0, 0.4],
-//         backfaces: true
-//     }),
-//     position: [0, -1.0, 0],
-//     pickable: false,
-//     collidable: false
-// });
-
-// Load a model
-
-const xktLoader = new XKTLoaderPlugin(viewer);
-
-const model = xktLoader.load({
-    id: "myModel",
-    // src: "./data/models/xkt/schependomlaan/schependomlaan.xkt",
-    // metaModelSrc: "./data/metaModels/schependomlaan/metaModel.json",
-
-    src: "./data/models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
-    metaModelSrc: "./data/metaModels/OTCConferenceCenter/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
-    edges: true
 });
 
 // Create UI
 
-const toolbar = new Toolbar(viewer, {
+const viewerUI = new ViewerUI(server, viewer, {
+    modelsPanelId: "models-list",
+    objectsTreePanelId: "objects-tree",
+    classesTreePanelId: "classes-tree",
     sectionPlanesOverviewCanvasId: "mySectionPlanesOverviewCanvas",
     navCubeCanvasId: "myNavCubeCanvas",
     containerId: "canvasContainer",
@@ -109,27 +79,26 @@ const toolbar = new Toolbar(viewer, {
     annotationsPanelId: "annotations-index-panel"
 });
 
-bindButton("#reset", toolbar.reset, "reset");
-bindButton("#fit", toolbar.fit, "fit");
+bindButton("#reset", viewerUI.toolbar.reset, "reset");
+bindButton("#fit", viewerUI.toolbar.fit, "fit");
 
-bindCheckButton("#firstPerson", toolbar.firstPerson);
+bindCheckButton("#firstPerson", viewerUI.toolbar.firstPerson);
 
-bindCheckButton("#ortho", toolbar.ortho);
+bindCheckButton("#ortho", viewerUI.toolbar.ortho);
 
-bindCheckButton("#query", toolbar.query);
-bindCheckButton("#xray", toolbar.xray);
-bindCheckButton("#hide", toolbar.hide);
-bindCheckButton("#select", toolbar.select);
-bindCheckButton("#distance", toolbar.distance);
-bindCheckButton("#angle", toolbar.angle);
-bindCheckButton("#section", toolbar.section);
-bindCheckButton("#annotate", toolbar.annotate);
-bindCheckButton("#bcf", toolbar.bcf);
+bindCheckButton("#query", viewerUI.toolbar.query);
+bindCheckButton("#xray", viewerUI.toolbar.xray);
+bindCheckButton("#hide", viewerUI.toolbar.hide);
+bindCheckButton("#select", viewerUI.toolbar.select);
+bindCheckButton("#distance", viewerUI.toolbar.distance);
+bindCheckButton("#angle", viewerUI.toolbar.angle);
+bindCheckButton("#section", viewerUI.toolbar.section);
+bindCheckButton("#annotate", viewerUI.toolbar.annotate);
 
-bindButton("#createBCF", toolbar.bcf, "createViewpoint");
-bindButton("#clearBCF", toolbar.bcf, "clearViewpoints");
-bindButton("#clearAnnotations", toolbar.annotate, "clearAnnotations");
-bindButton("#clearSections", toolbar.section, "clearSections");
+bindButton("#createBCF", viewerUI.toolbar.bcf, "createViewpoint");
+bindButton("#clearBCF", viewerUI.toolbar.bcf, "clearViewpoints");
+bindButton("#clearAnnotations", viewerUI.toolbar.annotate, "clearAnnotations");
+bindButton("#clearSections", viewerUI.toolbar.section, "clearSections");
 
 function bindButton(selector, component, action) {
     $(selector).on('click', function (event) {
@@ -156,12 +125,3 @@ function bindCheckButton(selector, component) {
         $(selector).removeClass("active");
     }
 }
-
-// When model has loaded, create explorer trees
-
-model.on("loaded", () => {
-    buildStructureTree(viewer, "structure-tree", model);
-  //  buildClassesTree(viewer, "classes-tree", model);
-    viewer.cameraFlight.jumpTo(viewer.scene);
-    toolbar.reset.saveState();
-});
