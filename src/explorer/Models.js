@@ -103,7 +103,14 @@ class Models extends Controller {
             return;
         }
         model.destroy();
-        this.fire("modelUnloaded", modelId);
+        const scene = this.viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        this.viewer.cameraFlight.flyTo({
+            aabb: aabb
+        }, () => {
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+            this.fire("modelUnloaded", modelId);
+        });
     }
 
     /** @private */
