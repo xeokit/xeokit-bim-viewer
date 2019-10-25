@@ -25,51 +25,73 @@ class ViewerUI extends Controller {
             this.toolbar.reset.saveState();
         });
 
-        bindButton("#reset", this.toolbar.reset, "reset");
-        bindButton("#fit", this.toolbar.fit, "fit");
+        this._bindButton("#reset", this.toolbar.reset, "reset");
+        this._bindButton("#fit", this.toolbar.fit, "fit");
 
-        bindCheckButton("#firstPerson", this.toolbar.firstPerson);
+        this._bindCheckButton("#firstPerson", this.toolbar.firstPerson);
 
-        bindCheckButton("#ortho", this.toolbar.ortho);
+        this._bindCheckButton("#ortho", this.toolbar.ortho);
 
-        bindCheckButton("#query", this.toolbar.query);
-        bindCheckButton("#xray", this.toolbar.xray);
-        bindCheckButton("#hide", this.toolbar.hide);
-        bindCheckButton("#select", this.toolbar.select);
-        bindCheckButton("#distance", this.toolbar.distance);
-        bindCheckButton("#angle", this.toolbar.angle);
-        bindCheckButton("#section", this.toolbar.section);
-        bindCheckButton("#annotate", this.toolbar.annotate);
+        this._bindCheckButton("#query", this.toolbar.query);
+        this._bindCheckButton("#xray", this.toolbar.xray);
+        this._bindCheckButton("#hide", this.toolbar.hide);
+        this._bindCheckButton("#select", this.toolbar.select);
+        this._bindCheckButton("#distance", this.toolbar.distance);
+        this._bindCheckButton("#angle", this.toolbar.angle);
+        this._bindCheckButton("#section", this.toolbar.section);
+        this._bindCheckButton("#annotate", this.toolbar.annotate);
 
-        bindButton("#createBCF", this.toolbar.bcf, "createViewpoint");
-        bindButton("#clearBCF", this.toolbar.bcf, "clearViewpoints");
-        bindButton("#clearAnnotations", this.toolbar.annotate, "clearAnnotations");
-        bindButton("#clearSections", this.toolbar.section, "clearSections");
+        this._bindButton("#createBCF", this.toolbar.bcf, "createViewpoint");
+        this._bindButton("#clearBCF", this.toolbar.bcf, "clearViewpoints");
+        this._bindButton("#clearAnnotations", this.toolbar.annotate, "clearAnnotations");
+        this._bindButton("#clearSections", this.toolbar.section, "clearSections");
 
-        function bindButton(selector, component, action) {
-            $(selector).on('click', function (event) {
-                component[action]();
-                event.preventDefault();
-            });
-        }
+        $('#tree').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
 
-        function bindCheckButton(selector, component) {
-            $(selector).on('click', function (event) {
-                component.setActive(!component.getActive());
-                event.preventDefault();
-            });
-            component.on("active", (active) => {
-                if (active) {
-                    $(selector).addClass("active");
-                } else {
-                    $(selector).removeClass("active");
-                }
-            });
-            if (component.getActive()) {
+        $('#bcf').on('click', function () {
+            $('#sidebar2').toggleClass('active');
+        });
+    }
+
+    /**
+     * Opens the Explorer side panel
+     */
+    openExplorer() {
+        $("#sidebar").addClass("active");
+    }
+
+    /**
+     * Closes the Explorer side panel
+     */
+    closeExplorer() {
+        $("#sidebar").removeClass("active");
+    }
+
+    _bindButton(selector, component, action) {
+        $(selector).on('click', function (event) {
+            component[action]();
+            event.preventDefault();
+        });
+    }
+
+    _bindCheckButton(selector, component) {
+        $(selector).on('click', function (event) {
+            component.setActive(!component.getActive());
+            event.preventDefault();
+        });
+        component.on("active", (active) => {
+            if (active) {
                 $(selector).addClass("active");
             } else {
                 $(selector).removeClass("active");
             }
+        });
+        if (component.getActive()) {
+            $(selector).addClass("active");
+        } else {
+            $(selector).removeClass("active");
         }
     }
 }

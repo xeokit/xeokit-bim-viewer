@@ -12,7 +12,7 @@ import {XRayMode} from "./XRayMode.js";
 import {MeasureDistanceMode} from "./MeasureDistanceMode.js";
 import {MeasureAngleMode} from "./MeasureAngleMode.js";
 import {SelectMode} from "./SelectMode.js";
-import {PlanViews} from "./PlanViews.js";
+//import {PlanViews} from "./PlanViews.js";
 import {QueryMode} from "./QueryMode.js";
 import {AnnotateMode} from "./AnnotateMode.js";
 
