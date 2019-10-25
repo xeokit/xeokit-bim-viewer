@@ -16,17 +16,6 @@ class ClassesTree extends Controller {
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
 
-        this.viewer.scene.on("modelLoaded", () => {
-            this._rebuild(cfg);
-        });
-
-        this.viewer.scene.on("modelDestroyed", () => { // TODO: Need this event
-            this._rebuild(cfg);
-        });
-    }
-
-    _rebuild(cfg) {
-
         this._tree = new InspireTree({
             selection: {
                 autoSelectChildren: true,
@@ -36,7 +25,7 @@ class ClassesTree extends Controller {
             checkbox: {
                 autoCheckChildren: true
             },
-            data: this._createData()
+            data: []
         });
 
         new InspireTreeDOM(this._tree, {
@@ -86,21 +75,37 @@ class ClassesTree extends Controller {
                 // this._muteTreeEvents = false;
             });
         });
+
+        this.viewer.scene.on("modelLoaded", () => {
+            this._rebuild(cfg);
+        });
+
+        this.viewer.scene.on("modelDestroyed", () => { // TODO: Need this event
+            this._rebuild(cfg);
+        });
+    }
+
+    _addModel(modelId) {
+        this._rebuild();
+    }
+
+    _removeModel(modelId) {
+        this._rebuild();
+    }
+
+    _rebuild(cfg) {
+        this._tree.removeAll();
+        this._tree.addNodes(this._createData());
     }
 
     _createData() {
-
         const data = [];
         const metaTypes = {};
-
         const objects = this.viewer.scene.objects;
         const metaObjects = this.viewer.metaScene.metaObjects;
-
         for (var objectId in objects) {
             if (objects.hasOwnProperty(objectId)) {
-
                 const metaObject = metaObjects[objectId];
-
                 if (metaObject) {
                     var metaType = metaTypes[metaObject.type];
                     if (!metaType) {
@@ -119,7 +124,6 @@ class ClassesTree extends Controller {
                 }
             }
         }
-
         return data;
     }
 

@@ -13,11 +13,10 @@ class ObjectsTree extends Controller {
 
         super(parent);
 
+        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
+
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
-    }
-
-    _rebuild(cfg) {
 
         this._tree = new InspireTree({
             selection: {
@@ -28,7 +27,7 @@ class ObjectsTree extends Controller {
             checkbox: {
                 autoCheckChildren: true
             },
-            data: this._createData()
+            data: []
         });
 
         new InspireTreeDOM(this._tree, {
@@ -39,11 +38,11 @@ class ObjectsTree extends Controller {
 
             this._tree.select();
 
-            this._tree.model.expand();
-            if (this._tree.model.length > 0) {
-                this._tree.model[0].children[0].expand();
-                this._tree.model[0].children[0].children[0].expand();
-            }
+            // this._tree.model.expand();
+            // if (this._tree.model.length > 0) {
+            //     this._tree.model[0].children[0].expand();
+            //     this._tree.model[0].children[0].children[0].expand();
+            // }
 
             this._tree.on('node.selected', (event, node) => {
                 if (this._muteTreeEvents) {
@@ -86,16 +85,29 @@ class ObjectsTree extends Controller {
         });
     }
 
-    _createData() {
+    _addModel(modelId) {
         const data = [];
         const metaModels = this.viewer.metaScene.metaModels;
-        for (var modelId in metaModels) {
-            if (metaModels.hasOwnProperty(modelId)) {
-                const metaModel = metaModels[modelId];
-                this._visit(true, data, metaModel.rootMetaObject);
-            }
+        const metaModel = metaModels[modelId];
+        this._visit(true, data, metaModel.rootMetaObject);
+        const modelNodeIDs = [];
+        for (var i = 0, len = data.length; i < len; i++) {
+            modelNodeIDs.push(data[i].id);
         }
-        return data;
+        this._modelNodeIDs[modelId] = modelNodeIDs;
+        this._tree.addNodes(data);
+    }
+
+    _removeModel(modelId) {
+        const modelNodeIDs = this._modelNodeIDs[modelId];
+        for (var i = 0, len = modelNodeIDs.length; i < len; i++) {
+            const nodeId = modelNodeIDs[i];
+            const node = this._tree.node(nodeId);
+            if (!node) {
+                continue;
+            }
+            node.remove(true);
+        }
     }
 
     _visit(expand, data, metaObject) {

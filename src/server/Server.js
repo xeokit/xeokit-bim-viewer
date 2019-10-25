@@ -4,15 +4,6 @@ class Server {
 
     constructor() {
 
-        this._viewpointsIndex = [
-            {
-                id: "viewpoint1"
-            },
-            {
-                id: "viewpoint2"
-            }
-        ];
-
         this._modelsIndex = [
             {
                 id: "duplex",
@@ -48,6 +39,15 @@ class Server {
                 id: "fireAlarms",
                 src: "./data/models/xkt/WestRiverSideHospital/fireAlarms.xkt",
                 metaModelSrc: "./data/metaModels/WestRiverSideHospital/fireAlarms.json"
+            }
+        ];
+
+        this._viewpointsIndex = [
+            {
+                id: "viewpoint1"
+            },
+            {
+                id: "viewpoint2"
             }
         ];
     }

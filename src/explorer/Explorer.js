@@ -55,13 +55,16 @@ class Explorer extends Controller {
 
         this.models.on("modelLoaded", (modelId) => {
 
-            // TODO: Rebuild trees
+            this.objects._addModel(modelId);
+            this.classes._addModel(modelId);
 
             this.fire("modelLoaded", modelId);
         });
 
         this.models.on("modelUnloaded", (modelId) => {
-            // TODO: Rebuild trees
+
+            this.objects._removeModel(modelId);
+            this.classes._removeModel(modelId);
 
             this.fire("modelUnloaded", modelId);
         });
