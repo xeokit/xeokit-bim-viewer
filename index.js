@@ -79,49 +79,4 @@ const viewerUI = new ViewerUI(server, viewer, {
     annotationsPanelId: "annotations-index-panel"
 });
 
-bindButton("#reset", viewerUI.toolbar.reset, "reset");
-bindButton("#fit", viewerUI.toolbar.fit, "fit");
 
-bindCheckButton("#firstPerson", viewerUI.toolbar.firstPerson);
-
-bindCheckButton("#ortho", viewerUI.toolbar.ortho);
-
-bindCheckButton("#query", viewerUI.toolbar.query);
-bindCheckButton("#xray", viewerUI.toolbar.xray);
-bindCheckButton("#hide", viewerUI.toolbar.hide);
-bindCheckButton("#select", viewerUI.toolbar.select);
-bindCheckButton("#distance", viewerUI.toolbar.distance);
-bindCheckButton("#angle", viewerUI.toolbar.angle);
-bindCheckButton("#section", viewerUI.toolbar.section);
-bindCheckButton("#annotate", viewerUI.toolbar.annotate);
-
-bindButton("#createBCF", viewerUI.toolbar.bcf, "createViewpoint");
-bindButton("#clearBCF", viewerUI.toolbar.bcf, "clearViewpoints");
-bindButton("#clearAnnotations", viewerUI.toolbar.annotate, "clearAnnotations");
-bindButton("#clearSections", viewerUI.toolbar.section, "clearSections");
-
-function bindButton(selector, component, action) {
-    $(selector).on('click', function (event) {
-        component[action]();
-        event.preventDefault();
-    });
-}
-
-function bindCheckButton(selector, component) {
-    $(selector).on('click', function (event) {
-        component.setActive(!component.getActive());
-        event.preventDefault();
-    });
-    component.on("active", (active) => {
-        if (active) {
-            $(selector).addClass("active");
-        } else {
-            $(selector).removeClass("active");
-        }
-    });
-    if (component.getActive()) {
-        $(selector).addClass("active");
-    } else {
-        $(selector).removeClass("active");
-    }
-}
