@@ -6,37 +6,50 @@ class Server {
 
         this._modelsIndex = [
             {
-                id: "duplex",
+                id: "Duplex",
+                name: "Duplex",
                 src: "./data/models/xkt/duplex/duplex.xkt",
                 metaModelSrc: "./data/metaModels/duplex/metaModel.json"
             },
             {
+                id: "OTCConferenceCenter",
+                name: "OTC Conference Center",
+                src: "./data/models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
+                metaModelSrc: "./data/metaModels/OTCConferenceCenter/metaModel.json"
+            },
+            {
                 id: "schependomlaan",
+                name: "Schependomlaan",
                 src: "./data/models/xkt/schependomlaan/schependomlaan.xkt",
                 metaModelSrc: "./data/metaModels/schependomlaan/metaModel.json"
             },
             {
-                id: "structure",
+                id: "HospitalStructure",
+                name: "Hospital Structure",
                 src: "./data/models/xkt/WestRiverSideHospital/structure.xkt",
                 metaModelSrc: "./data/metaModels/WestRiverSideHospital/structure.json"
             },
             {
-                id: "electrical",
+                id: "HospitalElectrical",
+                name: "Hospital Electrical",
                 src: "./data/models/xkt/WestRiverSideHospital/electrical.xkt",
                 metaModelSrc: "data/metaModels/WestRiverSideHospital/electrical.json"
             },
             {
-                id: "sprinklers",
+                id: "HospitalSprinklers",
+                name: "Hospital Sprinklers",
                 src: "./data/models/xkt/WestRiverSideHospital/sprinklers.xkt",
                 metaModelSrc: "./data/metaModels/WestRiverSideHospital/sprinklers.json"
             },
             {
-                id: "plumbing",
+                id: "HospitalPlumbing",
+                name: "Hospital Plumbing",
                 src: "./data/models/xkt/WestRiverSideHospital/plumbing.xkt",
                 metaModelSrc: "./data/metaModels/WestRiverSideHospital/plumbing.json"
             },
             {
-                id: "fireAlarms",
+                id: "HospitalFireAlarms",
+                name: "Hospital Fire Alarms",
                 src: "./data/models/xkt/WestRiverSideHospital/fireAlarms.xkt",
                 metaModelSrc: "./data/metaModels/WestRiverSideHospital/fireAlarms.json"
             }

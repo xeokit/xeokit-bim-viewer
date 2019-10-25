@@ -78,7 +78,7 @@ class AnnotateMode extends Controller {
                             eye: camera.eye,
                             look: camera.look,
                             up: camera.up,
-                            occludable: false,
+                            occludable: true,
                             markerShown: true,
                             labelShown: true,
                             values: {

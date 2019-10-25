@@ -25,7 +25,7 @@ class Models extends Controller {
             const modelInfo = modelsInfo[i];
             h += "<div class='form-check'>";
             h += "<label class='form-check-label'>";
-            h += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.id;
+            h += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
             h += "</label>";
             h += "</div>";
 
