@@ -216,6 +216,28 @@
 </div>
 
 
+<div id="loadingDialog" class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Loading <span id="loadingDialogModelName"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="progress" style="height:30px">
+                    <div id="loadingProgressBar" class="progress-bar" style="width:20%;height:30px"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="loadingDialogCancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <canvas id="myNavCubeCanvas"></canvas>
 <canvas id="mySectionPlanesOverviewCanvas"></canvas>
 
