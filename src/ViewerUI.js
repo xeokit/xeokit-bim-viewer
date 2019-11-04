@@ -17,11 +17,11 @@ class ViewerUI extends Controller {
 
         this.toolbar = new Toolbar(this, cfg);
 
-        this.explorer.on("modelLoaded", (modelId) => {
+        this.explorer.on("modelLoaded", () => {
             this.toolbar.reset.saveState();
         });
 
-        this.explorer.on("modelUnloaded", (modelId) => {
+        this.explorer.on("modelUnloaded", () => {
             this.toolbar.reset.saveState();
         });
 

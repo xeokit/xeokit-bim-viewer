@@ -53,6 +53,9 @@ class Explorer extends Controller {
             event.preventDefault();
         });
 
+        // Handling model load events here ensures that we
+        // are able to fire "modelLoaded" after both trees updated.
+
         this.models.on("modelLoaded", (modelId) => {
 
             this.objects._addModel(modelId);
