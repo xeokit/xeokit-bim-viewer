@@ -64,9 +64,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        $('#loadingDialogModelName').text(modelInfo.name);
-        $('#loadingDialog').modal('show');
-        this._updateProgress(60);
+        this._showLoadingDialog(modelInfo.name);
         this.server.getModelMetadata(modelId,
             (json) => {
                 this.server.getModelGeometry(modelId,
@@ -88,7 +86,7 @@ class Models extends Controller {
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                 this.fire("modelLoaded", modelId);
                                 done(model);
-                                $('#loadingDialog').modal('hide');
+                                this._hideLoadingDialog();
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
@@ -96,7 +94,7 @@ class Models extends Controller {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                     this.fire("modelLoaded", modelId);
                                     done(model);
-                                    $('#loadingDialog').modal('hide');
+                                    this._hideLoadingDialog();
                                 });
                             }
                         });
@@ -104,22 +102,23 @@ class Models extends Controller {
                     (errMsg) => {
                         this.error(errMsg);
                         done();
-                        $('#loadingDialog').modal('hide');
+                        this._hideLoadingDialog();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                $('#loadingDialog').modal('hide');
+                this._hideLoadingDialog();
                 done();
             });
     }
 
-    _updateProgress(percentage){
-        if(percentage > 100) {
-            percentage = 100;
-        }
-        $('#loadingProgressBar').css('width', percentage+'%');
-        $('#loadingProgressBar').html(percentage+'%');
+    _showLoadingDialog(message) {
+        $('#loadingDialogModelName').text(message);
+        $('#loadingDialog').modal('show');
+    }
+
+    _hideLoadingDialog() {
+        $('#loadingDialog').modal('hide');
     }
 
     unloadModel(modelId) {

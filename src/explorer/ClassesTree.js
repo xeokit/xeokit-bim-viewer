@@ -63,26 +63,26 @@ class ClassesTree extends Controller {
             });
 
             this.viewer.scene.on("objectVisibility", (entity) => {
-                // if (this._muteEntityEvents) {
-                //     return;
-                // }
-                // const node = this._tree.node(entity.id);
-                // if (!node) {
-                //     return;
-                // }
-                // this._muteTreeEvents = true;
-                // entity.visible ? node.check(true) : node.uncheck(true);
-                // this._muteTreeEvents = false;
+                if (this._muteEntityEvents) {
+                    return;
+                }
+                const node = this._tree.node(entity.id);
+                if (!node) {
+                    return;
+                }
+                this._muteTreeEvents = true;
+                entity.visible ? node.check(true) : node.uncheck(true);
+                this._muteTreeEvents = false;
             });
         });
 
-        this.viewer.scene.on("modelLoaded", () => {
-            this._rebuild(cfg);
-        });
-
-        this.viewer.scene.on("modelDestroyed", () => { // TODO: Need this event
-            this._rebuild(cfg);
-        });
+        // this.viewer.scene.on("modelLoaded", () => {
+        //     this._rebuild(cfg);
+        // });
+        //
+        // this.viewer.scene.on("modelDestroyed", () => { // TODO: Need this event
+        //     this._rebuild(cfg);
+        // });
     }
 
     _addModel(modelId) {
