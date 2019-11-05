@@ -82,8 +82,8 @@ body {
     position: absolute;
     width: 200px;
     height: 200px;
-    bottom: 50px;
-    right: 270px;
+    top: 10px;
+    left: 310px;
     z-index: 200000;
 }
 
