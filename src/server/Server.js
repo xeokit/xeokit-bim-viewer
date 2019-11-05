@@ -66,9 +66,7 @@ class Server {
     }
 
     getModels(params, done, error) {
-      //  done(this._modelsIndex);
-
-        return this._modelsIndex;
+       done(this._modelsIndex);
     }
 
     getModelGeometry(modelId, done, error) {

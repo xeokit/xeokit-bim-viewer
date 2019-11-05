@@ -1,7 +1,8 @@
 import {Controller} from "../Controller.js";
-import {ClassesTree} from "./ClassesTree.js";
-import {ObjectsTree} from "./ObjectsTree.js";
+import {Classes} from "./Classes.js";
+import {Objects} from "./Objects.js";
 import {Models} from "./Models.js";
+import {Storeys} from "./Storeys.js";
 
 /**
  * Manages the explorer trees.
@@ -23,33 +24,39 @@ class Explorer extends Controller {
 
         /**
          *
-         * @type {ObjectsTree}
+         * @type {Objects}
          */
-        this.objects = new ObjectsTree(this, cfg);
+        this.objects = new Objects(this, cfg);
 
         /**
          *
-         * @type {ClassesTree}
+         * @type {Classes}
          */
-        this.classes = new ClassesTree(this, cfg);
+        this.classes = new Classes(this, cfg);
+
+        // /**
+        //  *
+        //  * @type {Storeys}
+        //  */
+        // this.storeys = new Storeys(this, cfg);
 
         $("#showAllObjects").on('click', (event) => {
-            this._selectAll();
+            this._showAllObjects();
             event.preventDefault();
         });
 
         $("#hideAllObjects").on('click', (event) => {
-            this._deselectAll();
+            this._hideAllObjects();
             event.preventDefault();
         });
 
         $("#showAllClasses").on('click', (event) => {
-            this._selectAll();
+            this._showAllObjects();
             event.preventDefault();
         });
 
         $("#hideAllClasses").on('click', (event) => {
-            this._deselectAll();
+            this._hideAllObjects();
             event.preventDefault();
         });
 
@@ -57,23 +64,19 @@ class Explorer extends Controller {
         // are able to fire "modelLoaded" after both trees updated.
 
         this.models.on("modelLoaded", (modelId) => {
-
             this.objects._addModel(modelId);
             this.classes._addModel(modelId);
-
             this.fire("modelLoaded", modelId);
         });
 
         this.models.on("modelUnloaded", (modelId) => {
-
             this.objects._removeModel(modelId);
             this.classes._removeModel(modelId);
-
             this.fire("modelUnloaded", modelId);
         });
     }
 
-    _selectAll() {
+    _showAllObjects() {
 
         this.objects.muteEvents();
         this.classes.muteEvents();
@@ -87,7 +90,7 @@ class Explorer extends Controller {
         this.classes.unmuteEvents();
     }
 
-    _deselectAll() {
+    _hideAllObjects() {
 
         this.objects.muteEvents();
         this.classes.muteEvents();

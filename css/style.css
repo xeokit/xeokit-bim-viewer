@@ -70,7 +70,7 @@ body {
     width: 100%;
     height: 100%;
     min-height: 100vh;
-    background: lightblue;
+    background: #ebebeb;
     cursor: default;
     pointer-events: all;
     margin: 0;
@@ -169,7 +169,7 @@ body {
 }
 
 #toolbar {
-    background: lightblue;
+    background: #ebebeb;
     align-items: center;
     justify-content: center;
     padding: 10px;
@@ -311,8 +311,8 @@ a:focus {
 }
 
 #sidebar {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 320px;
+    max-width: 320px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
@@ -459,7 +459,7 @@ a.article:hover {
 
 @media (max-width: 768px) {
     #sidebar {
-        margin-left: -250px;
+        margin-left: -270px;
     }
     #sidebar.active {
         margin-left: 0;

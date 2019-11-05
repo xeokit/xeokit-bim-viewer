@@ -61,11 +61,20 @@ class HideMode extends Controller {
 
             } else {
 
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+
                 this.viewer.cameraControl.off(this._onHover);
                 this.viewer.cameraControl.off(this._onHoverOff);
                 this.viewer.cameraControl.off(this._onMousedown);
                 this.viewer.cameraControl.off(this._onMouseup);
             }
+        });
+
+        this.viewerUI.on("reset", ()=>{
+            this.setActive(false);
         });
     }
 

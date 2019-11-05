@@ -39,6 +39,10 @@ class SectionMode extends Controller {
             }
 
         });
+        this.viewerUI.on("reset", () => {
+            this.clear();
+            this.setActive(false);
+        });
     }
 
     /**

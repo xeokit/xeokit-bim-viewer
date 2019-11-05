@@ -6,7 +6,7 @@ import {Controller} from "../Controller.js";
  *
  * Located at {@link Explorer#objects}.
  */
-class ObjectsTree extends Controller {
+class Objects extends Controller {
 
     /** @private */
     constructor(parent, cfg = {}) {
@@ -36,14 +36,6 @@ class ObjectsTree extends Controller {
 
         this._tree.on("model.loaded", () => {
 
-            this._tree.select();
-
-            // this._tree.model.expand();
-            // if (this._tree.model.length > 0) {
-            //     this._tree.model[0].children[0].expand();
-            //     this._tree.model[0].children[0].children[0].expand();
-            // }
-
             this._tree.on('node.selected', (event, node) => {
                 if (this._muteTreeEvents) {
                     return;
@@ -71,16 +63,25 @@ class ObjectsTree extends Controller {
             });
 
             this.viewer.scene.on("objectVisibility", (entity) => {
-                if (this._muteEntityEvents) {
-                    return;
-                }
-                const node = this._tree.node(entity.id);
-                if (!node) {
-                    return;
-                }
-                this._muteTreeEvents = true;
-                entity.visible ? node.check(true) : node.uncheck(true);
-                this._muteTreeEvents = false;
+                // if (this._muteEntityEvents) {
+                //     return;
+                // }
+                // const node = this._tree.node(entity.id);
+                // if (!node) {
+                //     return;
+                // }
+                // this._muteTreeEvents = true;
+                // const checked = node.checked();
+                // if (entity.visible) {
+                //     if (!checked) {
+                //         node.check(false);
+                //     }
+                // } else {
+                //     if (checked) {
+                //         node.uncheck(false);
+                //     }
+                // }
+                // this._muteTreeEvents = false;
             });
         });
     }
@@ -96,6 +97,7 @@ class ObjectsTree extends Controller {
         }
         this._modelNodeIDs[modelId] = modelNodeIDs;
         this._tree.addNodes(data);
+        this._synchTreeFromScene(modelId)
     }
 
     _removeModel(modelId) {
@@ -128,19 +130,48 @@ class ObjectsTree extends Controller {
         }
     }
 
-    _synchWithScene() {
+    _synchTreeFromScene(modelId) {
         this._muteTreeEvents = true;
-        const objectIds = this.viewer.scene.objectIds;
-        const objects = this.viewer.scene.objects;
-        for (var i = 0, len = objectIds.length; i < len; i++) {
-            const objectId = objectIds[i];
-            const node = this._tree.node(objectId);
-            if (!node) {
-                return;
-            }
-            objects[objectId].visible ? node.check(true) : node.uncheck(true);
+        const metaModel = this.viewer.metaScene.metaModels[modelId];
+        if (!metaModel) {
+            return;
         }
+        const rootMetaObject = metaModel.rootMetaObject;
+        if (!rootMetaObject) {
+            return;
+        }
+        this._muteTreeEvents = true;
+        this._setObjectVisibilities(rootMetaObject);
         this._muteTreeEvents = false;
+    }
+
+    _setObjectVisibilities(metaObject) {
+        if (!metaObject) {
+            return;
+        }
+        const objectId = metaObject.id;
+        const entity = this.viewer.scene.objects[objectId];
+        if (entity) {
+            const node = this._tree.node(objectId);
+            if (node) {
+                const checked = node.checked();
+                if (entity.visible) {
+                    if (!checked) {
+                        node.check(false);
+                    }
+                } else {
+                    if (checked) {
+                        node.uncheck(false);
+                    }
+                }
+            }
+        }
+        const children = metaObject.children;
+        if (children) {
+            for (var i = 0, len = children.length; i < len; i++) {
+                this._visit(children[i]);
+            }
+        }
     }
 
     muteEvents() {
@@ -166,4 +197,4 @@ class ObjectsTree extends Controller {
     }
 }
 
-export {ObjectsTree};
+export {Objects};

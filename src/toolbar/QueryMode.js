@@ -66,6 +66,10 @@ class QueryMode extends Controller {
                 this.viewer.cameraControl.off(this._onMouseup);
             }
         });
+
+        this.viewerUI.on("reset", ()=>{
+            this.setActive(false);
+        });
     }
 
     /** @private */

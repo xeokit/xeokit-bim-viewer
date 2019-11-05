@@ -16,16 +16,12 @@ class Models extends Controller {
         this._element = document.getElementById(cfg.modelsPanelId);
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
-
-        $('#loadingDialogCancelButton').click(()=>{
-            $('#loadingDialog').modal('hide');
-        });
-
         this._repaint();
     }
 
     _repaint() {
-        const modelsInfo = this.getModels();
+        const params = {};
+        this.server.getModels(params, (modelsInfo) => {
         var h = "";
         for (var i = 0, len = modelsInfo.length; i < len; i++) {
             const modelInfo = modelsInfo[i];
@@ -44,22 +40,18 @@ class Models extends Controller {
             const checkBox = $("#" + modelId);
             checkBox.on('click', () => {
                 if (checkBox.prop("checked")) {
-                    this.loadModel(modelId, (model) => {
-
-                    });
+                    this._loadModel(modelId);
                 } else {
-                    this.unloadModel(modelInfo.id);
+                    this._unloadModel(modelInfo.id);
                 }
             });
         }
+        }, (errMsg) => {
+            this.error(errMsg);
+        });
     }
 
-    getModels() {
-        return this.server.getModels();
-    }
-
-    loadModel(modelId, done = function () {
-    }) {
+    _loadModel(modelId) {
         const modelInfo = this._modelsInfo[modelId];
         if (!modelInfo) {
             return;
@@ -85,7 +77,6 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                 this.fire("modelLoaded", modelId);
-                                done(model);
                                 this._hideLoadingDialog();
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
@@ -93,7 +84,6 @@ class Models extends Controller {
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                     this.fire("modelLoaded", modelId);
-                                    done(model);
                                     this._hideLoadingDialog();
                                 });
                             }
@@ -101,14 +91,12 @@ class Models extends Controller {
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        done();
                         this._hideLoadingDialog();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
                 this._hideLoadingDialog();
-                done();
             });
     }
 
@@ -121,7 +109,7 @@ class Models extends Controller {
         $('#loadingDialog').modal('hide');
     }
 
-    unloadModel(modelId) {
+    _unloadModel(modelId) {
         const model = this.viewer.scene.models[modelId];
         if (!model) {
             this.error("Model not loaded: " + modelId);

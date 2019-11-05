@@ -47,6 +47,12 @@ class FirstPersonMode extends Controller {
                 cameraControl.pivoting = true;
                 cameraControl.panToPointer = true;
             }
+
+            this.viewer.cameraControl.planView = false;
+        });
+
+        this.viewerUI.on("reset", ()=>{
+            this.setActive(false);
         });
     }
 

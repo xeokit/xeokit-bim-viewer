@@ -24,7 +24,7 @@
 </head>
 
 <body>
-
+<a href="https://github.com/you"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" style="position: absolute; z-index: 100000; right: 0;" data-recalc-dims="1"></a>
 <div class="wrapper">
 
     <!-- Explorer trees -->
@@ -51,8 +51,15 @@
 
                 <li class="nav-item">
                     <a class="nav-link" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
-                       aria-controls="classes" aria-selected="false">Types</a>
+                       aria-controls="classes" aria-selected="false">Classes</a>
                 </li>
+
+                <!-- Storeys tab -->
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"-->
+<!--                       aria-controls="storeys" aria-selected="false">Storeys</a>-->
+<!--                </li>-->
             </ul>
 
             <div class="tab-content" id="myTabContent">
@@ -82,7 +89,7 @@
                     <div id="objects-tree" class="tree-panel"></div>
                 </div>
 
-                <!-- Types tree -->
+                <!-- Classes tree -->
 
                 <div class="tab-pane fade" id="classes" role="tabpanel" aria-labelledby="classes-tab">
 
@@ -100,6 +107,12 @@
 
                     <div id="classes-tree" class="tree-panel"></div>
                 </div>
+
+                <!-- Storeys -->
+
+<!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
+<!--                    <div id="storeys-menu" class="tree-panel"></div>-->
+<!--                </div>-->
             </div>
         </div>
     </nav>
@@ -155,11 +168,6 @@
                 <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x"
                         data-toggle="tooltip" data-placement="top" title="Query"></button>
 
-                <!-- X-Ray tool button -->
-
-                <button id="xray" type="button" class="btn btn-outline-primary fa fa-eye-slash fa-2x"
-                        data-toggle="tooltip" data-placement="top" title="X-Ray"></button>
-
                 <!-- Hide tool button -->
 
                 <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x"
@@ -170,25 +178,10 @@
                 <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x"
                         data-toggle="tooltip" data-placement="top" title="Select"></button>
 
-                <!-- Measure distance tool button -->
-
-                <button id="distance" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
-                        data-toggle="tooltip" data-placement="top" title="Measure distance"></button>
-
-                <!-- Measure angle tool button -->
-
-                <button id="angle" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
-                        data-toggle="tooltip" data-placement="top" title="Measure angle"></button>
-
                 <!-- Sectioning tool button -->
 
-                <button id="section" type="button" class="btn btn-outline-primary fa fa-crosshairs fa-2x"
+                <button id="section" type="button" class="btn btn-outline-primary fa fa-scissors fa-2x"
                         data-toggle="tooltip" data-placement="top" title="Slice"></button>
-
-                <!-- Annotation tool button -->
-
-                <button id="annotate" type="button" class="btn btn-outline-primary fa fa-map-marker fa-2x"
-                        data-toggle="tooltip" data-placement="top" title="Annotate"></button>
 
                 <!-- BCF tool button -->
 
@@ -231,6 +224,7 @@
         </div>
     </div>
 </div>
+
 
 
 <canvas id="myNavCubeCanvas"></canvas>

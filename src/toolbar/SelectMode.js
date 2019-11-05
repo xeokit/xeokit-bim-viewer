@@ -25,18 +25,17 @@ class SelectMode extends Controller {
                 var entity = null;
 
                 this._onHover = this.viewer.cameraControl.on("hover", (e) => {
-
                     if (entity) {
-                        entity.selected = false;
+                        entity.highlighted = false;
                         entity = null;
                     }
                     entity = e.entity;
-                    entity.selected = true;
+                    entity.highlighted = true;
                 });
 
                 this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
                     if (entity) {
-                        entity.selected = false;
+                        entity.highlighted = false;
                         entity = null;
                     }
                 });
@@ -61,11 +60,20 @@ class SelectMode extends Controller {
 
             } else {
 
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+
                 this.viewer.cameraControl.off(this._onHover);
                 this.viewer.cameraControl.off(this._onHoverOff);
                 this.viewer.cameraControl.off(this._onMousedown);
                 this.viewer.cameraControl.off(this._onMouseup);
             }
+        });
+
+        this.viewerUI.on("reset", ()=>{
+            this.setActive(false);
         });
     }
 
