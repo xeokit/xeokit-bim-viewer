@@ -76,14 +76,12 @@ body {
     margin: 0;
 }
 
-
-
 #myNavCubeCanvas {
     position: absolute;
     width: 200px;
     height: 200px;
     top: 10px;
-    left: 310px;
+    right: 270px;
     z-index: 200000;
 }
 
@@ -189,12 +187,6 @@ body {
 }
 
 #bcf-toolbar {
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-#annotations-toolbar {
     align-items: center;
     justify-content: center;
     padding: 10px;
@@ -320,7 +312,7 @@ a:focus {
 }
 
 #sidebar.active {
-    margin-left: -300px;
+    margin-left: -320px;
 }
 
 #sidebar .sidebar-header {
