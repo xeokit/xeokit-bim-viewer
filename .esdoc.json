@@ -1,0 +1,30 @@
+{
+  "source": "./src/",
+  "destination": "./docs",
+  "excludes": [
+  ],
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "includeSource": true,
+      "option": {
+        "lint": {"enable": true},
+        "coverage": {"enable": true},
+        "accessor": {"access": ["public"], "autoPrivate": true},
+        "undocumentIdentifier": {"enable": true},
+        "unexportedIdentifier": {"enable": false},
+        "typeInference": {"enable": true},
+
+        "brand": {
+          "logo": "./images/logo.jpg",
+          "title": "xeokit-viewer",
+          "description": "View large 3D BIM models in all major browsers and collaborate on issues using BCF",
+          "repository": "https://github.com/xeokit/xeokit-viewer",
+          "site": "https://github.com/xeokit/xeokit-viewer",
+          "author": "http://xeolabs.com",
+          "image": "./images/logo.jpg"
+        }
+      }
+    }
+  ]
+}
