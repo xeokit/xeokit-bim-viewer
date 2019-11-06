@@ -1,0 +1,28 @@
+{
+  "name": "xeokit-viewer",
+  "version": "1.0.0",
+  "description": "BIM viewer built on xeokit and Bootstrap",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xeokit/xeokit-viewer.git"
+  },
+  "keywords": [
+    "WebGL",
+    "BIM",
+    "IFC",
+    "xeokit"
+  ],
+  "author": "Lindsay Kay",
+  "license": "https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/xeokit/xeokit-viewer/issues"
+  },
+  "homepage": "https://github.com/xeokit/xeokit-viewer#readme"
+}
