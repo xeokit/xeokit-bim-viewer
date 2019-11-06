@@ -2,8 +2,6 @@ import {Controller} from "./Controller.js";
 
 import {Explorer} from "./explorer/Explorer.js";
 import {Toolbar} from "./toolbar/Toolbar.js";
-import {CameraMemento} from "../lib/xeokit/viewer/scene/mementos/CameraMemento.js";
-import {ObjectsMemento} from "../lib/xeokit/viewer/scene/mementos/ObjectsMemento.js";
 
 /**
  * @desc UI controller for a xeokit {@link Viewer} toolbar.
@@ -15,22 +13,10 @@ class ViewerUI extends Controller {
 
         super(null, cfg, server, viewer);
 
-        this._cameraMemento = new CameraMemento();
-        this._objectsMemento = new ObjectsMemento();
-        this._saved = false;
-
         this.explorer = new Explorer(this, cfg);
         this.toolbar = new Toolbar(this, cfg);
 
-        this.explorer.on("modelLoaded", () => {
-            this._saveState();
-        });
-
-        this.explorer.on("modelUnloaded", () => {
-            this._saveState();
-        });
-
-        this._bindButton("#reset", this, "reset");
+        this._bindButton("#reset", this.toolbar.reset, "reset");
         this._bindButton("#fit", this.toolbar.fit, "fit");
         this._bindCheckButton("#firstPerson", this.toolbar.firstPerson);
         this._bindCheckButton("#ortho", this.toolbar.ortho);
@@ -41,7 +27,6 @@ class ViewerUI extends Controller {
 
         this._bindButton("#createBCF", this.toolbar.bcf, "createViewpoint");
         this._bindButton("#clearBCF", this.toolbar.bcf, "clearViewpoints");
-        this._bindButton("#clearAnnotations", this.toolbar.annotate, "clearAnnotations");
         this._bindButton("#clearSections", this.toolbar.section, "clearSections");
 
         $('#tree').on('click', function () {
@@ -51,26 +36,30 @@ class ViewerUI extends Controller {
         $('#bcf').on('click', function () {
             $('#sidebar2').toggleClass('active');
         });
-    }
 
-    _saveState() {
-        this._cameraMemento.saveCamera(this.viewer.scene);
-        this._objectsMemento.saveObjects(this.viewer.scene); // Save all states
-        this._saved = true;
-    }
-
-    /**
-     * Resets the viewer.
-     */
-    reset() {
-        if (!this._saved) {
-            this.error("State not saved");
-            return;
-        }
-        this.fire("reset");
-        this._objectsMemento.restoreObjects(this.viewer.scene);
-        this._cameraMemento.restoreCamera(this.viewer.scene, () => {
+        this.explorer.models.on("modelLoaded", () => {
+            if (this.explorer.models.getNumModelsLoaded() === 1) {
+                this.toolbar.reset.saveState();
+                this._setToolbarButtonsEnabled(true);
+            }
         });
+
+        this.explorer.models.on("modelUnloaded", () => {
+            if (this.explorer.models.getNumModelsLoaded() === 0) {
+                this._setToolbarButtonsEnabled(false);
+            }
+        });
+    }
+
+    _setToolbarButtonsEnabled(enabled) {
+        this.toolbar.reset.setEnabled(enabled);
+        this.toolbar.fit.setEnabled(enabled);
+        this.toolbar.firstPerson.setEnabled(enabled);
+        this.toolbar.ortho.setEnabled(enabled);
+        this.toolbar.query.setEnabled(enabled);
+        this.toolbar.hide.setEnabled(enabled);
+        this.toolbar.select.setEnabled(enabled);
+        this.toolbar.section.setEnabled(enabled);
     }
 
     _bindButton(selector, component, action) {
@@ -78,6 +67,18 @@ class ViewerUI extends Controller {
             component[action]();
             event.preventDefault();
         });
+        component.on("enabled", (enabled) => {
+            if (!enabled) {
+                $(selector).addClass("disabled");
+            } else {
+                $(selector).removeClass("disabled");
+            }
+        });
+        if (!component.getEnabled()) {
+            $(selector).addClass("disabled");
+        } else {
+            $(selector).removeClass("disabled");
+        }
     }
 
     _bindCheckButton(selector, component) {
@@ -96,6 +97,18 @@ class ViewerUI extends Controller {
             $(selector).addClass("active");
         } else {
             $(selector).removeClass("active");
+        }
+        component.on("enabled", (enabled) => {
+            if (!enabled) {
+                $(selector).addClass("disabled");
+            } else {
+                $(selector).removeClass("disabled");
+            }
+        });
+        if (!component.getEnabled()) {
+            $(selector).addClass("disabled");
+        } else {
+            $(selector).removeClass("disabled");
         }
     }
 }

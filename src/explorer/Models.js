@@ -16,6 +16,7 @@ class Models extends Controller {
         this._element = document.getElementById(cfg.modelsPanelId);
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
+        this._numModelsLoaded = 0;
         this._repaint();
     }
 
@@ -70,8 +71,8 @@ class Models extends Controller {
                         model.on("loaded", () => {
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
-                            const numModels = Object.keys(this.viewer.scene.models).length;
-                            if (numModels === 1) { // Jump camera when only one model
+                            this._numModelsLoaded++;
+                            if (this._numModelsLoaded === 1) { // Jump camera when only one model
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
                                 });
@@ -118,12 +119,17 @@ class Models extends Controller {
         model.destroy();
         const scene = this.viewer.scene;
         const aabb = scene.getAABB(scene.visibleObjectIds);
+        this._numModelsLoaded--;
         this.viewer.cameraFlight.flyTo({
             aabb: aabb
         }, () => {
             this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
             this.fire("modelUnloaded", modelId);
         });
+    }
+
+    getNumModelsLoaded() {
+        return this._numModelsLoaded;
     }
 
     /** @private */

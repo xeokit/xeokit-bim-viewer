@@ -185,11 +185,11 @@ class Objects extends Controller {
     }
 
     selectAll() {
-        this._tree.selectDeep();
+      //  this._tree.selectDeep();
     }
 
     deselectAll() {
-        this._tree.deselectDeep();
+    //    this._tree.deselectDeep();
     }
 
     destroy() {

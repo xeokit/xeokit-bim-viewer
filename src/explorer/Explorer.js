@@ -2,7 +2,6 @@ import {Controller} from "../Controller.js";
 import {Classes} from "./Classes.js";
 import {Objects} from "./Objects.js";
 import {Models} from "./Models.js";
-import {Storeys} from "./Storeys.js";
 
 /**
  * Manages the explorer trees.
@@ -40,6 +39,11 @@ class Explorer extends Controller {
         //  */
         // this.storeys = new Storeys(this, cfg);
 
+        $("#unloadAllModels").on('click', (event) => {
+            this._unloadAllModels();
+            event.preventDefault();
+        });
+
         $("#showAllObjects").on('click', (event) => {
             this._showAllObjects();
             event.preventDefault();
@@ -74,6 +78,10 @@ class Explorer extends Controller {
             this.classes._removeModel(modelId);
             this.fire("modelUnloaded", modelId);
         });
+    }
+
+    _unloadAllModels() {
+        // TODO
     }
 
     _showAllObjects() {

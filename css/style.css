@@ -51,6 +51,12 @@ body {
     pointer-events: all;
 }
 
+#models-toolbar {
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
 #structure-toolbar {
     align-items: center;
     justify-content: center;

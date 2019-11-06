@@ -76,8 +76,7 @@ const viewerUI = new ViewerUI(server, viewer, {
     sectionPlanesOverviewCanvasId: "mySectionPlanesOverviewCanvas",
     navCubeCanvasId: "myNavCubeCanvas",
     containerId: "canvasContainer",
-    bcfPanelId: "bcf-index-panel",
-    annotationsPanelId: "annotations-index-panel"
+    bcfPanelId: "bcf-index-panel"
 });
 
 

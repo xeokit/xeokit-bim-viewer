@@ -29,6 +29,7 @@ class Controller {
         this._events = null; // Maps names to events
         this._eventCallDepth = 0; // Helps us catch stack overflows from recursive events
 
+        this._enabled = null; // Used by #setEnabled() and #getEnabled()
         this._active = null; // Used by #setActive() and #getActive()
     }
 
@@ -236,6 +237,28 @@ class Controller {
         }
     }
 
+    /**
+     * Enables or disables this Controller.
+     *
+     * Fires an "enabled" event on update.
+     *
+     * @param {boolean} enabled Whether or not to enable.
+     */
+    setEnabled(enabled) {
+        if (this._enabled === enabled) {
+            return;
+        }
+        this._enabled = enabled;
+        this.fire("enabled", this._enabled);
+    }
+
+    /**
+     * Gets whether or not this Controller is enabled.
+     * @returns {boolean}
+     */
+    getEnabled() {
+        return this._enabled;
+    }
 
     /**
      * Activates or deactivates this Controller.

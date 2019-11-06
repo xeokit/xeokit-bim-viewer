@@ -67,6 +67,16 @@
                 <!-- Models tree -->
 
                 <div class="tab-pane fade show active" id="models" role="tabpanel" aria-labelledby="models-tab">
+
+                    <!-- Unload All button -->
+
+                    <div id="models-toolbar" class="btn-toolbar" role="toolbar"
+                         aria-label="Toolbar with button groups">
+                        <button id="unloadAllModels" type="button" class="btn btn-outline-light btn-sm">
+                            Unload all
+                        </button>
+                    </div>
+
                     <div id="models-list"></div>
                 </div>
 
@@ -134,28 +144,28 @@
             <!-- Reset button -->
 
             <div class="btn-group mr-2" role="group" aria-label="Second group">
-                <button id="reset" type="button" class="btn btn-outline-primary fa fa-home fa-2x"
+                <button id="reset" type="button" class="btn btn-outline-primary fa fa-home fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Reset view"></button>
             </div>
 
             <!-- Fit button -->
 
             <div class="btn-group mr-2" role="group" aria-label="Third group">
-                <button id="fit" type="button" class="btn btn-outline-primary fa fa-crop fa-2x"
+                <button id="fit" type="button" class="btn btn-outline-primary fa fa-crop fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Fit view"></button>
             </div>
 
             <!-- First Person mode button -->
 
             <div class="btn-group mr-2" role="group" aria-label="Fourth group">
-                <button id="firstPerson" type="button" class="btn btn-outline-primary fa fa-male  fa-2x"
+                <button id="firstPerson" type="button" class="btn btn-outline-primary fa fa-male  fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="First person mode"></button>
             </div>
 
             <!-- Ortho mode button -->
 
             <div class="btn-group mr-2" role="group" aria-label="Fifth group">
-                <button id="ortho" type="button" class="btn btn-outline-primary fa fa-cube  fa-2x"
+                <button id="ortho" type="button" class="btn btn-outline-primary fa fa-cube  fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Orthographic mode"></button>
             </div>
 
@@ -165,27 +175,27 @@
 
                 <!-- Query tool button -->
 
-                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x"
+                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Query"></button>
 
                 <!-- Hide tool button -->
 
-                <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x"
+                <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Hide"></button>
 
                 <!-- Select tool button -->
 
-                <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x"
+                <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Select"></button>
 
                 <!-- Sectioning tool button -->
 
-                <button id="section" type="button" class="btn btn-outline-primary fa fa-scissors fa-2x"
+                <button id="section" type="button" class="btn btn-outline-primary fa fa-scissors fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Slice"></button>
 
                 <!-- BCF tool button -->
 
-                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bookmark-o fa-2x"
+                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bookmark-o fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="BCF"></button>
             </div>
 
@@ -215,9 +225,10 @@
             <div class="modal-body" style="text-align:center;">
                 <br>
                 <div class="loader" style="display:inline-block;"></div>
+
                 <br>
                 <div class="modal-header" style="display:inline-block; border: 0;">
-                    <h5 class="modal-title" id="exampleModalLabel">Loading model &quot;<span id="loadingDialogModelName"></span>&quot;
+                    <h5 class="modal-title" id="exampleModalLabel">Loading &quot<span id="loadingDialogModelName"></span>&quot;
                     </h5>
                 </div>
             </div>

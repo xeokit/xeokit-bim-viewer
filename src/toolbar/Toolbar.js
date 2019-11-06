@@ -8,6 +8,7 @@ import {NavCubeMode} from "./NavCubeMode.js";
 import {FitAction} from "./FitAction.js";
 import {SelectMode} from "./SelectMode.js";
 import {QueryMode} from "./QueryMode.js";
+import {ResetAction} from "./ResetAction.js";
 
 /**
  * @desc UI controller for a xeokit {@link Viewer} toolbar.
@@ -18,6 +19,11 @@ class Toolbar extends Controller {
     constructor(parent, cfg = {}) {
 
         super(parent, cfg);
+
+        /** Resets the viewer to the state right after the most recent model was loaded.
+         * @type {ResetAction}
+         */
+        this.reset = new ResetAction(this);
 
         /** Flies the camera to show the entire model in view, from the current viewing angle.
          * @type {FitAction}
