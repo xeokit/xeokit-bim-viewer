@@ -94,7 +94,6 @@ class Classes extends Controller {
     }
 
     _repaint() {
-        var t0 = performance.now();
         const html = [];
         for (var type in this._data) {
             const classData = this._data[type];
@@ -132,8 +131,6 @@ class Classes extends Controller {
                 this._muteEntityEvents = false;
             });
         }
-        var t1 = performance.now();
-        console.log("Classes._repaint() " + (t1 - t0));
     }
 
     muteEvents() {
