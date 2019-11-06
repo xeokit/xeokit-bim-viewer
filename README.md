@@ -1,6 +1,6 @@
 # xeokit-viewer
 
-View large 3D BIM models in all major browsers and collaborate on issues using [BCF](https://en.wikipedia.org/wiki/BIM_Collaboration_Format).
+View large 3D BIM models and share BCF issues in the browser.
 
 * [Demo](https://xeokit.github.io/xeokit-viewer/)
 * [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
