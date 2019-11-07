@@ -133,6 +133,15 @@ class Classes extends Controller {
         }
     }
 
+    setToolbarEnabled(enabled) {
+        if (!enabled) {
+            $("#showAllClasses").addClass("disabled");
+            $("#hideAllClasses").addClass("disabled");
+        } else {
+            $("#showAllClasses").removeClass("disabled");
+            $("#hideAllClasses").removeClass("disabled");
+        }
+    }
     muteEvents() {
         this._muteCheckBoxEvents = true;
         this._muteEntityEvents = true;

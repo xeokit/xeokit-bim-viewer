@@ -18,6 +18,11 @@ class Models extends Controller {
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._repaint();
+
+        $("#unloadAllModels").on('click', (event) => {
+            this.unloadModels();
+            event.preventDefault();
+        });
     }
 
     _repaint() {
@@ -131,6 +136,14 @@ class Models extends Controller {
 
     getNumModelsLoaded() {
         return this._numModelsLoaded;
+    }
+
+    setToolbarEnabled(enabled) {
+        if (!enabled) {
+            $("#unloadAllModels").addClass("disabled");
+        } else {
+            $("#unloadAllModels").removeClass("disabled");
+        }
     }
 
     /** @private */

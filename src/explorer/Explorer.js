@@ -3,6 +3,7 @@ import {Classes} from "./Classes.js";
 import {Objects} from "./Objects.js";
 import {Models} from "./Models.js";
 import {Issues} from "./Issues.js";
+import {Storeys} from "./Storeys.js";
 
 /**
  * Manages the explorer trees.
@@ -43,16 +44,11 @@ class Explorer extends Controller {
             active: false
         });
 
-        // /**
-        //  *
-        //  * @type {Storeys}
-        //  */
-        // this.storeys = new Storeys(this, cfg);
-
-        $("#unloadAllModels").on('click', (event) => {
-            this.unloadModels();
-            event.preventDefault();
-        });
+        /**
+         *
+         * @type {Storeys}
+         */
+        this.storeys = new Storeys(this, cfg);
 
         $("#showAllObjects").on('click', (event) => {
             this._showAllObjects();
@@ -74,16 +70,6 @@ class Explorer extends Controller {
             event.preventDefault();
         });
 
-        $("#createIssue").on('click', (event) => {
-            this.issues.createIssue();
-            event.preventDefault();
-        });
-
-        $("#clearIssues").on('click', (event) => {
-            this.issues.clearIssues();
-            event.preventDefault();
-        });
-
         // Handling model load events here ensures that we
         // are able to fire "modelLoaded" after both trees updated.
 
@@ -98,10 +84,6 @@ class Explorer extends Controller {
             this.classes._removeModel(modelId);
             this.fire("modelUnloaded", modelId);
         });
-    }
-
-    unloadModels() {
-        this.models.unloadModels();
     }
 
     _showAllObjects() {
@@ -130,6 +112,14 @@ class Explorer extends Controller {
 
         this.objects.unmuteEvents();
         this.classes.unmuteEvents();
+    }
+
+    setToolbarEnabled(enabled) {
+        this.models.setToolbarEnabled(enabled);
+        this.objects.setToolbarEnabled(enabled);
+        this.classes.setToolbarEnabled(enabled);
+        this.storeys.setToolbarEnabled(enabled);
+        this.issues.setToolbarEnabled(enabled);
     }
 
     destroy() {

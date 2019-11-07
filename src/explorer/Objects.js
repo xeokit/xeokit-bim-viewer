@@ -174,6 +174,16 @@ class Objects extends Controller {
         }
     }
 
+    setToolbarEnabled(enabled) {
+        if (!enabled) {
+            $("#showAllObjects").addClass("disabled");
+            $("#hideAllObjects").addClass("disabled");
+        } else {
+            $("#showAllObjects").removeClass("disabled");
+            $("#hideAllObjects").removeClass("disabled");
+        }
+    }
+
     muteEvents() {
         this._muteTreeEvents = true;
         this._muteEntityEvents = true;

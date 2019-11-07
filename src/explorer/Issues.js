@@ -15,6 +15,16 @@ class Issues extends Controller {
         this._issues = [];
         this._issuesMap = {};
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
+
+        $("#createIssue").on('click', (event) => {
+            this.createIssue();
+            event.preventDefault();
+        });
+
+        $("#clearIssues").on('click', (event) => {
+            this.clearIssues();
+            event.preventDefault();
+        });
     }
 
     createIssue() {
@@ -55,6 +65,16 @@ class Issues extends Controller {
                     event.preventDefault();
                 });
             })();
+        }
+    }
+
+    setToolbarEnabled(enabled) {
+        if (!enabled) {
+            $("#createIssue").addClass("disabled");
+            $("#clearIssues").addClass("disabled");
+        } else {
+            $("#createIssue").removeClass("disabled");
+            $("#clearIssues").removeClass("disabled");
         }
     }
 

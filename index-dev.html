@@ -24,6 +24,7 @@
 
 <body>
 
+
 <div class="wrapper">
 
     <!-- Explorer trees -->
@@ -53,6 +54,13 @@
                        aria-controls="classes" aria-selected="false">Classes</a>
                 </li>
 
+                <!-- Storeys tab -->
+
+                <li class="nav-item">
+                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"
+                       aria-controls="storeys" aria-selected="false">Plans</a>
+                </li>
+
                 <!-- Issues tab -->
 
                 <li class="nav-item">
@@ -60,13 +68,6 @@
                        aria-controls="issues" aria-selected="false">Issues</a>
                 </li>
 
-
-                <!-- Storeys tab -->
-
-                <!--                <li class="nav-item">-->
-                <!--                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"-->
-                <!--                       aria-controls="storeys" aria-selected="false">Storeys</a>-->
-                <!--                </li>-->
             </ul>
 
             <div class="tab-content" id="myTabContent">
@@ -79,7 +80,7 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="unloadAllModels" type="button" class="btn btn-outline-light">
+                        <button id="unloadAllModels" type="button" class="btn btn-outline-light disabled">
                             Unload all
                         </button>
                     </div>
@@ -95,10 +96,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllObjects" type="button" class="btn btn-outline-light">
+                        <button id="showAllObjects" type="button" class="btn btn-outline-light disabled">
                             Show all
                         </button>
-                        <button id="hideAllObjects" type="button" class="btn btn-outline-light">
+                        <button id="hideAllObjects" type="button" class="btn btn-outline-light disabled">
                             Hide all
                         </button>
                     </div>
@@ -114,10 +115,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllClasses" type="button" class="btn btn-outline-light">
+                        <button id="showAllClasses" type="button" class="btn btn-outline-light disabled">
                             Show all
                         </button>
-                        <button id="hideAllClasses" type="button" class="btn btn-outline-light">
+                        <button id="hideAllClasses" type="button" class="btn btn-outline-light disabled">
                             Hide all
                         </button>
                     </div>
@@ -134,10 +135,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="createIssue" type="button" class="btn btn-outline-light">
+                        <button id="createIssue" type="button" class="btn btn-outline-light disabled">
                             Create
                         </button>
-                        <button id="clearIssues" type="button" class="btn btn-outline-light">
+                        <button id="clearIssues" type="button" class="btn btn-outline-light disabled">
                             Clear
                         </button>
                     </div>
@@ -147,9 +148,9 @@
 
                 <!-- Storeys -->
 
-                <!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
-                <!--                    <div id="storeys-menu" class="tree-panel"></div>-->
-                <!--                </div>-->
+                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">
+                    <div id="storeys-menu" class="tree-panel"></div>
+                </div>
 
             </div>
         </div>

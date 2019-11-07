@@ -108,17 +108,21 @@ class Storeys extends Controller {
         const storeyIds = [];
         for (var modelId in models) {
             const model = this.viewer.scene.models[modelId];
+            const metaModel = this.viewer.metaScene.metaModels[modelId];
+            if (!metaModel) {
+                continue;
+            }
             const storeys = this._storeyViewsPlugin.modelStoreys[modelId];
             if (!storeys) {
                 continue;
             }
-            html.push("<div>" + modelId + "</div>");
+            html.push("<div>" + metaModel.id + "</div>");
             for (storeyId in storeys) {
                 const storey = storeys[storeyId];
                 if (storey) {
                     html.push("<div class='form-check'>");
                     html.push("<label class='form-check-label'>");
-                    html.push("<a id='" + storey.storeyId + "' href=''>" + storey.storeyId + "</a>");
+                    html.push("<a id='" + storey.storeyId + "' href=''>" + storey.name + "</a>");
                     html.push("</label>");
                     html.push("</div>");
                     storeyIds.push(storeyId);
@@ -214,6 +218,10 @@ class Storeys extends Controller {
         this._openStoreyId = storeyId;
 
         this.fire("storeyOpened", this._openStoreyId);
+    }
+
+    setToolbarEnabled(enabled) {
+
     }
 
     /** @private */

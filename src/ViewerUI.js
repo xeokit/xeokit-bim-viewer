@@ -65,6 +65,7 @@ class ViewerUI extends Controller {
     }
 
     _setToolbarButtonsEnabled(enabled) {
+        this.explorer.setToolbarEnabled(enabled);
         this.toolbar.reset.setEnabled(enabled);
         this.toolbar.fit.setEnabled(enabled);
         this.toolbar.firstPerson.setEnabled(enabled);
