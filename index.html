@@ -28,7 +28,7 @@
 
     <!-- Explorer trees -->
 
-    <nav id="sidebar">
+    <nav id="sidebar" class="active">
         <div class="sidebar-header">
             <ul class="nav nav-tabs" id="treeTabs" role="tablist">
 
@@ -53,6 +53,14 @@
                        aria-controls="classes" aria-selected="false">Classes</a>
                 </li>
 
+                <!-- Issues tab -->
+
+                <li class="nav-item">
+                    <a class="nav-link " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
+                       aria-controls="issues" aria-selected="false">Issues</a>
+                </li>
+
+
                 <!-- Storeys tab -->
 
                 <!--                <li class="nav-item">-->
@@ -69,9 +77,9 @@
 
                     <!-- Unload All button -->
 
-                    <div id="models-toolbar" class="btn-toolbar" role="toolbar"
+                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="unloadAllModels" type="button" class="btn btn-outline-light btn-sm">
+                        <button id="unloadAllModels" type="button" class="btn btn-outline-light">
                             Unload all
                         </button>
                     </div>
@@ -85,12 +93,12 @@
 
                     <!-- Show All and Hide All buttons -->
 
-                    <div id="structure-toolbar" class="btn-toolbar" role="toolbar"
+                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllObjects" type="button" class="btn btn-outline-light btn-sm">
+                        <button id="showAllObjects" type="button" class="btn btn-outline-light">
                             Show all
                         </button>
-                        <button id="hideAllObjects" type="button" class="btn btn-outline-light btn-sm">
+                        <button id="hideAllObjects" type="button" class="btn btn-outline-light">
                             Hide all
                         </button>
                     </div>
@@ -104,12 +112,12 @@
 
                     <!-- Show All and Hide All buttons -->
 
-                    <div id="classes-toolbar" class="btn-toolbar" role="toolbar"
+                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllClasses" type="button" class="btn btn-outline-light btn-sm">
+                        <button id="showAllClasses" type="button" class="btn btn-outline-light">
                             Show all
                         </button>
-                        <button id="hideAllClasses" type="button" class="btn btn-outline-light btn-sm">
+                        <button id="hideAllClasses" type="button" class="btn btn-outline-light">
                             Hide all
                         </button>
                     </div>
@@ -117,11 +125,32 @@
                     <div id="classes-tree" class="tree-panel"></div>
                 </div>
 
+
+                <!-- Issues list -->
+
+                <div class="tab-pane fade show" id="issues" role="tabpanel" aria-labelledby="models-tab">
+
+                    <!-- Create Issue and Clear Issues buttons -->
+
+                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
+                         aria-label="Toolbar with button groups">
+                        <button id="createIssue" type="button" class="btn btn-outline-light">
+                            Create
+                        </button>
+                        <button id="clearIssues" type="button" class="btn btn-outline-light">
+                            Clear
+                        </button>
+                    </div>
+
+                    <div id="issues-list"></div>
+                </div>
+
                 <!-- Storeys -->
 
                 <!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
                 <!--                    <div id="storeys-menu" class="tree-panel"></div>-->
                 <!--                </div>-->
+
             </div>
         </div>
     </nav>
@@ -172,11 +201,6 @@
 
             <div class="btn-group mr-2" role="group" aria-label="Sixth group">
 
-                <!-- Query tool button -->
-
-                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Query"></button>
-
                 <!-- Hide tool button -->
 
                 <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x disabled"
@@ -187,15 +211,16 @@
                 <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Select"></button>
 
-                <!-- Sectioning tool button -->
+                <!-- Slice tool button -->
 
                 <button id="section" type="button" class="btn btn-outline-primary fa fa-cut fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Slice"></button>
 
-                <!-- BCF tool button -->
+                <!-- Query tool button -->
 
-                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bug fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="BCF"></button>
+                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
+                        data-toggle="tooltip" data-placement="top" title="Query"></button>
+
             </div>
 
         </div>
@@ -212,38 +237,14 @@
 
         <div class="sidebar-header">
 
-            <ul class="nav nav-tabs" id="sidebar2-tabs" role="tablist">
+            <!-- Properties panel -->
 
-                <!-- Properties tab -->
+            <p>Properties</p>
 
-                <li class="nav-item">
-                    <a class="nav-link active" id="info-tab" data-toggle="tab" href="#properties" role="tab"
-                       aria-controls="properties" aria-selected="true">Properties</a>
-                </li>
-
-                <!-- Issues tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
-                       aria-controls="issues" aria-selected="false">Issues</a>
-                </li>
-
-            </ul>
-
-            <div class="tab-content" id="myTab2Content">
-
-                <!-- Properties panel -->
-
-                <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
-                    <div id="properties-panel" class="tree-panel"></div>
-                </div>
-
-                <!-- Issues list -->
-
-                <div class="tab-pane fade show active" id="issues" role="tabpanel" aria-labelledby="models-tab">
-                    <div id="issues-list"></div>
-                </div>
+            <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
+                <div id="properties-panel" class="tree-panel"></div>
             </div>
+
         </div>
     </nav>
 </div>
