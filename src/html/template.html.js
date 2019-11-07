@@ -1,6 +1,4 @@
-
-
-<div class="wrapper">
+const template = `<div class="wrapper">
 
     <!-- Explorer trees -->
 
@@ -182,5 +180,7 @@
             <div id="bcf-index-panel"></div>
         </div>
     </nav>
-</div>
+</div>`;
+
+export {template};
 
