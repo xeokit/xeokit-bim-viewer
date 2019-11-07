@@ -1,10 +1,8 @@
 import {Viewer} from "./lib/xeokit/viewer/Viewer.js";
-import {ViewerUI} from "./src/ViewerUI.js";
-import {DirLight} from "./lib/xeokit/viewer/scene/lights/DirLight.js";
 import {AmbientLight} from "./lib/xeokit/viewer/scene/lights/AmbientLight.js";
+import {DirLight} from "./lib/xeokit/viewer/scene/lights/DirLight.js";
 import {Server} from "./src/server/Server.js";
-
-// Create and configure a xeokit Viewer
+import {ViewerUI} from "./src/ViewerUI.js";
 
 const viewer = new Viewer({
     canvasId: "myCanvas",
@@ -31,8 +29,6 @@ scene.highlightMaterial.edgeAlpha = 1.0;
 scene.highlightMaterial.fill = true;
 scene.highlightMaterial.fillAlpha = 0.1;
 scene.highlightMaterial.fillColor = [1, 1, 0];
-
-// Custom lights
 
 scene.clearLights();
 
@@ -62,11 +58,7 @@ new DirLight(scene, {
     space: "world"
 });
 
-const server = new Server({
-
-});
-
-// Create UI
+const server = new Server({});
 
 const viewerUI = new ViewerUI(server, viewer, {
     modelsPanelId: "models-list",
@@ -76,7 +68,6 @@ const viewerUI = new ViewerUI(server, viewer, {
     sectionPlanesOverviewCanvasId: "mySectionPlanesOverviewCanvas",
     navCubeCanvasId: "myNavCubeCanvas",
     containerId: "canvasContainer",
-    bcfPanelId: "bcf-index-panel"
+    issuesPanelId: "issues-list"
 });
-
 

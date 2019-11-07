@@ -2,6 +2,7 @@ import {Controller} from "../Controller.js";
 import {Classes} from "./Classes.js";
 import {Objects} from "./Objects.js";
 import {Models} from "./Models.js";
+import {Issues} from "./Issues.js";
 
 /**
  * Manages the explorer trees.
@@ -33,6 +34,15 @@ class Explorer extends Controller {
          */
         this.classes = new Classes(this, cfg);
 
+        /**
+         * Manages issues.
+         * @type {Issues}
+         */
+        this.issues = new Issues(this, {
+            issuesPanelId: cfg.issuesPanelId,
+            active: false
+        });
+
         // /**
         //  *
         //  * @type {Storeys}
@@ -40,7 +50,7 @@ class Explorer extends Controller {
         // this.storeys = new Storeys(this, cfg);
 
         $("#unloadAllModels").on('click', (event) => {
-            this._unloadAllModels();
+            this.unloadModels();
             event.preventDefault();
         });
 
@@ -64,6 +74,16 @@ class Explorer extends Controller {
             event.preventDefault();
         });
 
+        $("#createIssue").on('click', (event) => {
+            this.issues.createIssue();
+            event.preventDefault();
+        });
+
+        $("#clearIssues").on('click', (event) => {
+            this.issues.clearIssues();
+            event.preventDefault();
+        });
+
         // Handling model load events here ensures that we
         // are able to fire "modelLoaded" after both trees updated.
 
@@ -80,8 +100,8 @@ class Explorer extends Controller {
         });
     }
 
-    _unloadAllModels() {
-        // TODO
+    unloadModels() {
+        this.models.unloadModels();
     }
 
     _showAllObjects() {

@@ -2,6 +2,7 @@ import {Controller} from "./Controller.js";
 
 import {Explorer} from "./explorer/Explorer.js";
 import {Toolbar} from "./toolbar/Toolbar.js";
+import {BusyDialog} from "./BusyDialog.js";
 
 /**
  * @desc UI controller for a xeokit {@link Viewer} toolbar.
@@ -13,7 +14,10 @@ class ViewerUI extends Controller {
 
         super(null, cfg, server, viewer);
 
+        this.busyDialog = new BusyDialog(this);
+
         this.explorer = new Explorer(this, cfg);
+
         this.toolbar = new Toolbar(this, cfg);
 
         this._bindButton("#reset", this.toolbar.reset, "reset");
@@ -25,15 +29,16 @@ class ViewerUI extends Controller {
         this._bindCheckButton("#select", this.toolbar.select);
         this._bindCheckButton("#section", this.toolbar.section);
 
-        this._bindButton("#createBCF", this.toolbar.bcf, "createViewpoint");
-        this._bindButton("#clearBCF", this.toolbar.bcf, "clearViewpoints");
-        this._bindButton("#clearSections", this.toolbar.section, "clearSections");
+        this._bindButton("#unloadModels", this.explorer.models, "unloadModels");
+
+        this._bindButton("#createIssue", this.explorer.issues, "createIssue");
+        this._bindButton("#clearIssues", this.explorer.issues, "clearIssues");
 
         $('#tree').on('click', function () {
             $('#sidebar').toggleClass('active');
         });
 
-        $('#bcf').on('click', function () {
+        $('#query').on('click', function () {
             $('#sidebar2').toggleClass('active');
         });
 

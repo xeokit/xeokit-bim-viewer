@@ -1,6 +1,5 @@
 import {Controller} from "../Controller.js";
 import {SectionMode} from "./SectionMode.js";
-import {BCFMode} from "./BCFMode.js";
 import {HideMode} from "./HideMode.js";
 import {FirstPersonMode} from "./FirstPersonMode.js";
 import {OrthoMode} from "./OrthoMode.js";
@@ -78,15 +77,6 @@ class Toolbar extends Controller {
         });
 
         /**
-         * Manages BCF viewpoints.
-         * @type {BCFMode}
-         */
-        this.bcf = new BCFMode(this, {
-            bcfPanelId: cfg.bcfPanelId,
-            active: false
-        });
-
-        /**
          * Controls the NavCube.
          * @type {NavCubeMode}
          */
@@ -95,7 +85,7 @@ class Toolbar extends Controller {
             active: true
         });
 
-        this._mutexActivation([this.query, this.hide, this.select, this.section, this.bcf]);
+        this._mutexActivation([this.query, this.hide, this.select, this.section]);
 
         this.firstPerson.setActive(false);
         this.ortho.setActive(false);

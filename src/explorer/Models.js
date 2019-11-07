@@ -57,7 +57,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this._showLoadingDialog(modelInfo.name);
+        this.viewerUI.busyDialog.show(modelInfo.name);
         this.server.getModelMetadata(modelId,
             (json) => {
                 this.server.getModelGeometry(modelId,
@@ -78,36 +78,27 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                 this.fire("modelLoaded", modelId);
-                                this._hideLoadingDialog();
+                                this.viewerUI.busyDialog.hide();
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                     this.fire("modelLoaded", modelId);
-                                    this._hideLoadingDialog();
+                                    this.viewerUI.busyDialog.hide();
                                 });
                             }
                         });
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        this._hideLoadingDialog();
+                        this.viewerUI.busyDialog.hide();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                this._hideLoadingDialog();
+                this.viewerUI.busyDialog.hide();
             });
-    }
-
-    _showLoadingDialog(message) {
-        $('#loadingDialogModelName').text(message);
-        $('#loadingDialog').modal('show');
-    }
-
-    _hideLoadingDialog() {
-        $('#loadingDialog').modal('hide');
     }
 
     _unloadModel(modelId) {
@@ -119,6 +110,7 @@ class Models extends Controller {
         model.destroy();
         const scene = this.viewer.scene;
         const aabb = scene.getAABB(scene.visibleObjectIds);
+        $("#" + modelId).prop("checked", false);
         this._numModelsLoaded--;
         this.viewer.cameraFlight.flyTo({
             aabb: aabb
@@ -126,6 +118,15 @@ class Models extends Controller {
             this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
             this.fire("modelUnloaded", modelId);
         });
+    }
+
+    unloadModels() {
+        const models = this.viewer.scene.models;
+        const modelIds = Object.keys(models);
+        for (var i = 0, len = modelIds.length; i < len; i++) {
+            const modelId = modelIds[i];
+            this._unloadModel(modelId);
+        }
     }
 
     getNumModelsLoaded() {
