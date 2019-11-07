@@ -38,8 +38,16 @@ class ViewerUI extends Controller {
             $('#sidebar').toggleClass('active');
         });
 
+        this.toolbar.query.on("active", (active) => {
+            if (active) {
+                $('#sidebar2').addClass('active');
+            } else {
+                $('#sidebar2').removeClass('active');
+            }
+        });
+
         $('#query').on('click', function () {
-            $('#sidebar2').toggleClass('active');
+
         });
 
         this.explorer.models.on("modelLoaded", () => {
