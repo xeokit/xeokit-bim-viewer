@@ -8,18 +8,17 @@
 
     <title>BIM Viewer built on xeokit and Bootstrap</title>
 
-    <!-- Bootstrap CSS CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
+    <link rel="stylesheet" href="lib/inspire-tree/site-min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <link href="./lib/inspire-tree/site-min.css" type="text/css" rel="stylesheet"/>
-    <script src="./lib/lodash.js"></script>
-    <script src="./lib/inspire-tree/inspire-tree.min.js"></script>
-    <script src="./lib/inspire-tree/inspire-tree-dom-min.js"></script>
-
-    <link rel="stylesheet" href="css/style.css">
+    <script src="lib/jquery-3.3.1.slim.min.js"></script>
+    <script src="lib/popper.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/lodash.js"></script>
+    <script src="lib/inspire-tree/inspire-tree.min.js"></script>
+    <script src="lib/inspire-tree/inspire-tree-dom-min.js"></script>
 
 </head>
 
@@ -56,10 +55,10 @@
 
                 <!-- Storeys tab -->
 
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"-->
-<!--                       aria-controls="storeys" aria-selected="false">Storeys</a>-->
-<!--                </li>-->
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"-->
+                <!--                       aria-controls="storeys" aria-selected="false">Storeys</a>-->
+                <!--                </li>-->
             </ul>
 
             <div class="tab-content" id="myTabContent">
@@ -120,9 +119,9 @@
 
                 <!-- Storeys -->
 
-<!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
-<!--                    <div id="storeys-menu" class="tree-panel"></div>-->
-<!--                </div>-->
+                <!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
+                <!--                    <div id="storeys-menu" class="tree-panel"></div>-->
+                <!--                </div>-->
             </div>
         </div>
     </nav>
@@ -190,68 +189,67 @@
 
                 <!-- Sectioning tool button -->
 
-                <button id="section" type="button" class="btn btn-outline-primary fa fa-scissors fa-2x disabled"
+                <button id="section" type="button" class="btn btn-outline-primary fa fa-cut fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="Slice"></button>
 
                 <!-- BCF tool button -->
 
-                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bookmark-o fa-2x disabled"
+                <button id="bcf" type="button" class="btn btn-outline-primary fa fa-bug fa-2x disabled"
                         data-toggle="tooltip" data-placement="top" title="BCF"></button>
             </div>
 
         </div>
 
         <!--        <div id="canvasContainer" style="overflow-y:hidden; height:100%">-->
-            <canvas id="myCanvas"></canvas>
+        <canvas id="myCanvas"></canvas>
         <!--        </div>-->
-
 
     </div>
 
     <!-- Info panel -->
 
     <nav id="sidebar2">
+
         <div class="sidebar-header">
-            <div id="annotations-index-panel"></div>
-            <div id="bcf-index-panel"></div>
+
+            <ul class="nav nav-tabs" id="sidebar2-tabs" role="tablist">
+
+                <!-- Properties tab -->
+
+                <li class="nav-item">
+                    <a class="nav-link active" id="info-tab" data-toggle="tab" href="#properties" role="tab"
+                       aria-controls="properties" aria-selected="true">Properties</a>
+                </li>
+
+                <!-- Issues tab -->
+
+                <li class="nav-item">
+                    <a class="nav-link " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
+                       aria-controls="issues" aria-selected="false">Issues</a>
+                </li>
+
+            </ul>
+
+            <div class="tab-content" id="myTab2Content">
+
+                <!-- Properties panel -->
+
+                <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
+                    <div id="properties-panel" class="tree-panel"></div>
+                </div>
+
+                <!-- Issues list -->
+
+                <div class="tab-pane fade show active" id="issues" role="tabpanel" aria-labelledby="models-tab">
+                    <div id="issues-list"></div>
+                </div>
+            </div>
         </div>
     </nav>
 </div>
 
-
-<div id="loadingDialog" class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body" style="text-align:center;">
-                <br>
-                <div class="loader" style="display:inline-block;"></div>
-
-                <br>
-                <div class="modal-header" style="display:inline-block; border: 0;">
-                    <h5 class="modal-title" id="exampleModalLabel">Loading &quot<span id="loadingDialogModelName"></span>&quot;
-                    </h5>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
 <canvas id="myNavCubeCanvas"></canvas>
 <canvas id="mySectionPlanesOverviewCanvas"></canvas>
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
 
 </body>
 

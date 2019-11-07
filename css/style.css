@@ -51,34 +51,14 @@ body {
     pointer-events: all;
 }
 
-#models-toolbar {
+.explorer-toolbar {
     align-items: center;
     justify-content: center;
     padding: 10px;
 }
 
-#structure-toolbar {
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-#classes-toolbar {
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-#bcf-toolbar {
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-#sections-toolbar {
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
+.explorer-toolbar .btn {
+    margin: 5px;
 }
 
 .container-fluid {
@@ -126,6 +106,10 @@ footer {
 }
 
 #models-list {
+    padding: 10px;
+}
+
+#issues-list {
     padding: 10px;
 }
 
@@ -178,6 +162,7 @@ a:focus {
 #sidebar {
     min-width: 320px;
     max-width: 320px;
+    margin-left: -320px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
@@ -185,7 +170,7 @@ a:focus {
 }
 
 #sidebar.active {
-    margin-left: -320px;
+    margin-left: 0;
 }
 
 #sidebar .sidebar-header {
@@ -223,13 +208,14 @@ a[aria-expanded="true"] {
 #sidebar2 {
     min-width: 250px;
     max-width: 250px;
+    margin-right: -250px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
 }
 
 #sidebar2.active {
-    margin-right: -250px;
+    margin-right: 0;
 }
 
 #sidebar2 .sidebar-header {
