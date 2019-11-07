@@ -57,7 +57,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this.viewerUI.busyDialog.show(modelInfo.name);
+        this.viewerUI.busyDialog.show("Loading '" + modelInfo.name + "'");
         this.server.getModelMetadata(modelId,
             (json) => {
                 this.server.getModelGeometry(modelId,
