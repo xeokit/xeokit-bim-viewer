@@ -15,9 +15,7 @@ class ViewerUI extends Controller {
         super(null, cfg, server, viewer);
 
         this.busyDialog = new BusyDialog(this);
-
         this.explorer = new Explorer(this, cfg);
-
         this.toolbar = new Toolbar(this, cfg);
 
         this._bindButton("#reset", this.toolbar.reset, "reset");
@@ -28,16 +26,6 @@ class ViewerUI extends Controller {
         this._bindCheckButton("#hide", this.toolbar.hide);
         this._bindCheckButton("#select", this.toolbar.select);
         this._bindCheckButton("#section", this.toolbar.section);
-
-        this._bindButton("#unloadModels", this.explorer.models, "unloadModels");
-
-        this._bindButton("#createIssue", this.explorer.issues, "createIssue");
-        this._bindButton("#clearIssues", this.explorer.issues, "clearIssues");
-
-
-        $('#query').on('click', function () {
-
-        });
 
         this.explorer.models.on("modelLoaded", () => {
             if (this.explorer.models.getNumModelsLoaded() === 1) {
