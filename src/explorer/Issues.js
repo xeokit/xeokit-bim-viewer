@@ -17,7 +17,7 @@ class Issues extends Controller {
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
         $("#createIssue").on('click', (event) => {
-            this.createIssue();
+            this._createIssue();
             event.preventDefault();
         });
 
@@ -27,7 +27,7 @@ class Issues extends Controller {
         });
     }
 
-    createIssue() {
+    _createIssue() {
         const viewpointId = math.createUUID();
         const viewpoint = this._bcfViewpointsPlugin.getViewpoint();
         const record = {
@@ -61,7 +61,7 @@ class Issues extends Controller {
             (function () {
                 const record = self._issues[i];
                 $("#" + record.id).on('click', (event) => {
-                    self._bcfViewpointsPlugin.setViewpoint(record.viewpoint);
+                    self._bcfViewpointsPlugin.setViewpoint(record.viewpoint, {immediate: false});
                     event.preventDefault();
                 });
             })();
