@@ -24,6 +24,8 @@
 
 <body>
 
+
+
 <div class="wrapper">
 
     <!-- Explorer trees -->
@@ -42,31 +44,31 @@
                 <!-- Objects tab -->
 
                 <li class="nav-item">
-                    <a class="nav-link  " id="objects-tab" data-toggle="tab" href="#objects" role="tab"
+                    <a class="nav-link disabled" id="objects-tab" data-toggle="tab" href="#objects" role="tab"
                        aria-controls="objects" aria-selected="false">Objects</a>
                 </li>
 
                 <!-- Classes tab -->
 
                 <li class="nav-item">
-                    <a class="nav-link" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
+                    <a class="nav-link disabled" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
                        aria-controls="classes" aria-selected="false">Classes</a>
+                </li>
+
+                <!-- Storeys tab -->
+
+                <li class="nav-item">
+                    <a class="nav-link disabled" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"
+                       aria-controls="storeys" aria-selected="false">Plans</a>
                 </li>
 
                 <!-- Issues tab -->
 
                 <li class="nav-item">
-                    <a class="nav-link " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
+                    <a class="nav-link disabled " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
                        aria-controls="issues" aria-selected="false">Issues</a>
                 </li>
 
-
-                <!-- Storeys tab -->
-
-                <!--                <li class="nav-item">-->
-                <!--                    <a class="nav-link" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"-->
-                <!--                       aria-controls="storeys" aria-selected="false">Storeys</a>-->
-                <!--                </li>-->
             </ul>
 
             <div class="tab-content" id="myTabContent">
@@ -79,7 +81,7 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="unloadAllModels" type="button" class="btn btn-outline-light">
+                        <button id="unloadAllModels" type="button" class="btn btn-outline-light disabled">
                             Unload all
                         </button>
                     </div>
@@ -95,10 +97,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllObjects" type="button" class="btn btn-outline-light">
+                        <button id="showAllObjects" type="button" class="btn btn-outline-light disabled">
                             Show all
                         </button>
-                        <button id="hideAllObjects" type="button" class="btn btn-outline-light">
+                        <button id="hideAllObjects" type="button" class="btn btn-outline-light disabled">
                             Hide all
                         </button>
                     </div>
@@ -114,10 +116,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="showAllClasses" type="button" class="btn btn-outline-light">
+                        <button id="showAllClasses" type="button" class="btn btn-outline-light disabled">
                             Show all
                         </button>
-                        <button id="hideAllClasses" type="button" class="btn btn-outline-light">
+                        <button id="hideAllClasses" type="button" class="btn btn-outline-light disabled">
                             Hide all
                         </button>
                     </div>
@@ -134,10 +136,10 @@
 
                     <div class="explorer-toolbar btn-toolbar" role="toolbar"
                          aria-label="Toolbar with button groups">
-                        <button id="createIssue" type="button" class="btn btn-outline-light">
+                        <button id="createIssue" type="button" class="btn btn-outline-light disabled">
                             Create
                         </button>
-                        <button id="clearIssues" type="button" class="btn btn-outline-light">
+                        <button id="clearIssues" type="button" class="btn btn-outline-light disabled">
                             Clear
                         </button>
                     </div>
@@ -147,9 +149,9 @@
 
                 <!-- Storeys -->
 
-                <!--                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">-->
-                <!--                    <div id="storeys-menu" class="tree-panel"></div>-->
-                <!--                </div>-->
+                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">
+                    <div id="storeys-menu" class="tree-panel"></div>
+                </div>
 
             </div>
         </div>
@@ -165,15 +167,15 @@
             <!-- Explorer open/close button -->
 
             <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button id="tree" type="button" class="btn btn-outline-primary fa fa-sitemap  fa-2x"
-                        data-toggle="tooltip" data-placement="top" title="Object explorer"></button>
+                <button id="toggleExplorer" type="button" class="btn btn-outline-primary fa fa-sitemap  fa-2x active"
+                        data-toggle="tooltip" data-placement="top" title="Explorer"></button>
             </div>
 
             <!-- Reset button -->
 
             <div class="btn-group mr-2" role="group" aria-label="Second group">
                 <button id="reset" type="button" class="btn btn-outline-primary fa fa-home fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Reset view"></button>
+                        data-toggle="tooltip" data-placement="top" title="Reset"></button>
             </div>
 
             <!-- Fit button -->
@@ -204,22 +206,22 @@
                 <!-- Hide tool button -->
 
                 <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Hide"></button>
+                        data-toggle="tooltip" data-placement="top" title="Hide object tool"></button>
 
                 <!-- Select tool button -->
 
                 <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Select"></button>
+                        data-toggle="tooltip" data-placement="top" title="Select object tool"></button>
 
                 <!-- Slice tool button -->
 
                 <button id="section" type="button" class="btn btn-outline-primary fa fa-cut fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Slice"></button>
+                        data-toggle="tooltip" data-placement="top" title="Slice tool"></button>
 
                 <!-- Query tool button -->
 
                 <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Query"></button>
+                        data-toggle="tooltip" data-placement="top" title="Query object tool"></button>
 
             </div>
 

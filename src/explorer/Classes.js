@@ -135,9 +135,11 @@ class Classes extends Controller {
 
     setToolbarEnabled(enabled) {
         if (!enabled) {
+            $("#classes-tab").addClass("disabled");
             $("#showAllClasses").addClass("disabled");
             $("#hideAllClasses").addClass("disabled");
         } else {
+            $("#classes-tab").removeClass("disabled");
             $("#showAllClasses").removeClass("disabled");
             $("#hideAllClasses").removeClass("disabled");
         }

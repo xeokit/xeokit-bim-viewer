@@ -70,9 +70,11 @@ class Issues extends Controller {
 
     setToolbarEnabled(enabled) {
         if (!enabled) {
+            $("#issues-tab").addClass("disabled");
             $("#createIssue").addClass("disabled");
             $("#clearIssues").addClass("disabled");
         } else {
+            $("#issues-tab").removeClass("disabled");
             $("#createIssue").removeClass("disabled");
             $("#clearIssues").removeClass("disabled");
         }

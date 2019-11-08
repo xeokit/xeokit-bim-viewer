@@ -14,7 +14,7 @@ class BusyDialog extends Controller {
 
                 <br>
                 <div class="modal-header" style="display:inline-block; border: 0;">
-                    <h5 class="modal-title" id="exampleModalLabel"><span id="loadingDialogModelName"></span>&quot;
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="loadingDialogModelName"></span>&quot
                     </h5>
                 </div>
             </div>

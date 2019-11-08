@@ -34,17 +34,6 @@ class ViewerUI extends Controller {
         this._bindButton("#createIssue", this.explorer.issues, "createIssue");
         this._bindButton("#clearIssues", this.explorer.issues, "clearIssues");
 
-        $('#tree').on('click', function () {
-            $('#sidebar').toggleClass('active');
-        });
-
-        this.toolbar.query.on("active", (active) => {
-            if (active) {
-                $('#sidebar2').addClass('active');
-            } else {
-                $('#sidebar2').removeClass('active');
-            }
-        });
 
         $('#query').on('click', function () {
 
@@ -66,13 +55,25 @@ class ViewerUI extends Controller {
 
     _setToolbarButtonsEnabled(enabled) {
         this.explorer.setToolbarEnabled(enabled);
+
         this.toolbar.reset.setEnabled(enabled);
+
         this.toolbar.fit.setEnabled(enabled);
+
         this.toolbar.firstPerson.setEnabled(enabled);
+
         this.toolbar.ortho.setEnabled(enabled);
+
         this.toolbar.query.setEnabled(enabled);
+
+        if (!enabled) {
+            this.toolbar.query.setActive(enabled);
+        }
+
         this.toolbar.hide.setEnabled(enabled);
+
         this.toolbar.select.setEnabled(enabled);
+
         this.toolbar.section.setEnabled(enabled);
     }
 

@@ -176,9 +176,11 @@ class Objects extends Controller {
 
     setToolbarEnabled(enabled) {
         if (!enabled) {
+            $("#objects-tab").addClass("disabled");
             $("#showAllObjects").addClass("disabled");
             $("#hideAllObjects").addClass("disabled");
         } else {
+            $("#objects-tab").removeClass("disabled");
             $("#showAllObjects").removeClass("disabled");
             $("#hideAllObjects").removeClass("disabled");
         }

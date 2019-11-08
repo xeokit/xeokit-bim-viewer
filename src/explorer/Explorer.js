@@ -50,6 +50,11 @@ class Explorer extends Controller {
          */
         this.storeys = new Storeys(this, cfg);
 
+        $('#toggleExplorer').on('click', function () {
+            $('#toggleExplorer').toggleClass('active');
+            $('#sidebar').toggleClass('active');
+        });
+
         $("#showAllObjects").on('click', (event) => {
             this._showAllObjects();
             event.preventDefault();

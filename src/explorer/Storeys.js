@@ -121,13 +121,14 @@ class Storeys extends Controller {
                 const storey = storeys[storeyId];
                 if (storey) {
                     html.push("<div class='form-check'>");
-                    html.push("<label class='form-check-label'>");
+                    html.push("<li>");
                     html.push("<a id='" + storey.storeyId + "' href=''>" + storey.name + "</a>");
-                    html.push("</label>");
+                    html.push("</li>");
                     html.push("</div>");
                     storeyIds.push(storeyId);
                 }
             }
+            html.push("<br>");
         }
         this._element.innerHTML = html.join("");
         for (var i = 0, len = storeyIds.length; i < len; i++) {
@@ -221,7 +222,11 @@ class Storeys extends Controller {
     }
 
     setToolbarEnabled(enabled) {
-
+        if (!enabled) {
+            $("#storeys-tab").addClass("disabled");
+           } else {
+            $("#storeys-tab").removeClass("disabled");
+        }
     }
 
     /** @private */

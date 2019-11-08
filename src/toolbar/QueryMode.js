@@ -58,12 +58,16 @@ class QueryMode extends Controller {
                     }
                 });
 
+                $('#sidebar2').addClass('active');
+
             } else {
 
                 this.viewer.cameraControl.off(this._onHover);
                 this.viewer.cameraControl.off(this._onHoverOff);
                 this.viewer.cameraControl.off(this._onMousedown);
                 this.viewer.cameraControl.off(this._onMouseup);
+
+                $('#sidebar2').removeClass('active');
             }
         });
 
