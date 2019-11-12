@@ -19,7 +19,8 @@
     "WebGL",
     "BIM",
     "IFC",
-    "xeokit"
+    "xeokit",
+    "OpenProject"
   ],
   "author": "Lindsay Kay",
   "license": "https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt",
