@@ -1,5 +1,5 @@
 {
-  "name": "xeokit-viewer",
+  "name": "@xeokit/xeokit-viewer",
   "version": "1.1.0",
   "description": "BIM viewer built on xeokit and Bootstrap",
   "main": "index.js",
