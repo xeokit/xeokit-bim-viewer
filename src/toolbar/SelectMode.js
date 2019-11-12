@@ -1,5 +1,6 @@
 import {Controller} from "../Controller.js";
-import {math} from "../../lib/xeokit/viewer/scene/math/math.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
 
 function closeEnough(p, q) {
     const CLICK_DIST = 4;

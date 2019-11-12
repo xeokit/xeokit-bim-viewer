@@ -1,6 +1,6 @@
-import {BCFViewpointsPlugin} from "../../lib/xeokit/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
-import {math} from "../../lib/xeokit/viewer/scene/math/math.js";
 import {Controller} from "../Controller.js";
+import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /**
  * @desc Manages issues.

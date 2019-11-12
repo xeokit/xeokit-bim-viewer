@@ -21,7 +21,7 @@ class ViewerUI extends Controller {
         this._bindButton("#reset", this.toolbar.reset, "reset");
         this._bindButton("#fit", this.toolbar.fit, "fit");
         this._bindCheckButton("#firstPerson", this.toolbar.firstPerson);
-        this._bindCheckButton("#ortho", this.toolbar.ortho);
+        // this._bindCheckButton("#ortho", this.toolbar.ortho);
         this._bindCheckButton("#query", this.toolbar.query);
         this._bindCheckButton("#hide", this.toolbar.hide);
         this._bindCheckButton("#select", this.toolbar.select);
@@ -29,7 +29,6 @@ class ViewerUI extends Controller {
 
         this.explorer.models.on("modelLoaded", () => {
             if (this.explorer.models.getNumModelsLoaded() === 1) {
-                this.toolbar.reset.saveState();
                 this._setToolbarButtonsEnabled(true);
             }
         });
@@ -41,7 +40,16 @@ class ViewerUI extends Controller {
         });
     }
 
+    saveBCFViewpoint() {
+
+    }
+
+    loadBCFViewpoint() {
+
+    }
+
     _setToolbarButtonsEnabled(enabled) {
+
         this.explorer.setToolbarEnabled(enabled);
 
         this.toolbar.reset.setEnabled(enabled);

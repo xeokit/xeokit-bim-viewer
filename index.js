@@ -1,8 +1,9 @@
-import {Viewer} from "./lib/xeokit/viewer/Viewer.js";
-import {AmbientLight} from "./lib/xeokit/viewer/scene/lights/AmbientLight.js";
-import {DirLight} from "./lib/xeokit/viewer/scene/lights/DirLight.js";
+
 import {Server} from "./src/server/Server.js";
 import {ViewerUI} from "./src/ViewerUI.js";
+import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
+import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
+import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 
 const viewer = new Viewer({
     canvasId: "myCanvas",

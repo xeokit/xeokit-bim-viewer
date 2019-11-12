@@ -24,6 +24,19 @@ class OrthoMode extends Controller {
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
         });
+
+        $("#ortho").on('click', (event) => {
+            this.setActive(!this.getActive());
+            event.preventDefault();
+        });
+
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                $("#ortho").addClass("disabled");
+            } else {
+                $("#ortho").removeClass("disabled");
+            }
+        });
     }
 }
 

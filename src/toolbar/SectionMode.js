@@ -1,5 +1,6 @@
 import {Controller} from "../Controller.js";
-import {SectionPlanesPlugin} from "../../lib/xeokit/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js";
+import {SectionPlanesPlugin} from "@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js";
+
 
 /**
  * Controls section planes.
