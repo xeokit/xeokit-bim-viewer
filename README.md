@@ -2,8 +2,7 @@
 
 View large 3D BIM models and share BCF issues in the browser.
 
-* [Demo](https://xeokit.github.io/xeokit-viewer/)
-* [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
+* [Demo](https://xeokit.github.io/xeokit-viewer/index-dev.html)
 
 
 ## Building 
