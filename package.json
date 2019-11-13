@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/xeokit/xeokit-viewer#readme",
   "devDependencies": {
+    "circular-dependency-plugin": "^5.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
