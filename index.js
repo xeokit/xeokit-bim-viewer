@@ -1,9 +1,8 @@
-
 import {Server} from "./src/server/Server.js";
 import {ViewerUI} from "./src/ViewerUI.js";
-import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
-import {AmbientLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
-import {DirLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
+import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
+import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
+import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 
 const viewer = new Viewer({
     canvasId: "myCanvas",
@@ -71,4 +70,5 @@ const viewerUI = new ViewerUI(server, viewer, {
     containerId: "canvasContainer",
     issuesPanelId: "issues-list"
 });
+
 

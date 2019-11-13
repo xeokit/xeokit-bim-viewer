@@ -1,6 +1,6 @@
 import {Controller} from "../Controller.js";
-import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-import {ModelMemento} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/mementos/ModelMemento.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {ModelMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/ModelMemento.js";
 const tempVec3a = math.vec3();
 
 class ResetAction extends Controller {

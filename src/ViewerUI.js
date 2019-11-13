@@ -8,7 +8,6 @@ import {BusyDialog} from "./BusyDialog.js";
  * @desc UI controller for a xeokit {@link Viewer} toolbar.
  */
 class ViewerUI extends Controller {
-
     /** @private */
     constructor(server, viewer, cfg = {}) {
 
