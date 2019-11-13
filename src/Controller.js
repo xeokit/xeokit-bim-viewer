@@ -1,5 +1,5 @@
-import {Map} from "../lib/xeokit/viewer/scene/utils/Map.js";
-import {utils} from "../lib/xeokit/viewer/scene/utils.js";
+import {Map} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/utils/Map.js";
+import {utils} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/utils.js";
 
 /**
  * @desc Base class for all xeokit-ui components.
