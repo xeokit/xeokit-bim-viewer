@@ -1,0 +1,20 @@
+{
+  "projects": [
+    {
+      "id": "Duplex",
+      "name": "Duplex"
+    },
+    {
+      "id": "OTCConferenceCenter",
+      "name": "OTC Conference Center"
+    },
+    {
+      "id": "schependomlaan",
+      "name": "Schependomlaan"
+    },
+    {
+      "id": "WestRiversideHospital",
+      "name": "West Riverside Hospital"
+    }
+  ]
+}

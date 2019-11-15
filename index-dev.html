@@ -317,7 +317,9 @@
         space: "world"
     });
 
-    const server = new Server({});
+    const server = new Server({
+        dataDir: "./data/"
+    });
 
     const viewerUI = new ViewerUI(server, viewer, {
         modelsPanelId: "models-list",
@@ -329,6 +331,10 @@
         containerId: "canvasContainer",
         issuesPanelId: "issues-list"
     });
+
+    // viewerUI.loadProject("duplex");
+     viewerUI.loadProject("WestRiversideHospital");
+  //  viewerUI.loadProject("schependomlaan");
 
 
 </script>

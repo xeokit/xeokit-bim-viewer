@@ -1,129 +1,66 @@
 import {utils} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/utils.js";
 
+/**
+ * Default server client which loads content via HTTP from the file system.
+ */
 class Server {
 
-    constructor() {
-
-        this._modelsIndex = [
-            {
-                id: "Duplex",
-                name: "Duplex",
-                src: "./data/models/xkt/duplex/duplex.xkt",
-                metaModelSrc: "./data/metaModels/duplex/metaModel.json"
-            },
-            {
-                id: "OTCConferenceCenter",
-                name: "OTC Conference Center",
-                src: "./data/models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
-                metaModelSrc: "./data/metaModels/OTCConferenceCenter/metaModel.json"
-            },
-            {
-                id: "schependomlaan",
-                name: "Schependomlaan",
-                src: "./data/models/xkt/schependomlaan/schependomlaan.xkt",
-                metaModelSrc: "./data/metaModels/schependomlaan/metaModel.json"
-            },
-            {
-                id: "HospitalStructure",
-                name: "Hospital Structure",
-                src: "./data/models/xkt/WestRiverSideHospital/structure.xkt",
-                metaModelSrc: "./data/metaModels/WestRiverSideHospital/structure.json"
-            },
-            {
-                id: "HospitalElectrical",
-                name: "Hospital Electrical",
-                src: "./data/models/xkt/WestRiverSideHospital/electrical.xkt",
-                metaModelSrc: "data/metaModels/WestRiverSideHospital/electrical.json"
-            },
-            {
-                id: "HospitalSprinklers",
-                name: "Hospital Sprinklers",
-                src: "./data/models/xkt/WestRiverSideHospital/sprinklers.xkt",
-                metaModelSrc: "./data/metaModels/WestRiverSideHospital/sprinklers.json"
-            },
-            {
-                id: "HospitalPlumbing",
-                name: "Hospital Plumbing",
-                src: "./data/models/xkt/WestRiverSideHospital/plumbing.xkt",
-                metaModelSrc: "./data/metaModels/WestRiverSideHospital/plumbing.json"
-            },
-            {
-                id: "HospitalFireAlarms",
-                name: "Hospital Fire Alarms",
-                src: "./data/models/xkt/WestRiverSideHospital/fireAlarms.xkt",
-                metaModelSrc: "./data/metaModels/WestRiverSideHospital/fireAlarms.json"
-            }
-        ];
-
-        this._viewpointsIndex = [
-            {
-                id: "viewpoint1"
-            },
-            {
-                id: "viewpoint2"
-            }
-        ];
+    /**
+     *
+     * @param cfg
+     * @param.cfg.dataDir Base directory for content.
+     */
+    constructor(cfg = {}) {
+        this._dataDir = cfg.dataDir || "";
     }
 
-    getModels(params, done, error) {
-       done(this._modelsIndex);
+    /**
+     * Gets the manifest of all projects.
+     * @param done
+     * @param error
+     */
+    getProjects(done, error) {
+        const url = this._dataDir + "/projects/index.json";
+        console.log("Loading database manifest: " + url);
+        utils.loadJSON(url, done, error);
     }
 
-    getModelGeometry(modelId, done, error) {
-        const modelInfo = this._findModel(modelId);
-        if (!modelInfo) {
-            error("Model not found: " + modelId);
-            return;
-        }
-        utils.loadArraybuffer(modelInfo.src, (data) => {
-            done(data);
-        }, (err) => {
-            error(err);
-        });
+    /**
+     * Gets a manifest for a project.
+     * @param projectId
+     * @param done
+     * @param error
+     */
+    getProject(projectId, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/index.json";
+        console.log("Loading project manifest: " + url);
+        utils.loadJSON(url, done, error);
     }
 
-    _findModel(modelId) {
-        for (var i = 0, len = this._modelsIndex.length; i < len; i++) {
-            if (this._modelsIndex[i].id === modelId) {
-                return this._modelsIndex[i];
-            }
-        }
+    /**
+     * Gets metadata for a model within a project.
+     * @param projectId
+     * @param modelId
+     * @param done
+     * @param error
+     */
+    getMetadata(projectId, modelId, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/metadata.json";
+        console.log("Loading model metadata: " + url);
+        utils.loadJSON(url, done, error);
     }
 
-    getModelMetadata(modelId, done, error) {
-        const modelInfo = this._findModel(modelId);
-        if (!modelInfo) {
-            error("Model not found: " + modelId);
-            return;
-        }
-        utils.loadJSON(modelInfo.metaModelSrc, (data) => {
-            done(data);
-        }, (err) => {
-            error(err);
-        });
-    }
-
-    getViewpointsIndex(modelId, done, error) {
-        const modelInfo = this._findModel(modelId);
-        if (!modelInfo) {
-            error("Model not found: " + modelId);
-            return;
-        }
-        done(this._viewpointsIndex);
-    }
-
-    saveViewpoint(modelId, viewpointId, viewpoint) {
-    }
-
-    getViewpoint(viewpointId, done, error) {
-        utils.loadJSON("./data/bcf/" + viewpointId + ".json", (data) => {
-            done(data);
-        }, (err) => {
-            error(err);
-        });
-    }
-
-    deleteViewpoint(viewpointId) {
+    /**
+     * Gets geometry for a model within a project.
+     * @param projectId
+     * @param modelId
+     * @param done
+     * @param error
+     */
+    getGeometry(projectId, modelId, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/geometry.xkt";
+        console.log("Loading model geometry: " + url);
+        utils.loadArraybuffer(url, done, error);
     }
 }
 

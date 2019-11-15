@@ -1,0 +1,10 @@
+{
+  "id": "OTCConferenceCenter",
+  "name": "OTC Conference Center",
+  "models": [
+    {
+      "id": "design",
+      "name": "OTC Conference Center Design"
+    }
+  ]
+}

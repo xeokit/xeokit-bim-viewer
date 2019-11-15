@@ -1,4 +1,3 @@
-
 import {Controller} from "../Controller.js";
 import {XKTLoaderPlugin} from "/node_modules/@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
 import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
@@ -18,41 +17,42 @@ class Models extends Controller {
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
-        this._repaint();
-
+        this._projectId = null;
         $("#unloadAllModels").on('click', (event) => {
             this.unloadModels();
             event.preventDefault();
         });
     }
 
-    _repaint() {
+    _loadProject(projectId) {
         const params = {};
-        this.server.getModels(params, (modelsInfo) => {
-        var h = "";
-        for (var i = 0, len = modelsInfo.length; i < len; i++) {
-            const modelInfo = modelsInfo[i];
-            this._modelsInfo[modelInfo.id] = modelInfo;
-            h += "<div class='form-check'>";
-            h += "<label class='form-check-label'>";
-            h += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
-            h += "</label>";
-            h += "</div>";
-
-        }
-        this._element.innerHTML = h;
-        for (var i = 0, len = modelsInfo.length; i < len; i++) {
-            const modelInfo = modelsInfo[i];
-            const modelId = modelInfo.id;
-            const checkBox = $("#" + modelId);
-            checkBox.on('click', () => {
-                if (checkBox.prop("checked")) {
-                    this._loadModel(modelId);
-                } else {
-                    this._unloadModel(modelInfo.id);
-                }
-            });
-        }
+        this.server.getProject(projectId, (projectInfo) => {
+            this._projectId = projectId;
+            var h = "";
+            const modelsInfo = projectInfo.models || [];
+            this._modelsInfo = {};
+            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+                const modelInfo = modelsInfo[i];
+                this._modelsInfo[modelInfo.id] = modelInfo;
+                h += "<div class='form-check'>";
+                h += "<label class='form-check-label'>";
+                h += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
+                h += "</label>";
+                h += "</div>";
+            }
+            this._element.innerHTML = h;
+            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+                const modelInfo = modelsInfo[i];
+                const modelId = modelInfo.id;
+                const checkBox = $("#" + modelId);
+                checkBox.on('click', () => {
+                    if (checkBox.prop("checked")) {
+                        this._loadModel(modelId);
+                    } else {
+                        this._unloadModel(modelInfo.id);
+                    }
+                });
+            }
         }, (errMsg) => {
             this.error(errMsg);
         });
@@ -64,9 +64,9 @@ class Models extends Controller {
             return;
         }
         this.viewerUI.busyDialog.show("Loading model '" + modelInfo.name + "'");
-        this.server.getModelMetadata(modelId,
+        this.server.getMetadata(this._projectId, modelId,
             (json) => {
-                this.server.getModelGeometry(modelId,
+                this.server.getGeometry(this._projectId, modelId,
                     (arraybuffer) => {
                         const model = this._xktLoader.load({
                             id: modelId,

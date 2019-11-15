@@ -40,10 +40,25 @@ class ViewerUI extends Controller {
         });
     }
 
+    /**
+     * Loads a project into the viewer.
+     * Unloads any project already loaded.
+     * @param projectId
+     */
+    loadProject(projectId) {
+        this.explorer._loadProject(projectId);
+    }
+
+    /**
+     * Saves viewer state to a BCF viewpoint.
+     */
     saveBCFViewpoint() {
 
     }
 
+    /**
+     * Sets viewer state to a BCF viewpoint.
+     */
     loadBCFViewpoint() {
 
     }

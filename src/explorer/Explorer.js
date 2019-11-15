@@ -1,9 +1,9 @@
 import {Controller} from "../Controller.js";
-import {Classes} from "./Classes.js";
-import {Objects} from "./Objects.js";
 import {Models} from "./Models.js";
-import {Issues} from "./Issues.js";
+import {Objects} from "./Objects.js";
+import {Classes} from "./Classes.js";
 import {Storeys} from "./Storeys.js";
+import {Issues} from "./Issues.js";
 
 /**
  * Manages the explorer trees.
@@ -117,6 +117,10 @@ class Explorer extends Controller {
 
         this.objects.unmuteEvents();
         this.classes.unmuteEvents();
+    }
+
+    _loadProject(projectId) {
+        this.models._loadProject(projectId);
     }
 
     setToolbarEnabled(enabled) {

@@ -1,0 +1,26 @@
+{
+  "id": "WestRiversideHospital",
+  "name": "West Riverside Hospital",
+  "models": [
+    {
+      "id": "structure",
+      "name": "Hospital Structure"
+    },
+    {
+      "id": "electrical",
+      "name": "Hospital Electrical"
+    },
+    {
+      "id": "sprinklers",
+      "name": "Hospital Sprinklers"
+    },
+    {
+      "id": "plumbing",
+      "name": "Hospital Plumbing"
+    },
+    {
+      "id": "fireAlarms",
+      "name": "Hospital Fire Alarms"
+    }
+  ]
+}
