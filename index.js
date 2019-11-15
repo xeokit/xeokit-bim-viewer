@@ -1,4 +1,3 @@
-
 import {Server} from "./src/server/Server.js";
 import {ViewerUI} from "./src/ViewerUI.js";
 import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
@@ -59,7 +58,9 @@ new DirLight(scene, {
     space: "world"
 });
 
-const server = new Server({});
+const server = new Server({
+    dataDir: "./data/"
+});
 
 const viewerUI = new ViewerUI(server, viewer, {
     modelsPanelId: "models-list",
@@ -72,3 +73,6 @@ const viewerUI = new ViewerUI(server, viewer, {
     issuesPanelId: "issues-list"
 });
 
+// viewerUI.loadProject("duplex");
+viewerUI.loadProject("WestRiversideHospital");
+//  viewerUI.loadProject("schependomlaan");

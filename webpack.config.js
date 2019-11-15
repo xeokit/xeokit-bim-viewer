@@ -4,6 +4,11 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
     entry: './index.js',
+    resolve: {
+        alias: {
+            '/node_modules/@xeokit': "@xeokit"
+        }
+    },
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
