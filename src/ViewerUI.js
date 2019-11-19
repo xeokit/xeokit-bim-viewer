@@ -228,11 +228,6 @@ class ViewerUI extends Controller {
         this.ortho.setActive(false);
         this.navCube.setActive(true);
 
-        // $('.xeokit-toggleExplorer').on('click', function () {
-        //     $('.toggleExplorer').toggleClass('active');
-        //     $('.sidebar').toggleClass('active');
-        // });
-
         explorerElement.find(".xeokit-showAllObjects").on('click', (event) => {
             this._showAllObjects();
             event.preventDefault();
