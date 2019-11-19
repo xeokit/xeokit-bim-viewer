@@ -5,7 +5,7 @@ class BusyDialog extends Controller {
     constructor(parent, cfg = {}) {
         super(parent, cfg);
 
-        this._dialog = $(`<div id="loadingDialog" class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        this._dialog = $(`<div class="loadingDialog modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body" style="text-align:center;">
@@ -14,7 +14,7 @@ class BusyDialog extends Controller {
 
                 <br>
                 <div class="modal-header" style="display:inline-block; border: 0;">
-                    <h5 class="modal-title" id="exampleModalLabel"><span id="loadingDialogModelName"></span>&quot
+                    <h5 class="modal-title"><span class="xeokit-model-message"></span>
                     </h5>
                 </div>
             </div>
@@ -26,12 +26,12 @@ class BusyDialog extends Controller {
     }
 
     show(message) {
-        $('#loadingDialogModelName').text(message);
-        $('#loadingDialog').modal('show');
+        this._dialog.find('.xeokit-model-message').text(message);
+        this._dialog.modal('show');
     }
 
     hide() {
-        $('#loadingDialog').modal('hide');
+        this._dialog.modal('hide');
     }
 
     destroy() {

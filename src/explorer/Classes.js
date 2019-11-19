@@ -1,22 +1,34 @@
 import {Controller} from "../Controller.js";
 
-
-/**
- * Manages the classes menu.
- *
- * Located at {@link Explorer#classes}.
- */
 class Classes extends Controller {
 
-    /** @private */
     constructor(parent, cfg = {}) {
 
         super(parent);
 
+        if (!cfg.classesTabElement) {
+            throw "Missing config: classesTabElement";
+        }
+
+        if (!cfg.showAllClassesButtonElement) {
+            throw "Missing config: showAllClassesButtonElement";
+        }
+
+        if (!cfg.hideAllClassesButtonElement) {
+            throw "Missing config: hideAllClassesButtonElement";
+        }
+
+        if (!cfg.classesElement) {
+            throw "Missing config: classesElement";
+        }
+
+        this._classesTabElement = cfg.classesTabElement;
+        this._showAllClassesButtonElement = cfg.showAllClassesButtonElement;
+        this._hideAllClassesButtonElement = cfg.hideAllClassesButtonElement;
+        this._classesElement = cfg.classesElement;
+
         this._muteCheckBoxEvents = false;
         this._muteEntityEvents = false;
-
-        this._element = document.getElementById(cfg.classesTreePanelId);
 
         this._data = {};
 
@@ -90,7 +102,7 @@ class Classes extends Controller {
             }
         }
         var t1 = performance.now();
-        console.log("Classes._createData() " + (t1 - t0));
+        // console.log("Classes._createData() " + (t1 - t0));
     }
 
     _repaint() {
@@ -110,12 +122,11 @@ class Classes extends Controller {
             html.push("</label>");
             html.push("</div>");
         }
-        this._element.innerHTML = html.join("");
+        this._classesElement.html(html.join(""));
         for (var type in this._data) {
             const classData = this._data[type];
             const checkBox = $("#" + type);
-            const _type = type;
-            const objectIds = this.viewer.metaScene.getObjectIDsByType(_type);
+            const objectIds = this.viewer.metaScene.getObjectIDsByType(type);
             checkBox.on('click', () => {
                 if (this._muteCheckBoxEvents) {
                     return;
@@ -133,15 +144,15 @@ class Classes extends Controller {
         }
     }
 
-    setToolbarEnabled(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
-            $("#classes-tab").addClass("disabled");
-            $("#showAllClasses").addClass("disabled");
-            $("#hideAllClasses").addClass("disabled");
+            this._classesTabElement.addClass("disabled");
+            this._showAllClassesButtonElement.addClass("disabled");
+            this._hideAllClassesButtonElement.addClass("disabled");
         } else {
-            $("#classes-tab").removeClass("disabled");
-            $("#showAllClasses").removeClass("disabled");
-            $("#hideAllClasses").removeClass("disabled");
+            this._classesTabElement.removeClass("disabled");
+            this._showAllClassesButtonElement.removeClass("disabled");
+            this._hideAllClassesButtonElement.removeClass("disabled");
         }
     }
     muteEvents() {

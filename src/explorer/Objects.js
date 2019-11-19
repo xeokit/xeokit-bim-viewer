@@ -1,20 +1,34 @@
 import {Controller} from "../Controller.js";
 
-
-/**
- * Manages the objects tree.
- *
- * Located at {@link Explorer#objects}.
- */
 class Objects extends Controller {
 
-    /** @private */
     constructor(parent, cfg = {}) {
 
         super(parent);
 
-        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
+        if (!cfg.objectsTabElement) {
+            throw "Missing config: objectsTabElement";
+        }
 
+        if (!cfg.showAllObjectsButtonElement) {
+            throw "Missing config: showAllObjectsButtonElement";
+        }
+
+        if (!cfg.hideAllObjectsButtonElement) {
+            throw "Missing config: hideAllObjectsButtonElement";
+        }
+
+        if (!cfg.objectsElement) {
+            throw "Missing config: objectsElement";
+        }
+
+        this._objectsTabElement = cfg.objectsTabElement;
+        this._showAllObjectsButtonElement = cfg.showAllObjectsButtonElement;
+        this._hideAllObjectsButtonElement = cfg.hideAllObjectsButtonElement;
+
+        const objectsElement = cfg.objectsElement;
+
+        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
 
@@ -31,7 +45,7 @@ class Objects extends Controller {
         });
 
         new InspireTreeDOM(this._tree, {
-            target: document.getElementById(cfg.objectsTreePanelId)
+            target: objectsElement.get(0)
         });
 
         this._tree.on("model.loaded", () => {
@@ -174,15 +188,15 @@ class Objects extends Controller {
         }
     }
 
-    setToolbarEnabled(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
-            $("#objects-tab").addClass("disabled");
-            $("#showAllObjects").addClass("disabled");
-            $("#hideAllObjects").addClass("disabled");
+            this._objectsTabElement.addClass("disabled");
+            this._showAllObjectsButtonElement.addClass("disabled");
+            this._hideAllObjectsButtonElement.addClass("disabled");
         } else {
-            $("#objects-tab").removeClass("disabled");
-            $("#showAllObjects").removeClass("disabled");
-            $("#hideAllObjects").removeClass("disabled");
+            this._objectsTabElement.removeClass("disabled");
+            this._showAllObjectsButtonElement.removeClass("disabled");
+            this._hideAllObjectsButtonElement.removeClass("disabled");
         }
     }
 

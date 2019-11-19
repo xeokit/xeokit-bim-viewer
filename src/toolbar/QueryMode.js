@@ -6,25 +6,40 @@ function closeEnough(p, q) {
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-/**
- * Controls click-to-query-element mode.
- *
- * Located at {@link Toolbar#query}.
- */
 class QueryMode extends Controller {
 
-    /** @private */
-    constructor(parent) {
+    constructor(parent, cfg) {
 
         super(parent);
 
+        if (!cfg.buttonElement) {
+            throw "Missing config: buttonElement";
+        }
+
+        const buttonElement = cfg.buttonElement;
+
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                buttonElement.addClass("disabled");
+            } else {
+                buttonElement.removeClass("disabled");
+            }
+        });
+
         this.on("active", (active) => {
-
             if (active) {
+                buttonElement.addClass("active");
+            } else {
+                buttonElement.removeClass("active");
+            }
+        });
 
+        this.on("active", (active) => {
+            const viewer = this.viewer;
+            const cameraControl = viewer.cameraControl;
+            if (active) {
                 var entity = null;
-
-                this._onHover = this.viewer.cameraControl.on("hover", (e) => {
+                this._onHover = cameraControl.on("hover", (e) => {
                     if (entity) {
                         entity.highlighted = false;
                         entity = null;
@@ -32,54 +47,49 @@ class QueryMode extends Controller {
                     entity = e.entity;
                     entity.highlighted = true;
                 });
-
-                this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+                this._onHoverOff = cameraControl.on("hoverOff", (e) => {
                     if (entity) {
                         entity.highlighted = false;
                         entity = null;
                     }
                 });
-
                 const lastCoords = math.vec2();
-
-                this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+                this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
                     lastCoords[0] = coords[0];
                     lastCoords[1] = coords[1];
                 });
-
-                this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+                this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
                     if (entity) {
                         if (!closeEnough(lastCoords, coords)) {
                             entity = null;
                             return;
                         }
-                        alert(entity.id);
+                        this.fire("queryPicked", entity.id);
                         entity = null;
+                    } else {
+                        this.fire("queryNotPicked", false);
                     }
                 });
-
-                $('#sidebar2').addClass('active');
-
             } else {
-
-                this.viewer.cameraControl.off(this._onHover);
-                this.viewer.cameraControl.off(this._onHoverOff);
-                this.viewer.cameraControl.off(this._onMousedown);
-                this.viewer.cameraControl.off(this._onMouseup);
-
-                $('#sidebar2').removeClass('active');
+                cameraControl.off(this._onHover);
+                cameraControl.off(this._onHoverOff);
+                cameraControl.off(this._onMousedown);
+                cameraControl.off(this._onMouseup);
             }
+        });
+
+        buttonElement.on('click', (event) => {
+            if (!this.getEnabled()) {
+                return;
+            }
+            const active = this.getActive();
+            this.setActive(!active);
+            event.preventDefault();
         });
 
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
         });
-    }
-
-    /** @private */
-    destroy() {
-        this.setActive(false);
-        super.destroy();
     }
 }
 

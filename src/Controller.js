@@ -12,9 +12,7 @@ class Controller {
     constructor(parent, cfg, server, viewer) {
 
         this.viewerUI = (parent ? (parent.viewerUI || parent) : this);
-
         this.server = parent ? parent.server : server;
-
         this.viewer = parent ? parent.viewer : viewer;
 
         this._children = [];
@@ -152,16 +150,6 @@ class Controller {
     }
 
     /**
-     * Returns ````true```` if there exist any subscribers to the given event on this Controller.
-     *
-     * @param {String} event The event
-     * @return {Boolean} True if there are any subscribers to the given event on this component.
-     */
-    hasSubs(event) {
-        return (this._eventSubs && !!this._eventSubs[event]);
-    }
-
-    /**
      * Logs a console debugging message for this Controller.
      *
      * The console message will have this format: *````[LOG] [<component type> <component id>: <message>````*
@@ -202,35 +190,26 @@ class Controller {
     }
 
     _mutexActivation(controllers) {
-
-        const ignore = [];
+        const mutedControllers = [];
         const numControllers = controllers.length;
-
         for (let i = 0; i < numControllers; i++) {
-            ignore[i] = false;
+            mutedControllers[i] = false;
         }
-
         for (let i = 0; i < numControllers; i++) {
-
             const controller = controllers[i];
-
             controller.on("active", (function () {
-
                 const _i = i;
-
                 return function (active) {
-
-                    if (!active || ignore[_i]) {
+                    if (!active || mutedControllers[_i]) {
                         return;
                     }
-
                     for (let j = 0; j < numControllers; j++) {
                         if (j === _i) {
                             continue;
                         }
-                        ignore[j] = true;
+                        mutedControllers[j] = true;
                         controllers[j].setActive(false);
-                        ignore[j] = false;
+                        mutedControllers[j] = false;
                     }
                 };
             })());
@@ -287,23 +266,19 @@ class Controller {
      * Destroys this Controller.
      */
     destroy() {
-
         if (this.destroyed) {
             return;
         }
-
         /**
          * Fired when this Controller is destroyed.
          * @event destroyed
          */
-        this.fire("destroyed", this.destroyed = true); 
-        
+        this.fire("destroyed", this.destroyed = true);
         this._subIdMap = null;
         this._subIdEvents = null;
         this._eventSubs = null;
         this._events = null;
         this._eventCallDepth = 0;
-
         for (let i = 0, len = this._children.length; i < len; i++) {
             this._children.destroy();
         }

@@ -222,7 +222,7 @@ class Storeys extends Controller {
         this.fire("storeyOpened", this._openStoreyId);
     }
 
-    setToolbarEnabled(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
             $("#storeys-tab").addClass("disabled");
            } else {

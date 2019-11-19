@@ -1,17 +1,33 @@
 import {Controller} from "../Controller.js";
 
-/**
- * Controls orthographic mode for a xeokit {@link Camera}.
- *
- * Located at {@link Toolbar#ortho}.
- */
 class OrthoMode extends Controller {
 
-    /** @private */
     constructor(parent, cfg) {
 
         super(parent, cfg);
 
+        if (!cfg.buttonElement) {
+            throw "Missing config: buttonElement";
+        }
+
+        const buttonElement = cfg.buttonElement;
+
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                buttonElement.addClass("disabled");
+            } else {
+                buttonElement.removeClass("disabled");
+            }
+        });
+
+        this.on("active", (active) => {
+            if (active) {
+                buttonElement.addClass("active");
+            } else {
+                buttonElement.removeClass("active");
+            }
+        });
+        
         this.on("active", (active) => {
             if (active) {
                 this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, () => {});
@@ -20,22 +36,14 @@ class OrthoMode extends Controller {
             }
             this.viewer.cameraControl.planView = false;
         });
-
-        this.viewerUI.on("reset", ()=>{
-            this.setActive(false);
-        });
-
-        $("#ortho").on('click', (event) => {
+        
+        buttonElement.on('click', (event) => {
             this.setActive(!this.getActive());
             event.preventDefault();
         });
 
-        this.on("enabled", (enabled) => {
-            if (!enabled) {
-                $("#ortho").addClass("disabled");
-            } else {
-                $("#ortho").removeClass("disabled");
-            }
+        this.viewerUI.on("reset", ()=>{
+            this.setActive(false);
         });
     }
 }

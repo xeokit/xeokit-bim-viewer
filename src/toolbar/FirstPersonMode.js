@@ -1,64 +1,63 @@
 import {Controller} from "../Controller.js";
 
-/**
- * Controls first-person mode.
- *
- * Located at {@link Toolbar#firstPerson}.
- */
 class FirstPersonMode extends Controller {
 
-    /** @private */
     constructor(parent, cfg) {
 
         super(parent, cfg);
 
+        if (!cfg.buttonElement) {
+            throw "Missing config: buttonElement";
+        }
+
+        const buttonElement = cfg.buttonElement;
         const cameraControl = this.viewer.cameraControl;
+
         cameraControl.firstPerson = false;
         cameraControl.pivoting = true;
         cameraControl.panToPointer = true;
 
-       // this._cursor = new FirstPersonCursor(this.viewer.scene);
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                buttonElement.addClass("disabled");
+            } else {
+                buttonElement.removeClass("disabled");
+            }
+        });
 
         this.on("active", (active) => {
-
             if (active) {
+                buttonElement.addClass("active");
+            } else {
+                buttonElement.removeClass("active");
+            }
+        });
 
-              //  this.viewer.scene.canvas.canvas.style.cursor = "default";
-
-                const cameraControl = this.viewer.cameraControl;
+        this.on("active", (active) => {
+            if (active) {
                 cameraControl.firstPerson = true;
                 cameraControl.panToPointer = true;
                 cameraControl.pivoting = false;
-
-                // this._onHoverSurface = this.viewer.cameraControl.on("hoverSurface", (e) => {
-                //    this._cursor.show(e);
-                // });
-                //
-                // this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
-                //     this._cursor.hide(e);
-                // });
-
             } else {
-
-              //  this.viewer.scene.canvas.canvas.style.cursor = "default";
-
-                const cameraControl = this.viewer.cameraControl;
                 cameraControl.firstPerson = false;
                 cameraControl.pivoting = true;
                 cameraControl.panToPointer = true;
             }
-
             this.viewer.cameraControl.planView = false;
+        });
+
+        buttonElement.on('click', (event) => {
+            if (!this.getEnabled()) {
+                return;
+            }
+            const active = this.getActive();
+            this.setActive(!active);
+            event.preventDefault();
         });
 
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
         });
-    }
-
-    destroy() {
-        super.destroy();
-        // this._cursor.destroy();
     }
 }
 

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>BIM Viewer built on xeokit and Bootstrap</title>
+    <title>Minimal BIM Viewer built on xeokit SDK and Bootstrap</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
@@ -20,234 +20,113 @@
     <script src="lib/inspire-tree/inspire-tree.min.js"></script>
     <script src="lib/inspire-tree/inspire-tree-dom-min.js"></script>
 
+    <style>
+
+        #myWrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+            z-index: 10000;
+        }
+
+        #myExplorer {
+            min-width: 400px;
+            max-width: 400px;
+            height: 100%;
+            margin-left: -400px;
+            background: #7386D5;
+            color: #fff;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        #myExplorer.active {
+            margin-left: 0;
+        }
+
+        #myExplorer .sidebar-header {
+            padding: 0;
+            background: #6d7fcc;
+        }
+
+        #myExplorer ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #myExplorer ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #myExplorer ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        #myExplorer ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+
+        #myExplorer ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: #6d7fcc;
+        }
+
+        #myContent {
+            width: auto;
+            height: auto;
+        }
+
+        #myToolbar {
+            align-items: center;
+            justify-content: center;
+            padding: 0px;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+            /*min-height: 100vh;*/
+            background: #ebebeb;
+            cursor: default;
+            pointer-events: all;
+            margin: 0;
+        }
+
+        #myNavCubeCanvas {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            top: 50px;
+            right: 50px;
+            z-index: 200000;
+        }
+
+        #mySectionPlanesOverviewCanvas {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            top: 300px;
+            right: 50px;
+            z-index: 200000;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-
-<div class="wrapper">
-
-    <!-- Explorer trees -->
-
-    <nav id="sidebar" class="active">
-        <div class="sidebar-header">
-            <ul class="nav nav-tabs" id="treeTabs" role="tablist">
-
-                <!-- Models tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link active" id="models-tab" data-toggle="tab" href="#models" role="tab"
-                       aria-controls="models" aria-selected="true">Models</a>
-                </li>
-
-                <!-- Objects tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link disabled" id="objects-tab" data-toggle="tab" href="#objects" role="tab"
-                       aria-controls="objects" aria-selected="false">Objects</a>
-                </li>
-
-                <!-- Classes tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link disabled" id="classes-tab" data-toggle="tab" href="#classes" role="tab"
-                       aria-controls="classes" aria-selected="false">Classes</a>
-                </li>
-
-                <!-- Storeys tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link disabled" id="storeys-tab" data-toggle="tab" href="#storeys" role="tab"
-                       aria-controls="storeys" aria-selected="false">Plans</a>
-                </li>
-
-                <!-- Issues tab -->
-
-                <li class="nav-item">
-                    <a class="nav-link disabled " id="issues-tab" data-toggle="tab" href="#issues" role="tab"
-                       aria-controls="issues" aria-selected="false">Issues</a>
-                </li>
-
-            </ul>
-
-            <div class="tab-content" id="myTabContent">
-
-                <!-- Models tree -->
-
-                <div class="tab-pane fade show active" id="models" role="tabpanel" aria-labelledby="models-tab">
-
-                    <!-- Unload All button -->
-
-                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
-                         aria-label="Toolbar with button groups">
-                        <button id="unloadAllModels" type="button" class="btn btn-outline-light disabled">
-                            Unload all
-                        </button>
-                    </div>
-
-                    <div id="models-list"></div>
-                </div>
-
-                <!-- Objects tree -->
-
-                <div class="tab-pane fade" id="objects" role="tabpanel" aria-labelledby="objects-tab">
-
-                    <!-- Show All and Hide All buttons -->
-
-                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
-                         aria-label="Toolbar with button groups">
-                        <button id="showAllObjects" type="button" class="btn btn-outline-light disabled">
-                            Show all
-                        </button>
-                        <button id="hideAllObjects" type="button" class="btn btn-outline-light disabled">
-                            Hide all
-                        </button>
-                    </div>
-
-                    <div id="objects-tree" class="tree-panel"></div>
-                </div>
-
-                <!-- Classes tree -->
-
-                <div class="tab-pane fade" id="classes" role="tabpanel" aria-labelledby="classes-tab">
-
-                    <!-- Show All and Hide All buttons -->
-
-                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
-                         aria-label="Toolbar with button groups">
-                        <button id="showAllClasses" type="button" class="btn btn-outline-light disabled">
-                            Show all
-                        </button>
-                        <button id="hideAllClasses" type="button" class="btn btn-outline-light disabled">
-                            Hide all
-                        </button>
-                    </div>
-
-                    <div id="classes-tree" class="tree-panel"></div>
-                </div>
-
-
-                <!-- Issues list -->
-
-                <div class="tab-pane fade show" id="issues" role="tabpanel" aria-labelledby="models-tab">
-
-                    <!-- Create Issue and Clear Issues buttons -->
-
-                    <div class="explorer-toolbar btn-toolbar" role="toolbar"
-                         aria-label="Toolbar with button groups">
-                        <button id="createIssue" type="button" class="btn btn-outline-light disabled">
-                            Create
-                        </button>
-                        <button id="clearIssues" type="button" class="btn btn-outline-light disabled">
-                            Clear
-                        </button>
-                    </div>
-
-                    <div id="issues-list"></div>
-                </div>
-
-                <!-- Storeys -->
-
-                <div class="tab-pane fade" id="storeys" role="tabpanel" aria-labelledby="storeys-tab">
-                    <div id="storeys-menu" class="tree-panel"></div>
-                </div>
-
-            </div>
-        </div>
-    </nav>
-
-
-    <div id="content">
-
-        <!-- Toolbar -->
-
-        <div id="toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-
-            <!-- Explorer open/close button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button id="toggleExplorer" type="button" class="btn btn-outline-primary fa fa-sitemap  fa-2x active"
-                        data-toggle="tooltip" data-placement="top" title="Explorer"></button>
-            </div>
-
-            <!-- Reset button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Second group">
-                <button id="reset" type="button" class="btn btn-outline-primary fa fa-home fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Reset"></button>
-            </div>
-
-            <!-- Fit button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Third group">
-                <button id="fit" type="button" class="btn btn-outline-primary fa fa-crop fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Fit view"></button>
-            </div>
-
-            <!-- First Person mode button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Fourth group">
-                <button id="firstPerson" type="button" class="btn btn-outline-primary fa fa-male  fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="First person mode"></button>
-            </div>
-
-            <!-- Ortho mode button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Fifth group">
-                <button id="ortho" type="button" class="btn btn-outline-primary fa fa-cube  fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Orthographic mode"></button>
-            </div>
-
-            <!-- Tools button group -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Sixth group">
-
-                <!-- Hide tool button -->
-
-                <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Hide object tool"></button>
-
-                <!-- Select tool button -->
-
-                <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Select object tool"></button>
-
-                <!-- Slice tool button -->
-
-                <button id="section" type="button" class="btn btn-outline-primary fa fa-cut fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Slice tool"></button>
-
-                <!-- Query tool button -->
-
-                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Query object tool"></button>
-
-            </div>
-
-        </div>
-
-        <!--        <div id="canvasContainer" style="overflow-y:hidden; height:100%">-->
+<div id="myWrapper">
+    <nav id="myExplorer" class="active"></nav>
+    <div id="myContent">
+        <div id="myToolbar"></div>
         <canvas id="myCanvas"></canvas>
-        <!--        </div>-->
-
     </div>
-
-    <!-- Info panel -->
-
-    <nav id="sidebar2">
-
-        <div class="sidebar-header">
-
-            <!-- Properties panel -->
-
-            <p>Properties</p>
-
-            <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
-                <div id="properties-panel" class="tree-panel"></div>
-            </div>
-
-        </div>
-    </nav>
 </div>
 
 <canvas id="myNavCubeCanvas"></canvas>
@@ -259,83 +138,32 @@
 
     import {Server} from "./src/server/Server.js";
     import {ViewerUI} from "./src/ViewerUI.js";
-    import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
-    import {AmbientLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
-    import {DirLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
-
-    const viewer = new Viewer({
-        canvasId: "myCanvas",
-        transparent: true
-    });
-
-    const scene = viewer.scene;
-    const camera = scene.camera;
-
-    camera.eye = [10.45, 17.38, -98.31];
-    camera.look = [43.09, 0.5, -26.76];
-    camera.up = [0.06, 0.96, 0.16];
-
-    scene.xrayMaterial.fill = false;
-    scene.xrayMaterial.fillColor = [0, 0, 0];
-    scene.xrayMaterial.fillAlpha = 0.1;
-    scene.xrayMaterial.edges = true;
-    scene.xrayMaterial.edgeColor = [0, 0, 0];
-    scene.xrayMaterial.edgeAlpha = 0.3;
-
-    scene.highlightMaterial.edges = true;
-    scene.highlightMaterial.edgeColor = [.5, .5, 0];
-    scene.highlightMaterial.edgeAlpha = 1.0;
-    scene.highlightMaterial.fill = true;
-    scene.highlightMaterial.fillAlpha = 0.1;
-    scene.highlightMaterial.fillColor = [1, 1, 0];
-
-    scene.clearLights();
-
-    new AmbientLight(scene, {
-        color: [0.3, 0.3, 0.3],
-        intensity: 1.0
-    });
-
-    new DirLight(scene, {
-        dir: [0.8, -0.6, -0.8],
-        color: [1.0, 1.0, 1.0],
-        intensity: 1.0,
-        space: "world"
-    });
-
-    new DirLight(scene, {
-        dir: [-0.8, -0.4, 0.4],
-        color: [1.0, 1.0, 1.0],
-        intensity: 1.0,
-        space: "world"
-    });
-
-    new DirLight(scene, {
-        dir: [0.2, -0.8, 0.8],
-        color: [0.6, 0.6, 0.6],
-        intensity: 1.0,
-        space: "world"
-    });
 
     const server = new Server({
         dataDir: "./data/"
     });
 
-    const viewerUI = new ViewerUI(server, viewer, {
-        modelsPanelId: "models-list",
-        objectsTreePanelId: "objects-tree",
-        classesTreePanelId: "classes-tree",
-        storeysPanelId: "storeys-menu",
-        sectionPlanesOverviewCanvasId: "mySectionPlanesOverviewCanvas",
-        navCubeCanvasId: "myNavCubeCanvas",
-        containerId: "canvasContainer",
-        issuesPanelId: "issues-list"
+    const viewerUI = new ViewerUI(server, {
+        canvasElement: $("#myCanvas"), // WebGL canvas
+        explorerElement: $("#myExplorer"), // Left panel
+        toolbarElement: $("#myToolbar"), // Toolbar
+        navCubeCanvasElement: $("#myNavCubeCanvas"),
+        sectionPlanesOverviewCanvasElement: $("#mySectionPlanesOverviewCanvas"), // Section planes overview canvas
+        queryInfoPanelElement: $("#myQueryInfoPanel") // Query results panel
+    });
+
+    viewerUI.on("queryPicked", (event) => {
+        const entity = event.entity; // Entity
+        const metaObject = event.metaObject; // MetaObject
+        alert(`Query result:\n\nObject ID = ${entity.id}\nIFC type = "${metaObject.type}"`);
     });
 
     // viewerUI.loadProject("duplex");
      viewerUI.loadProject("WestRiversideHospital");
-  //  viewerUI.loadProject("schependomlaan");
+    // viewerUI.loadProject("schependomlaan");
 
+    // For debugging
+    window.viewer = viewerUI.viewer;
 
 </script>
 

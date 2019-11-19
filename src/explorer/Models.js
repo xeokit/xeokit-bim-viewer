@@ -4,43 +4,51 @@ import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.
 
 const tempVec3 = math.vec3();
 
-/**
- * @desc Manages models.
- *
- * Located at {@link Toolbar#models}.
- */
 class Models extends Controller {
 
     constructor(parent, cfg) {
+
         super(parent, cfg);
-        this._element = document.getElementById(cfg.modelsPanelId);
+
+        if (!cfg.modelsTabElement) {
+            throw "Missing config: modelsTabElement";
+        }
+
+        if (!cfg.unloadModelsButtonElement) {
+            throw "Missing config: unloadModelsButtonElement";
+        }
+
+        if (!cfg.modelsElement) {
+            throw "Missing config: modelsElement";
+        }
+
+        this._modelsTabElement = cfg.modelsTabElement;
+        this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
+        this._modelsElement = cfg.modelsElement;
+
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._projectId = null;
-        $("#unloadAllModels").on('click', (event) => {
-            this.unloadModels();
-            event.preventDefault();
-        });
     }
 
     _loadProject(projectId) {
         const params = {};
         this.server.getProject(projectId, (projectInfo) => {
             this._projectId = projectId;
-            var h = "";
+            var html = "";
             const modelsInfo = projectInfo.models || [];
             this._modelsInfo = {};
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
-                h += "<div class='form-check'>";
-                h += "<label class='form-check-label'>";
-                h += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
-                h += "</label>";
-                h += "</div>";
+                html += "<div class='form-check'>";
+                html += "<label class='form-check-label'>";
+                html += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
+                html += "</label>";
+                html += "</div>";
             }
-            this._element.innerHTML = h;
+            this._modelsElement.html(html);
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 const modelId = modelInfo.id;
@@ -126,7 +134,7 @@ class Models extends Controller {
         });
     }
 
-    unloadModels() {
+    _unloadModels() {
         const models = this.viewer.scene.models;
         const modelIds = Object.keys(models);
         for (var i = 0, len = modelIds.length; i < len; i++) {
@@ -139,11 +147,11 @@ class Models extends Controller {
         return this._numModelsLoaded;
     }
 
-    setToolbarEnabled(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
-            $("#unloadAllModels").addClass("disabled");
+            this._unloadModelsButtonElement.addClass("disabled");
         } else {
-            $("#unloadAllModels").removeClass("disabled");
+            this._unloadModelsButtonElement.removeClass("disabled");
         }
     }
 

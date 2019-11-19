@@ -3,21 +3,42 @@ import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.
 
 const tempVec3 = math.vec3();
 
-/**
- * Flies the camera to show the entire model in view, from the current viewing angle.
- *
- * Located at {@link Toolbar#fit}.
- */
 class FitAction extends Controller {
 
-    /** @private */
     constructor(parent, cfg={}) {
+
         super(parent, cfg);
+
+        if (!cfg.buttonElement) {
+            throw "Missing config: buttonElement";
+        }
+
+        const buttonElement = cfg.buttonElement;
+
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                buttonElement.addClass("disabled");
+            } else {
+                buttonElement.removeClass("disabled");
+            }
+        });
+
+        this.on("active", (active) => {
+            if (active) {
+                buttonElement.addClass("active");
+            } else {
+                buttonElement.removeClass("active");
+            }
+        });
+
+        buttonElement.on('click', (event) => {
+            if (this.getEnabled()) {
+                this.fit();
+            }
+            event.preventDefault();
+        });
     }
 
-    /**
-     * Flies the camera to show the entire model in view, from the current viewing angle.
-     */
     fit() {
         const scene = this.viewer.scene;
         const aabb = scene.getAABB(scene.visibleObjectIds);
