@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>BIM Viewer built on xeokit and Bootstrap</title>
+    <title>Minimal BIM Viewer built on xeokit SDK and Bootstrap</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
@@ -20,116 +20,136 @@
     <script src="lib/inspire-tree/inspire-tree.min.js"></script>
     <script src="lib/inspire-tree/inspire-tree-dom-min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+
+
+    <style>
+
+        html, body {
+            height: 100%;
+        }
+        body {
+            margin: 0;
+        }
+
+        #myWrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+            z-index: 10000;
+        }
+
+        #myExplorer {
+            min-width: 400px;
+            max-width: 400px;
+            height: 100%;
+            margin-left: -400px;
+            background: #7386D5;
+            color: #fff;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        #myExplorer.active {
+            margin-left: 0;
+        }
+
+        #myExplorer .explorer-toolbar{
+            padding: 0;
+            background: #6d7fcc;
+        }
+
+        #myExplorer ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #myExplorer ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #myExplorer ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        #myExplorer ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+
+        #myExplorer ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: #6d7fcc;
+        }
+
+        #myContent {
+            width: 100%;
+            height: 100%;
+            background: #ebebeb;
+        }
+
+        #myToolbar {
+            position:fixed;
+            width:100%;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            height: 60px;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+            padding-top:60px;
+            background: #ebebeb;
+            cursor: default;
+            pointer-events: all;
+            margin: 0;
+        }
+
+        #myNavCubeCanvas {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            bottom: 00px;
+            left: 400px;
+            z-index: 200000;
+        }
+
+        #mySectionPlanesOverviewCanvas {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            top: 300px;
+            right: 50px;
+            z-index: 200000;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
+<a class="github-fork-ribbon" href="https://github.com/xeokit/xeokit-viewer" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
-<div class="wrapper">
+<div id="myWrapper">
 
-    <!-- Explorer trees -->
-
-    <nav id="sidebar" class="active">
-
-
-    </nav>
-
-
-    <div id="content">
-
-        <!-- Toolbar -->
-
-        <div id="toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-
-            <!-- Explorer open/close button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button id="toggleExplorer" type="button" class="btn btn-outline-primary fa fa-sitemap  fa-2x active"
-                        data-toggle="tooltip" data-placement="top" title="Explorer"></button>
-            </div>
-
-            <!-- Reset button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Second group">
-                <button id="reset" type="button" class="btn btn-outline-primary fa fa-home fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Reset"></button>
-            </div>
-
-            <!-- Fit button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Third group">
-                <button id="fit" type="button" class="btn btn-outline-primary fa fa-crop fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Fit view"></button>
-            </div>
-
-            <!-- First Person mode button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Fourth group">
-                <button id="firstPerson" type="button" class="btn btn-outline-primary fa fa-male  fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="First person mode"></button>
-            </div>
-
-            <!-- Ortho mode button -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Fifth group">
-                <button id="ortho" type="button" class="btn btn-outline-primary fa fa-cube  fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Orthographic mode"></button>
-            </div>
-
-            <!-- Tools button group -->
-
-            <div class="btn-group mr-2" role="group" aria-label="Sixth group">
-
-                <!-- Hide tool button -->
-
-                <button id="hide" type="button" class="btn btn-outline-primary fa fa-eraser fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Hide object tool"></button>
-
-                <!-- Select tool button -->
-
-                <button id="select" type="button" class="btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Select object tool"></button>
-
-                <!-- Slice tool button -->
-
-                <button id="section" type="button" class="btn btn-outline-primary fa fa-cut fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Slice tool"></button>
-
-                <!-- Query tool button -->
-
-                <button id="query" type="button" class="btn btn-outline-primary fa fa-info-circle fa-2x disabled"
-                        data-toggle="tooltip" data-placement="top" title="Query object tool"></button>
-
-            </div>
-
-        </div>
-
-        <!--        <div id="canvasContainer" style="overflow-y:hidden; height:100%">-->
+    <nav id="myExplorer" class="active"></nav>
+    <div id="myContent">
+        <div id="myToolbar"></div>
         <canvas id="myCanvas"></canvas>
-        <!--        </div>-->
-
     </div>
-
-    <!-- Info panel -->
-
-    <nav id="sidebar2">
-
-        <div class="sidebar-header">
-
-            <!-- Properties panel -->
-
-            <p>Properties</p>
-
-            <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="classes-tab">
-                <div id="properties-panel" class="tree-panel"></div>
-            </div>
-
-        </div>
-    </nav>
 </div>
 
 <canvas id="myNavCubeCanvas"></canvas>
 <canvas id="mySectionPlanesOverviewCanvas"></canvas>
+
+
 
 </body>
 
