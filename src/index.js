@@ -1,5 +1,8 @@
-import {Server} from "./src/server/Server.js";
-import {ViewerUI} from "./src/ViewerUI.js";
+import {Server} from "./server/Server.js";
+import {ViewerUI} from "./ViewerUI.js";
+
+import "bootstrap";
+import './scss/app.scss';
 
 const server = new Server({
     dataDir: "./data/"
