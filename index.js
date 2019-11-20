@@ -1,8 +1,5 @@
-import {Server} from "./server/Server.js";
-import {ViewerUI} from "./ViewerUI.js";
-
-import "bootstrap";
-import './scss/app.scss';
+import {Server} from "./src/server/Server.js";
+import {ViewerUI} from "./src/ViewerUI.js";
 
 const server = new Server({
     dataDir: "./data/"
@@ -13,8 +10,7 @@ const viewerUI = new ViewerUI(server, {
     explorerElement: document.getElementById("myExplorer"), // Left panel
     toolbarElement: document.getElementById("myToolbar"), // Toolbar
     navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
-    sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas"), // Section planes overview canvas
-    queryInfoPanelElement: document.getElementById("myQueryInfoPanel") // Query results panel
+    sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas")
 });
 
 viewerUI.on("queryPicked", (event) => {
