@@ -17,77 +17,107 @@ import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
 import {AmbientLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
 import {DirLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 
-const explorerTemplate = `<div class="sidebar-header" style="height:100%;">
-<ul class="nav nav-tabs" role="tablist">
-    <!-- Models tab -->
-    <li class="nav-item">
-        <a class="xeokit-modelsTab nav-link active" id="{{models}}-tab" data-toggle="tab" href="#{{models}}" role="tab">Models</a>
-    </li>
-    <!-- Objects tab -->
-    <li class=" nav-item">
-        <a class="xeokit-objectsTab nav-link disabled" id="{{objects}}-tab" data-toggle="tab" href="#{{objects}}" role="tab">Objects</a>
-    </li>
-    <!-- Classes tab -->
-    <li class="nav-item">
-        <a class="xeokit-classesTab nav-link disabled" id="{{classes}}-tab" data-toggle="tab" href="#{{classes}}" role="tab">Classes</a>
-    </li>
-</ul>
-<div class="tab-content" style="height:100%;">
-    <!-- Models tree -->
-    <div class="tab-pane fade show active" id="{{models}}" role="tabpanel" style="padding:5px;">
-        <div class="explorer-toolbar btn-toolbar" role="toolbar">
-            <button type="button" class="xeokit-unloadAllModels btn btn-outline-light disabled">Unload all</button>
+const explorerTemplate = `<div class="xeokit-tabs">
+    <div class="xeokit-tab">
+        <a class="xeokit-tab-button xeokit-modelsTab" href="#">Models</a>
+        <div class="xeokit-tab-content">
+            <div class="xeokit-btn-group">
+                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled">Unload all</button>
+            </div>
+            <div class="xeokit-models" style="overflow-y:scroll;"></div>
         </div>
-        <div class="xeokit-models" style="overflow-y:scroll;"></div>
     </div>
-    <!-- Objects tree -->
-    <div class="tab-pane fade" id="{{objects}}" role="tabpanel" style="padding:5px;">
-        <div class="explorer-toolbar btn-toolbar" role="toolbar">
-            <button type="button" class="xeokit-showAllObjects btn btn-outline-light disabled">Show all</button>
-            <button type="button" class="xeokit-hideAllObjects btn btn-outline-light disabled">Hide all</button>
+    <div class="xeokit-tab xeokit-objectsTab">
+        <a class="xeokit-tab-button" href="#">Objects</a>
+        <div class="xeokit-tab-content">
+         <div class="xeokit-btn-group">
+            <button type="button" class="xeokit-showAllObjects xeokit-btn disabled">Show all</button>
+            <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled">Hide all</button>
         </div>
         <div class="xeokit-objects tree-panel" style="overflow-y:scroll;"></div>
-    </div>
-    <!-- Classes tree -->
-    <div class="tab-pane fade" id="{{classes}}" role="tabpanel" style="padding:5px;">
-        <div class="explorer-toolbar btn-toolbar" role="toolbar">
-            <button type="button" class="xeokit-showAllClasses btn btn-outline-light disabled">Show all</button>
-            <button type="button" class="xeokit-hideAllClasses btn btn-outline-light disabled">Hide all</button>
         </div>
-        <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
     </div>
-</div>
+    <div class="xeokit-tab xeokit-classesTab">
+        <a class="xeokit-tab-button" href="#">Classes</a>
+        <div class="xeokit-tab-content">
+            <div class="xeokit-btn-group">
+                <button type="button" class="xeokit-showAllClasses xeokit-btn disabled">Show all</button>
+                <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled">Hide all</button>
+            </div>
+            <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
+        </div>
+    </div>
 </div>`;
 
-const toolbarTemplate = `<div class="xeokit-toolbar btn-toolbar" style="background: rgba(0,0,0,0);" role="toolbar">
+const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
-    <div class="btn-group mr-2" role="group">
-        <button type="button" class="xeokit-reset btn btn-outline-primary fa fa-home fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Reset"></button>
+    <div class="xeokit-btn-group">
+        <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled"></button>
     </div>
     <!-- Fit button -->
-    <div class="btn-group mr-2" role="group">
-        <button type="button" class="xeokit-fit btn btn-outline-primary fa fa-crop fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Fit view"></button>
+    <div class="xeokit-btn-group" role="group">
+        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled"></button>
     </div>
     <!-- First Person mode button -->
-    <div class="btn-group mr-2" role="group">
-        <button type="button" class="xeokit-firstPerson btn btn-outline-primary fa fa-male  fa-2x disabled" data-toggle="tooltip" data-placement="top" title="First person mode"></button>
+    <div class="xeokit-btn-group" role="group">
+        <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
     </div>
     <!-- Ortho mode button -->
-    <div class="btn-group mr-2" role="group">
-        <button type="button" class="xeokit-ortho btn btn-outline-primary fa fa-cube  fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Orthographic mode"></button>
+    <div class="xeokit-btn-group" role="group">
+        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled"></button>
     </div>
     <!-- Tools button group -->
-    <div class="btn-group mr-2" role="group">
+    <div class="xeokit-xeokit-btn-group" role="group">
         <!-- Hide tool button -->
-        <button type="button" class="xeokit-hide btn btn-outline-primary fa fa-eraser fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Hide object tool"></button>
+        <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
         <!-- Select tool button -->
-        <button type="button" class="xeokit-select btn btn-outline-primary fa fa-mouse-pointer fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Select object tool"></button>
+        <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled"></button>
         <!-- Slice tool button -->
-        <button type="button" class="xeokit-section btn btn-outline-primary fa fa-cut fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Slice tool"></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
         <!-- Query tool button -->
-        <button type="button" class="xeokit-query btn btn-outline-primary fa fa-info-circle fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Query object tool"></button>
+        <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled"></button>
     </div>
 </div>`;
+
+function initTabs(containerElement) {
+
+    const tabsClass = 'xeokit-tabs';
+    const tabClass = 'xeokit-tab';
+    const tabButtonClass = 'xeokit-tab-button';
+    const activeClass = 'active';
+
+    // Activates the chosen tab and deactivates the rest
+    function activateTab(chosenTabElement) {
+        let tabList = chosenTabElement.parentNode.querySelectorAll('.' + tabClass);
+        for (let i = 0; i < tabList.length; i++) {
+            let tabElement = tabList[i];
+            if (tabElement.isEqualNode(chosenTabElement)) {
+                tabElement.classList.add(activeClass)
+            } else {
+                tabElement.classList.remove(activeClass)
+            }
+        }
+    }
+
+    // Initialize each tabbed container
+    let tabbedContainers = containerElement.querySelectorAll('.' + tabsClass);
+    for (let i = 0; i < tabbedContainers.length; i++) {
+        let tabbedContainer = tabbedContainers[i];
+        // List of tabs for this tabbed container
+        let tabList = tabbedContainer.querySelectorAll('.' + tabClass);
+        // Make the first tab active when the page loads
+        activateTab(tabList[0]);
+        // Activate a tab when you click its button
+        for (let i = 0; i < tabList.length; i++) {
+            let tabElement = tabList[i];
+            let tabButton = tabElement.querySelector('.' + tabButtonClass);
+            tabButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                activateTab(event.target.parentNode);
+            })
+        }
+    }
+}
 
 /**
  * @desc UI controller for a xeokit {@link Viewer} toolbar.
@@ -121,10 +151,6 @@ class ViewerUI extends Controller {
             throw "Config expected: sectionPlanesOverviewCanvasElement";
         }
 
-        if (!cfg.queryInfoPanelElement) {
-            throw "Config expected: queryInfoPanelElement";
-        }
-
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
         const toolbarElement = cfg.toolbarElement;
@@ -133,7 +159,7 @@ class ViewerUI extends Controller {
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
 
         super(null, cfg, server, new Viewer({
-            canvasElement: canvasElement.get(0),
+            canvasElement: canvasElement,
             transparent: true
         }));
 
@@ -142,77 +168,79 @@ class ViewerUI extends Controller {
         // In explorer HTML, IDs are used to coordinate tabs with their panels;
         // we must generate those IDs to ensure that they are unique within the DOM
 
-        explorerElement.html(explorerTemplate
+        explorerElement.innerHTML = explorerTemplate
             .replace(/{{objects}}/g, "objects" + this.viewer.id)
             .replace(/{{models}}/g, "models" + this.viewer.id)
-            .replace(/{{classes}}/g, "classes" + this.viewer.id));
+            .replace(/{{classes}}/g, "classes" + this.viewer.id);
 
-        toolbarElement.html(toolbarTemplate);
+        toolbarElement.innerHTML = toolbarTemplate;
+
+        initTabs(explorerElement);
 
         this.busyDialog = new BusyDialog(this); // TODO: Support external spinner dialog
 
         // Explorer
 
         this.models = new Models(this, {
-            modelsTabElement: explorerElement.find(".xeokit-modelsTab"),
-            unloadModelsButtonElement: explorerElement.find(".xeokit-unloadAllModels"),
-            modelsElement: explorerElement.find(".xeokit-models")
+            modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
+            unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
+            modelsElement: explorerElement.querySelector(".xeokit-models")
         });
 
         this.objects = new Objects(this, {
-            objectsTabElement: explorerElement.find(".xeokit-objectsTab"),
-            showAllObjectsButtonElement: explorerElement.find(".xeokit-showAllObjects"),
-            hideAllObjectsButtonElement: explorerElement.find(".xeokit-hideAllObjects"),
-            objectsElement: explorerElement.find(".xeokit-objects")
+            objectsTabElement: explorerElement.querySelector(".xeokit-objectsTab"),
+            showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
+            hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
+            objectsElement: explorerElement.querySelector(".xeokit-objects")
         });
 
         this.classes = new Classes(this, {
-            classesTabElement: explorerElement.find(".xeokit-classesTab"),
-            showAllClassesButtonElement: explorerElement.find(".xeokit-showAllClasses"),
-            hideAllClassesButtonElement: explorerElement.find(".xeokit-hideAllClasses"),
-            classesElement: explorerElement.find(".xeokit-classes")
+            classesTabElement: explorerElement.querySelector(".xeokit-classesTab"),
+            showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
+            hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
+            classesElement: explorerElement.querySelector(".xeokit-classes")
         });
 
         // Toolbar
 
         this.reset = new ResetAction(this, {
-            buttonElement: toolbarElement.find(".xeokit-reset"),
+            buttonElement: toolbarElement.querySelector(".xeokit-reset"),
             active: false
         });
 
         this.fit = new FitAction(this, {
-            buttonElement: toolbarElement.find(".xeokit-fit"),
+            buttonElement: toolbarElement.querySelector(".xeokit-fit"),
             active: false
         });
 
         this.firstPerson = new FirstPersonMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-firstPerson"),
+            buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
 
         this.ortho = new OrthoMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-ortho"),
+            buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
             active: false
         });
 
         this.hide = new HideMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-hide"),
+            buttonElement: toolbarElement.querySelector(".xeokit-hide"),
             active: false
         });
 
         this.select = new SelectMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-select"),
+            buttonElement: toolbarElement.querySelector(".xeokit-select"),
             active: false
         });
 
         this.query = new QueryMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-query"),
+            buttonElement: toolbarElement.querySelector(".xeokit-query"),
             queryInfoPanelElement: queryInfoPanelElement,
             active: false
         });
 
         this.section = new SectionMode(this, {
-            buttonElement: toolbarElement.find(".xeokit-section"),
+            buttonElement: toolbarElement.querySelector(".xeokit-section"),
             sectionPlanesOverviewCanvasElement: sectionPlanesOverviewCanvasElement,
             active: false
         });
@@ -228,27 +256,27 @@ class ViewerUI extends Controller {
         this.ortho.setActive(false);
         this.navCube.setActive(true);
 
-        explorerElement.find(".xeokit-showAllObjects").on('click', (event) => {
+        explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
             this._showAllObjects();
             event.preventDefault();
         });
 
-        explorerElement.find(".xeokit-hideAllObjects").on('click', (event) => {
+        explorerElement.querySelector(".xeokit-hideAllObjects").addEventListener("click", (event) => {
             this._hideAllObjects();
             event.preventDefault();
         });
 
-        explorerElement.find(".xeokit-showAllClasses").on('click', (event) => {
+        explorerElement.querySelector(".xeokit-showAllClasses").addEventListener("click", (event) => {
             this._showAllObjects();
             event.preventDefault();
         });
 
-        explorerElement.find(".xeokit-hideAllClasses").on('click', (event) => {
+        explorerElement.querySelector(".xeokit-hideAllClasses").addEventListener("click", (event) => {
             this._hideAllObjects();
             event.preventDefault();
         });
 
-        explorerElement.find(".xeokit-unloadAllModels").on('click', (event) => {
+        explorerElement.querySelector(".xeokit-unloadAllModels").addEventListener("click", (event) => {
             this._enableControls(false); // For quick UI feedback
             this.models._unloadModels();
             event.preventDefault();

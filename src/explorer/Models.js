@@ -48,13 +48,13 @@ class Models extends Controller {
                 html += "</label>";
                 html += "</div>";
             }
-            this._modelsElement.html(html);
+            this._modelsElement.innerHTML = html;
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 const modelId = modelInfo.id;
-                const checkBox = $("#" + modelId);
-                checkBox.on('click', () => {
-                    if (checkBox.prop("checked")) {
+                const checkBox = document.getElementById("" + modelId);
+                checkBox.addEventListener("click", () => {
+                    if (checkBox.checked) {
                         this._loadModel(modelId);
                     } else {
                         this._unloadModel(modelInfo.id);
@@ -124,7 +124,7 @@ class Models extends Controller {
         model.destroy();
         const scene = this.viewer.scene;
         const aabb = scene.getAABB(scene.visibleObjectIds);
-        $("#" + modelId).prop("checked", false);
+        document.getElementById("" + modelId).checked = false;
         this._numModelsLoaded--;
         this.viewer.cameraFlight.flyTo({
             aabb: aabb
@@ -149,9 +149,9 @@ class Models extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._unloadModelsButtonElement.addClass("disabled");
+            this._unloadModelsButtonElement.classList.add("disabled");
         } else {
-            this._unloadModelsButtonElement.removeClass("disabled");
+            this._unloadModelsButtonElement.classList.remove("disabled");
         }
     }
 

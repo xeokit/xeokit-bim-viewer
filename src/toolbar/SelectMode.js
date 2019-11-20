@@ -21,17 +21,17 @@ class SelectMode extends Controller {
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
-                buttonElement.addClass("disabled");
+                buttonElement.classList.add("disabled");
             } else {
-                buttonElement.removeClass("disabled");
+                buttonElement.classList.remove("disabled");
             }
         });
 
         this.on("active", (active) => {
             if (active) {
-                buttonElement.addClass("active");
+                buttonElement.classList.add("active");
             } else {
-                buttonElement.removeClass("active");
+                buttonElement.classList.remove("active");
             }
         });
 
@@ -81,7 +81,7 @@ class SelectMode extends Controller {
             }
         });
 
-        buttonElement.on('click', (event) => {
+        buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
             }

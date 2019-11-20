@@ -1,7 +1,7 @@
 {
   "name": "@xeokit/xeokit-viewer",
-  "version": "1.1.6",
-  "description": "BIM viewer built on xeokit and Bootstrap",
+  "version": "1.2.0",
+  "description": "BIM viewer built on xeokit",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -38,23 +38,11 @@
   "devDependencies": {
     "autoprefixer": "^9.7.2",
     "circular-dependency-plugin": "^5.2.0",
-    "css-loader": "^3.2.0",
-    "node-sass": "^4.13.0",
-    "postcss-loader": "^3.0.0",
-    "sass-loader": "^8.0.0",
-    "style-loader": "^1.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0",
-    "webpack-provide-global-plugin": "0.0.1"
+    "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "^0.5.1",
-    "bootstrap": "^4.3.1",
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0",
-    "express-es6-template-engine": "^2.2.0",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.0"
+    "@xeokit/xeokit-sdk": "^0.5.1"
   }
 }

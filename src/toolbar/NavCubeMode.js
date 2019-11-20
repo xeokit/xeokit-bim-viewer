@@ -14,7 +14,7 @@ class NavCubeMode extends Controller {
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
 
         this._navCube = new NavCubePlugin(this.viewer, {
-            canvasElement: navCubeCanvasElement.get(0),
+            canvasElement: navCubeCanvasElement,
             fitVisible: true
         });
 
@@ -22,9 +22,9 @@ class NavCubeMode extends Controller {
 
         // this.on("active", (active) => {
         //     if (active) {
-        //         buttonElement.addClass("active");
+        //         buttonElement.classList.add("active");
         //     } else {
-        //         buttonElement.removeClass("active");
+        //         buttonElement.classList.remove("active");
         //     }
         // });
 

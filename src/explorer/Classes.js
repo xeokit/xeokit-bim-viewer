@@ -49,12 +49,12 @@ class Classes extends Controller {
             if (entity.visible) {
                 classData.numObjectsVisible++;
                 if (classData.numObjectsVisible === 1) {
-                    $("#" + type).prop("checked", true);
+                    document.getElementById("" + type).checked = true;
                 }
             } else {
                 classData.numObjectsVisible--;
                 if (classData.numObjectsVisible === 0) {
-                    $("#" + type).prop("checked", false);
+                    document.getElementById("" + type).checked = false;
                 }
             }
             this._muteCheckBoxEvents = false;
@@ -122,16 +122,16 @@ class Classes extends Controller {
             html.push("</label>");
             html.push("</div>");
         }
-        this._classesElement.html(html.join(""));
+        this._classesElement.innerHTML = html.join("");
         for (var type in this._data) {
             const classData = this._data[type];
-            const checkBox = $("#" + type);
+            const checkBox = document.getElementById("" + type);
             const objectIds = this.viewer.metaScene.getObjectIDsByType(type);
-            checkBox.on('click', () => {
+            checkBox.addEventListener("click", () => {
                 if (this._muteCheckBoxEvents) {
                     return;
                 }
-                const visible = checkBox.prop("checked");
+                const visible = checkBox.checked;
                 this._muteEntityEvents = true;
                 this.viewer.scene.setObjectsVisible(objectIds, visible);
                 if (visible) {
@@ -146,13 +146,13 @@ class Classes extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._classesTabElement.addClass("disabled");
-            this._showAllClassesButtonElement.addClass("disabled");
-            this._hideAllClassesButtonElement.addClass("disabled");
+            this._classesTabElement.classList.add("disabled");
+            this._showAllClassesButtonElement.classList.add("disabled");
+            this._hideAllClassesButtonElement.classList.add("disabled");
         } else {
-            this._classesTabElement.removeClass("disabled");
-            this._showAllClassesButtonElement.removeClass("disabled");
-            this._hideAllClassesButtonElement.removeClass("disabled");
+            this._classesTabElement.classList.remove("disabled");
+            this._showAllClassesButtonElement.classList.remove("disabled");
+            this._hideAllClassesButtonElement.classList.remove("disabled");
         }
     }
     muteEvents() {
@@ -169,7 +169,7 @@ class Classes extends Controller {
         for (var type in this._data) {
             const classData = this._data[type];
             classData.numObjectsVisible = classData.numObjects;
-            $("#" + type).prop("checked", true);
+            document.getElementById("" + type).checked = true;
         }
     }
 
@@ -177,7 +177,7 @@ class Classes extends Controller {
         for (var type in this._data) {
             const classData = this._data[type];
             classData.numObjectsVisible = 0;
-            $("#" + type).prop("checked", false);
+            document.getElementById("" + type).checked = false;
         }
     }
 

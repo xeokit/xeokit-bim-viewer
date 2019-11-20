@@ -134,8 +134,8 @@ class Storeys extends Controller {
         this._element.innerHTML = html.join("");
         for (var i = 0, len = storeyIds.length; i < len; i++) {
             const _storeyId = storeyIds[i];
-            const link = $("#" + _storeyId);
-            link.on('click', (e) => {
+            const link = document.getElementById("" + _storeyId);
+            link.addEventListener("click", (e) => {
                 this.showStorey(_storeyId, () => {
                 });
                 e.preventDefault();
@@ -224,9 +224,9 @@ class Storeys extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            $("#storeys-tab").addClass("disabled");
+            document.getElementById("storeys-tab").classList.add("disabled");
            } else {
-            $("#storeys-tab").removeClass("disabled");
+            document.getElementById("storeys-tab").classList.remove("disabled");
         }
     }
 
