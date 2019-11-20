@@ -165,14 +165,7 @@ class ViewerUI extends Controller {
 
         this._customizeViewer();
 
-        // In explorer HTML, IDs are used to coordinate tabs with their panels;
-        // we must generate those IDs to ensure that they are unique within the DOM
-
-        explorerElement.innerHTML = explorerTemplate
-            .replace(/{{objects}}/g, "objects" + this.viewer.id)
-            .replace(/{{models}}/g, "models" + this.viewer.id)
-            .replace(/{{classes}}/g, "classes" + this.viewer.id);
-
+        explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
 
         initTabs(explorerElement);
