@@ -1,17 +1,18 @@
+
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-
+const ProvidePlugin = require('webpack-provide-global-plugin');
 
 module.exports = {
     entry: './index.js',
+    output: {
+        filename: 'main.js',
+        path: path.resolve(__dirname, 'dist'),
+    },
     resolve: {
         alias: {
             '/node_modules/@xeokit': "@xeokit"
         }
-    },
-    output: {
-        filename: 'main.js',
-        path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
         new CircularDependencyPlugin({
@@ -26,6 +27,9 @@ module.exports = {
             allowAsyncCycles: false,
             // set the current working directory for displaying module paths
             cwd: process.cwd(),
+        }),
+        new ProvidePlugin({
+            '$': 'jquery'
         })
     ]
 };
