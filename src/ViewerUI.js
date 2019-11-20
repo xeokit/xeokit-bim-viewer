@@ -17,8 +17,8 @@ import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
 import {AmbientLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
 import {DirLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 
-const explorerTemplate = `<div class="sidebar-header">
-<ul class="nav nav-tabs" id="treeTabs" role="tablist">
+const explorerTemplate = `<div class="sidebar-header" style="height:100%;">
+<ul class="nav nav-tabs" role="tablist">
     <!-- Models tab -->
     <li class="nav-item">
         <a class="xeokit-modelsTab nav-link active" id="{{models}}-tab" data-toggle="tab" href="#{{models}}" role="tab">Models</a>
@@ -32,34 +32,34 @@ const explorerTemplate = `<div class="sidebar-header">
         <a class="xeokit-classesTab nav-link disabled" id="{{classes}}-tab" data-toggle="tab" href="#{{classes}}" role="tab">Classes</a>
     </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="tab-content" style="height:100%;">
     <!-- Models tree -->
-    <div class="tab-pane fade show active" id="{{models}}" role="tabpanel">
+    <div class="tab-pane fade show active" id="{{models}}" role="tabpanel" style="padding:5px;">
         <div class="explorer-toolbar btn-toolbar" role="toolbar">
             <button type="button" class="xeokit-unloadAllModels btn btn-outline-light disabled">Unload all</button>
         </div>
-        <div class="xeokit-models"></div>
+        <div class="xeokit-models" style="overflow-y:scroll;"></div>
     </div>
     <!-- Objects tree -->
-    <div class="tab-pane fade" id="{{objects}}" role="tabpanel">
+    <div class="tab-pane fade" id="{{objects}}" role="tabpanel" style="padding:5px;">
         <div class="explorer-toolbar btn-toolbar" role="toolbar">
             <button type="button" class="xeokit-showAllObjects btn btn-outline-light disabled">Show all</button>
             <button type="button" class="xeokit-hideAllObjects btn btn-outline-light disabled">Hide all</button>
         </div>
-        <div class="xeokit-objects tree-panel"></div>
+        <div class="xeokit-objects tree-panel" style="overflow-y:scroll;"></div>
     </div>
     <!-- Classes tree -->
-    <div class="tab-pane fade" id="{{classes}}" role="tabpanel">
+    <div class="tab-pane fade" id="{{classes}}" role="tabpanel" style="padding:5px;">
         <div class="explorer-toolbar btn-toolbar" role="toolbar">
             <button type="button" class="xeokit-showAllClasses btn btn-outline-light disabled">Show all</button>
             <button type="button" class="xeokit-hideAllClasses btn btn-outline-light disabled">Hide all</button>
         </div>
-        <div class="xeokit-classes tree-panel"></div>
+        <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
     </div>
 </div>
 </div>`;
 
-const toolbarTemplate = `<div class="xeokit-toolbar btn-toolbar" role="toolbar">
+const toolbarTemplate = `<div class="xeokit-toolbar btn-toolbar" style="background: rgba(0,0,0,0);" role="toolbar">
     <!-- Reset button -->
     <div class="btn-group mr-2" role="group">
         <button type="button" class="xeokit-reset btn btn-outline-primary fa fa-home fa-2x disabled" data-toggle="tooltip" data-placement="top" title="Reset"></button>
