@@ -19,22 +19,22 @@ class SectionMode extends Controller {
         const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
-            overviewCanvas: sectionPlanesOverviewCanvasElement.get(0)
+            overviewCanvas: sectionPlanesOverviewCanvasElement
         });
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
-                buttonElement.addClass("disabled");
+                buttonElement.classList.add("disabled");
             } else {
-                buttonElement.removeClass("disabled");
+                buttonElement.classList.remove("disabled");
             }
         });
 
         this.on("active", (active) => {
             if (active) {
-                buttonElement.addClass("active");
+                buttonElement.classList.add("active");
             } else {
-                buttonElement.removeClass("active");
+                buttonElement.classList.remove("active");
             }
         });
 
@@ -55,7 +55,7 @@ class SectionMode extends Controller {
             }
         });
 
-        buttonElement.on('click', (event) => {
+        buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
             }

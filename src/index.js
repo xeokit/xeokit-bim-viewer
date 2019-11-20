@@ -9,12 +9,12 @@ const server = new Server({
 });
 
 const viewerUI = new ViewerUI(server, {
-    canvasElement: $("#myCanvas"), // WebGL canvas
-    explorerElement: $("#myExplorer"), // Left panel
-    toolbarElement: $("#myToolbar"), // Toolbar
-    navCubeCanvasElement: $("#myNavCubeCanvas"),
-    sectionPlanesOverviewCanvasElement: $("#mySectionPlanesOverviewCanvas"), // Section planes overview canvas
-    queryInfoPanelElement: $("#myQueryInfoPanel") // Query results panel
+    canvasElement: document.getElementById("myCanvas"), // WebGL canvas
+    explorerElement: document.getElementById("myExplorer"), // Left panel
+    toolbarElement: document.getElementById("myToolbar"), // Toolbar
+    navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
+    sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas"), // Section planes overview canvas
+    queryInfoPanelElement: document.getElementById("myQueryInfoPanel") // Query results panel
 });
 
 viewerUI.on("queryPicked", (event) => {

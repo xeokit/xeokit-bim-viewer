@@ -45,7 +45,7 @@ class Objects extends Controller {
         });
 
         new InspireTreeDOM(this._tree, {
-            target: objectsElement.get(0)
+            target: objectsElement
         });
 
         this._tree.on("model.loaded", () => {
@@ -190,13 +190,13 @@ class Objects extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._objectsTabElement.addClass("disabled");
-            this._showAllObjectsButtonElement.addClass("disabled");
-            this._hideAllObjectsButtonElement.addClass("disabled");
+            this._objectsTabElement.classList.add("disabled");
+            this._showAllObjectsButtonElement.classList.add("disabled");
+            this._hideAllObjectsButtonElement.classList.add("disabled");
         } else {
-            this._objectsTabElement.removeClass("disabled");
-            this._showAllObjectsButtonElement.removeClass("disabled");
-            this._hideAllObjectsButtonElement.removeClass("disabled");
+            this._objectsTabElement.classList.remove("disabled");
+            this._showAllObjectsButtonElement.classList.remove("disabled");
+            this._hideAllObjectsButtonElement.classList.remove("disabled");
         }
     }
 

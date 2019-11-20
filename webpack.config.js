@@ -1,7 +1,6 @@
 
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const ProvidePlugin = require('webpack-provide-global-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -59,9 +58,6 @@ module.exports = {
             allowAsyncCycles: false,
             // set the current working directory for displaying module paths
             cwd: process.cwd(),
-        }),
-        new ProvidePlugin({
-            '$': 'jquery'
         })
     ]
 };
