@@ -13,14 +13,22 @@ Initialize:
 sudo npm install
 ````
 
-Building JavaScript in ````/dist````:
+Building ES6 module in ````/dist/main.js````:
 
 ````
 npm run build
 ````
 
-Building API docs in ````./docs````:
+Then, within ````index.hml````, we use the module like so:
 
-````
-npm run docs
+````javascript
+import {Server, ViewerUI} from "./dist/main.js";
+
+const server = new Server({
+    dataDir: "./data/"
+});
+
+const viewerUI = new ViewerUI(server, {
+    //...
+});
 ````
