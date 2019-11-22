@@ -13,10 +13,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js -p",
-    "watch": "webpack --config webpack.config.js --watch -d",
-    "docs": "/node_modules/.bin/esdoc",
-    "start": "webpack-dev-server --mode development --progress --colors --inline --content-base build"
+    "build": " rollup index.js --file dist/main.js --format esm"
   },
   "repository": {
     "type": "git",
@@ -37,10 +34,7 @@
   "homepage": "https://github.com/xeokit/xeokit-viewer#readme",
   "devDependencies": {
     "autoprefixer": "^9.7.2",
-    "circular-dependency-plugin": "^5.2.0",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "rollup": "^1.27.4"
   },
   "dependencies": {
     "@xeokit/xeokit-sdk": "^0.5.1"
