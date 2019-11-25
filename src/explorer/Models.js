@@ -1,6 +1,6 @@
 import {Controller} from "../Controller.js";
-import {XKTLoaderPlugin} from "/node_modules/@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {XKTLoaderPlugin} from "@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 const tempVec3 = math.vec3();
 

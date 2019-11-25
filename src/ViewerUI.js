@@ -13,9 +13,9 @@ import {Models} from "./explorer/Models.js";
 import {Objects} from "./explorer/Objects.js";
 import {Classes} from "./explorer/Classes.js";
 
-import {Viewer} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/Viewer.js";
-import {AmbientLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
-import {DirLight} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
+import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
+import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
+import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab">

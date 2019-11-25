@@ -1,8 +1,8 @@
 import {Controller} from "../Controller.js";
-import {StoreyViewsPlugin} from "/node_modules/@xeokit/xeokit-sdk/src/plugins/StoreyViewsPlugin/StoreyViewsPlugin.js";
-import {CameraMemento} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/mementos/CameraMemento.js";
-import {ObjectsMemento} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/mementos/ObjectsMemento.js";
-import {math} from "/node_modules/@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {StoreyViewsPlugin} from "@xeokit/xeokit-sdk/src/plugins/StoreyViewsPlugin/StoreyViewsPlugin.js";
+import {CameraMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/CameraMemento.js";
+import {ObjectsMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/ObjectsMemento.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 
 
