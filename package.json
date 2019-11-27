@@ -35,7 +35,7 @@
   "homepage": "https://github.com/xeokit/xeokit-viewer#readme",
   "devDependencies": {
     "autoprefixer": "^9.7.2",
-    "rollup": "^1.27.4",
+    "rollup": "^1.27.5",
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {

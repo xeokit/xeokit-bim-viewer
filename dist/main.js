@@ -28753,6 +28753,13 @@ class Scene extends Component {
         this.reflectionMaps = {};
 
         /**
+         * The real world offset for this Scene
+         *
+         * @type {Number[]}
+         */
+        this.realWorldOffset = cfg.realWorldOffset || new Float64Array([0, 0, 0]);
+
+        /**
          * Manages the HTML5 canvas for this Scene.
          *
          * @type {Canvas}
@@ -49614,6 +49621,475 @@ class Models extends Controller {
     }
 }
 
+/** @private
+ */
+class ModelStructureTreeView {
+
+    /**
+     * @private
+     */
+    constructor(viewer, model, metaModel, cfg) {
+
+        if (!cfg.containerElement) {
+            throw "Config expected: containerElement";
+        }
+
+        this._viewer = viewer;
+        this._metaModel = metaModel;
+        this._model = model;
+        this._containerElement = cfg.containerElement;
+        this._rootElement = null;
+        this._muteSceneEvents = false; // When true, ModelStructureTreeView ignores "objectVisibility" events from xeokit Scene
+        this._muteTreeEvents = false; // When true, ModelStructureTreeView does not update xeokit Entity visibilities
+        this._data = [];
+        this._dataMap = {};
+
+        this._onObjectVisibility = this._viewer.scene.on("objectVisibility", (entity) => {
+            if (this._muteSceneEvents) {
+                return;
+            }
+            const objectId = entity.id;
+            const checkbox = document.getElementById(objectId);
+            if (checkbox) {  // Assuming here that only leaf MetaObjects have Entities in the Scene
+                this._muteTreeEvents = true;
+                const metaObject = this._viewer.metaScene.metaObjects[objectId];
+                if (metaObject) {
+                    const visible = entity.visible;
+                    checkbox.checked = visible;
+                    var parentMetaObject = metaObject.parent;
+                    while (parentMetaObject) {
+                        const checkbox = document.getElementById(parentMetaObject.id);
+                        if (checkbox) {
+                            if (visible) {
+                                checkbox.checked = true;
+                            }
+                        }
+                        parentMetaObject = parentMetaObject.parent;
+                    }
+                }
+                this._muteTreeEvents = false;
+            }
+        });
+
+        this._onModelDestroyed = this._model.on("destroyed", () => {
+            this.destroy();
+        });
+        
+        this._expandHandler = (e) => {
+            this._expand(e);
+        };
+
+        this._collapseHandler = (e) => {
+            this._collapse(e);
+        };
+
+        this._treeNodeCheckedHandler = (e) => {
+            this._treeNodeChecked(e);
+        };
+
+        this._addModelTreeData();
+        
+        this._initWithoutError = true;
+    }
+
+    _addModelTreeData() {
+        this._addMetaObjectTreeData(this._metaModel.rootMetaObject);
+        this._synchModelTreeDataToScene();
+        this._addOrphans();
+    }
+
+    _addMetaObjectTreeData(metaObject) { // Add a node for the given object
+        if (!metaObject) {
+            return;
+        }
+        const metaObjectName = metaObject.name;
+        const item = {
+            id: metaObject.id,
+            name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
+            parent: metaObject.parent ? metaObject.parent.id : null,
+            numEntities: 0,
+            numVisibleEntities: 0,
+            checked: false
+        };
+        this._data.push(item);
+        this._dataMap[item.id] = item;
+        const children = metaObject.children;
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                this._addMetaObjectTreeData(children[i]);
+            }
+        }
+    }
+
+    _synchModelTreeDataToScene() {
+        const objectIds = this._metaModel.rootMetaObject.getObjectIDsInSubtree();
+        for (let i = 0, len = objectIds.length; i < len; i++) {
+            const objectId = objectIds[i];
+            const item = this._dataMap[objectId];
+            item.numEntities = 0;
+            item.numVisibleEntities = 0;
+            item.checked = false;
+        }
+        for (let i = 0, len = objectIds.length; i < len; i++) {
+            const objectId = objectIds[i];
+            const metaObject = this._viewer.metaScene.metaObjects[objectId];
+            if (metaObject) {
+                const item = this._dataMap[objectId];
+                const entity = this._viewer.scene.objects[objectId];
+                if (entity) {
+                    const visible = entity.visible;
+                    item.numEntities = 1;
+                    if (visible) {
+                        item.numVisibleEntities = 1;
+                        item.checked = true;
+                    } else {
+                        item.numVisibleEntities = 0;
+                        item.checked = false;
+                    }
+                    let parentId = item.parent; // Synch parents
+                    while (parentId) {
+                        let parent = this._dataMap[parentId];
+                        parent.numEntities++;
+                        if (visible) {
+                            parent.numVisibleEntities++;
+                            parent.checked = true;
+                        }
+                        parentId = parent.parent;
+                    }
+                }
+            }
+        }
+    }
+
+    _addOrphans() {
+        const orphansArray = this._data.filter((item) => {
+            return item.parent === null;
+        });
+        if (orphansArray.length > 0) {
+            const items = orphansArray.map((item) => {
+                return this._generateListItem(item);
+            });
+            const ul = document.createElement('ul');
+            items.forEach(function (li) {
+                ul.appendChild(li);
+            });
+            this._containerElement.appendChild(ul);
+            this._rootElement = ul;
+        }
+    }
+
+    _getChildren(parentId) {
+        return this._data.filter((item) => {
+            return item.parent === parentId;
+        });
+    }
+
+    _generateListItem(item) {
+        const li = document.createElement('li');
+        li.id = 'item-' + item.id;
+        if (this._hasChildren(item.id)) {
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = '+';
+            a.classList.add('plus');
+            a.addEventListener('click', this._expandHandler);
+            li.appendChild(a);
+        }
+        const checkbox = document.createElement('input');
+        checkbox.id = item.id;
+        checkbox.type = "checkbox";
+        checkbox.checked = item.checked;
+        checkbox.addEventListener("change", this._treeNodeCheckedHandler);
+        li.appendChild(checkbox);
+        const span = document.createElement('span');
+        span.textContent = item.name;
+        li.appendChild(span);
+        span.addEventListener('click', () =>{
+            alert("clicked");
+        });
+        return li;
+    }
+
+    _hasChildren(parentId) {
+        return this._data.some((item) => {
+            return item.parent === parentId;
+        });
+    }
+
+    _treeNodeChecked(event) {
+
+        if (this._muteTreeEvents) {
+            return;
+        }
+
+        this._muteSceneEvents = true;
+
+        const node = event.target;
+        const checkedObjectId = node.id;
+        const checkedMetaObject = this._viewer.metaScene.metaObjects[checkedObjectId];
+        if (checkedMetaObject) {
+            const visible = node.checked;
+            this._withMetaObjectsInSubtree(checkedMetaObject, (metaObject) => {
+                const objectId = metaObject.id;
+                const item = this._dataMap[objectId];
+                item.numVisibleEntities = visible ? item.numEntities : 0;
+                item.checked = visible;
+                const checkbox = document.getElementById(objectId);
+                if (checkbox) {
+                    const lastChecked = checkbox.checked;
+                    checkbox.checked = visible;
+                    if (lastChecked !== visible) {
+                        let nextObjectId = item.id;
+                        while (nextObjectId) {
+                            const parent = this._dataMap[nextObjectId];
+                            if (visible) {
+                                parent.numVisibleEntities++;
+                                if (!parent.checked) {
+                                    document.getElementById(nextObjectId).checked = true;
+                                    parent.checked = true;
+                                }
+                            } else {
+                                parent.numVisibleEntities--;
+                                const needCheck = (parent.numVisibleEntities > 0);
+                                if (needCheck) {
+                                    if (!parent.checked) {
+                                        document.getElementById(nextObjectId).checked = true;
+                                        parent.checked = true;
+                                    }
+                                } else {
+                                    if (parent.checked) {
+                                        document.getElementById(nextObjectId).checked = false;
+                                        parent.checked = false;
+                                    }
+                                }
+                            }
+                            nextObjectId = parent.parent;
+                        }
+                    }
+                }
+                const entity = this._viewer.scene.objects[objectId];
+                if (entity) {
+                    entity.visible = visible;
+                }
+            });
+        }
+        this._muteSceneEvents = false;
+    }
+
+    _expand(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const element = event.target;
+        const parentElement = element.parentElement;
+        const id = parentElement.id.replace('item-', '');
+        const childElements = this._getChildren(id);
+        const items = childElements.map((item) => {
+            return this._generateListItem(item);
+        });
+        const ul = document.createElement('ul');
+        items.forEach((li) => {
+            ul.appendChild(li);
+        });
+        parentElement.appendChild(ul);
+        element.classList.remove('plus');
+        element.classList.add('minus');
+        element.textContent = '-';
+        element.removeEventListener('click', this._expandHandler);
+        element.addEventListener('click', this._collapseHandler);
+    }
+
+    _collapse(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const element = event.target;
+        const parent = element.parentElement;
+        const ul = parent.querySelector('ul');
+        parent.removeChild(ul);
+        element.classList.remove('minus');
+        element.classList.add('plus');
+        element.textContent = '+';
+        element.removeEventListener('click', this._collapseHandler);
+        element.addEventListener('click', this._expandHandler);
+    }
+
+    _withMetaObjectsInSubtree(metaObject, callback) {
+        const visit = (metaObject) => {
+            if (!metaObject) {
+                return;
+            }
+            callback(metaObject);
+            const children = metaObject.children;
+            if (children) {
+                for (var i = 0, len = children.length; i < len; i++) {
+                    visit(children[i]);
+                }
+            }
+        };
+        visit(metaObject);
+    }
+
+    /**
+     * Destroys this ModelTreeView.
+     */
+    destroy() {
+        if (this._initWithoutError) {
+            this._rootElement.parentNode.removeChild(this._rootElement);
+            this._viewer.scene.off(this._onObjectVisibility);
+            this._model.off(this._onModelDestroyed);
+        }
+    }
+}
+
+/**
+ * @desc A {@link Viewer} plugin that provides an HTML tree view that represents the structural hierarchy of models.
+ *
+ * <a href="https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_StructureTreeViewPlugin_Hospital" style="border: 1px solid black;"><img src="http://xeokit.io/img/docs/StructureTreeViewPlugin/StructureTreeViewPlugin.png"></a>
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_StructureTreeViewPlugin_Hospital)]
+ *
+ * ## Usage
+ *
+ * In the example below we'll create a structural tree view using StructureTreeViewPlugin. Then we'll use an [XKTLoaderPlugin]() to
+ * load the Schependomlaan model from an [.xkt file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/models/xkt/schependomlaan), along
+ * with an accompanying JSON [IFC metadata file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/metaModels/schependomlaan). When the
+ * model has loaded, we'll add it to the StructureTreeViewPlugin.
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_StructureTreeViewPlugin_Schependomlaan)]
+ *
+ * ````javascript
+ * import {Viewer} from "../src/viewer/Viewer.js";
+ * import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
+ * import {StructureTreeViewPlugin} from "../src/plugins/StructureTreeViewPlugin/StructureTreeViewPlugin.js";
+ *
+ * const viewer = new Viewer({
+ *      canvasId: "myCanvas",
+ *      transparent: true
+ * });
+ *
+ * viewer.camera.eye = [-2.56, 8.38, 8.27];
+ * viewer.camera.look = [13.44, 3.31, -14.83];
+ * viewer.camera.up = [0.10, 0.98, -0.14];
+ *
+ * const xktLoader = new XKTLoaderPlugin(viewer);
+ *
+ * const model = xktLoader.load({
+ *     id: "myModel",
+ *     src: "./models/xkt/schependomlaan/schependomlaan.xkt",
+ *     metaModelSrc: "./metaModels/schependomlaan/metaModel.json",
+ *     edges: true
+ * });
+ *
+ * const treeView = new StructureTreeViewPlugin(viewer, {
+ *      containerElement: document.getElementById("myTreeViewContainer");
+ * });
+ *
+ * model.on("loaded", () => {
+ *      treeView.addModel(model.id);
+ * });
+ * ````
+ * @class StructureTreeViewPlugin
+ */
+class StructureTreeViewPlugin extends Plugin {
+
+    /**
+     * @constructor
+     *
+     * @param {Viewer} viewer The Viewer.
+     * @param {*} cfg Plugin configuration.
+     * @param {HTMLElement} cfg.containerElement DOM element to contain the StructureTreeViewPlugin.
+     * @param {Boolean} [cfg.autoAddModels=false] Set ````true```` to automatically add each model as it's created.
+     */
+    constructor(viewer, cfg = {}) {
+        super("StructureTreeViewPlugin", viewer);
+        if (!cfg.containerElement) {
+            this.error("Config expected: containerElement");
+            return;
+        }
+        this._containerElement = cfg.containerElement;
+        this._modelTreeViews = {};
+        this._autoAddModels = !!cfg.autoAddModels;
+
+        if (this._autoAddModels) {
+
+            // TODO: Add existing models
+            // TODO: Option to order models alphabetically?
+
+            this.viewer.scene.on("modelLoaded", (modelId) =>{
+                this.addModel(modelId);
+            });
+        }
+    }
+
+    /**
+     * Adds a model to this StructureTreeViewPlugin.
+     *
+     * The model will be automatically removed when destroyed.
+     *
+     * To automatically add each model as it's created, instead of manually calling this method each time,
+     * provide a ````autoAddModels: true```` to the StructureTreeViewPlugin constructor.
+     *
+     * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
+     */
+    addModel(modelId) {
+        if (!this._containerElement) {
+            return;
+        }
+        const model = this.viewer.scene.models[modelId];
+        if (!model) {
+            throw "Model not found: " + modelId;
+        }
+        const metaModel = this.viewer.metaScene.metaModels[modelId];
+        if (!metaModel) {
+            this.error("MetaModel not found: " + modelId);
+            return;
+        }
+        if (this._modelTreeViews[modelId]) {
+            this.warn("Model already added: " + modelId);
+            return;
+        }
+        this._modelTreeViews[modelId] = new ModelStructureTreeView(this.viewer, model, metaModel, {
+            containerElement: this._containerElement
+        });
+        model.on("destroyed", () => {
+            this.removeModel(model.id);
+        });
+    }
+
+    /**
+     * Removes a model from this StructureTreeViewPlugin.
+     *
+     * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
+     */
+    removeModel(modelId) {
+        if (!this._containerElement) {
+            return;
+        }
+        const modelTreeView = this._modelTreeViews[modelId];
+        if (!modelTreeView) {
+            this.warn("Model not added: " + modelId);
+            return;
+        }
+        modelTreeView.destroy();
+        delete this._modelTreeViews[modelId];
+    }
+
+    /**
+     * Destroys this StructureTreeViewPlugin.
+     */
+    destroy() {
+        if (!this._containerElement) {
+            return;
+        }
+        for (let modelId in this._modelTreeViews) {
+            if (this._modelTreeViews.hasOwnProperty(modelId)) {
+                this._modelTreeViews[modelId].destroy();
+            }
+        }
+        this._modelTreeViews = {};
+        super.destroy();
+    }
+}
+
 class Objects extends Controller {
 
     constructor(parent, cfg = {}) {
@@ -49646,160 +50122,25 @@ class Objects extends Controller {
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
 
-        this._tree = new InspireTree({
-            selection: {
-                autoSelectChildren: true,
-                autoDeselect: true,
-                mode: 'checkbox'
-            },
-            checkbox: {
-                autoCheckChildren: true
-            },
-            data: []
-        });
-
-        new InspireTreeDOM(this._tree, {
-            target: objectsElement
-        });
-
-        this._tree.on("model.loaded", () => {
-
-            this._tree.on('node.selected', (event, node) => {
-                if (this._muteTreeEvents) {
-                    return;
-                }
-                const objectId = event.id;
-                const entity = this.viewer.scene.objects[objectId];
-                if (entity) {
-                    this._muteEntityEvents = true;
-                    entity.visible = true;
-                    this._muteEntityEvents = false;
-                }
-            });
-
-            this._tree.on('node.deselected', (event, node) => {
-                if (this._muteTreeEvents) {
-                    return;
-                }
-                const objectId = event.id;
-                const entity = this.viewer.scene.objects[objectId];
-                if (entity) {
-                    this._muteEntityEvents = true;
-                    entity.visible = false;
-                    this._muteEntityEvents = false;
-                }
-            });
-
-            this.viewer.scene.on("objectVisibility", (entity) => {
-                // if (this._muteEntityEvents) {
-                //     return;
-                // }
-                // const node = this._tree.node(entity.id);
-                // if (!node) {
-                //     return;
-                // }
-                // this._muteTreeEvents = true;
-                // const checked = node.checked();
-                // if (entity.visible) {
-                //     if (!checked) {
-                //         node.check(false);
-                //     }
-                // } else {
-                //     if (checked) {
-                //         node.uncheck(false);
-                //     }
-                // }
-                // this._muteTreeEvents = false;
-            });
+        this._tree = new StructureTreeViewPlugin(this.viewer, {
+            containerElement: objectsElement
         });
     }
 
     _addModel(modelId) {
-        const data = [];
-        const metaModels = this.viewer.metaScene.metaModels;
-        const metaModel = metaModels[modelId];
-        this._visit(true, data, metaModel.rootMetaObject);
-        const modelNodeIDs = [];
-        for (var i = 0, len = data.length; i < len; i++) {
-            modelNodeIDs.push(data[i].id);
-        }
-        this._modelNodeIDs[modelId] = modelNodeIDs;
-        this._tree.addNodes(data);
-        this._synchTreeFromScene(modelId);
+        this._tree.addModel(modelId);
     }
 
     _removeModel(modelId) {
-        const modelNodeIDs = this._modelNodeIDs[modelId];
-        for (var i = 0, len = modelNodeIDs.length; i < len; i++) {
-            const nodeId = modelNodeIDs[i];
-            const node = this._tree.node(nodeId);
-            if (!node) {
-                continue;
-            }
-            node.remove(true);
-        }
-    }
-
-    _visit(expand, data, metaObject) {
-        if (!metaObject) {
-            return;
-        }
-        const child = {
-            id: metaObject.id,
-            text: metaObject.name || ("(" + metaObject.type + ")")
-        };
-        data.push(child);
-        const children = metaObject.children;
-        if (children) {
-            child.children = [];
-            for (var i = 0, len = children.length; i < len; i++) {
-                this._visit(true, child.children, children[i]);
-            }
-        }
+        this._tree.removeModel(modelId);
     }
 
     _synchTreeFromScene(modelId) {
-        this._muteTreeEvents = true;
-        const metaModel = this.viewer.metaScene.metaModels[modelId];
-        if (!metaModel) {
-            return;
-        }
-        const rootMetaObject = metaModel.rootMetaObject;
-        if (!rootMetaObject) {
-            return;
-        }
-        this._muteTreeEvents = true;
-        this._setObjectVisibilities(rootMetaObject);
-        this._muteTreeEvents = false;
+
     }
 
     _setObjectVisibilities(metaObject) {
-        if (!metaObject) {
-            return;
-        }
-        const objectId = metaObject.id;
-        const entity = this.viewer.scene.objects[objectId];
-        if (entity) {
-            const node = this._tree.node(objectId);
-            if (node) {
-                const checked = node.checked();
-                if (entity.visible) {
-                    if (!checked) {
-                        node.check(false);
-                    }
-                } else {
-                    if (checked) {
-                        node.uncheck(false);
-                    }
-                }
-            }
-        }
-        const children = metaObject.children;
-        if (children) {
-            for (var i = 0, len = children.length; i < len; i++) {
-                this._visit(children[i]);
-            }
-        }
+
     }
 
     setEnabled(enabled) {
