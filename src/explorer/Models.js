@@ -60,6 +60,10 @@ class Models extends Controller {
                         this._unloadModel(modelInfo.id);
                     }
                 });
+                if (modelInfo.default) {
+                    checkBox.checked = true;
+                    this._loadModel(modelId);
+                }
             }
         }, (errMsg) => {
             this.error(errMsg);

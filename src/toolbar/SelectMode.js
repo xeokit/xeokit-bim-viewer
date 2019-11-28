@@ -36,49 +36,7 @@ class SelectMode extends Controller {
         });
 
         this.on("active", (active) => {
-            const viewer = this.viewer;
-            const cameraControl = viewer.cameraControl;
-            if (active) {
-                var entity = null;
-                this._onHover = cameraControl.on("hover", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                    entity = e.entity;
-                    entity.highlighted = true;
-                });
-                this._onHoverOff = cameraControl.on("hoverOff", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                });
-                const lastCoords = math.vec2();
-                this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                });
-                this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
-                    if (entity) {
-                        if (!closeEnough(lastCoords, coords)) {
-                            entity = null;
-                            return;
-                        }
-                        entity.selected = !entity.selected;
-                        entity = null;
-                    }
-                });
-            } else {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-                cameraControl.off(this._onHover);
-                cameraControl.off(this._onHoverOff);
-                cameraControl.off(this._onMousedown);
-                cameraControl.off(this._onMouseup);
-            }
+           this.activateSelectMode(active);
         });
 
         buttonElement.addEventListener("click", (event) => {
@@ -93,6 +51,52 @@ class SelectMode extends Controller {
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
         });
+    }
+
+    activateSelectMode(active) {
+        const viewer = this.viewer;
+        const cameraControl = viewer.cameraControl;
+        if (active) {
+            var entity = null;
+            this._onHover = cameraControl.on("hover", (e) => {
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+                entity = e.entity;
+                entity.highlighted = true;
+            });
+            this._onHoverOff = cameraControl.on("hoverOff", (e) => {
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+            });
+            const lastCoords = math.vec2();
+            this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+                lastCoords[0] = coords[0];
+                lastCoords[1] = coords[1];
+            });
+            this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+                if (entity) {
+                    if (!closeEnough(lastCoords, coords)) {
+                        entity = null;
+                        return;
+                    }
+                    entity.selected = !entity.selected;
+                    entity = null;
+                }
+            });
+        } else {
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+            cameraControl.off(this._onHover);
+            cameraControl.off(this._onHoverOff);
+            cameraControl.off(this._onMousedown);
+            cameraControl.off(this._onMouseup);
+        }
     }
 }
 

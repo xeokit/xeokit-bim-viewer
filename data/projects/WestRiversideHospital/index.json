@@ -4,7 +4,8 @@
   "models": [
     {
       "id": "structure",
-      "name": "Hospital Structure"
+      "name": "Hospital Structure",
+      "default": true
     },
     {
       "id": "electrical",

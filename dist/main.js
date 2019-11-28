@@ -6637,49 +6637,7 @@ class SelectMode extends Controller {
         });
 
         this.on("active", (active) => {
-            const viewer = this.viewer;
-            const cameraControl = viewer.cameraControl;
-            if (active) {
-                var entity = null;
-                this._onHover = cameraControl.on("hover", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                    entity = e.entity;
-                    entity.highlighted = true;
-                });
-                this._onHoverOff = cameraControl.on("hoverOff", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                });
-                const lastCoords = math.vec2();
-                this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                });
-                this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
-                    if (entity) {
-                        if (!closeEnough$1(lastCoords, coords)) {
-                            entity = null;
-                            return;
-                        }
-                        entity.selected = !entity.selected;
-                        entity = null;
-                    }
-                });
-            } else {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-                cameraControl.off(this._onHover);
-                cameraControl.off(this._onHoverOff);
-                cameraControl.off(this._onMousedown);
-                cameraControl.off(this._onMouseup);
-            }
+           this.activateSelectMode(active);
         });
 
         buttonElement.addEventListener("click", (event) => {
@@ -6694,6 +6652,52 @@ class SelectMode extends Controller {
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
         });
+    }
+
+    activateSelectMode(active) {
+        const viewer = this.viewer;
+        const cameraControl = viewer.cameraControl;
+        if (active) {
+            var entity = null;
+            this._onHover = cameraControl.on("hover", (e) => {
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+                entity = e.entity;
+                entity.highlighted = true;
+            });
+            this._onHoverOff = cameraControl.on("hoverOff", (e) => {
+                if (entity) {
+                    entity.highlighted = false;
+                    entity = null;
+                }
+            });
+            const lastCoords = math.vec2();
+            this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+                lastCoords[0] = coords[0];
+                lastCoords[1] = coords[1];
+            });
+            this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+                if (entity) {
+                    if (!closeEnough$1(lastCoords, coords)) {
+                        entity = null;
+                        return;
+                    }
+                    entity.selected = !entity.selected;
+                    entity = null;
+                }
+            });
+        } else {
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+            cameraControl.off(this._onHover);
+            cameraControl.off(this._onHoverOff);
+            cameraControl.off(this._onMousedown);
+            cameraControl.off(this._onMouseup);
+        }
     }
 }
 
@@ -7415,6 +7419,7 @@ class Component {
         this._subIdMap = null; // Subscription subId pool
         this._subIdEvents = null; // Subscription subIds mapped to event names
         this._eventSubs = null; // Event names mapped to subscribers
+        this._eventSubsNum = null;
         this._events = null; // Maps names to events
         this._eventCallDepth = 0; // Helps us catch stack overflows from recursive events
         this._ownedComponents = null; // // Components created with #create - lazy-instantiated
@@ -7517,6 +7522,7 @@ class Component {
         }
         if (!this._eventSubs) {
             this._eventSubs = {};
+            this._eventSubsNum = {};
         }
         if (forget !== true) {
             this._events[event] = value || true; // Save notification
@@ -7561,11 +7567,15 @@ class Component {
         }
         if (!this._eventSubs) {
             this._eventSubs = {};
+            this._eventSubsNum = {};
         }
         let subs = this._eventSubs[event];
         if (!subs) {
             subs = {};
             this._eventSubs[event] = subs;
+            this._eventSubsNum[event] = 1;
+        } else {
+            this._eventSubsNum[event]++;
         }
         const subId = this._subIdMap.addItem(); // Create unique subId
         subs[subId] = {
@@ -7598,6 +7608,7 @@ class Component {
             const subs = this._eventSubs[event];
             if (subs) {
                 delete subs[subId];
+                this._eventSubsNum[event]--;
             }
             this._subIdMap.removeItem(subId); // Release subId
         }
@@ -7629,7 +7640,7 @@ class Component {
      * @return {Boolean} True if there are any subscribers to the given event on this component.
      */
     hasSubs(event) {
-        return (this._eventSubs && !!this._eventSubs[event]);
+        return (this._eventSubsNum && (this._eventSubsNum[event] > 0));
     }
 
     /**
@@ -31163,20 +31174,7 @@ class SectionMode extends Controller {
         });
 
         this.on("active", (active) =>{
-            if (active) {
-                this._sectionPlanesPlugin.setOverviewVisible(true);
-                this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
-                    const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                        pos: e.worldPos,
-                        dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
-                    });
-                    this._sectionPlanesPlugin.showControl(sectionPlane.id);
-                });
-            } else {
-                this.viewer.cameraControl.off(this._onPickedSurface);
-                this._sectionPlanesPlugin.hideControl();
-                this._sectionPlanesPlugin.setOverviewVisible(false);
-            }
+          this.activateSectionMode(active);
         });
 
         buttonElement.addEventListener("click", (event) => {
@@ -31192,6 +31190,23 @@ class SectionMode extends Controller {
             this.clear();
             this.setActive(false);
         });
+    }
+
+    activateSectionMode(active) {
+        if (active) {
+            this._sectionPlanesPlugin.setOverviewVisible(true);
+            this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
+                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                    pos: e.worldPos,
+                    dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
+                });
+                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+            });
+        } else {
+            this.viewer.cameraControl.off(this._onPickedSurface);
+            this._sectionPlanesPlugin.hideControl();
+            this._sectionPlanesPlugin.setOverviewVisible(false);
+        }
     }
 
     clear() {
@@ -49519,6 +49534,10 @@ class Models extends Controller {
                         this._unloadModel(modelInfo.id);
                     }
                 });
+                if (modelInfo.default) {
+                    checkBox.checked = true;
+                    this._loadModel(modelId);
+                }
             }
         }, (errMsg) => {
             this.error(errMsg);
@@ -49649,26 +49668,45 @@ class ModelStructureTreeView {
                 return;
             }
             const objectId = entity.id;
+            const item = this._dataMap[objectId];
+            if (!item) {
+                return; // Not in this tree
+            }
+            const visible = entity.visible;
+            const updated = (visible !== item.checked);
+            if (!updated) {
+                return;
+            }
+            this._muteTreeEvents = true;
+            item.checked = visible;
+            if (visible) {
+                item.numVisibleEntities++;
+            } else {
+                item.numVisibleEntities--;
+            }
             const checkbox = document.getElementById(objectId);
-            if (checkbox) {  // Assuming here that only leaf MetaObjects have Entities in the Scene
-                this._muteTreeEvents = true;
-                const metaObject = this._viewer.metaScene.metaObjects[objectId];
-                if (metaObject) {
-                    const visible = entity.visible;
-                    checkbox.checked = visible;
-                    var parentMetaObject = metaObject.parent;
-                    while (parentMetaObject) {
-                        const checkbox = document.getElementById(parentMetaObject.id);
-                        if (checkbox) {
-                            if (visible) {
-                                checkbox.checked = true;
-                            }
-                        }
-                        parentMetaObject = parentMetaObject.parent;
+            if (checkbox) {
+                checkbox.checked = visible;
+            }
+            let parentId = item.parent;
+            while (parentId) {
+                const parentItem = this._dataMap[parentId];
+                parentItem.checked = visible;
+                if (visible) {
+                    parentItem.numVisibleEntities++;
+                } else {
+                    parentItem.numVisibleEntities--;
+                }
+                const parentCheckbox = document.getElementById(parentId);
+                if (parentCheckbox) {
+                    const newChecked = (parentItem.numVisibleEntities > 0);
+                    if (newChecked !== parentCheckbox.checked) {
+                        parentCheckbox.checked = newChecked;
                     }
                 }
-                this._muteTreeEvents = false;
+                parentId = parentItem.parent;
             }
+            this._muteTreeEvents = false;
         });
 
         this._onModelDestroyed = this._model.on("destroyed", () => {
@@ -49817,61 +49855,49 @@ class ModelStructureTreeView {
     }
 
     _treeNodeChecked(event) {
-
         if (this._muteTreeEvents) {
             return;
         }
-
         this._muteSceneEvents = true;
-
         const node = event.target;
+        const visible = node.checked;
         const checkedObjectId = node.id;
         const checkedMetaObject = this._viewer.metaScene.metaObjects[checkedObjectId];
-        if (checkedMetaObject) {
-            const visible = node.checked;
-            this._withMetaObjectsInSubtree(checkedMetaObject, (metaObject) => {
-                const objectId = metaObject.id;
-                const item = this._dataMap[objectId];
-                item.numVisibleEntities = visible ? item.numEntities : 0;
-                item.checked = visible;
-                const checkbox = document.getElementById(objectId);
-                if (checkbox) {
-                    const lastChecked = checkbox.checked;
-                    checkbox.checked = visible;
-                    if (lastChecked !== visible) {
-                        let nextObjectId = item.id;
-                        while (nextObjectId) {
-                            const parent = this._dataMap[nextObjectId];
-                            if (visible) {
-                                parent.numVisibleEntities++;
-                                if (!parent.checked) {
-                                    document.getElementById(nextObjectId).checked = true;
-                                    parent.checked = true;
-                                }
-                            } else {
-                                parent.numVisibleEntities--;
-                                const needCheck = (parent.numVisibleEntities > 0);
-                                if (needCheck) {
-                                    if (!parent.checked) {
-                                        document.getElementById(nextObjectId).checked = true;
-                                        parent.checked = true;
-                                    }
-                                } else {
-                                    if (parent.checked) {
-                                        document.getElementById(nextObjectId).checked = false;
-                                        parent.checked = false;
-                                    }
-                                }
-                            }
-                            nextObjectId = parent.parent;
-                        }
-                    }
-                }
-                const entity = this._viewer.scene.objects[objectId];
-                if (entity) {
-                    entity.visible = visible;
-                }
-            });
+        let numUpdated = 0;
+        this._withMetaObjectsInSubtree(checkedMetaObject, (metaObject) => {
+            const objectId = metaObject.id;
+            const item = this._dataMap[objectId];
+            item.numVisibleEntities = visible ? item.numEntities : 0;
+            if (visible !== item.checked) {
+                numUpdated++;
+            }
+            item.checked = visible;
+            const checkbox = document.getElementById(objectId);
+            if (checkbox) {
+                // Checkbox element is currently in DOM
+                checkbox.checked = visible;
+            }
+            const entity = this._viewer.scene.objects[objectId];
+            if (entity) {
+                entity.visible = visible;
+            }
+        });
+        const item = this._dataMap[checkedObjectId];
+        let parentId = item.parent;
+        while (parentId) {
+            const parentItem = this._dataMap[parentId];
+            parentItem.checked = visible;
+            const checkbox = document.getElementById(parentId); // Parent checkboxes are always in DOM
+            if (visible) {
+                parentItem.numVisibleEntities += numUpdated;
+            } else {
+                parentItem.numVisibleEntities -= numUpdated;
+            }
+            const newChecked = (parentItem.numVisibleEntities > 0);
+            if (newChecked !== checkbox.checked) {
+                checkbox.checked = newChecked;
+            }
+            parentId = parentItem.parent;
         }
         this._muteSceneEvents = false;
     }
@@ -49941,7 +49967,7 @@ class ModelStructureTreeView {
 }
 
 /**
- * @desc A {@link Viewer} plugin that provides an HTML tree view that represents the structural hierarchy of models.
+ * @desc A {@link Viewer} plugin that provides an HTML tree view to navigate the IFC structural hierarchy of models.
  *
  * <a href="https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_StructureTreeViewPlugin_Hospital" style="border: 1px solid black;"><img src="http://xeokit.io/img/docs/StructureTreeViewPlugin/StructureTreeViewPlugin.png"></a>
  *
@@ -49949,10 +49975,11 @@ class ModelStructureTreeView {
  *
  * ## Usage
  *
- * In the example below we'll create a structural tree view using StructureTreeViewPlugin. Then we'll use an [XKTLoaderPlugin]() to
- * load the Schependomlaan model from an [.xkt file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/models/xkt/schependomlaan), along
- * with an accompanying JSON [IFC metadata file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/metaModels/schependomlaan). When the
- * model has loaded, we'll add it to the StructureTreeViewPlugin.
+ * In the example below we'll use an [XKTLoaderPlugin]() to load the Schependomlaan model from an [.xkt file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/models/xkt/schependomlaan), along
+ * with an accompanying JSON [IFC metadata file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/metaModels/schependomlaan).
+ *
+ * Then we'll use a StructureTreeViewPlugin to create a structure tree view. When the
+ * model has loaded, we'll add it to the structure tree view.
  *
  * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_StructureTreeViewPlugin_Schependomlaan)]
  *
@@ -49980,13 +50007,34 @@ class ModelStructureTreeView {
  * });
  *
  * const treeView = new StructureTreeViewPlugin(viewer, {
- *      containerElement: document.getElementById("myTreeViewContainer");
+ *      containerElement: document.getElementById("myTreeViewContainer")
  * });
  *
  * model.on("loaded", () => {
  *      treeView.addModel(model.id);
  * });
  * ````
+ *
+ * ## Automatically Adding Models
+ *
+ * We can also configure the StructureTreeViewPlugin to automatically add models whenever they are loaded. This will also
+ * add any models that are already loaded.
+ *
+ * ````javascript
+ * const treeView = new StructureTreeViewPlugin(viewer, {
+ *      containerElement: document.getElementById("myTreeViewContainer"),
+ *      autoAddModels: true
+ * });
+ * ````
+ *
+ * Models are automatically removed when they are destroyed.
+ *
+ * ## Customizing Appearance
+ *
+ * We can customize the appearance of our StructureTreeViewPlugin by defining custom CSS for its HTML
+ * elements. See our example's [source code](https://github.com/xeokit/xeokit-sdk/blob/master/examples/BIMOffline_StructureTreeViewPlugin_Schependomlaan.html)
+ * for an example of custom CSS rules.
+ *
  * @class StructureTreeViewPlugin
  */
 class StructureTreeViewPlugin extends Plugin {
@@ -50000,20 +50048,24 @@ class StructureTreeViewPlugin extends Plugin {
      * @param {Boolean} [cfg.autoAddModels=false] Set ````true```` to automatically add each model as it's created.
      */
     constructor(viewer, cfg = {}) {
+
         super("StructureTreeViewPlugin", viewer);
+
         if (!cfg.containerElement) {
             this.error("Config expected: containerElement");
             return;
         }
+
         this._containerElement = cfg.containerElement;
         this._modelTreeViews = {};
         this._autoAddModels = !!cfg.autoAddModels;
 
         if (this._autoAddModels) {
-
-            // TODO: Add existing models
-            // TODO: Option to order models alphabetically?
-
+            const modelIds = Object.keys(this.viewer.scene.models);
+            for (let i = 0, len = modelIds.length; i < len; i++) {
+                const modelId = modelIds[i];
+                this.addModel(modelId);
+            }
             this.viewer.scene.on("modelLoaded", (modelId) =>{
                 this.addModel(modelId);
             });
@@ -50021,7 +50073,7 @@ class StructureTreeViewPlugin extends Plugin {
     }
 
     /**
-     * Adds a model to this StructureTreeViewPlugin.
+     * Adds a model.
      *
      * The model will be automatically removed when destroyed.
      *
@@ -50056,7 +50108,7 @@ class StructureTreeViewPlugin extends Plugin {
     }
 
     /**
-     * Removes a model from this StructureTreeViewPlugin.
+     * Removes a model.
      *
      * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
      */
@@ -50071,6 +50123,31 @@ class StructureTreeViewPlugin extends Plugin {
         }
         modelTreeView.destroy();
         delete this._modelTreeViews[modelId];
+    }
+
+    /**
+     * Expands the tree node corresponding to the given object.
+     *
+     * @param {String} objectId ID of the object.
+     */
+    expandNode(objectId) {
+
+    }
+
+    /**
+     * Collapses the tree node corresponding to the given object.
+     *
+     * @param {String} objectId ID of the object.
+     */
+    collapseNode(objectId) {
+
+    }
+
+    /**
+     * Collapses all model trees.
+     */
+    collapseTree() {
+
     }
 
     /**

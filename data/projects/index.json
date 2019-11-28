@@ -6,7 +6,8 @@
     },
     {
       "id": "WestRiversideHospital",
-      "name": "West Riverside Hospital"
+      "name": "West Riverside Hospital",
+      "default": true
     }
   ]
 }
