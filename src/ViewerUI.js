@@ -1,5 +1,5 @@
 import {Controller} from "./Controller.js";
-import {BusyDialog} from "./BusyDialog.js";
+import {BusyModal} from "./BusyModal.js";
 import {ResetAction} from "./toolbar/ResetAction.js";
 import {FitAction} from "./toolbar/FitAction.js";
 import {FirstPersonMode} from "./toolbar/FirstPersonMode.js";
@@ -170,7 +170,7 @@ class ViewerUI extends Controller {
 
         initTabs(explorerElement);
 
-        this.busyDialog = new BusyDialog(this); // TODO: Support external spinner dialog
+        this.busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
         // Explorer
 

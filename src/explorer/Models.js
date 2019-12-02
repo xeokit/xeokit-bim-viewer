@@ -75,7 +75,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this.viewerUI.busyDialog.show("Loading model '" + modelInfo.name + "'");
+        this.viewerUI.busyModal.show("Loading model '" + modelInfo.name + "'");
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -96,26 +96,26 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                 this.fire("modelLoaded", modelId);
-                                this.viewerUI.busyDialog.hide();
+                                this.viewerUI.busyModal.hide();
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                     this.fire("modelLoaded", modelId);
-                                    this.viewerUI.busyDialog.hide();
+                                    this.viewerUI.busyModal.hide();
                                 });
                             }
                         });
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        this.viewerUI.busyDialog.hide();
+                        this.viewerUI.busyModal.hide();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                this.viewerUI.busyDialog.hide();
+                this.viewerUI.busyModal.hide();
             });
     }
 

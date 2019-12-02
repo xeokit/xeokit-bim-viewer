@@ -843,42 +843,102 @@ class Controller {
     }
 }
 
-class BusyDialog extends Controller {
+class BusyModal extends Controller {
 
     constructor(parent, cfg = {}) {
+
         super(parent, cfg);
 
-//         document.body.insertAdjacentHTML(`<div class="loadingDialog modal" tabindex="-1" role="dialog">
-//     <div class="modal-dialog" role="document">
-//         <div class="modal-content">
-//             <div class="modal-body" style="text-align:center;">
-//                 <br>
-//                 <div class="loader" style="display:inline-block;"></div>
-//
-//                 <br>
-//                 <div class="modal-header" style="display:inline-block; border: 0;">
-//                     <h5 class="modal-title"><span class="xeokit-model-message"></span>
-//                     </h5>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-// </div>`);
+        document.body.insertAdjacentHTML('beforeend', `<style>
+
+     .xeokit-busy-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .xeokit-busy-modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            border-radius: 0.5em;
+            width: 50%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            -webkit-animation-name: xeokit-busy-modal-animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: xeokit-busy-modal-animatetop;
+            animation-duration: 0.4s
+        }
+
+        /* Add Animation */
+        @-webkit-keyframes xeokit-busy-modal-animatetop {
+            from {
+                opacity: 0
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes xeokit-busy-modal-animatetop {
+            from {
+                opacity: 0
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .xeokit-busy-modal-message {
+            font-size: 22px;
+            padding: 2px 16px;
+            background-color: white;
+            color: #212529;
+        }
+
+        .xeokit-busy-modal-body {
+            padding: 2px 16px;
+            margin: 20px 2px
+        }
+
+        </style>
+        <div class="xeokit-busy-modal">
+            <div class="xeokit-busy-modal-content">
+                <div class="xeokit-busy-modal-body">
+              <div class="xeokit-busy-modal-message">Default text</div>
+                </div>
+            </div>
+        </div>`);
+
+        this._modal = document.querySelector(".xeokit-busy-modal");
     }
 
     show(message) {
-      //  this._dialog.find('.xeokit-model-message').text(message);
-    //    this._dialog.modal('show');
+        this._modalVisible = true;
+        document.querySelector('.xeokit-busy-modal-message').innerText = message;
+        this._modal.style.display = 'block';
     }
 
     hide() {
-      //  this._dialog.modal('hide');
+        this._modalVisible = false;
+        this._modal.style.display = 'none';
     }
 
     destroy() {
         super.destroy();
-    //    this._dialog.remove();
-
+        if (this._modal) {
+            this._modal.parentNode.removeChild(this._modal);
+            this._modal = null;
+        }
     }
 }
 
@@ -49549,7 +49609,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this.viewerUI.busyDialog.show("Loading model '" + modelInfo.name + "'");
+        this.viewerUI.busyModal.show("Loading model '" + modelInfo.name + "'");
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -49570,26 +49630,26 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
                                 this.fire("modelLoaded", modelId);
-                                this.viewerUI.busyDialog.hide();
+                                this.viewerUI.busyModal.hide();
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
                                     this.fire("modelLoaded", modelId);
-                                    this.viewerUI.busyDialog.hide();
+                                    this.viewerUI.busyModal.hide();
                                 });
                             }
                         });
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        this.viewerUI.busyDialog.hide();
+                        this.viewerUI.busyModal.hide();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                this.viewerUI.busyDialog.hide();
+                this.viewerUI.busyModal.hide();
             });
     }
 
@@ -54057,7 +54117,7 @@ class ViewerUI extends Controller {
 
         initTabs(explorerElement);
 
-        this.busyDialog = new BusyDialog(this); // TODO: Support external spinner dialog
+        this.busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
         // Explorer
 
