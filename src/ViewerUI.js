@@ -16,6 +16,7 @@ import {Classes} from "./explorer/Classes.js";
 import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
 import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
 import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
+import {Storeys} from "./explorer/Storeys.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab">
@@ -45,6 +46,12 @@ const explorerTemplate = `<div class="xeokit-tabs">
                 <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled">Hide all</button>
             </div>
             <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
+        </div>
+    </div>
+     <div class="xeokit-tab xeokit-storeysTab">
+        <a class="xeokit-tab-button" href="#">Storeys</a>
+        <div class="xeokit-tab-content">
+             <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
         </div>
     </div>
 </div>`;
@@ -192,6 +199,11 @@ class ViewerUI extends Controller {
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
             classesElement: explorerElement.querySelector(".xeokit-classes")
+        });
+
+        this.storeys = new Storeys(this, {
+            storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
+            storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
 
         // Toolbar

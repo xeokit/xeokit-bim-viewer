@@ -4,20 +4,22 @@ import {CameraMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/Camera
 import {ObjectsMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/ObjectsMemento.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
-
-
-/**
- * @desc Manages storeys.
- *
- * Located at {@link Toolbar#storeys}.
- */
 class Storeys extends Controller {
 
     constructor(parent, cfg) {
 
         super(parent, cfg);
 
-        this._element = document.getElementById(cfg.storeysPanelId);
+        if (!cfg.storeysTabElement) {
+            throw "Missing config: storeysTabElement";
+        }
+
+        if (!cfg.storeysElement) {
+            throw "Missing config: storeysElement";
+        }
+
+        this._storeysTabElement = cfg.storeysTabElement;
+        this._storeysElement = cfg.storeysElement;
 
         this._storeyViewsPlugin = new StoreyViewsPlugin(this.viewer);
 
@@ -41,6 +43,12 @@ class Storeys extends Controller {
         const viewer = this.viewer;
         const worldPos = math.vec3();
 
+        viewer.scene.xrayMaterial.fillColor = [0.0, 0.0, 0.0];
+        viewer.scene.xrayMaterial.edgeColor = [0.0, 0.0, 0.0];
+
+        viewer.scene.xrayMaterial.fillAlpha = 0.06;
+        viewer.scene.xrayMaterial.edgeAlpha = 0.4;
+
         viewer.cameraControl.on("pickedSurface", (pickResult) => {
 
             if (!this._storeyOpen) {
@@ -50,7 +58,7 @@ class Storeys extends Controller {
             const entity = pickResult.entity;
             const metaObject = viewer.metaScene.metaObjects[entity.id];
 
-            if (canStandOnTypes[metaObject.type]) {
+          //  if (canStandOnTypes[metaObject.type]) {
 
                 worldPos.set(pickResult.worldPos);
                 worldPos[1] += 1.5;
@@ -70,7 +78,7 @@ class Storeys extends Controller {
                     this._storeyOpen = false;
                     this._openStoreyId = null;
                 });
-            }
+           // }
         });
 
         viewer.cameraControl.on("pickedNothing", (pickResult) => {
@@ -106,10 +114,12 @@ class Storeys extends Controller {
         const html = [];
         var storeyId;
         const models = this.viewer.scene.models;
+        const metaScene = this.viewer.metaScene;
         const storeyIds = [];
         for (var modelId in models) {
             const model = this.viewer.scene.models[modelId];
-            const metaModel = this.viewer.metaScene.metaModels[modelId];
+            const metaModel = metaScene.metaModels[modelId];
+            const rootMetaObject = metaModel.rootMetaObject;
             if (!metaModel) {
                 continue;
             }
@@ -117,21 +127,24 @@ class Storeys extends Controller {
             if (!storeys) {
                 continue;
             }
-            html.push("<div>" + metaModel.id + "</div>");
+            html.push("<div>" + (rootMetaObject ? rootMetaObject.name : metaModel.id) + "</div>");
+            html.push("<ul>");
             for (storeyId in storeys) {
                 const storey = storeys[storeyId];
+                const metaObject = metaScene.metaObjects[storeyId];
                 if (storey) {
                     html.push("<div class='form-check'>");
                     html.push("<li>");
-                    html.push("<a id='" + storey.storeyId + "' href=''>" + storey.name + "</a>");
+                    html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
                     html.push("</li>");
                     html.push("</div>");
                     storeyIds.push(storeyId);
                 }
             }
+            html.push("</ul>");
             html.push("<br>");
         }
-        this._element.innerHTML = html.join("");
+        this._storeysElement.innerHTML = html.join("");
         for (var i = 0, len = storeyIds.length; i < len; i++) {
             const _storeyId = storeyIds[i];
             const link = document.getElementById("" + _storeyId);
@@ -173,7 +186,7 @@ class Storeys extends Controller {
 
                     this._storeyViewsPlugin.showStoreyObjects(storeyId, {
                         hideOthers: true,
-                        useObjectStates: true
+                        useObjectStates: false
                     });
 
                     this.viewer.cameraControl.planView = true; // Disable camera rotation
@@ -204,7 +217,7 @@ class Storeys extends Controller {
 
                     this._storeyViewsPlugin.showStoreyObjects(storeyId, {
                         hideOthers: true,
-                        useObjectStates: true
+                        useObjectStates: false
                     });
 
                     this.viewer.cameraControl.planView = true; // Disable camera rotation
@@ -223,11 +236,11 @@ class Storeys extends Controller {
     }
 
     setEnabled(enabled) {
-        if (!enabled) {
-            document.getElementById("storeys-tab").classList.add("disabled");
-           } else {
-            document.getElementById("storeys-tab").classList.remove("disabled");
-        }
+        // if (!enabled) {
+        //     document.getElementById("storeys-tab").classList.add("disabled");
+        //    } else {
+        //     document.getElementById("storeys-tab").classList.remove("disabled");
+        // }
     }
 
     /** @private */
