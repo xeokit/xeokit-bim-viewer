@@ -1,0 +1,10 @@
+{
+  "id": "schependomlaan",
+  "name": "Schependomlaan",
+  "models": [
+    {
+      "id": "design",
+      "name": "Schependomlaan Design"
+    }
+  ]
+}

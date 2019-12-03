@@ -5,6 +5,10 @@
       "name": "Duplex"
     },
     {
+      "id": "Schependomlaan",
+      "name": "Schependomlaan"
+    },
+    {
       "id": "WestRiversideHospital",
       "name": "West Riverside Hospital",
       "default": true
