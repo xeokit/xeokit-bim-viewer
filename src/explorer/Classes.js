@@ -26,6 +26,11 @@ class Classes extends Controller {
         this._showAllClassesButtonElement = cfg.showAllClassesButtonElement;
         this._hideAllClassesButtonElement = cfg.hideAllClassesButtonElement;
         this._classesElement = cfg.classesElement;
+        this._classesTabButtonElement = this._classesTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._classesTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._muteCheckBoxEvents = false;
         this._muteEntityEvents = false;
@@ -146,11 +151,11 @@ class Classes extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._classesTabElement.classList.add("disabled");
+            this._classesTabButtonElement.classList.add("disabled");
             this._showAllClassesButtonElement.classList.add("disabled");
             this._hideAllClassesButtonElement.classList.add("disabled");
         } else {
-            this._classesTabElement.classList.remove("disabled");
+            this._classesTabButtonElement.classList.remove("disabled");
             this._showAllClassesButtonElement.classList.remove("disabled");
             this._hideAllClassesButtonElement.classList.remove("disabled");
         }

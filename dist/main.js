@@ -849,69 +849,7 @@ class BusyModal extends Controller {
 
         super(parent, cfg);
 
-        document.body.insertAdjacentHTML('beforeend', `<style>
-
-     .xeokit-busy-modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .xeokit-busy-modal-content {
-            position: relative;
-            background-color: #fefefe;
-            margin: auto;
-            padding: 0;
-            border: 1px solid #888;
-            border-radius: 0.5em;
-            width: 50%;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            -webkit-animation-name: xeokit-busy-modal-animatetop;
-            -webkit-animation-duration: 0.4s;
-            animation-name: xeokit-busy-modal-animatetop;
-            animation-duration: 0.4s
-        }
-
-        /* Add Animation */
-        @-webkit-keyframes xeokit-busy-modal-animatetop {
-            from {
-                opacity: 0
-            }
-            to {
-                opacity: 1
-            }
-        }
-
-        @keyframes xeokit-busy-modal-animatetop {
-            from {
-                opacity: 0
-            }
-            to {
-                opacity: 1
-            }
-        }
-
-        .xeokit-busy-modal-message {
-            font-size: 22px;
-            padding: 2px 16px;
-            background-color: white;
-            color: #212529;
-        }
-
-        .xeokit-busy-modal-body {
-            padding: 2px 16px;
-            margin: 20px 2px
-        }
-
-        </style>
-        <div class="xeokit-busy-modal">
+        document.body.insertAdjacentHTML('beforeend', `<div class="xeokit-busy-modal">
             <div class="xeokit-busy-modal-content">
                 <div class="xeokit-busy-modal-body">
               <div class="xeokit-busy-modal-message">Default text</div>
@@ -8119,12 +8057,6 @@ class Component {
             return;
         }
 
-        /**
-         * Fired when this Component is destroyed.
-         * @event destroyed
-         */
-        this.fire("destroyed", this.destroyed = true); // Must fire before we blow away subscription maps, below
-
         // Unsubscribe from child components and destroy then
 
         let id;
@@ -8172,6 +8104,13 @@ class Component {
         this._eventCallDepth = 0;
         this._ownedComponents = null;
         this._updateScheduled = false;
+
+
+        /**
+         * Fired when this Component is destroyed.
+         * @event destroyed
+         */
+        this.fire("destroyed", this.destroyed = true); // Must fire before we blow away subscription maps, below
     }
 }
 
@@ -49560,6 +49499,11 @@ class Models extends Controller {
         this._modelsTabElement = cfg.modelsTabElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
         this._modelsElement = cfg.modelsElement;
+        this._modelsTabButtonElement = this._modelsTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._modelsTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
@@ -49687,8 +49631,10 @@ class Models extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
+            this._modelsTabButtonElement.classList.add("disabled");
             this._unloadModelsButtonElement.classList.add("disabled");
         } else {
+            this._modelsTabButtonElement.classList.remove("disabled");
             this._unloadModelsButtonElement.classList.remove("disabled");
         }
     }
@@ -50345,6 +50291,11 @@ class Objects extends Controller {
         this._objectsTabElement = cfg.objectsTabElement;
         this._showAllObjectsButtonElement = cfg.showAllObjectsButtonElement;
         this._hideAllObjectsButtonElement = cfg.hideAllObjectsButtonElement;
+        this._objectsTabButtonElement = this._objectsTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._objectsTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         const objectsElement = cfg.objectsElement;
 
@@ -50375,11 +50326,11 @@ class Objects extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._objectsTabElement.classList.add("disabled");
+            this._objectsTabButtonElement.classList.add("disabled");
             this._showAllObjectsButtonElement.classList.add("disabled");
             this._hideAllObjectsButtonElement.classList.add("disabled");
         } else {
-            this._objectsTabElement.classList.remove("disabled");
+            this._objectsTabButtonElement.classList.remove("disabled");
             this._showAllObjectsButtonElement.classList.remove("disabled");
             this._hideAllObjectsButtonElement.classList.remove("disabled");
         }
@@ -50434,6 +50385,11 @@ class Classes extends Controller {
         this._showAllClassesButtonElement = cfg.showAllClassesButtonElement;
         this._hideAllClassesButtonElement = cfg.hideAllClassesButtonElement;
         this._classesElement = cfg.classesElement;
+        this._classesTabButtonElement = this._classesTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._classesTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._muteCheckBoxEvents = false;
         this._muteEntityEvents = false;
@@ -50554,11 +50510,11 @@ class Classes extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._classesTabElement.classList.add("disabled");
+            this._classesTabButtonElement.classList.add("disabled");
             this._showAllClassesButtonElement.classList.add("disabled");
             this._hideAllClassesButtonElement.classList.add("disabled");
         } else {
-            this._classesTabElement.classList.remove("disabled");
+            this._classesTabButtonElement.classList.remove("disabled");
             this._showAllClassesButtonElement.classList.remove("disabled");
             this._hideAllClassesButtonElement.classList.remove("disabled");
         }
@@ -55392,6 +55348,11 @@ class Storeys extends Controller {
 
         this._storeysTabElement = cfg.storeysTabElement;
         this._storeysElement = cfg.storeysElement;
+        this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._storeysTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._storeyViewsPlugin = new StoreyViewsPlugin(this.viewer);
 
@@ -55601,11 +55562,13 @@ class Storeys extends Controller {
     }
 
     setEnabled(enabled) {
-        // if (!enabled) {
-        //     document.getElementById("storeys-tab").classList.add("disabled");
-        //    } else {
-        //     document.getElementById("storeys-tab").classList.remove("disabled");
-        // }
+        if (!enabled) {
+            this._storeysTabButtonElement.classList.add("disabled");
+            this._storeysTabElement.classList.add("disabled");
+           } else {
+            this._storeysTabButtonElement.classList.remove("disabled");
+            this._storeysTabElement.classList.remove("disabled");
+        }
     }
 
     /** @private */
@@ -55616,8 +55579,8 @@ class Storeys extends Controller {
 }
 
 const explorerTemplate = `<div class="xeokit-tabs">
-    <div class="xeokit-tab">
-        <a class="xeokit-tab-button xeokit-modelsTab" href="#">Models</a>
+    <div class="xeokit-tab xeokit-modelsTab">
+        <a class="xeokit-tab-btn" href="#">Models</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled">Unload all</button>
@@ -55626,7 +55589,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
     <div class="xeokit-tab xeokit-objectsTab">
-        <a class="xeokit-tab-button" href="#">Objects</a>
+        <a class="xeokit-tab-btn disabled" href="#">Objects</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
             <button type="button" class="xeokit-showAllObjects xeokit-btn disabled">Show all</button>
@@ -55636,7 +55599,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
-        <a class="xeokit-tab-button" href="#">Classes</a>
+        <a class="xeokit-tab-btn disabled" href="#">Classes</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-showAllClasses xeokit-btn disabled">Show all</button>
@@ -55646,7 +55609,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
-        <a class="xeokit-tab-button" href="#">Storeys</a>
+        <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
         <div class="xeokit-tab-content">
              <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
         </div>
@@ -55671,7 +55634,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled"></button>
     </div>
     <!-- Tools button group -->
-    <div class="xeokit-xeokit-btn-group" role="group">
+    <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
         <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
         <!-- Select tool button -->
@@ -55687,7 +55650,7 @@ function initTabs(containerElement) {
 
     const tabsClass = 'xeokit-tabs';
     const tabClass = 'xeokit-tab';
-    const tabButtonClass = 'xeokit-tab-button';
+    const tabButtonClass = 'xeokit-tab-btn';
     const activeClass = 'active';
 
     // Activates the chosen tab and deactivates the rest
@@ -56019,6 +55982,7 @@ class ViewerUI extends Controller {
         this.models.setEnabled(enabled);
         this.objects.setEnabled(enabled);
         this.classes.setEnabled(enabled);
+        this.storeys.setEnabled(enabled);
 
         // Toolbar
 

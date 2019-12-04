@@ -20,6 +20,11 @@ class Storeys extends Controller {
 
         this._storeysTabElement = cfg.storeysTabElement;
         this._storeysElement = cfg.storeysElement;
+        this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._storeysTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._storeyViewsPlugin = new StoreyViewsPlugin(this.viewer);
 
@@ -236,11 +241,13 @@ class Storeys extends Controller {
     }
 
     setEnabled(enabled) {
-        // if (!enabled) {
-        //     document.getElementById("storeys-tab").classList.add("disabled");
-        //    } else {
-        //     document.getElementById("storeys-tab").classList.remove("disabled");
-        // }
+        if (!enabled) {
+            this._storeysTabButtonElement.classList.add("disabled");
+            this._storeysTabElement.classList.add("disabled");
+           } else {
+            this._storeysTabButtonElement.classList.remove("disabled");
+            this._storeysTabElement.classList.remove("disabled");
+        }
     }
 
     /** @private */

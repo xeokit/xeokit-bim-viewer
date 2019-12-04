@@ -19,8 +19,8 @@ import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 import {Storeys} from "./explorer/Storeys.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
-    <div class="xeokit-tab">
-        <a class="xeokit-tab-button xeokit-modelsTab" href="#">Models</a>
+    <div class="xeokit-tab xeokit-modelsTab">
+        <a class="xeokit-tab-btn" href="#">Models</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled">Unload all</button>
@@ -29,7 +29,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
     <div class="xeokit-tab xeokit-objectsTab">
-        <a class="xeokit-tab-button" href="#">Objects</a>
+        <a class="xeokit-tab-btn disabled" href="#">Objects</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
             <button type="button" class="xeokit-showAllObjects xeokit-btn disabled">Show all</button>
@@ -39,7 +39,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
-        <a class="xeokit-tab-button" href="#">Classes</a>
+        <a class="xeokit-tab-btn disabled" href="#">Classes</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-showAllClasses xeokit-btn disabled">Show all</button>
@@ -49,7 +49,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
-        <a class="xeokit-tab-button" href="#">Storeys</a>
+        <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
         <div class="xeokit-tab-content">
              <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
         </div>
@@ -74,7 +74,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled"></button>
     </div>
     <!-- Tools button group -->
-    <div class="xeokit-xeokit-btn-group" role="group">
+    <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
         <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
         <!-- Select tool button -->
@@ -90,7 +90,7 @@ function initTabs(containerElement) {
 
     const tabsClass = 'xeokit-tabs';
     const tabClass = 'xeokit-tab';
-    const tabButtonClass = 'xeokit-tab-button';
+    const tabButtonClass = 'xeokit-tab-btn';
     const activeClass = 'active';
 
     // Activates the chosen tab and deactivates the rest
@@ -422,6 +422,7 @@ class ViewerUI extends Controller {
         this.models.setEnabled(enabled);
         this.objects.setEnabled(enabled);
         this.classes.setEnabled(enabled);
+        this.storeys.setEnabled(enabled);
 
         // Toolbar
 

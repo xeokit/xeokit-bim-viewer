@@ -25,6 +25,11 @@ class Models extends Controller {
         this._modelsTabElement = cfg.modelsTabElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
         this._modelsElement = cfg.modelsElement;
+        this._modelsTabButtonElement = this._modelsTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._modelsTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer);
         this._modelsInfo = {};
@@ -153,8 +158,10 @@ class Models extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
+            this._modelsTabButtonElement.classList.add("disabled");
             this._unloadModelsButtonElement.classList.add("disabled");
         } else {
+            this._modelsTabButtonElement.classList.remove("disabled");
             this._unloadModelsButtonElement.classList.remove("disabled");
         }
     }

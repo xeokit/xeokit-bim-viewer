@@ -26,6 +26,11 @@ class Objects extends Controller {
         this._objectsTabElement = cfg.objectsTabElement;
         this._showAllObjectsButtonElement = cfg.showAllObjectsButtonElement;
         this._hideAllObjectsButtonElement = cfg.hideAllObjectsButtonElement;
+        this._objectsTabButtonElement = this._objectsTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._objectsTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
 
         const objectsElement = cfg.objectsElement;
 
@@ -56,11 +61,11 @@ class Objects extends Controller {
 
     setEnabled(enabled) {
         if (!enabled) {
-            this._objectsTabElement.classList.add("disabled");
+            this._objectsTabButtonElement.classList.add("disabled");
             this._showAllObjectsButtonElement.classList.add("disabled");
             this._hideAllObjectsButtonElement.classList.add("disabled");
         } else {
-            this._objectsTabElement.classList.remove("disabled");
+            this._objectsTabButtonElement.classList.remove("disabled");
             this._showAllObjectsButtonElement.classList.remove("disabled");
             this._hideAllObjectsButtonElement.classList.remove("disabled");
         }
