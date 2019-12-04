@@ -121,6 +121,9 @@ function initTabs(containerElement) {
             let tabButton = tabElement.querySelector('.' + tabButtonClass);
             tabButton.addEventListener('click', function (event) {
                 event.preventDefault();
+                if (this.classList.contains("disabled")) {
+                    return;
+                }
                 activateTab(event.target.parentNode);
             })
         }
@@ -514,7 +517,7 @@ class ViewerUI extends Controller {
 
         // Explorer
 
-        this.models.setEnabled(enabled);
+        // Models tab is always enabled
         this.objects.setEnabled(enabled);
         this.classes.setEnabled(enabled);
         this.storeys.setEnabled(enabled);
