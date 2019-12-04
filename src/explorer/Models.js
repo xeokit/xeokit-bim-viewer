@@ -47,10 +47,8 @@ class Models extends Controller {
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div class='form-check'>";
-                html += "<label class='form-check-label'>";
-                html += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
-                html += "</label>";
+                html += "<div>";
+                html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
                 html += "</div>";
             }
             this._modelsElement.innerHTML = html;

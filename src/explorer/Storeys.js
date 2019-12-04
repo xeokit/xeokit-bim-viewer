@@ -138,11 +138,9 @@ class Storeys extends Controller {
                 const storey = storeys[storeyId];
                 const metaObject = metaScene.metaObjects[storeyId];
                 if (storey) {
-                    html.push("<div class='form-check'>");
                     html.push("<li>");
                     html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
                     html.push("</li>");
-                    html.push("</div>");
                     storeyIds.push(storeyId);
                 }
             }

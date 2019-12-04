@@ -115,16 +115,14 @@ class Classes extends Controller {
         for (var type in this._data) {
             const classData = this._data[type];
             html.push("<div class='form-check'>");
-            html.push("<label class='form-check-label'>");
             html.push("<input id='");
             html.push(type);
-            html.push("' type='checkbox' class='form-check-input' value=''");
+            html.push("' type='checkbox' value=''");
             if (classData.numObjectsVisible > 0) {
                 html.push(" checked ");
             }
             html.push(">");
             html.push(type);
-            html.push("</label>");
             html.push("</div>");
         }
         this._classesElement.innerHTML = html.join("");

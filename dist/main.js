@@ -6318,6 +6318,7 @@ class ResetAction extends Controller {
         const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
         const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
         viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
         viewer.cameraFlight.flyTo({
             look: center,
             eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
@@ -49520,10 +49521,8 @@ class Models extends Controller {
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div class='form-check'>";
-                html += "<label class='form-check-label'>";
-                html += "<input id='" + modelInfo.id + "' type='checkbox' class='form-check-input' value=''>" + modelInfo.name;
-                html += "</label>";
+                html += "<div>";
+                html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
                 html += "</div>";
             }
             this._modelsElement.innerHTML = html;
@@ -50474,16 +50473,14 @@ class Classes extends Controller {
         for (var type in this._data) {
             const classData = this._data[type];
             html.push("<div class='form-check'>");
-            html.push("<label class='form-check-label'>");
             html.push("<input id='");
             html.push(type);
-            html.push("' type='checkbox' class='form-check-input' value=''");
+            html.push("' type='checkbox' value=''");
             if (classData.numObjectsVisible > 0) {
                 html.push(" checked ");
             }
             html.push(">");
             html.push(type);
-            html.push("</label>");
             html.push("</div>");
         }
         this._classesElement.innerHTML = html.join("");
@@ -55459,11 +55456,9 @@ class Storeys extends Controller {
                 const storey = storeys[storeyId];
                 const metaObject = metaScene.metaObjects[storeyId];
                 if (storey) {
-                    html.push("<div class='form-check'>");
                     html.push("<li>");
                     html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
                     html.push("</li>");
-                    html.push("</div>");
                     storeyIds.push(storeyId);
                 }
             }
