@@ -17,6 +17,7 @@ import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
 import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
 import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 import {Storeys} from "./explorer/Storeys.js";
+import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
@@ -322,6 +323,8 @@ class ViewerUI extends Controller {
         this.reset.on("reset", () => {
             this.fire("reset", true);
         });
+
+        this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
     }
 
     _customizeViewer() {
@@ -375,16 +378,108 @@ class ViewerUI extends Controller {
 
     /**
      * Saves viewer state to a BCF viewpoint.
+     *
+     * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
+     * direction vector. Therefore, we save ````camera_direction```` as the vector from {@link Camera#eye} to {@link Camera#look}.
+     *
+     * @param {*} [options] Options for getting the viewpoint.
+     * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.
+     * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.
+     * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.
+     * @returns {*} BCF JSON viewpoint object
+     * @example
+     *
+     * const viewer = new Viewer();
+     *
+     * const bcfPlugin = new BCFPlugin(viewer, {
+     *     //...
+     * });
+     *
+     * const viewpoint = viewerUI.saveBCFViewpoint({
+     *     spacesVisible: false,          // Default
+     *     spaceBoundariesVisible: false, // Default
+     *     openingsVisible: false         // Default
+     * });
+     *
+     * // viewpoint will resemble the following:
+     *
+     * {
+     *     perspective_camera: {
+     *         camera_view_point: {
+     *             x: 0.0,
+     *             y: 0.0,
+     *             z: 0.0
+     *         },
+     *         camera_direction: {
+     *             x: 1.0,
+     *             y: 1.0,
+     *             z: 2.0
+     *         },
+     *         camera_up_vector: {
+     *             x: 0.0,
+     *             y: 0.0,
+     *             z: 1.0
+     *         },
+     *         field_of_view: 90.0
+     *     },
+     *     lines: [],
+     *     clipping_planes: [{
+     *         location: {
+     *             x: 0.5,
+     *             y: 0.5,
+     *             z: 0.5
+     *         },
+     *         direction: {
+     *             x: 1.0,
+     *             y: 0.0,
+     *             z: 0.0
+     *         }
+     *     }],
+     *     bitmaps: [],
+     *     snapshot: {
+     *         snapshot_type: png,
+     *         snapshot_data: "data:image/png;base64,......"
+     *     },
+     *     components: {
+     *         visibility: {
+     *             default_visibility: false,
+     *             exceptions: [{
+     *                 ifc_guid: 4$cshxZO9AJBebsni$z9Yk,
+     *                 originating_system: xeokit.io,
+     *                 authoring_tool_id: xeokit/v1.0
+     *             }]
+     *        },
+     *         selection: [{
+     *            ifc_guid: "4$cshxZO9AJBebsni$z9Yk",
+     *         }]
+     *     }
+     * }
      */
-    saveBCFViewpoint() {
-
+    saveBCFViewpoint(options) {
+        return this._bcfViewpointsPlugin.getViewpoint(options);
     }
 
     /**
-     * Sets viewer state to a BCF viewpoint.
+     * Sets viewer state to the given BCF viewpoint.
+     *
+     * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
+     * direction vector. Therefore, when loading a BCF viewpoint, we set {@link Camera#look} to the absolute position
+     * obtained by offsetting the BCF ````camera_view_point````  along ````camera_direction````.
+     *
+     * When loading a viewpoint, we also have the option to find {@link Camera#look} as the closest point of intersection
+     * (on the surface of any visible and pickable {@link Entity}) with a 3D ray fired from ````camera_view_point```` in
+     * the direction of ````camera_direction````.
+     *
+     * @param {*} bcfViewpoint  BCF JSON viewpoint object or "reset" / "RESET" to reset the viewer, which clears SectionPlanes,
+     * shows default visible entities and restores camera to initial default position.
+     * @param {*} [options] Options for setting the viewpoint.
+     * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest
+     * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
+     * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
+     * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
      */
-    loadBCFViewpoint() {
-
+    loadBCFViewpoint(bcfViewpoint, options) {
+        this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
     _showAllObjects() {
@@ -434,6 +529,8 @@ class ViewerUI extends Controller {
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
         this.section.setEnabled(enabled);
+
+        this._bcfViewpointsPlugin.destroy();
     }
 }
 
