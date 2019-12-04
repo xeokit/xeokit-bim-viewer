@@ -104,6 +104,7 @@ class ResetAction extends Controller {
         const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
         const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
         viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
         viewer.cameraFlight.flyTo({
             look: center,
             eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
