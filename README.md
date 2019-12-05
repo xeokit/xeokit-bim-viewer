@@ -1,6 +1,6 @@
 # xeokit-viewer
 
-A minimal 3D BIM model viewer built on xeokit.
+A minimal BIM model viewer built on xeokit. Work in progress.
 
 [![Screenshot](https://xeokit.github.io/xeokit-viewer/images/screenshot.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys)
 
