@@ -219,8 +219,8 @@ class Storeys extends Controller {
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                 });
             }
 
@@ -263,8 +263,8 @@ class Storeys extends Controller {
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                 });
             }
         }
