@@ -108,7 +108,6 @@ class Storeys extends Controller {
 
         const objectIds = metaObject.getObjectIDsInSubtree();
 
-        scene.setObjectsVisible(objectIds, true);
         scene.setObjectsXRayed(objectIds, false);
 
         if (!threeDMode) {
