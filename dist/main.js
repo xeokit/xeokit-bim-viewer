@@ -55457,12 +55457,11 @@ class Storeys extends Controller {
             } else {
                 // View fit
 
-                //   scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-
                 viewer.cameraFlight.flyTo({
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                     scene.setObjectsVisible(scene.xrayedObjectIds, false);
                 });
             }
@@ -55502,12 +55501,11 @@ class Storeys extends Controller {
             } else {
                 // view fit
 
-                //
-
                 viewer.cameraFlight.flyTo({
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                     scene.setObjectsVisible(scene.xrayedObjectIds, false);
                 });
             }
