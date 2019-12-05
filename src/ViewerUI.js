@@ -409,8 +409,8 @@ class ViewerUI extends Controller {
             case "classes":
                 tabSelector = "xeokit-classesTab";
                 break;
-            case "stories":
-                tabSelector = "xeokit-storiesTab";
+            case "storeys":
+                tabSelector = "xeokit-storeysTab";
                 break;
             default:
                 tabSelector = "xeokit-objectsTab";
