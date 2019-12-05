@@ -1,6 +1,6 @@
 # xeokit-viewer
 
-View 3D BIM models and share BCF issues in the browser.
+A minimal 3D BIM model viewer built on xeokit.
 
 ## Demos 
 
