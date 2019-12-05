@@ -99,6 +99,7 @@ class Storeys extends Controller {
         this.viewerUI.hide.setActive(false);
         this.viewerUI.select.setActive(false);
         this.viewerUI.section.setActive(false);
+        this.viewerUI.section.clear();
         this.viewerUI.firstPerson.setActive(false);
 
         const threeDMode = this.viewerUI.threeD.getActive();

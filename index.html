@@ -145,7 +145,7 @@
             position: relative;
             display: inline-flex;
             vertical-align: middle;
-            margin-right: .7rem !important;
+            margin-right: 1rem !important;
         }
 
         .xeokit-btn {
@@ -161,7 +161,7 @@
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
             -webkit-appearance: button;
             overflow: visible;
-            margin: 0;
+            margin: 0 2px 0 0;
             box-sizing: border-box;
             align-items: flex-start;
         }
@@ -304,11 +304,11 @@
             vertical-align: middle;
             border: 1px solid #ffffff;
             padding: .375rem .75rem;
+            margin: 0 5px 10px 0;
             border-radius: .25rem;
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
             -webkit-appearance: button;
             overflow: visible;
-            margin: 0;
             box-sizing: border-box;
             align-items: flex-start;
             /*font: 400 13.3333px Arial;*/
@@ -498,17 +498,20 @@
         alert(`Query result:\n\nObject ID = ${entity.id}\nIFC type = "${metaObject.type}"`);
     });
 
-    function getUrlVars() {
+    const getUrlVars = () => {
         var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
             vars[key] = value;
         });
         return vars;
-    }
+    };
 
-    var project = getUrlVars()["project"] || "WestRiversideHospital";
+    const urlVars = getUrlVars();
+    const project = urlVars["project"] || "WestRiversideHospital";
+    const tab = urlVars["tab"] || "objects";
 
     viewerUI.loadProject(project);
+    viewerUI.openTab(tab);
 
 </script>
 

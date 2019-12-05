@@ -93,6 +93,7 @@ class Models extends Controller {
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
+                            this._unloadModelsButtonElement.classList.remove("disabled");
                             if (this._numModelsLoaded === 1) { // Jump camera when only one model
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
@@ -133,6 +134,11 @@ class Models extends Controller {
         const aabb = scene.getAABB(scene.visibleObjectIds);
         document.getElementById("" + modelId).checked = false;
         this._numModelsLoaded--;
+        if (this._numModelsLoaded > 0) {
+            this._unloadModelsButtonElement.classList.remove("disabled");
+        } else {
+            this._unloadModelsButtonElement.classList.add("disabled");
+        }
         this.viewer.cameraFlight.flyTo({
             aabb: aabb
         }, () => {

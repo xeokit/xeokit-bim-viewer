@@ -3,7 +3,6 @@ import {BusyModal} from "./BusyModal.js";
 import {ResetAction} from "./toolbar/ResetAction.js";
 import {FitAction} from "./toolbar/FitAction.js";
 import {FirstPersonMode} from "./toolbar/FirstPersonMode.js";
-import {OrthoMode} from "./toolbar/OrthoMode.js";
 import {HideMode} from "./toolbar/HideMode.js";
 import {SelectMode} from "./toolbar/SelectMode.js";
 import {QueryMode} from "./toolbar/QueryMode.js";
@@ -183,6 +182,8 @@ class ViewerUI extends Controller {
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
+
+        this._explorerElement = explorerElement;
 
         initTabs(explorerElement);
 
@@ -388,6 +389,42 @@ class ViewerUI extends Controller {
      */
     loadProject(projectId) {
         this.models._loadProject(projectId);
+    }
+
+    /**
+     * Opens a tab.
+     * @param tabId
+     */
+    openTab(tabId) {
+        const tabClass = 'xeokit-tab';
+        const activeClass = 'active';
+        let tabSelector;
+        switch (tabId) {
+            case "models":
+                tabSelector = "xeokit-modelsTab";
+                break;
+            case "objects":
+                tabSelector = "xeokit-objectsTab";
+                break;
+            case "classes":
+                tabSelector = "xeokit-classesTab";
+                break;
+            case "stories":
+                tabSelector = "xeokit-storiesTab";
+                break;
+            default:
+                tabSelector = "xeokit-objectsTab";
+        }
+        let tabs = this._explorerElement.querySelectorAll("." + tabClass);
+        let tab = this._explorerElement.querySelector("." + tabSelector);
+        for (let i = 0; i < tabs.length; i++) {
+            let tabElement = tabs[i];
+            if (tabElement.isEqualNode(tab)) {
+                tabElement.classList.add(activeClass)
+            } else {
+                tabElement.classList.remove(activeClass)
+            }
+        }
     }
 
     /**

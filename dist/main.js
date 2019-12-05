@@ -49520,6 +49520,7 @@ class Models extends Controller {
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
+                            this._unloadModelsButtonElement.classList.remove("disabled");
                             if (this._numModelsLoaded === 1) { // Jump camera when only one model
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
@@ -49560,6 +49561,11 @@ class Models extends Controller {
         const aabb = scene.getAABB(scene.visibleObjectIds);
         document.getElementById("" + modelId).checked = false;
         this._numModelsLoaded--;
+        if (this._numModelsLoaded > 0) {
+            this._unloadModelsButtonElement.classList.remove("disabled");
+        } else {
+            this._unloadModelsButtonElement.classList.add("disabled");
+        }
         this.viewer.cameraFlight.flyTo({
             aabb: aabb
         }, () => {
@@ -55380,12 +55386,14 @@ class Storeys extends Controller {
         this.viewerUI.hide.setActive(false);
         this.viewerUI.select.setActive(false);
         this.viewerUI.section.setActive(false);
+        this.viewerUI.section.clear();
         this.viewerUI.firstPerson.setActive(false);
 
         const threeDMode = this.viewerUI.threeD.getActive();
 
         scene.setObjectsVisible(scene.objectIds, true);
         scene.setObjectsXRayed(scene.objectIds, true);
+        scene.setObjectsSelected(scene.selectedObjectIds, false);
 
         const objectIds = metaObject.getObjectIDsInSubtree();
 
@@ -55964,6 +55972,9 @@ class ThreeDMode extends Controller {
 
             } else {
 
+                this.viewerUI.section.setActive(false);
+                this.viewerUI.section.clear();
+
                 const viewer = this.viewer;
                 const scene = viewer.scene;
                 const camera = scene.camera;
@@ -56220,6 +56231,8 @@ class ViewerUI extends Controller {
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
 
+        this._explorerElement = explorerElement;
+
         initTabs(explorerElement);
 
         this.busyModal = new BusyModal(this); // TODO: Support external spinner dialog
@@ -56424,6 +56437,42 @@ class ViewerUI extends Controller {
      */
     loadProject(projectId) {
         this.models._loadProject(projectId);
+    }
+
+    /**
+     * Opens a tab.
+     * @param tabId
+     */
+    openTab(tabId) {
+        const tabClass = 'xeokit-tab';
+        const activeClass = 'active';
+        let tabSelector;
+        switch (tabId) {
+            case "models":
+                tabSelector = "xeokit-modelsTab";
+                break;
+            case "objects":
+                tabSelector = "xeokit-objectsTab";
+                break;
+            case "classes":
+                tabSelector = "xeokit-classesTab";
+                break;
+            case "stories":
+                tabSelector = "xeokit-storiesTab";
+                break;
+            default:
+                tabSelector = "xeokit-objectsTab";
+        }
+        let tabs = this._explorerElement.querySelectorAll("." + tabClass);
+        let tab = this._explorerElement.querySelector("." + tabSelector);
+        for (let i = 0; i < tabs.length; i++) {
+            let tabElement = tabs[i];
+            if (tabElement.isEqualNode(tab)) {
+                tabElement.classList.add(activeClass);
+            } else {
+                tabElement.classList.remove(activeClass);
+            }
+        }
     }
 
     /**

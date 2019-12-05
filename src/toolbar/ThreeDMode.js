@@ -41,6 +41,9 @@ class ThreeDMode extends Controller {
 
             } else {
 
+                this.viewerUI.section.setActive(false);
+                this.viewerUI.section.clear();
+
                 const viewer = this.viewer;
                 const scene = viewer.scene;
                 const camera = scene.camera;
