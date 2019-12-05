@@ -95,9 +95,6 @@ class Storeys extends Controller {
         const metaScene = viewer.metaScene;
         const metaObject = metaScene.metaObjects[storeyId];
 
-        this.viewerUI.query.setActive(false);
-        this.viewerUI.hide.setActive(false);
-        this.viewerUI.select.setActive(false);
         this.viewerUI.section.setActive(false);
         this.viewerUI.section.clear();
         this.viewerUI.firstPerson.setActive(false);
