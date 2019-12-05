@@ -47,7 +47,7 @@ class Models extends Controller {
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div>";
+                html += "<div class='xeokit-form-check'>";
                 html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
                 html += "</div>";
             }
@@ -78,7 +78,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this.viewerUI.busyModal.show("Loading model '" + modelInfo.name + "'");
+        this.viewerUI.busyModal.show("Loading " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,

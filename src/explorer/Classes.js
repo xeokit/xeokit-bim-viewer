@@ -114,7 +114,7 @@ class Classes extends Controller {
         const html = [];
         for (var type in this._data) {
             const classData = this._data[type];
-            html.push("<div class='form-check'>");
+            html.push("<div class='xeokit-form-check'>");
             html.push("<input id='");
             html.push(type);
             html.push("' type='checkbox' value=''");

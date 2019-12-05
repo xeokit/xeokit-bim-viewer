@@ -4,7 +4,8 @@
   "models": [
     {
       "id": "design",
-      "name": "Schependomlaan Design"
+      "name": "Schependomlaan Design",
+      "default": true
     }
   ]
 }

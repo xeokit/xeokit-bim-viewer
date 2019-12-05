@@ -102,6 +102,7 @@ class ResetAction extends Controller {
         const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
         const camera = scene.camera;
         const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
+    //    const up = math.mulVec3Scalar((camera.yUp) ? [-1, 1, -1] : [-1, 1, 1], -1, []);
         const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
         viewer.cameraControl.pivotPos = center;
         viewer.cameraControl.planView = false;

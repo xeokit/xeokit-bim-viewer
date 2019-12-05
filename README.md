@@ -1,8 +1,11 @@
 # xeokit-viewer
 
-View large 3D BIM models and share BCF issues in the browser.
+View 3D BIM models and share BCF issues in the browser.
 
-* [Demo](https://xeokit.github.io/xeokit-viewer/index.html)
+* [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/index.html?project=WestRiversideHospital)
+* [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter)
+* [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan)
+* [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex)
 
 
 ## Building 

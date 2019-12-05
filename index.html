@@ -113,8 +113,8 @@
             position: absolute;
             width: 200px;
             height: 200px;
-            bottom: 0;
-            right: 0;
+            bottom: 0px;
+            left: 380px;
             z-index: 200000;
         }
 
@@ -168,6 +168,8 @@
 
         .xeokit-btn.disabled {
             opacity: .55;
+            color: #6c757d !important;
+            border: 1px solid #6c757d !important;
         }
 
         .xeokit-btn.active {
@@ -316,9 +318,11 @@
             opacity: .55;
         }
 
-        .xeokit-objectsTab  {
-            font-family: 'Roboto', sans-serif;
-            font-size: 15px;
+        .xeokit-modelsTab {
+        }
+
+        .xeokit-modelsTab .xeokit-form-check{
+            padding-left: 15px;
         }
 
         .xeokit-objectsTab ul {
@@ -370,7 +374,16 @@
             top: 1em;
         }
 
-        .xeokit-storeysTab  {
+        .xeokit-classesTab  {
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+        }
+
+        .xeokit-classesTab .xeokit-form-check {
+            padding-left: 15px;
+        }
+
+        .xeokit-storeysTab {
             font-family: 'Roboto', sans-serif;
             font-size: 15px;
         }
@@ -401,12 +414,12 @@
             padding: 0;
             border: 1px solid #888;
             border-radius: 0.5em;
-            width: 50%;
+            width: 40%;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             -webkit-animation-name: xeokit-busy-modal-animatetop;
             -webkit-animation-duration: 0.4s;
             animation-name: xeokit-busy-modal-animatetop;
-            animation-duration: 0.4s
+            animation-duration: 0.2s
         }
 
         /* Add Animation */
@@ -485,9 +498,17 @@
         alert(`Query result:\n\nObject ID = ${entity.id}\nIFC type = "${metaObject.type}"`);
     });
 
-     viewerUI.loadProject("Schependomlaan");
-  //  viewerUI.loadProject("WestRiversideHospital");
-    //viewerUI.loadProject("OTCConferenceCenter");
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    var project = getUrlVars()["project"] || "WestRiversideHospital";
+
+    viewerUI.loadProject(project);
 
 </script>
 

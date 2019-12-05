@@ -10,8 +10,11 @@
     },
     {
       "id": "WestRiversideHospital",
-      "name": "West Riverside Hospital",
-      "default": true
+      "name": "West Riverside Hospital"
+    },
+    {
+      "id": "OTCConferenceCenter",
+      "name": "OTC Conference Center"
     }
   ]
 }

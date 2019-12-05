@@ -48,13 +48,16 @@ class Storeys extends Controller {
         const viewer = this.viewer;
         const worldPos = math.vec3();
 
+        viewer.scene.xrayMaterial.fill = false;
         viewer.scene.xrayMaterial.fillColor = [0.0, 0.0, 0.0];
         viewer.scene.xrayMaterial.edgeColor = [0.0, 0.0, 0.0];
 
         viewer.scene.xrayMaterial.fillAlpha = 0.06;
-        viewer.scene.xrayMaterial.edgeAlpha = 0.4;
+        viewer.scene.xrayMaterial.edgeAlpha = 0.2;
 
         viewer.cameraControl.on("pickedSurface", (pickResult) => {
+
+            return;
 
             if (!this._storeyOpen) {
                 return;
@@ -172,6 +175,14 @@ class Storeys extends Controller {
         const metaScene = viewer.metaScene;
         const metaObject = metaScene.metaObjects[storeyId];
 
+        this.viewerUI.query.setActive(false);
+        this.viewerUI.hide.setActive(false);
+        this.viewerUI.select.setActive(false);
+        this.viewerUI.section.setActive(false);
+        this.viewerUI.firstPerson.setActive(false);
+
+        const threeDMode = this.viewerUI.threeD.getActive();
+
         if (this._storeyOpen) {
 
             scene.setObjectsVisible(scene.objectIds, true);
@@ -182,23 +193,37 @@ class Storeys extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
 
-            this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
-                projection: "ortho", // Orthographic projection
-                duration: 0.3,       // 2.5 second transition
-                done: () => {
+            if (!threeDMode) {
 
-                    this._storeyViewsPlugin.showStoreyObjects(storeyId, {
-                        hideOthers: true,
-                        useObjectStates: false
-                    });
+                this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
+                    projection: "ortho", // Orthographic projection
+                    duration: 0.5,       // 2.5 second transition
+                    done: () => {
 
-                    this.viewer.cameraControl.planView = true; // Disable camera rotation
+                        this._storeyViewsPlugin.showStoreyObjects(storeyId, {
+                            hideOthers: true,
+                            useObjectStates: false
+                        });
 
-                    if (done) {
-                        done();
+                        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                        if (done) {
+                            done();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                // View fit
+
+                //   scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                viewer.cameraFlight.flyTo({
+                    aabb: scene.getAABB(objectIds),
+                    duration: 0.5
+                }, () => {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                });
+            }
 
         } else {
 
@@ -213,23 +238,37 @@ class Storeys extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
 
-            this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
-                projection: "ortho", // Orthographic projection
-                duration: 1.0,       // 2.5 second transition
-                done: () => {
+            if (!threeDMode) {
 
-                    this._storeyViewsPlugin.showStoreyObjects(storeyId, {
-                        hideOthers: true,
-                        useObjectStates: false
-                    });
+                this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
+                    projection: "ortho", // Orthographic projection
+                    duration: 0.5,       // 2.5 second transition
+                    done: () => {
 
-                    this.viewer.cameraControl.planView = true; // Disable camera rotation
+                        this._storeyViewsPlugin.showStoreyObjects(storeyId, {
+                            hideOthers: true,
+                            useObjectStates: false
+                        });
 
-                    if (done) {
-                        done();
+                        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                        if (done) {
+                            done();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                // view fit
+
+                //
+
+                viewer.cameraFlight.flyTo({
+                    aabb: scene.getAABB(objectIds),
+                    duration: 0.5
+                }, () => {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                });
+            }
         }
 
         this._storeyOpen = true;

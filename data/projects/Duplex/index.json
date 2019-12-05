@@ -1,0 +1,11 @@
+{
+  "id": "duplex",
+  "name": "Duplex",
+  "models": [
+    {
+      "id": "design",
+      "name": "Duplex Design",
+      "default": true
+    }
+  ]
+}

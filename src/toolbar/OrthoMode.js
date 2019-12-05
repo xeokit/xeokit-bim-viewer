@@ -34,7 +34,6 @@ class OrthoMode extends Controller {
             } else {
                 this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, () => {});
             }
-            this.viewer.cameraControl.planView = false;
         });
         
         buttonElement.addEventListener("click", (event) => {

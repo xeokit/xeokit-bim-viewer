@@ -18,6 +18,7 @@ import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLi
 import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 import {Storeys} from "./explorer/Storeys.js";
 import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
+import {ThreeDMode} from "./toolbar/ThreeDMode.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
@@ -62,6 +63,10 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group">
         <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled"></button>
     </div>
+    <!-- 3D Mode button -->
+    <div class="xeokit-btn-group" role="group">
+        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x"></button>
+    </div>
     <!-- Fit button -->
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled"></button>
@@ -70,20 +75,20 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
     </div>
-    <!-- Ortho mode button -->
-    <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled"></button>
-    </div>
+<!--    &lt;!&ndash; Ortho mode button &ndash;&gt;-->
+<!--    <div class="xeokit-btn-group" role="group">-->
+<!--        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled" style="visibility: hidden;"></button>-->
+<!--    </div>-->
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
         <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
         <!-- Select tool button -->
         <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled"></button>
-        <!-- Slice tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled"></button>
+        <!-- Slice tool button -->
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
     </div>
 </div>`;
 
@@ -222,15 +227,20 @@ class ViewerUI extends Controller {
             active: false
         });
 
+        this.threeD = new ThreeDMode(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
+            active: false
+        });
+
         this.firstPerson = new FirstPersonMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
-
-        this.ortho = new OrthoMode(this, {
-            buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
-            active: false
-        });
+        //
+        // this.ortho = new OrthoMode(this, {
+        //     buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
+        //     active: false
+        // });
 
         this.hide = new HideMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-hide"),
@@ -261,8 +271,9 @@ class ViewerUI extends Controller {
 
         this._mutexActivation([this.query, this.hide, this.select, this.section]);
 
+        this.threeD.setActive(true);
         this.firstPerson.setActive(false);
-        this.ortho.setActive(false);
+        //this.ortho.setActive(false);
         this.navCube.setActive(true);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -526,8 +537,9 @@ class ViewerUI extends Controller {
 
         this.reset.setEnabled(enabled);
         this.fit.setEnabled(enabled);
+        this.threeD.setEnabled(enabled);
         this.firstPerson.setEnabled(enabled);
-        this.ortho.setEnabled(enabled);
+      //  this.ortho.setEnabled(enabled);
         this.query.setEnabled(enabled);
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);

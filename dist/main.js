@@ -6316,6 +6316,7 @@ class ResetAction extends Controller {
         const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
         const camera = scene.camera;
         const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
+    //    const up = math.mulVec3Scalar((camera.yUp) ? [-1, 1, -1] : [-1, 1, 1], -1, []);
         const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
         viewer.cameraControl.pivotPos = center;
         viewer.cameraControl.planView = false;
@@ -6446,54 +6447,6 @@ class FirstPersonMode extends Controller {
             }
             const active = this.getActive();
             this.setActive(!active);
-            event.preventDefault();
-        });
-
-        this.viewerUI.on("reset", ()=>{
-            this.setActive(false);
-        });
-    }
-}
-
-class OrthoMode extends Controller {
-
-    constructor(parent, cfg) {
-
-        super(parent, cfg);
-
-        if (!cfg.buttonElement) {
-            throw "Missing config: buttonElement";
-        }
-
-        const buttonElement = cfg.buttonElement;
-
-        this.on("enabled", (enabled) => {
-            if (!enabled) {
-                buttonElement.classList.add("disabled");
-            } else {
-                buttonElement.classList.remove("disabled");
-            }
-        });
-
-        this.on("active", (active) => {
-            if (active) {
-                buttonElement.classList.add("active");
-            } else {
-                buttonElement.classList.remove("active");
-            }
-        });
-        
-        this.on("active", (active) => {
-            if (active) {
-                this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, () => {});
-            } else {
-                this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, () => {});
-            }
-            this.viewer.cameraControl.planView = false;
-        });
-        
-        buttonElement.addEventListener("click", (event) => {
-            this.setActive(!this.getActive());
             event.preventDefault();
         });
 
@@ -49521,7 +49474,7 @@ class Models extends Controller {
             for (var i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div>";
+                html += "<div class='xeokit-form-check'>";
                 html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
                 html += "</div>";
             }
@@ -49552,7 +49505,7 @@ class Models extends Controller {
         if (!modelInfo) {
             return;
         }
-        this.viewerUI.busyModal.show("Loading model '" + modelInfo.name + "'");
+        this.viewerUI.busyModal.show("Loading " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -50472,7 +50425,7 @@ class Classes extends Controller {
         const html = [];
         for (var type in this._data) {
             const classData = this._data[type];
-            html.push("<div class='form-check'>");
+            html.push("<div class='xeokit-form-check'>");
             html.push("<input id='");
             html.push(type);
             html.push("' type='checkbox' value=''");
@@ -54953,7 +54906,7 @@ class StoreyViewsPlugin extends Plugin {
         eye2[1] = look2[1] + (camera.worldUp[1] * sca);
         eye2[2] = look2[2] + (camera.worldUp[2] * sca);
 
-        const up2 = camera.worldForward;
+        const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
 
         if (options.done) {
 
@@ -55364,43 +55317,17 @@ class Storeys extends Controller {
         this._openStoreyId = null;
 
         const viewer = this.viewer;
-        const worldPos = math.vec3();
 
+        viewer.scene.xrayMaterial.fill = false;
         viewer.scene.xrayMaterial.fillColor = [0.0, 0.0, 0.0];
         viewer.scene.xrayMaterial.edgeColor = [0.0, 0.0, 0.0];
 
         viewer.scene.xrayMaterial.fillAlpha = 0.06;
-        viewer.scene.xrayMaterial.edgeAlpha = 0.4;
+        viewer.scene.xrayMaterial.edgeAlpha = 0.2;
 
         viewer.cameraControl.on("pickedSurface", (pickResult) => {
 
-            if (!this._storeyOpen) {
-                return;
-            }
-
-            const entity = pickResult.entity;
-            const metaObject = viewer.metaScene.metaObjects[entity.id];
-
-          //  if (canStandOnTypes[metaObject.type]) {
-
-                worldPos.set(pickResult.worldPos);
-                worldPos[1] += 1.5;
-
-                viewer.cameraFlight.flyTo({
-                    eye: worldPos,
-                    up: viewer.camera.worldUp,
-                    look: math.addVec3(worldPos, viewer.camera.worldForward, []),
-                    projection: "perspective",
-                    duration: 1.5
-                }, () => {
-
-                    viewer.cameraControl.planView = false;
-                    viewer.cameraControl.firstPerson = true;
-                    viewer.cameraControl.pivoting = false;
-
-                    this._storeyOpen = false;
-                    this._openStoreyId = null;
-                });
+            return;
            // }
         });
 
@@ -55490,6 +55417,14 @@ class Storeys extends Controller {
         const metaScene = viewer.metaScene;
         const metaObject = metaScene.metaObjects[storeyId];
 
+        this.viewerUI.query.setActive(false);
+        this.viewerUI.hide.setActive(false);
+        this.viewerUI.select.setActive(false);
+        this.viewerUI.section.setActive(false);
+        this.viewerUI.firstPerson.setActive(false);
+
+        const threeDMode = this.viewerUI.threeD.getActive();
+
         if (this._storeyOpen) {
 
             scene.setObjectsVisible(scene.objectIds, true);
@@ -55500,23 +55435,37 @@ class Storeys extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
 
-            this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
-                projection: "ortho", // Orthographic projection
-                duration: 0.3,       // 2.5 second transition
-                done: () => {
+            if (!threeDMode) {
 
-                    this._storeyViewsPlugin.showStoreyObjects(storeyId, {
-                        hideOthers: true,
-                        useObjectStates: false
-                    });
+                this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
+                    projection: "ortho", // Orthographic projection
+                    duration: 0.5,       // 2.5 second transition
+                    done: () => {
 
-                    this.viewer.cameraControl.planView = true; // Disable camera rotation
+                        this._storeyViewsPlugin.showStoreyObjects(storeyId, {
+                            hideOthers: true,
+                            useObjectStates: false
+                        });
 
-                    if (done) {
-                        done();
+                        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                        if (done) {
+                            done();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                // View fit
+
+                //   scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                viewer.cameraFlight.flyTo({
+                    aabb: scene.getAABB(objectIds),
+                    duration: 0.5
+                }, () => {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                });
+            }
 
         } else {
 
@@ -55531,23 +55480,37 @@ class Storeys extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
 
-            this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
-                projection: "ortho", // Orthographic projection
-                duration: 1.0,       // 2.5 second transition
-                done: () => {
+            if (!threeDMode) {
 
-                    this._storeyViewsPlugin.showStoreyObjects(storeyId, {
-                        hideOthers: true,
-                        useObjectStates: false
-                    });
+                this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
+                    projection: "ortho", // Orthographic projection
+                    duration: 0.5,       // 2.5 second transition
+                    done: () => {
 
-                    this.viewer.cameraControl.planView = true; // Disable camera rotation
+                        this._storeyViewsPlugin.showStoreyObjects(storeyId, {
+                            hideOthers: true,
+                            useObjectStates: false
+                        });
 
-                    if (done) {
-                        done();
+                        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+                        if (done) {
+                            done();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                // view fit
+
+                //
+
+                viewer.cameraFlight.flyTo({
+                    aabb: scene.getAABB(objectIds),
+                    duration: 0.5
+                }, () => {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                });
+            }
         }
 
         this._storeyOpen = true;
@@ -56059,6 +56022,138 @@ function ZToY(vec) {
     return new Float64Array([vec[0], vec[2], -vec[1]]);
 }
 
+const tempVec3a$4 = math.vec3();
+
+class ThreeDMode extends Controller {
+
+    constructor(parent, cfg) {
+
+        super(parent, cfg);
+
+        if (!cfg.buttonElement) {
+            throw "Missing config: buttonElement";
+        }
+
+        const buttonElement = cfg.buttonElement;
+
+        this.on("enabled", (enabled) => {
+            if (!enabled) {
+                buttonElement.classList.add("disabled");
+            } else {
+                buttonElement.classList.remove("disabled");
+            }
+        });
+
+        this.on("active", (active) => {
+            if (active) {
+                buttonElement.classList.add("active");
+            } else {
+                buttonElement.classList.remove("active");
+            }
+        });
+
+        this.on("active", (active) => {
+
+            if (active) {
+
+                this._resetCamera();
+
+                this.viewerUI.navCube.setActive(true);
+
+            } else {
+
+                const viewer = this.viewer;
+                const scene = viewer.scene;
+                const camera = scene.camera;
+                const aabb = scene.getAABB(scene.visibleObjectIds);
+               // const aabb = scene.aabb;
+
+                if (aabb[3] < aabb[0] || aabb[4] < aabb[1] || aabb[5] < aabb[2]) { // Don't fly to an inverted boundary
+                    return;
+                }
+                if (aabb[3] === aabb[0] && aabb[4] === aabb[1] && aabb[5] === aabb[2]) { // Don't fly to an empty boundary
+                    return;
+                }
+                const look2 = math.getAABB3Center(aabb);
+                const diag = math.getAABB3Diag(aabb);
+                const fitFOV = 45; // fitFOV;
+                const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
+
+                const orthoScale2 = diag * 1.3;
+
+                const eye2 = tempVec3a$4;
+
+                eye2[0] = look2[0] + (camera.worldUp[0] * sca);
+                eye2[1] = look2[1] + (camera.worldUp[1] * sca);
+                eye2[2] = look2[2] + (camera.worldUp[2] * sca);
+
+                const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
+
+                viewer.cameraFlight.flyTo({
+                    projection: "ortho",
+                    eye: eye2,
+                    look: look2,
+                    up: up2,
+                    orthoScale: orthoScale2
+                }, () =>{
+                    this.viewerUI.navCube.setActive(false);
+                });
+            }
+
+            this.viewer.cameraControl.planView = !active;
+            this.viewerUI.firstPerson.setEnabled(active);
+           // this.viewerUI.ortho.setEnabled(active);
+            this.viewerUI.section.setEnabled(active);
+
+            if (!active) {
+                this.viewerUI.section.setActive(false);
+                //this.viewerUI.firstPerson.setActive(false);
+            }
+
+        });
+
+        buttonElement.addEventListener("click", (event) => {
+            this.setActive(!this.getActive());
+            event.preventDefault();
+        });
+
+        this.viewerUI.on("reset", () => {
+            this.setActive(true);
+        });
+    }
+
+    _resetCamera() {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+       // const aabb = scene.aabb;
+        const diag = math.getAABB3Diag(aabb);
+        const center = math.getAABB3Center(aabb, tempVec3a$4);
+        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
+        const camera = scene.camera;
+        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
+        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
+        viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
+
+        // scene.setObjectsXRayed(scene.objectIds, true);
+        // scene.setObjectsXRayed(scene.visibleObjectIds, false);
+        // scene.setObjectsVisible(scene.objectIds, true);
+
+        viewer.cameraFlight.flyTo({
+            look: center,
+            eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
+            up: up,
+            orthoScale: diag * 1.3,
+            projection: "perspective",
+            duration: 1
+        }, () => {
+            // scene.setObjectsVisible(scene.xrayedObjectIds, false);
+            // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+        });
+    }
+}
+
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
         <a class="xeokit-tab-btn" href="#">Models</a>
@@ -56102,6 +56197,10 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group">
         <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled"></button>
     </div>
+    <!-- 3D Mode button -->
+    <div class="xeokit-btn-group" role="group">
+        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x"></button>
+    </div>
     <!-- Fit button -->
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled"></button>
@@ -56110,20 +56209,20 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
     </div>
-    <!-- Ortho mode button -->
-    <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled"></button>
-    </div>
+<!--    &lt;!&ndash; Ortho mode button &ndash;&gt;-->
+<!--    <div class="xeokit-btn-group" role="group">-->
+<!--        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled" style="visibility: hidden;"></button>-->
+<!--    </div>-->
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
         <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
         <!-- Select tool button -->
         <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled"></button>
-        <!-- Slice tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled"></button>
+        <!-- Slice tool button -->
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
     </div>
 </div>`;
 
@@ -56262,15 +56361,20 @@ class ViewerUI extends Controller {
             active: false
         });
 
+        this.threeD = new ThreeDMode(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
+            active: false
+        });
+
         this.firstPerson = new FirstPersonMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
-
-        this.ortho = new OrthoMode(this, {
-            buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
-            active: false
-        });
+        //
+        // this.ortho = new OrthoMode(this, {
+        //     buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
+        //     active: false
+        // });
 
         this.hide = new HideMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-hide"),
@@ -56301,8 +56405,9 @@ class ViewerUI extends Controller {
 
         this._mutexActivation([this.query, this.hide, this.select, this.section]);
 
+        this.threeD.setActive(true);
         this.firstPerson.setActive(false);
-        this.ortho.setActive(false);
+        //this.ortho.setActive(false);
         this.navCube.setActive(true);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -56566,8 +56671,9 @@ class ViewerUI extends Controller {
 
         this.reset.setEnabled(enabled);
         this.fit.setEnabled(enabled);
+        this.threeD.setEnabled(enabled);
         this.firstPerson.setEnabled(enabled);
-        this.ortho.setEnabled(enabled);
+      //  this.ortho.setEnabled(enabled);
         this.query.setEnabled(enabled);
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
