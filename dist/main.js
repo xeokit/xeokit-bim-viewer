@@ -32836,7 +32836,8 @@ class NavCubeMode extends Controller {
 
         this._navCube = new NavCubePlugin(this.viewer, {
             canvasElement: navCubeCanvasElement,
-            fitVisible: true
+            fitVisible: true,
+            color: "#CFCFCF"
         });
 
         this._navCube.setVisible(this._active);
