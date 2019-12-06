@@ -35,7 +35,7 @@ class Storeys extends Controller {
         viewer.scene.xrayMaterial.fillColor = [0.0, 0.0, 0.0];
         viewer.scene.xrayMaterial.edgeColor = [0.0, 0.0, 0.0];
         viewer.scene.xrayMaterial.fillAlpha = 0.06;
-        viewer.scene.xrayMaterial.edgeAlpha = 0.2;
+        viewer.scene.xrayMaterial.edgeAlpha = 0.4;
     }
 
     _repaint() {
