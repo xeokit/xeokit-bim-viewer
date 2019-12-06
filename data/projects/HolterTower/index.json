@@ -1,0 +1,11 @@
+{
+  "id": "holterTower",
+  "name": "HolterTower",
+  "models": [
+    {
+      "id": "design",
+      "name": "Holter Tower",
+      "default": true
+    }
+  ]
+}

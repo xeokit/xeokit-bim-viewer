@@ -1,15 +1,27 @@
 # xeokit-viewer
 
-A minimal BIM model viewer built on xeokit. Work in progress.
+A minimal BIM model viewer built on xeokit. Work in progress!
 
 [![Screenshot](https://xeokit.github.io/xeokit-viewer/images/screenshot.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys)
 
+## Features
+
+* Uses [xeokit SDK](https://xeokit.io) for fast loading and rendering of large models.
+* Works in all major browsers, including mobile.
+* Loads BIM geometry and metadata from the file system.
+* Supports IFC2x3 and IFC4.
+* Implemented in JavaScript (ES6), with no external library dependencies (other than xeokit).
+
 ## Demos 
 
-* [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/index.html?project=WestRiversideHospital&tab=models)
-* [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys)
-* [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan&tab=storeys)
-* [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex&tab=storeys)
+| Live Demo | Model Source |
+|---|---|
+| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [Holter Tower](https://xeokit.github.io/xeokit-viewer/index.html?project=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
+| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/index.html?project=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
+| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
+
 
 
 ## Building 
