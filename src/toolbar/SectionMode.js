@@ -38,8 +38,11 @@ class SectionMode extends Controller {
             }
         });
 
-        this.on("active", (active) =>{
-          this.activateSectionMode(active);
+        this.on("active", (active) => {
+            this._sectionPlanesPlugin.setOverviewVisible(active);
+            if (!active) {
+                this._sectionPlanesPlugin.hideControl();
+            }
         });
 
         buttonElement.addEventListener("click", (event) => {
@@ -55,23 +58,21 @@ class SectionMode extends Controller {
             this.clear();
             this.setActive(false);
         });
+
+        this._initSectionMode();
     }
 
-    activateSectionMode(active) {
-        if (active) {
-            this._sectionPlanesPlugin.setOverviewVisible(true);
-            this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
-                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                    pos: e.worldPos,
-                    dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
-                });
-                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+    _initSectionMode() {
+        this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                pos: e.worldPos,
+                dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
             });
-        } else {
-            this.viewer.cameraControl.off(this._onPickedSurface);
-            this._sectionPlanesPlugin.hideControl();
-            this._sectionPlanesPlugin.setOverviewVisible(false);
-        }
+            this._sectionPlanesPlugin.showControl(sectionPlane.id);
+        });
     }
 
     clear() {

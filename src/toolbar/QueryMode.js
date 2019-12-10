@@ -34,50 +34,6 @@ class QueryMode extends Controller {
             }
         });
 
-        this.on("active", (active) => {
-            const viewer = this.viewer;
-            const cameraControl = viewer.cameraControl;
-            if (active) {
-                var entity = null;
-                this._onHover = cameraControl.on("hover", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                    entity = e.entity;
-                    entity.highlighted = true;
-                });
-                this._onHoverOff = cameraControl.on("hoverOff", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                });
-                const lastCoords = math.vec2();
-                this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                });
-                this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
-                    if (entity) {
-                        if (!closeEnough(lastCoords, coords)) {
-                            entity = null;
-                            return;
-                        }
-                        this.fire("queryPicked", entity.id);
-                        entity = null;
-                    } else {
-                        this.fire("queryNotPicked", false);
-                    }
-                });
-            } else {
-                cameraControl.off(this._onHover);
-                cameraControl.off(this._onHoverOff);
-                cameraControl.off(this._onMousedown);
-                cameraControl.off(this._onMouseup);
-            }
-        });
-
         buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
@@ -89,6 +45,57 @@ class QueryMode extends Controller {
 
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
+        });
+
+        this._initQueryMode();
+    }
+
+    _initQueryMode() {
+        const viewer = this.viewer;
+        const cameraControl = viewer.cameraControl;
+        var entity = null;
+        this._onHover = cameraControl.on("hover", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+            entity = e.entity;
+            entity.highlighted = true;
+        });
+        this._onHoverOff = cameraControl.on("hoverOff", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+        });
+        const lastCoords = math.vec2();
+        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            lastCoords[0] = coords[0];
+            lastCoords[1] = coords[1];
+        });
+        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                if (!closeEnough(lastCoords, coords)) {
+                    entity = null;
+                    return;
+                }
+                this.fire("queryPicked", entity.id);
+                entity = null;
+            } else {
+                this.fire("queryNotPicked", false);
+            }
         });
     }
 }

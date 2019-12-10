@@ -189,27 +189,57 @@ class Controller {
         window.console.error(message);
     }
 
+    // _mutexActivationOLD(controllers) {
+    //     const mutedControllers = [];
+    //     const numControllers = controllers.length;
+    //     for (let i = 0; i < numControllers; i++) {
+    //         mutedControllers[i] = false;
+    //     }
+    //     for (let i = 0; i < numControllers; i++) {
+    //         const controller = controllers[i];
+    //         controller.on("active", (function () {
+    //             const _i = i;
+    //             return function (active) {
+    //
+    //                 if (!active) {
+    //                     console.log("  returning (" + controller.id + " active == false)");
+    //                     return;
+    //                 }
+    //                 if (mutedControllers[_i]) {
+    //                     console.log("  returning (" + controller.id + " muted)");
+    //                     return;
+    //                 }
+    //                 for (let j = 0; j < numControllers; j++) {
+    //                     if (j === _i) {
+    //                         continue;
+    //                     }
+    //                     console.log("   muting: " + controllers[j].id);
+    //                     mutedControllers[j] = true;
+    //                     console.log("   deactivating: " + controllers[j].id);
+    //                     controllers[j].setActive(false);
+    //                     console.log("   unmuting " + controllers[j].id);
+    //                     mutedControllers[j] = false;
+    //                 }
+    //             };
+    //         })());
+    //     }
+    // }
+
     _mutexActivation(controllers) {
-        const mutedControllers = [];
         const numControllers = controllers.length;
-        for (let i = 0; i < numControllers; i++) {
-            mutedControllers[i] = false;
-        }
         for (let i = 0; i < numControllers; i++) {
             const controller = controllers[i];
             controller.on("active", (function () {
                 const _i = i;
                 return function (active) {
-                    if (!active || mutedControllers[_i]) {
+                    if (!active) {
                         return;
                     }
                     for (let j = 0; j < numControllers; j++) {
                         if (j === _i) {
                             continue;
                         }
-                        mutedControllers[j] = true;
                         controllers[j].setActive(false);
-                        mutedControllers[j] = false;
                     }
                 };
             })());

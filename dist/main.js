@@ -746,27 +746,57 @@ class Controller {
         window.console.error(message);
     }
 
+    // _mutexActivationOLD(controllers) {
+    //     const mutedControllers = [];
+    //     const numControllers = controllers.length;
+    //     for (let i = 0; i < numControllers; i++) {
+    //         mutedControllers[i] = false;
+    //     }
+    //     for (let i = 0; i < numControllers; i++) {
+    //         const controller = controllers[i];
+    //         controller.on("active", (function () {
+    //             const _i = i;
+    //             return function (active) {
+    //
+    //                 if (!active) {
+    //                     console.log("  returning (" + controller.id + " active == false)");
+    //                     return;
+    //                 }
+    //                 if (mutedControllers[_i]) {
+    //                     console.log("  returning (" + controller.id + " muted)");
+    //                     return;
+    //                 }
+    //                 for (let j = 0; j < numControllers; j++) {
+    //                     if (j === _i) {
+    //                         continue;
+    //                     }
+    //                     console.log("   muting: " + controllers[j].id);
+    //                     mutedControllers[j] = true;
+    //                     console.log("   deactivating: " + controllers[j].id);
+    //                     controllers[j].setActive(false);
+    //                     console.log("   unmuting " + controllers[j].id);
+    //                     mutedControllers[j] = false;
+    //                 }
+    //             };
+    //         })());
+    //     }
+    // }
+
     _mutexActivation(controllers) {
-        const mutedControllers = [];
         const numControllers = controllers.length;
-        for (let i = 0; i < numControllers; i++) {
-            mutedControllers[i] = false;
-        }
         for (let i = 0; i < numControllers; i++) {
             const controller = controllers[i];
             controller.on("active", (function () {
                 const _i = i;
                 return function (active) {
-                    if (!active || mutedControllers[_i]) {
+                    if (!active) {
                         return;
                     }
                     for (let j = 0; j < numControllers; j++) {
                         if (j === _i) {
                             continue;
                         }
-                        mutedControllers[j] = true;
                         controllers[j].setActive(false);
-                        mutedControllers[j] = false;
                     }
                 };
             })());
@@ -6489,10 +6519,6 @@ class HideMode extends Controller {
             }
         });
 
-        this.on("active", (active) => {
-           this.activateHideMode(active);
-        });
-
         buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
@@ -6502,54 +6528,54 @@ class HideMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.viewerUI.on("reset", () => {
             this.setActive(false);
         });
+
+        this._initHideMode();
     }
 
-    activateHideMode(active) {
-        if (active) {
-            var entity = null;
-            this._onHover = this.viewer.cameraControl.on("hover", (e) => {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-                entity = e.entity;
-                entity.highlighted = true;
-            });
-            this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
-            const lastCoords = math.vec2();
-            this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
-                lastCoords[0] = coords[0];
-                lastCoords[1] = coords[1];
-            });
-            this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
-                if (entity) {
-                    if (!closeEnough(lastCoords, coords)) {
-                        entity = null;
-                        return;
-                    }
-                    entity.visible = false;
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
-        } else {
+    _initHideMode() {
+        var entity = null;
+        this._onHover = this.viewer.cameraControl.on("hover", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
             if (entity) {
                 entity.highlighted = false;
                 entity = null;
             }
-            this.viewer.cameraControl.off(this._onHover);
-            this.viewer.cameraControl.off(this._onHoverOff);
-            this.viewer.cameraControl.off(this._onMousedown);
-            this.viewer.cameraControl.off(this._onMouseup);
-        }
+            entity = e.entity;
+            entity.highlighted = true;
+        });
+        this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+        });
+        const lastCoords = math.vec2();
+        this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+            lastCoords[0] = coords[0];
+            lastCoords[1] = coords[1];
+        });
+        this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                if (!closeEnough(lastCoords, coords)) {
+                    entity = null;
+                    return;
+                }
+                entity.visible = false;
+                entity.highlighted = false;
+                entity = null;
+            }
+        });
     }
 }
 
@@ -6586,10 +6612,6 @@ class SelectMode extends Controller {
             }
         });
 
-        this.on("active", (active) => {
-           this.activateSelectMode(active);
-        });
-
         buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
@@ -6599,55 +6621,58 @@ class SelectMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.viewerUI.on("reset", () => {
             this.setActive(false);
         });
+
+        this._initSectionMode();
     }
 
-    activateSelectMode(active) {
+    _initSectionMode() {
         const viewer = this.viewer;
         const cameraControl = viewer.cameraControl;
-        if (active) {
-            var entity = null;
-            this._onHover = cameraControl.on("hover", (e) => {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-                entity = e.entity;
-                entity.highlighted = true;
-            });
-            this._onHoverOff = cameraControl.on("hoverOff", (e) => {
-                if (entity) {
-                    entity.highlighted = false;
-                    entity = null;
-                }
-            });
-            const lastCoords = math.vec2();
-            this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
-                lastCoords[0] = coords[0];
-                lastCoords[1] = coords[1];
-            });
-            this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
-                if (entity) {
-                    if (!closeEnough$1(lastCoords, coords)) {
-                        entity = null;
-                        return;
-                    }
-                    entity.selected = !entity.selected;
-                    entity = null;
-                }
-            });
-        } else {
+        var entity = null;
+        this._onHover = cameraControl.on("hover", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
             if (entity) {
                 entity.highlighted = false;
                 entity = null;
             }
-            cameraControl.off(this._onHover);
-            cameraControl.off(this._onHoverOff);
-            cameraControl.off(this._onMousedown);
-            cameraControl.off(this._onMouseup);
-        }
+            entity = e.entity;
+            entity.highlighted = true;
+        });
+        this._onHoverOff = cameraControl.on("hoverOff", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+        });
+        const lastCoords = math.vec2();
+        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            lastCoords[0] = coords[0];
+            lastCoords[1] = coords[1];
+        });
+        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                if (!closeEnough$1(lastCoords, coords)) {
+                    entity = null;
+                    return;
+                }
+                entity.selected = !entity.selected;
+                entity = null;
+            }
+        });
     }
 }
 
@@ -6684,50 +6709,6 @@ class QueryMode extends Controller {
             }
         });
 
-        this.on("active", (active) => {
-            const viewer = this.viewer;
-            const cameraControl = viewer.cameraControl;
-            if (active) {
-                var entity = null;
-                this._onHover = cameraControl.on("hover", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                    entity = e.entity;
-                    entity.highlighted = true;
-                });
-                this._onHoverOff = cameraControl.on("hoverOff", (e) => {
-                    if (entity) {
-                        entity.highlighted = false;
-                        entity = null;
-                    }
-                });
-                const lastCoords = math.vec2();
-                this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                });
-                this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
-                    if (entity) {
-                        if (!closeEnough$2(lastCoords, coords)) {
-                            entity = null;
-                            return;
-                        }
-                        this.fire("queryPicked", entity.id);
-                        entity = null;
-                    } else {
-                        this.fire("queryNotPicked", false);
-                    }
-                });
-            } else {
-                cameraControl.off(this._onHover);
-                cameraControl.off(this._onHoverOff);
-                cameraControl.off(this._onMousedown);
-                cameraControl.off(this._onMouseup);
-            }
-        });
-
         buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
@@ -6739,6 +6720,57 @@ class QueryMode extends Controller {
 
         this.viewerUI.on("reset", ()=>{
             this.setActive(false);
+        });
+
+        this._initQueryMode();
+    }
+
+    _initQueryMode() {
+        const viewer = this.viewer;
+        const cameraControl = viewer.cameraControl;
+        var entity = null;
+        this._onHover = cameraControl.on("hover", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+            entity = e.entity;
+            entity.highlighted = true;
+        });
+        this._onHoverOff = cameraControl.on("hoverOff", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                entity.highlighted = false;
+                entity = null;
+            }
+        });
+        const lastCoords = math.vec2();
+        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            lastCoords[0] = coords[0];
+            lastCoords[1] = coords[1];
+        });
+        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (entity) {
+                if (!closeEnough$2(lastCoords, coords)) {
+                    entity = null;
+                    return;
+                }
+                this.fire("queryPicked", entity.id);
+                entity = null;
+            } else {
+                this.fire("queryNotPicked", false);
+            }
         });
     }
 }
@@ -7592,7 +7624,7 @@ class Component {
      * @return {Boolean} True if there are any subscribers to the given event on this component.
      */
     hasSubs(event) {
-        return (this._eventSubsNum && (this._eventSubsNum[event] > 0));
+        return true;
     }
 
     /**
@@ -31126,8 +31158,11 @@ class SectionMode extends Controller {
             }
         });
 
-        this.on("active", (active) =>{
-          this.activateSectionMode(active);
+        this.on("active", (active) => {
+            this._sectionPlanesPlugin.setOverviewVisible(active);
+            if (!active) {
+                this._sectionPlanesPlugin.hideControl();
+            }
         });
 
         buttonElement.addEventListener("click", (event) => {
@@ -31143,23 +31178,21 @@ class SectionMode extends Controller {
             this.clear();
             this.setActive(false);
         });
+
+        this._initSectionMode();
     }
 
-    activateSectionMode(active) {
-        if (active) {
-            this._sectionPlanesPlugin.setOverviewVisible(true);
-            this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
-                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                    pos: e.worldPos,
-                    dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
-                });
-                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+    _initSectionMode() {
+        this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                pos: e.worldPos,
+                dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
             });
-        } else {
-            this.viewer.cameraControl.off(this._onPickedSurface);
-            this._sectionPlanesPlugin.hideControl();
-            this._sectionPlanesPlugin.setOverviewVisible(false);
-        }
+            this._sectionPlanesPlugin.showControl(sectionPlane.id);
+        });
     }
 
     clear() {
