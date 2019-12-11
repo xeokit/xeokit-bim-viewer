@@ -7624,7 +7624,7 @@ class Component {
      * @return {Boolean} True if there are any subscribers to the given event on this component.
      */
     hasSubs(event) {
-        return true;
+        return (this._eventSubsNum && (this._eventSubsNum[event] > 0));
     }
 
     /**
@@ -8043,6 +8043,12 @@ class Component {
             return;
         }
 
+        /**
+         * Fired when this Component is destroyed.
+         * @event destroyed
+         */
+        this.fire("destroyed", this.destroyed = true); // Must fire before we blow away subscription maps, below
+
         // Unsubscribe from child components and destroy then
 
         let id;
@@ -8090,13 +8096,6 @@ class Component {
         this._eventCallDepth = 0;
         this._ownedComponents = null;
         this._updateScheduled = false;
-
-
-        /**
-         * Fired when this Component is destroyed.
-         * @event destroyed
-         */
-        this.fire("destroyed", this.destroyed = true); // Must fire before we blow away subscription maps, below
     }
 }
 
@@ -27358,6 +27357,7 @@ class DirLight extends Light {
             shadowDirty: true,
 
             getShadowViewMatrix: (function () {
+                const look = math.vec3();
                 const up = math.vec3([0, 1, 0]);
                 return function () {
                     if (self._shadowViewMatrixDirty) {
@@ -41493,7 +41493,6 @@ class PerformanceModel extends Component {
             }
         }
         this.scene.camera.off(this._onCameraViewMatrix);
-        super.destroy();
         for (var i = 0, len = this._layers.length; i < len; i++) {
             this._layers[i].destroy();
         }
@@ -41504,6 +41503,7 @@ class PerformanceModel extends Component {
         if (this._isModel) {
             this.scene._deregisterModel(this);
         }
+        super.destroy();
     }
 }
 
@@ -41751,7 +41751,7 @@ const IFCObjectDefaults = {
 
     IfcWindow: {
         colorize: [0.137255, 0.403922, 0.870588],
-        pickable: false,
+        pickable: true,
         opacity: 0.4,
         priority: 6 // FIXME: transparent objects need to be last in order to avoid strange wireframe effect
     },
@@ -48884,6 +48884,7 @@ class XKTLoaderPlugin extends Plugin {
      * @param {Object} [cfg.dataSource] A custom data source through which the XKTLoaderPlugin can load model and metadata files. Defaults to an instance of {@link XKTDefaultDataSource}, which loads uover HTTP.
      * @param {String[]} [cfg.includeTypes] When loading metadata, only loads objects that have {@link MetaObject}s with {@link MetaObject#type} values in this list.
      * @param {String[]} [cfg.excludeTypes] When loading metadata, never loads objects that have {@link MetaObject}s with {@link MetaObject#type} values in this list.
+     * @param {Boolean} [cfg.excludeUnclassifiedObjects=false] When loading metadata and this is ````true````, will only load {@link Entity}s that have {@link MetaObject}s (that are not excluded). This is useful when we don't want Entitys in the Scene that are not represented within IFC navigation components, such as {@link StructureTreeViewPlugin}.
      */
     constructor(viewer, cfg = {}) {
 
@@ -48893,6 +48894,7 @@ class XKTLoaderPlugin extends Plugin {
         this.objectDefaults = cfg.objectDefaults;
         this.includeTypes = cfg.includeTypes;
         this.excludeTypes = cfg.excludeTypes;
+        this.excludeUnclassifiedObjects = cfg.excludeUnclassifiedObjects;
     }
 
     /**
@@ -49004,6 +49006,35 @@ class XKTLoaderPlugin extends Plugin {
         return this._excludeTypes;
     }
 
+
+    /**
+     * Sets whether we load objects that don't have IFC types.
+     *
+     * When loading models with metadata and this is ````true````, XKTLoaderPlugin will not load objects
+     * that don't have IFC types.
+     *
+     * Default value is ````false````.
+     *
+     * @type {Boolean}
+     */
+    set excludeUnclassifiedObjects(value) {
+        this._excludeUnclassifiedObjects = !!value;
+    }
+
+    /**
+     * Gets whether we load objects that don't have IFC types.
+     *
+     * When loading models with metadata and this is ````true````, XKTLoaderPlugin will not load objects
+     * that don't have IFC types.
+     *
+     * Default value is ````false````.
+     *
+     * @type {Boolean}
+     */
+    get excludeUnclassifiedObjects() {
+        return this._excludeUnclassifiedObjects;
+    }
+
     /**
      * Loads a .xkt model into this XKTLoaderPlugin's {@link Viewer}.
      *
@@ -49023,6 +49054,7 @@ class XKTLoaderPlugin extends Plugin {
      * @param {Number[]} [params.matrix=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]] The model's world transform matrix. Overrides the position, scale and rotation parameters.
      * @param {Boolean} [params.edges=false] Indicates if the model's edges are initially emphasized.
      * @returns {Entity} Entity representing the model, which will have {@link Entity#isModel} set ````true```` and will be registered by {@link Entity#id} in {@link Scene#models}.
+     * @param {Boolean} [params.excludeUnclassifiedObjects=false] When loading metadata and this is ````true````, will only load {@link Entity}s that have {@link MetaObject}s (that are not excluded). This is useful when we don't want Entitys in the Scene that are not represented within IFC navigation components, such as {@link StructureTreeViewPlugin}.
      */
     load(params = {}) {
 
@@ -49068,6 +49100,8 @@ class XKTLoaderPlugin extends Plugin {
             if (objectDefaults) {
                 options.objectDefaults = objectDefaults;
             }
+
+            options.excludeUnclassifiedObjects = (params.excludeUnclassifiedObjects !== undefined) ? (!!params.excludeUnclassifiedObjects) : this._excludeUnclassifiedObjects;
 
             const processMetaModelData = (metaModelData) => {
 
@@ -49297,6 +49331,10 @@ class XKTLoaderPlugin extends Plugin {
                             meshDefaults.opacity = props.opacity;
                         }
                     }
+                } else {
+                    if (options.excludeUnclassifiedObjects) {
+                        continue;
+                    }
                 }
 
                 const lastEntity = (i === numEntities - 1);
@@ -49418,6 +49456,10 @@ class XKTLoaderPlugin extends Plugin {
                         if (props.opacity !== undefined && props.opacity !== null) {
                             meshDefaults.opacity = props.opacity;
                         }
+                    }
+                } else {
+                    if (options.excludeUnclassifiedObjects) {
+                        continue;
                     }
                 }
 
@@ -49900,8 +49942,13 @@ class ModelStructureTreeView {
         const span = document.createElement('span');
         span.textContent = node.name;
         nodeElement.appendChild(span);
-        span.addEventListener('click', () =>{
-            //alert("clicked");
+        span.addEventListener('click', (e) =>{
+           const childObjectIds = this._viewer.metaScene.getObjectIDsInSubtree(node.id);
+           this._viewer.cameraFlight.flyTo({
+               aabb:this._viewer.scene.getAABB(childObjectIds)
+           });
+          
+
         });
         return nodeElement;
     }
@@ -50038,7 +50085,7 @@ class ModelStructureTreeView {
  * In the example below we'll add a StructureTreeViewPlugin which, by default, will automatically show the structural
  * hierarchy of the IFC elements in each model we load.
  *
- * Then we'll use an [XKTLoaderPlugin]() to load the Schependomlaan model from an
+ * Then we'll use an {@link XKTLoaderPlugin} to load the Schependomlaan model from an
  * [.xkt file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/models/xkt/schependomlaan), along
  * with an accompanying JSON [IFC metadata file](https://github.com/xeokit/xeokit-sdk/tree/master/examples/metaModels/schependomlaan).
  *
@@ -53920,7 +53967,7 @@ class Storey {
     /**
      * @private
      */
-    constructor(plugin, aabb, modelId, storeyId) {
+    constructor(plugin, aabb, modelId, storeyId, numObjects) {
 
         /**
          * The {@link StoreyViewsPlugin} this Storey belongs to.
@@ -53960,6 +54007,13 @@ class Storey {
          * @type {Number[]}
          */
         this.aabb = aabb.slice();
+
+        /** Number of {@link Entity}s within the IfcBuildingStorey.
+         *
+         * @property numObjects
+         * @type {Number}
+         */
+        this.numObjects = numObjects;
     }
 }
 
@@ -54841,7 +54895,8 @@ class StoreyViewsPlugin extends Plugin {
             const metaObject = metaScene.metaObjects[storeyId];
             const childObjectIds = metaObject.getObjectIDsInSubtree();
             const aabb = scene.getAABB(childObjectIds);
-            const storey = new Storey(this, aabb, modelId, storeyId);
+            const numObjects = (Math.random() > 0.5) ? childObjectIds.length : 0;
+            const storey = new Storey(this, aabb, modelId, storeyId, numObjects);
             storey._onModelDestroyed = model.once("destroyed", () => {
                 this._deregisterModelStoreys(modelId);
                 this.fire("storeys", this.storeys);
@@ -55383,7 +55438,11 @@ class Storeys extends Controller {
                 const metaObject = metaScene.metaObjects[storeyId];
                 if (storey) {
                     html.push("<li>");
-                    html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
+                    if (storey.numObjects > 0) {
+                        html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
+                    } else {
+                        html.push(metaObject.name + " (no objects)");
+                    }
                     html.push("</li>");
                     storeyIds.push(storeyId);
                 }
@@ -55395,11 +55454,13 @@ class Storeys extends Controller {
         for (var i = 0, len = storeyIds.length; i < len; i++) {
             const _storeyId = storeyIds[i];
             const link = document.getElementById("" + _storeyId);
-            link.addEventListener("click", (e) => {
-                this.showStorey(_storeyId, () => {
+            if (link) {
+                link.addEventListener("click", (e) => {
+                    this.showStorey(_storeyId, () => {
+                    });
+                    e.preventDefault();
                 });
-                e.preventDefault();
-            });
+            }
         }
     }
 
@@ -55825,6 +55886,7 @@ class BCFViewpointsPlugin extends Plugin {
      * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
      * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
      * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
+     * @param {Boolean} [options.reset] When ````true```` (default), set scene objects xrayed property to false, highlighted to false, pickable to true and opacity to 1.
      */
     setViewpoint(bcfViewpoint, options = {}) {
 
@@ -55837,6 +55899,7 @@ class BCFViewpointsPlugin extends Plugin {
         const camera = scene.camera;
         const rayCast = (options.rayCast !== false);
         const immediate = (options.immediate !== false);
+        const reset = (options.reset !== false);
         const realWorldOffset = scene.realWorldOffset;
 
         scene.clearSectionPlanes();
@@ -55850,7 +55913,12 @@ class BCFViewpointsPlugin extends Plugin {
             });
         }
 
-        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+        if (reset) {
+            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            scene.setObjectsPickable(scene.objectIds, true);
+            scene.setObjectsOpacity(scene.objectIds, 1);
+        }
 
         if (bcfViewpoint.components) {
 
