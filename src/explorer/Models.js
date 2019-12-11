@@ -87,6 +87,7 @@ class Models extends Controller {
                             id: modelId,
                             metaModelData: json,
                             xkt: arraybuffer,
+                            excludeUnclassifiedObjects: true,
                             edges: true
                         });
                         model.on("loaded", () => {

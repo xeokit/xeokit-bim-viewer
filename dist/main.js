@@ -49590,6 +49590,7 @@ class Models extends Controller {
                             id: modelId,
                             metaModelData: json,
                             xkt: arraybuffer,
+                            excludeUnclassifiedObjects: true,
                             edges: true
                         });
                         model.on("loaded", () => {
@@ -55438,11 +55439,7 @@ class Storeys extends Controller {
                 const metaObject = metaScene.metaObjects[storeyId];
                 if (storey) {
                     html.push("<li>");
-                    if (storey.numObjects > 0) {
-                        html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
-                    } else {
-                        html.push(metaObject.name + " (no objects)");
-                    }
+                    html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
                     html.push("</li>");
                     storeyIds.push(storeyId);
                 }
@@ -55454,13 +55451,11 @@ class Storeys extends Controller {
         for (var i = 0, len = storeyIds.length; i < len; i++) {
             const _storeyId = storeyIds[i];
             const link = document.getElementById("" + _storeyId);
-            if (link) {
-                link.addEventListener("click", (e) => {
-                    this.showStorey(_storeyId, () => {
-                    });
-                    e.preventDefault();
+            link.addEventListener("click", (e) => {
+                this.showStorey(_storeyId, () => {
                 });
-            }
+                e.preventDefault();
+            });
         }
     }
 
