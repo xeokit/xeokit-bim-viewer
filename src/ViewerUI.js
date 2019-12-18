@@ -74,10 +74,6 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
     </div>
-<!--    &lt;!&ndash; Ortho mode button &ndash;&gt;-->
-<!--    <div class="xeokit-btn-group" role="group">-->
-<!--        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled" style="visibility: hidden;"></button>-->
-<!--    </div>-->
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->

@@ -25,7 +25,6 @@
             line-height: 1.50;
             -webkit-font-smoothing: antialiased;
             margin: 0;
-            min-height: 100vh;
         }
 
         #myWrapper {
@@ -93,28 +92,30 @@
         }
 
         #myContent {
-            width: 100%;
+            width: calc(100% - 400px);
             height: 100%;
             background: #ebebeb;
         }
 
         #myToolbar {
-            position:fixed;
-            width:100%;
+            top: 0;
             align-items: center;
             justify-content: center;
-            padding: 6px;
-            height: 60px;
+            padding: 0;
+            /*height: 60px;*/
+            z-index: 100000;
+            position: absolute;
+            pointer-events: none;
         }
 
         #myCanvas {
             width: 100%;
-            height: calc(100% - 60px);
-            padding-top:60px;
+            height: 100%;
             background: #f2f2f2;
             cursor: default;
             pointer-events: all;
             margin: 0;
+            position: relative;
         }
 
         #myNavCubeCanvas {
@@ -147,6 +148,10 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: flex-start;
+            background: transparent;
+            pointer-events: none;
+            padding: 10px;
+
         }
 
         .xeokit-btn-group {
@@ -154,13 +159,14 @@
             display: inline-flex;
             vertical-align: middle;
             margin-right: 1.2rem !important;
+            pointer-events: none;
         }
 
         .xeokit-btn {
             position: relative;
             flex: 1 1 auto;
             color: #03103F;
-            background-color: transparent;
+            background-color: white;
             text-align: center;
             vertical-align: middle;
             border: 2px solid #1d2453;
@@ -172,6 +178,7 @@
             margin: 0 2px 0 0;
             box-sizing: border-box;
             align-items: flex-start;
+            pointer-events: all;
         }
 
         .xeokit-btn.disabled {
@@ -493,7 +500,7 @@
 
 <div id="myWrapper">
 
-    <nav id="myExplorer" class="active"></nav>
+    <div id="myExplorer" class="active"></div>
     <div id="myContent">
         <div id="myToolbar"></div>
         <canvas id="myCanvas"></canvas>
