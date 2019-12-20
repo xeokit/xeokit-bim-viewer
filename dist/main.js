@@ -49683,7 +49683,7 @@ class Models extends Controller {
 
 /** @private
  */
-class ModelStructureTreeView {
+class ModelTreeView {
 
     /**
      * @private
@@ -49700,18 +49700,16 @@ class ModelStructureTreeView {
         }
 
         this._viewer = viewer;
-        this._metaModel = metaModel;
         this._rootMetaObject = rootMetaObject;
         this._model = model;
         this._containerElement = cfg.containerElement;
         this._rootElement = null;
-        this._muteSceneEvents = false; // When true, ModelStructureTreeView ignores "objectVisibility" events from xeokit Scene
-        this._muteTreeEvents = false; // When true, ModelStructureTreeView does not update xeokit Entity visibilities
-        this._nodeList = [];
+        this._muteSceneEvents = false;
+        this._muteTreeEvents = false;
+        this._rootNodes = [];
         this._nodeMap = {};
 
         this._onObjectVisibility = this._viewer.scene.on("objectVisibility", (entity) => {
-            // When an object's visibility changes, update checkbox state on corresponding node and parents 
             if (this._muteSceneEvents) {
                 return;
             }
@@ -49736,23 +49734,22 @@ class ModelStructureTreeView {
             if (checkbox) {
                 checkbox.checked = visible;
             }
-            let parentId = node.parentId;
-            while (parentId) {
-                const parentNode = this._nodeMap[parentId];
-                parentNode.checked = visible;
+            let parent = node.parent;
+            while (parent) {
+                parent.checked = visible;
                 if (visible) {
-                    parentNode.numVisibleEntities++;
+                    parent.numVisibleEntities++;
                 } else {
-                    parentNode.numVisibleEntities--;
+                    parent.numVisibleEntities--;
                 }
-                const parentCheckbox = document.getElementById(parentId);
+                const parentCheckbox = document.getElementById(parent.id);
                 if (parentCheckbox) {
-                    const newChecked = (parentNode.numVisibleEntities > 0);
+                    const newChecked = (parent.numVisibleEntities > 0);
                     if (newChecked !== parentCheckbox.checked) {
                         parentCheckbox.checked = newChecked;
                     }
                 }
-                parentId = parentNode.parentId;
+                parent = parent.parent;
             }
             this._muteTreeEvents = false;
         });
@@ -49779,95 +49776,228 @@ class ModelStructureTreeView {
             const checkbox = event.target;
             const visible = checkbox.checked;
             const checkedObjectId = checkbox.id;
-            const checkedMetaObject = this._viewer.metaScene.metaObjects[checkedObjectId];
+            const checkedNode = this._nodeMap[checkedObjectId];
+            const objects = this._viewer.scene.objects;
             let numUpdated = 0;
-            this._withMetaObjectsInSubtree(checkedMetaObject, (metaObject) => {
-                const objectId = metaObject.id;
-                const node = this._nodeMap[objectId];
+            this._withNodeTree(checkedNode, (node) => {
+                const objectId = node.id;
+                const entity = objects[objectId];
+                const isLeaf = (node.children.length === 0);
                 node.numVisibleEntities = visible ? node.numEntities : 0;
-                if (((!metaObject.children) || (metaObject.children.length === 0)) && (visible !== node.checked)) {
+                if (isLeaf && (visible !== node.checked)) {
                     numUpdated++;
                 }
                 node.checked = visible;
                 const checkbox = document.getElementById(objectId);
                 if (checkbox) {
-                    // Checkbox element is currently in DOM
                     checkbox.checked = visible;
                 }
-                const entity = this._viewer.scene.objects[objectId];
                 if (entity) {
                     entity.visible = visible;
                 }
             });
-            const node = this._nodeMap[checkedObjectId];
-            let parentId = node.parentId;
-            while (parentId) {
-                const parentNode = this._nodeMap[parentId];
-                parentNode.checked = visible;
-                const checkbox = document.getElementById(parentId); // Parent checkboxes are always in DOM
+            let parent = checkedNode.parent;
+            while (parent) {
+                parent.checked = visible;
+                const checkbox = document.getElementById(parent.id); // Parent checkboxes are always in DOM
                 if (visible) {
-                    parentNode.numVisibleEntities += numUpdated;
+                    parent.numVisibleEntities += numUpdated;
                 } else {
-                    parentNode.numVisibleEntities -= numUpdated;
+                    parent.numVisibleEntities -= numUpdated;
                 }
-                const newChecked = (parentNode.numVisibleEntities > 0);
+                const newChecked = (parent.numVisibleEntities > 0);
                 if (newChecked !== checkbox.checked) {
                     checkbox.checked = newChecked;
                 }
-                parentId = parentNode.parentId;
+                parent = parent.parent;
             }
             this._muteSceneEvents = false;
         };
 
+        this._mode = cfg.mode || "structure";
 
-        this._init();
+        this._createNodes();
 
         if (cfg.autoExpandDepth) {
             this._expandToDepth(cfg.autoExpandDepth);
         }
 
-        this._initWithoutError = true;
+        this._createNodesWithoutError = true;
     }
 
-    _init() {
-        this._createData();
-        this._synchDataToScene();
+    setMode(mode) {
+        if (this._mode === mode) {
+            return;
+        }
+        this._mode = mode;
+        this._createNodes();
+    }
+
+    _createNodes() {
+        if (this._rootElement) {
+            this._rootElement.parentNode.removeChild(this._rootElement);
+            this._rootElement = null;
+        }
+        this._rootNodes = [];
+        this._nodeMap = {};
+        switch (this._mode) {
+            case "storeys":
+                this._createStoreysNodes();
+                break;
+            case "types":
+                this._createTypesNodes();
+                break;
+            case "structure":
+            default:
+                this._createStructureNodes();
+        }
+        this._synchNodesToEntities();
         this._createTrees();
     }
 
-    _createData(metaObject = this._rootMetaObject) {
-        // Build tree view data structure from meta model
+    _createStoreysNodes(
+        metaObject = this._rootMetaObject,
+        projectNode,
+        storeyNode,
+        typeNodes) {
+        const metaObjectType = metaObject.type;
+        const metaObjectName = metaObject.name;
+        if (metaObjectType === "IfcProject") {
+            projectNode = {
+                id: metaObject.id,
+                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                parent: null,
+                numEntities: 0,
+                numVisibleEntities: 0,
+                checked: false,
+                children: []
+            };
+            this._rootNodes.push(projectNode);
+            this._nodeMap[projectNode.id] = projectNode;
+        } else if (metaObjectType === "IfcBuildingStorey") {
+            storeyNode = {
+                id: metaObject.id,
+                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                parent: projectNode,
+                numEntities: 0,
+                numVisibleEntities: 0,
+                checked: false,
+                children: []
+            };
+            projectNode.children.push(storeyNode);
+            this._nodeMap[storeyNode.id] = storeyNode;
+            typeNodes = {};
+        } else {
+            if (storeyNode) {
+                typeNodes = typeNodes || {};
+                var typeNode = typeNodes[metaObjectType];
+                if (!typeNode) {
+                    typeNode = {
+                        id: storeyNode.id + "." + metaObjectType,
+                        name: metaObjectType,
+                        parent: storeyNode,
+                        numEntities: 0,
+                        numVisibleEntities: 0,
+                        checked: false,
+                        children: []
+                    };
+                    storeyNode.children.push(typeNode);
+                    this._nodeMap[typeNode.id] = typeNode;
+                    typeNodes[metaObjectType] = typeNode;
+                }
+                const node = {
+                    id: metaObject.id,
+                    name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                    parent: typeNode,
+                    numEntities: 0,
+                    numVisibleEntities: 0,
+                    checked: false,
+                    children: []
+                };
+                typeNode.children.push(node);
+                this._nodeMap[node.id] = node;
+            }
+        }
+        const children = metaObject.children;
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const childMetaObject = children[i];
+                this._createStoreysNodes(childMetaObject, projectNode, storeyNode, typeNodes);
+            }
+        }
+    }
+
+    _createTypesNodes(metaObject = this._rootMetaObject, typeNodes = {}) {
+        const objects = this._viewer.scene.objects;
+        const object = objects[metaObject.id];
+        if (object) {
+            const metaObjectType = metaObject.type;
+            const metaObjectName = metaObject.name;
+            var typeNode = typeNodes[metaObjectType];
+            if (!typeNode) {
+                typeNode = {
+                    id: metaObjectType,
+                    name: metaObjectType,
+                    parent: null,
+                    numEntities: 0,
+                    numVisibleEntities: 0,
+                    checked: false,
+                    children: []
+                };
+                this._rootNodes.push(typeNode);
+                this._nodeMap[typeNode.id] = typeNode;
+                typeNodes[metaObjectType] = typeNode;
+            }
+            const node = {
+                id: metaObject.id,
+                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                parent: typeNode,
+                numEntities: 0,
+                numVisibleEntities: 0,
+                checked: false,
+                children: []
+            };
+            typeNode.children.push(node);
+            this._nodeMap[node.id] = node;
+        }
+        const children = metaObject.children;
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const childMetaObject = children[i];
+                this._createTypesNodes(childMetaObject, typeNodes);
+            }
+        }
+    }
+
+    _createStructureNodes(metaObject = this._rootMetaObject, parent) {
         const metaObjectName = metaObject.name;
         const node = {
             id: metaObject.id,
             name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
-            parentId: metaObject.parent ? metaObject.parent.id : null,
+            parent: parent,
             numEntities: 0,
             numVisibleEntities: 0,
-            checked: false
+            checked: false,
+            children: []
         };
-        this._nodeList.push(node);
+        if (parent) {
+            parent.children.push(node);
+        } else {
+            this._rootNodes.push(node);
+        }
         this._nodeMap[node.id] = node;
         const children = metaObject.children;
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 const childMetaObject = children[i];
-                this._createData(childMetaObject);
+                this._createStructureNodes(childMetaObject, node);
             }
         }
     }
 
-    _synchDataToScene() {
-        // Record entity and visibility counts at tree nodes
+    _synchNodesToEntities() {
         const rootMetaObject = this._rootMetaObject;
         const objectIds = rootMetaObject.getObjectIDsInSubtree();
-        for (let i = 0, len = objectIds.length; i < len; i++) {
-            const objectId = objectIds[i];
-            const node = this._nodeMap[objectId];
-            node.numEntities = 0;
-            node.numVisibleEntities = 0;
-            node.checked = false;
-        }
         const metaObjects = this._viewer.metaScene.metaObjects;
         const objects = this._viewer.scene.objects;
         for (let i = 0, len = objectIds.length; i < len; i++) {
@@ -49875,56 +50005,63 @@ class ModelStructureTreeView {
             const metaObject = metaObjects[objectId];
             if (metaObject) {
                 const node = this._nodeMap[objectId];
-                const entity = objects[objectId];
-                if (entity) {
-                    const visible = entity.visible;
-                    node.numEntities = 1;
-                    if (visible) {
-                        node.numVisibleEntities = 1;
-                        node.checked = true;
-                    } else {
-                        node.numVisibleEntities = 0;
-                        node.checked = false;
-                    }
-                    let parentId = node.parentId; // Synch parents
-                    while (parentId) {
-                        let parent = this._nodeMap[parentId];
-                        parent.numEntities++;
+                if (node) {
+                    const entity = objects[objectId];
+                    if (entity) {
+                        const visible = entity.visible;
+                        node.numEntities = 1;
                         if (visible) {
-                            parent.numVisibleEntities++;
-                            parent.checked = true;
+                            node.numVisibleEntities = 1;
+                            node.checked = true;
+                        } else {
+                            node.numVisibleEntities = 0;
+                            node.checked = false;
                         }
-                        parentId = parent.parentId;
+                        let parent = node.parent; // Synch parents
+                        while (parent) {
+                            parent.numEntities++;
+                            if (visible) {
+                                parent.numVisibleEntities++;
+                                parent.checked = true;
+                            }
+                            parent = parent.parent;
+                        }
                     }
                 }
             }
         }
     }
 
-    _createTrees() {
-        // Create DOM element for the unexpanded root of each tree
-        const rootNodes = this._nodeList.filter((node) => {
-            return node.parentId === null;
-        });
-        if (rootNodes.length === 0) {
+    _withNodeTree(node, callback) {
+        callback(node);
+        const children = node.children;
+        if (!children) {
             return;
         }
-        const rootNodeElements = rootNodes.map((rootNode) => {
+        for (let i = 0, len = children.length; i < len; i++) {
+            this._withNodeTree(children[i], callback);
+        }
+    }
+
+    _createTrees() {
+        if (this._rootNodes.length === 0) {
+            return;
+        }
+        const rootNodeElements = this._rootNodes.map((rootNode) => {
             return this._createNodeElement(rootNode);
         });
         const ul = document.createElement('ul');
-        rootNodeElements.forEach(function (nodeElement) {
+        rootNodeElements.forEach((nodeElement) => {
             ul.appendChild(nodeElement);
-            });
+        });
         this._containerElement.appendChild(ul);
         this._rootElement = ul;
     }
 
     _createNodeElement(node) {
-        // Create a DOM element for a node, which represents an object
         const nodeElement = document.createElement('li');
         nodeElement.id = 'node-' + node.id;
-        if (this._hasChildren(node.id)) {
+        if (node.children.length > 0) {
             const groupElementId = "a-" + node.id;
             const groupElement = document.createElement('a');
             groupElement.href = '#';
@@ -49943,25 +50080,13 @@ class ModelStructureTreeView {
         const span = document.createElement('span');
         span.textContent = node.name;
         nodeElement.appendChild(span);
-        span.addEventListener('click', (e) =>{
-           const childObjectIds = this._viewer.metaScene.getObjectIDsInSubtree(node.id);
-           this._viewer.cameraFlight.flyTo({
-               aabb:this._viewer.scene.getAABB(childObjectIds)
-           });
-          
-
+        span.addEventListener('click', () =>{
+            //alert("clicked");
         });
         return nodeElement;
     }
 
-    _hasChildren(parentId) {
-        return this._nodeList.some((node) => {
-            return node.parentId === parentId;
-        });
-    }
-
-    _expandToDepth(depth) {
-        const expand = (metaObject, countDepth) => {
+    _expandToDepth(depth) {        const expand = (metaObject, countDepth) => {
             if (countDepth === depth) {
                 return;
             }
@@ -49982,27 +50107,27 @@ class ModelStructureTreeView {
     }
 
     _expandNode(objectId) {
-        //
         const groupElementId = "a-" + objectId;
         const groupElement = document.getElementById(groupElementId);
         if (groupElement) {
             this._expandGroupElement(groupElement);
             return;
         }
+        const path = [];
+        path.unshift(objectId);
         const node = this._nodeMap[objectId];
-        let parentId = node.parentId;
-        while (parentId) {
-            let parent = this._nodeMap[parentId];
-            parentId = parent.parentId;
+        let parent = node.parent;
+        while (parent) {
+            path.unshift(parent.id);
+            parent = parent.parent;
         }
     }
 
     _expandGroupElement(groupElement) {
         const parentElement = groupElement.parentElement;
         const id = parentElement.id.replace('node-', '');
-        const childNodes = this._nodeList.filter((node) => {
-            return node.parentId === id;
-        });
+        const groupNode = this._nodeMap[id];
+        const childNodes = groupNode.children;
         const nodeElements = childNodes.map((node) => {
             return this._createNodeElement(node);
         });
@@ -50033,30 +50158,13 @@ class ModelStructureTreeView {
         groupElement.addEventListener('click', this.groupExpandHandler);
     }
 
-    _withMetaObjectsInSubtree(metaObject, callback) {
-        const visit = (metaObject) => {
-            if (!metaObject) {
-                return;
-            }
-            callback(metaObject);
-            const children = metaObject.children;
-            if (children) {
-                for (var i = 0, len = children.length; i < len; i++) {
-                    visit(children[i]);
-                }
-            }
-        };
-        visit(metaObject);
-    }
-
     /**
      * Destroys this ModelTreeView.
      */
     destroy() {
-        if (this._initWithoutError && !this._destroyed) {
+        if (this._createNodesWithoutError && !this._destroyed) {
             this._rootElement.parentNode.removeChild(this._rootElement);
             this._viewer.scene.off(this._onObjectVisibility);
-            this._model.off(this._onModelDestroyed);
             this._destroyed = true;
         }
     }
@@ -50066,7 +50174,7 @@ class ModelStructureTreeView {
  * @desc A {@link Viewer} plugin that provides an HTML tree view to navigate the structural hierarchy of IFC elements in models.
  * <br>
  *
- * <a href="https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_XKT_WestRiverSideHospital" style="border: 1px solid black;"><img src="http://xeokit.io/img/docs/StructureTreeViewPlugin/StructureTreeViewPlugin.png"></a>
+ * <a href="https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_XKT_WestRiverSideHospital" style="border: 1px solid black;"><img src="http://xeokit.io/img/docs/TreeViewPlugin/TreeViewPlugin.png"></a>
  *
  * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_XKT_WestRiverSideHospital)]
  *
@@ -50075,15 +50183,16 @@ class ModelStructureTreeView {
  * * A fast HTML tree widget, with zero external dependencies, that works with huge numbers of objects.
  * * Each node has a checkbox to control the visibility of its object.
  * * Automatically includes all models (that have metadata) that are currently in the {@link Scene}.
+ * * Has three modes for organizing nodes: "structure", "storeys" and "types".
  * * Allows custom CSS styling.
  *
  * ## Credits
  *
- * StructureTreeViewPlugin is based on techniques described in [*Super Fast Tree View in JavaScript*](https://chrissmith.xyz/super-fast-tree-view-in-javascript/) by [Chris Smith](https://twitter.com/chris22smith).
+ * TreeViewPlugin is based on techniques described in [*Super Fast Tree View in JavaScript*](https://chrissmith.xyz/super-fast-tree-view-in-javascript/) by [Chris Smith](https://twitter.com/chris22smith).
  *
  * ## Usage
  *
- * In the example below we'll add a StructureTreeViewPlugin which, by default, will automatically show the structural
+ * In the example below we'll add a TreeViewPlugin which, by default, will automatically show the structural
  * hierarchy of the IFC elements in each model we load.
  *
  * Then we'll use an {@link XKTLoaderPlugin} to load the Schependomlaan model from an
@@ -50095,7 +50204,7 @@ class ModelStructureTreeView {
  * ````javascript
  * import {Viewer} from "../src/viewer/Viewer.js";
  * import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
- * import {StructureTreeViewPlugin} from "../src/plugins/StructureTreeViewPlugin/StructureTreeViewPlugin.js";
+ * import {TreeViewPlugin} from "../src/plugins/TreeViewPlugin/TreeViewPlugin.js";
  *
  * const viewer = new Viewer({
  *      canvasId: "myCanvas",
@@ -50106,7 +50215,7 @@ class ModelStructureTreeView {
  * viewer.camera.look = [13.44, 3.31, -14.83];
  * viewer.camera.up = [0.10, 0.98, -0.14];
  *
- * const treeView = new StructureTreeViewPlugin(viewer, {
+ * const treeView = new TreeViewPlugin(viewer, {
  *     containerElement: document.getElementById("myTreeViewContainer")
  * });
  *
@@ -50122,13 +50231,13 @@ class ModelStructureTreeView {
  *
  * ## Manually Adding Models
  *
- * We can control which models appear in our StructureTreeViewPlugin by adding them manually.
+ * We can control which models appear in our TreeViewPlugin by adding them manually.
  *
- * In the next example, we'll configure the StructureTreeViewPlugin to not automatically add models. Once the model
- * has loaded, we'll add it manually using {@link StructureTreeViewPlugin#addModel}.
+ * In the next example, we'll configure the TreeViewPlugin to not automatically add models. Once the model
+ * has loaded, we'll add it manually using {@link TreeViewPlugin#addModel}.
  *
  * ````javascript
- * const treeView = new StructureTreeViewPlugin(viewer, {
+ * const treeView = new TreeViewPlugin(viewer, {
  *      containerElement: document.getElementById("myTreeViewContainer"),
  *      autoAddModels: false  // <<---------------- Don't auto-add models
  * });
@@ -50149,12 +50258,12 @@ class ModelStructureTreeView {
  *
  * ## Initially Expanding Nodes
  *
- * We can configure StructureTreeViewPlugin to initially expand each model's nodes to a given depth.
+ * We can configure TreeViewPlugin to initially expand each model's nodes to a given depth.
  *
  * Let's automatically expand the first three nodes from the root, for every model added:
  *
  * ````javascript
- * const treeView = new StructureTreeViewPlugin(viewer, {
+ * const treeView = new TreeViewPlugin(viewer, {
  *      containerElement: document.getElementById("myTreeViewContainer"),
  *      autoExpandDepth: 3
  * });
@@ -50162,26 +50271,53 @@ class ModelStructureTreeView {
  *
  * ## Customizing Appearance
  *
- * We can customize the appearance of our StructureTreeViewPlugin by defining custom CSS for its HTML
+ * We can customize the appearance of our TreeViewPlugin by defining custom CSS for its HTML
  * elements. See our example's [source code](https://github.com/xeokit/xeokit-sdk/blob/master/examples/BIMOffline_XKT_Schependomlaan.html)
  * for an example of custom CSS rules.
  *
- * @class StructureTreeViewPlugin
+ * ## Organization Mode
+ *
+ * TreeViewPlugin has three modes for organizing its nodes:
+ *
+ * * "structure" - organizes the tree nodes to indicate the structural hierarchy of the {@link MetaObject}s.
+ * * "storeys" - groups nodes within their ````IfcBuildingStoreys````, and sub-groups them by their IFC types.
+ * * "types" - groups nodes by their IFC types.
+ *
+ * <br>
+ * The table below shows what the modes look like:
+ * <br>
+ *
+ * | 1. Structure Mode | 2. Types Mode | 3. Storeys Mode |
+ * |---|---|---|
+ * | <img src="http://xeokit.io/img/docs/TreeViewPlugin/structureMode.png"> | <img src="http://xeokit.io/img/docs/TreeViewPlugin/typesMode.png"> | <img src="http://xeokit.io/img/docs/TreeViewPlugin/storeysMode.png"> |
+ * <br>
+ *
+ * Let's create a TreeViewPlugin that groups nodes by their building stories and IFC types:
+ *
+ * ````javascript
+ * const treeView = new TreeViewPlugin(viewer, {
+ *      containerElement: document.getElementById("myTreeViewContainer"),
+ *      mode: "stories"
+ * });
+ * ````
+ *
+ * @class TreeViewPlugin
  */
-class StructureTreeViewPlugin extends Plugin {
+class TreeViewPlugin extends Plugin {
 
     /**
      * @constructor
      *
      * @param {Viewer} viewer The Viewer.
      * @param {*} cfg Plugin configuration.
-     * @param {HTMLElement} cfg.containerElement DOM element to contain the StructureTreeViewPlugin.
-     * @param {Boolean} [cfg.autoAddModels=true] When ````true```` (default), will automatically add each model as it's created. Set this ````false```` if you want to manually add models using {@link StructureTreeViewPlugin#addModel} instead.
+     * @param {HTMLElement} cfg.containerElement DOM element to contain the TreeViewPlugin.
+     * @param {Boolean} [cfg.autoAddModels=true] When ````true```` (default), will automatically add each model as it's created. Set this ````false```` if you want to manually add models using {@link TreeViewPlugin#addModel} instead.
      * @param {Number} [cfg.autoExpandDepth] Optional depth to which to initially expand the tree.
+     * @param {String} [cfg.mode="structure"] How to organize the tree: "structure", "storeys" or "types". See the usage documentation (above) for details.
      */
     constructor(viewer, cfg = {}) {
 
-        super("StructureTreeViewPlugin", viewer);
+        super("TreeViewPlugin", viewer);
 
         if (!cfg.containerElement) {
             this.error("Config expected: containerElement");
@@ -50199,10 +50335,54 @@ class StructureTreeViewPlugin extends Plugin {
                 const modelId = modelIds[i];
                 this.addModel(modelId);
             }
-            this.viewer.metaScene.on("metaModelCreated", (modelId) =>{
-                this.addModel(modelId);
+            this.viewer.scene.on("modelLoaded", (modelId) =>{
+                if (this.viewer.metaScene.metaModels[modelId]) {
+                    this.addModel(modelId);
+                }
             });
         }
+
+        this.mode = cfg.mode;
+    }
+
+    /**
+     * Sets how the tree nodes are organized.
+     *
+     * * "structure" - organizes the nodes to indicate the containment hierarchy of the IFC objects.
+     * * "storeys" - groups the nodes within ````IfcBuildingStoreys```` and sub-groups them by their IFC types.
+     * * "types" - groups the nodes within their IFC types.
+     *
+     * Default value is "structure".
+     *
+     * @type {String}
+     */
+    set mode(mode) {
+        mode = mode || "structure";
+        if (mode !== "structure" && mode !== "storeys" && mode !== "types") {
+            this.error("Unsupported value for `mode' - defaulting to 'structure'");
+            mode = "structure";
+        }
+        this._mode = mode;
+        for (let modelId in this._modelTreeViews) {
+            if (this._modelTreeViews.hasOwnProperty(modelId)) {
+                this._modelTreeViews.setMode(this._mode);
+            }
+        }
+    }
+
+    /**
+     * Gets how the tree nodes are organized.
+     *
+     * * "structure" - organizes the nodes to indicate the containment hierarchy of the IFC objects.
+     * * "storeys" - groups the nodes within ````IfcBuildingStoreys```` and sub-groups them by their IFC types.
+     * * "types" - groups the nodes within their IFC types.
+     *
+     * Default value is "structure".
+     *
+     * @type {String}
+     */
+    get mode() {
+        return this._mode;
     }
 
     /**
@@ -50211,7 +50391,7 @@ class StructureTreeViewPlugin extends Plugin {
      * The model will be automatically removed when destroyed.
      *
      * To automatically add each model as it's created, instead of manually calling this method each time,
-     * provide a ````autoAddModels: true```` to the StructureTreeViewPlugin constructor.
+     * provide a ````autoAddModels: true```` to the TreeViewPlugin constructor.
      *
      * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
      */
@@ -50232,9 +50412,10 @@ class StructureTreeViewPlugin extends Plugin {
             this.warn("Model already added: " + modelId);
             return;
         }
-        this._modelTreeViews[modelId] = new ModelStructureTreeView(this.viewer, model, metaModel, {
+        this._modelTreeViews[modelId] = new ModelTreeView(this.viewer, model, metaModel, {
             containerElement: this._containerElement,
-            autoExpandDepth: this._autoExpandDepth
+            autoExpandDepth: this._autoExpandDepth,
+            mode: this._mode
         });
         model.on("destroyed", () => {
             this.removeModel(model.id);
@@ -50290,7 +50471,7 @@ class StructureTreeViewPlugin extends Plugin {
     // }
 
     /**
-     * Destroys this StructureTreeViewPlugin.
+     * Destroys this TreeViewPlugin.
      */
     destroy() {
         if (!this._containerElement) {
@@ -50343,8 +50524,9 @@ class Objects extends Controller {
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
 
-        this._tree = new StructureTreeViewPlugin(this.viewer, {
-            containerElement: objectsElement
+        this._tree = new TreeViewPlugin(this.viewer, {
+            containerElement: objectsElement,
+            mode: "structure"
         });
     }
 
@@ -53829,7 +54011,6 @@ class Viewer {
             this.error(`Plugin with this ID already installed: ${plugin.id}`);
         }
         this.plugins[plugin.id] = plugin;
-        this.log(`Installed plugin: ${plugin.id}`);
     }
 
     /**
@@ -53851,7 +54032,6 @@ class Viewer {
             installedPlugin.clear();
         }
         delete this.plugins[plugin.id];
-        this.log(`Removed plugin: ${plugin.id}`);
     }
 
     /**
@@ -53958,1434 +54138,22 @@ class Viewer {
     }
 }
 
-/**
- * @desc Information about an ````IfcBuildingStorey````.
- *
- * These are provided by a {@link StoreyViewsPlugin}.
- */
-class Storey {
-
-    /**
-     * @private
-     */
-    constructor(plugin, aabb, modelId, storeyId, numObjects) {
-
-        /**
-         * The {@link StoreyViewsPlugin} this Storey belongs to.
-         *
-         * @property plugin
-         * @type {StoreyViewsPlugin}
-         */
-        this.plugin = plugin;
-
-        /**
-         * ID of the IfcBuildingStorey.
-         *
-         * This matches IDs of the IfcBuildingStorey's {@link MetaObject} and {@link Entity}.
-         *
-         * @property storeyId
-         * @type {String}
-         */
-        this.storeyId = storeyId;
-
-        /**
-         * ID of the model.
-         *
-         * This matches the ID of the {@link MetaModel} that contains the IfcBuildingStorey's {@link MetaObject}.
-         *
-         * @property modelId
-         * @type {String|Number}
-         */
-        this.modelId = modelId;
-
-        /**
-         * Axis-aligned World-space boundary of the {@link Entity}s that represent the IfcBuildingStorey.
-         *
-         * The boundary is a six-element Float32Array containing the min/max extents of the
-         * axis-aligned boundary, ie. ````[xmin, ymin, zmin, xmax, ymax, zmax]````
-         *
-         * @property aabb
-         * @type {Number[]}
-         */
-        this.aabb = aabb.slice();
-
-        /** Number of {@link Entity}s within the IfcBuildingStorey.
-         *
-         * @property numObjects
-         * @type {Number}
-         */
-        this.numObjects = numObjects;
-    }
-}
-
-/**
- * @desc Property states for {@link Entity}s in {@link Storey}s capture by a {@link StoreyViewsPlugin}.
- *
- * @type {{String:Object}}
- */
-const IFCStoreyPlanObjectStates = {
-    IfcSlab: {
-        visible: true,
-        edges: false,
-        colorize: [1.0, 1.0, 1.0, 1.0]
-    },
-    IfcWall: {
-        visible: true,
-        edges: false,
-        colorize: [0.1, 0.1, 0.1, 1.0]
-    },
-    IfcWallStandardCase: {
-        visible: true,
-        edges: false,
-        colorize: [0.1, 0.1, 0.1, 1.0]
-    },
-    IfcDoor: {
-        visible: true,
-        edges: false,
-        colorize: [0.5, 0.5, 0.5, 1.0]
-    },
-    IfcWindow: {
-        visible: true,
-        edges: false,
-        colorize: [0.5, 0.5, 0.5, 1.0]
-    },
-    IfcColumn: {
-        visible: true,
-        edges: false,
-        colorize: [0.5, 0.5, 0.5, 1.0]
-    },
-    IfcCurtainWall: {
-        visible: true,
-        edges: false,
-        colorize: [0.5, 0.5, 0.5, 1.0]
-    },
-    IfcStair: {
-        visible: true,
-        edges: false,
-        colorize: [0.7, 0.7, 0.7, 1.0]
-    },
-    IfcStairFlight: {
-        visible: true,
-        edges: false,
-        colorize: [0.7, 0.7, 0.7, 1.0]
-    },
-    IfcRamp: {
-        visible: true,
-        edges: false,
-        colorize: [0.7, 0.7, 0.7, 1.0]
-    },
-    IfcFurniture: {
-        visible: true,
-        edges: false,
-        colorize: [0.7, 0.7, 0.7, 1.0]
-    },
-    IfcFooting: {
-        visible: true,
-        edges: false,
-        colorize: [0.7, 0.7, 0.7, 1.0]
-    },
-    IfcFloor: {
-        visible: true,
-        edges: false,
-        colorize: [1.0, 1.0, 1.0, 1.0]
-    },
-    DEFAULT: {
-        visible: false
-    }
-};
-
-const color$2 = math.vec3();
-
-/**
- * @desc Saves and restores a snapshot of the visual state of the {@link Entity}'s that represent objects within a {@link Scene}.
- *
- * * An Entity represents an object when {@link Entity#isObject} is ````true````.
- * * Each object-Entity is registered by {@link Entity#id} in {@link Scene#objects}.
- *
- * ## Usage
- *
- * In the example below, we'll create a {@link Viewer} and use an {@link XKTLoaderPlugin} to load an ````.xkt```` model. When the model has loaded, we'll hide a couple of {@link Entity}s and save a snapshot of the visual states of all the Entitys in an ObjectsMemento. Then we'll show all the Entitys
- * again, and then we'll restore the visual states of all the Entitys again from the ObjectsMemento, which will hide those two Entitys again.
- *
- * ````javascript
- * import {Viewer} from "../src/viewer/Viewer.js";
- * import {ObjectsMemento} from "../src/scene/mementos/ObjectsMemento.js";
- *
- * const viewer = new Viewer({
- *     canvasId: "myCanvas"
- * });
- *
- * // Load a model
- * const xktLoader = new XKTLoaderPlugin(viewer);
- *
- * const model = xktLoader.load({
- *     id: "myModel",
- *     src: "./models/xkt/schependomlaan/schependomlaan.xkt"
- * });
- *
- * model.on("loaded", () => {
- *
- *      // Model has loaded
- *
- *      // Hide a couple of objects
- *      viewer.scene.objects["0u4wgLe6n0ABVaiXyikbkA"].visible = false;
- *      viewer.scene.objects["3u4wgLe3n0AXVaiXyikbYO"].visible = false;
- *
- *      // Save memento of all object states, which includes those two hidden objects
- *      const objectsMemento = new ObjectsMemento();
- *
- *      objectsMemento.saveObjects(viewer.scene);
- *
- *      // Show all objects
- *      viewer.scene.setObjectsVisible(viewer.scene.objectIds, true);
- *
- *      // Restore the objects states again, which involves hiding those two objects again
- *      objectsMemento.restoreObjects(viewer.scene);
- * });
- * `````
- *
- * ## Masking Saved State
- *
- * We can optionally supply a mask to focus what state we save and restore.
- *
- * For example, to save and restore only the {@link Entity#visible} and {@link Entity#clippable} states:
- *
- * ````javascript
- * objectsMemento.saveObjects(viewer.scene, {
- *     visible: true,
- *     clippable: true
- * });
- *
- * //...
- *
- * // Restore the objects states again
- * objectsMemento.restoreObjects(viewer.scene);
- * ````
- */
-class ObjectsMemento {
-
-    /**
-     * Creates an ObjectsMemento.
-     */
-    constructor() {
-
-        /** @private */
-        this.objectsVisible = [];
-
-        /** @private */
-        this.objectsEdges = [];
-
-        /** @private */
-        this.objectsXrayed = [];
-
-        /** @private */
-        this.objectsHighlighted = [];
-
-        /** @private */
-        this.objectsSelected = [];
-
-        /** @private */
-        this.objectsClippable = [];
-
-        /** @private */
-        this.objectsPickable = [];
-
-        /** @private */
-        this.objectsColorize = [];
-
-        /** @private */
-        this.objectsOpacity = [];
-
-        /** @private */
-        this.numObjects = 0;
-    }
-
-    /**
-     * Saves a snapshot of the visual state of the {@link Entity}'s that represent objects within a {@link Scene}.
-     *
-     * @param {Scene} scene The scene.
-     * @param {Object} [mask] Masks what state gets saved. Saves all state when not supplied.
-     * @param {boolean} [mask.visible] Saves {@link Entity#visible} values when ````true````.
-     * @param {boolean} [mask.visible] Saves {@link Entity#visible} values when ````true````.
-     * @param {boolean} [mask.edges] Saves {@link Entity#edges} values when ````true````.
-     * @param {boolean} [mask.xrayed] Saves {@link Entity#xrayed} values when ````true````.
-     * @param {boolean} [mask.highlighted] Saves {@link Entity#highlighted} values when ````true````.
-     * @param {boolean} [mask.selected] Saves {@link Entity#selected} values when ````true````.
-     * @param {boolean} [mask.clippable] Saves {@link Entity#clippable} values when ````true````.
-     * @param {boolean} [mask.pickable] Saves {@link Entity#pickable} values when ````true````.
-     * @param {boolean} [mask.colorize] Saves {@link Entity#colorize} values when ````true````.
-     * @param {boolean} [mask.opacity] Saves {@link Entity#opacity} values when ````true````.
-     */
-    saveObjects(scene, mask) {
-
-        this.numObjects = 0;
-
-        this._mask = mask ? utils.apply(mask, {}) : null;
-
-        const objects = scene.objects;
-        const visible = (!mask || mask.visible);
-        const edges = (!mask || mask.edges);
-        const xrayed = (!mask || mask.xrayed);
-        const highlighted = (!mask || mask.highlighted);
-        const selected = (!mask || mask.selected);
-        const clippable = (!mask || mask.clippable);
-        const pickable = (!mask || mask.pickable);
-        const colorize = (!mask || mask.colorize);
-        const opacity = (!mask || mask.opacity);
-
-        for (var objectId in objects) {
-            if (objects.hasOwnProperty(objectId)) {
-                const object = objects[objectId];
-                const i = this.numObjects;
-                if (visible) {
-                    this.objectsVisible[i] = object.visible;
-                }
-                if (edges) {
-                    this.objectsEdges[i] = object.edges;
-                }
-                if (xrayed) {
-                    this.objectsXrayed[i] = object.xrayed;
-                }
-                if (highlighted) {
-                    this.objectsHighlighted[i] = object.highlighted;
-                }
-                if (selected) {
-                    this.objectsSelected[i] = object.selected;
-                }
-                if (clippable) {
-                    this.objectsClippable[i] = object.clippable;
-                }
-                if (pickable) {
-                    this.objectsPickable[i] = object.pickable;
-                }
-                if (colorize) {
-                    const objectColor = object.colorize;
-                    this.objectsColorize[i * 3 + 0] = objectColor[0];
-                    this.objectsColorize[i * 3 + 1] = objectColor[1];
-                    this.objectsColorize[i * 3 + 2] = objectColor[2];
-                }
-                if (opacity) {
-                    this.objectsOpacity[i] = object.opacity;
-                }
-                this.numObjects++;
-            }
-        }
-    }
-
-    /**
-     * Restores a {@link Scene}'s {@link Entity}'s to their state previously captured with {@link ObjectsMemento#saveObjects}.
-     * @param {Scene} scene The scene.
-     */
-    restoreObjects(scene) {
-
-        const mask = this._mask;
-
-        const visible = (!mask || mask.visible);
-        const edges = (!mask || mask.edges);
-        const xrayed = (!mask || mask.xrayed);
-        const highlighted = (!mask || mask.highlighted);
-        const selected = (!mask || mask.selected);
-        const clippable = (!mask || mask.clippable);
-        const pickable = (!mask || mask.pickable);
-        const colorize = (!mask || mask.colorize);
-        const opacity = (!mask || mask.opacity);
-
-        var i = 0;
-
-        const objects = scene.objects;
-
-        for (var objectId in objects) {
-            if (objects.hasOwnProperty(objectId)) {
-                const object = objects[objectId];
-                if (visible) {
-                    object.visible = this.objectsVisible[i];
-                }
-                if (edges) {
-                    object.edges = this.objectsEdges[i];
-                }
-                if (xrayed) {
-                    object.xrayed = this.objectsXrayed[i];
-                }
-                if (highlighted) {
-                    object.highlighted = this.objectsHighlighted[i];
-                }
-                if (selected) {
-                    object.selected = this.objectsSelected[i];
-                }
-                if (clippable) {
-                    object.clippable = this.objectsClippable[i];
-                }
-                if (pickable) {
-                    object.pickable = this.objectsPickable[i];
-                }
-                if (colorize) {
-                    color$2[0] = this.objectsColorize[i * 3 + 0];
-                    color$2[1] = this.objectsColorize[i * 3 + 1];
-                    color$2[2] = this.objectsColorize[i * 3 + 2];
-                    object.colorize = color$2;
-                }
-                if (opacity) {
-                    object.opacity = this.objectsOpacity[i];
-                }
-                i++;
-            }
-        }
-    }
-}
-
-/**
- * @desc Saves and restores the state of a {@link Scene}'s {@link Camera}.
- *
- * ## Usage
- *
- * In the example below, we'll create a {@link Viewer} and use an {@link XKTLoaderPlugin} to load an ````.xkt```` model. When the model has loaded, we'll save a snapshot of the {@link Camera} state in an CameraMemento. Then we'll move the Camera, and then we'll restore its original state again from the CameraMemento.
- *
- * ````javascript
- * import {Viewer} from "../src/viewer/Viewer.js";
- * import {CameraMemento} from "../src/scene/mementos/CameraMemento.js";
- *
- * const viewer = new Viewer({
- *     canvasId: "myCanvas"
- * });
- *
- * // Load a model
- * const xktLoader = new XKTLoaderPlugin(viewer);
- *
- * const model = xktLoader.load({
- *     id: "myModel",
- *     src: "./models/xkt/schependomlaan/schependomlaan.xkt"
- * });
- *
- * // Set camera
- * viewer.camera.eye = [-2.56, 8.38, 8.27];
- * viewer.camera.look = [13.44, 3.31, -14.83];
- * viewer.camera.up = [0.10, 0.98, -0.14];
- *
- * model.on("loaded", () => {
- *
- *      // Model has loaded
- *
- *      // Save memento of camera state
- *      const cameraMemento = new CameraMemento();
- *
- *      cameraMemento.saveCamera(viewer.scene);
- *
- *      // Move the camera
- *      viewer.camera.eye = [45.3, 2.00, 5.13];
- *      viewer.camera.look = [0.0, 5.5, 10.0];
- *      viewer.camera.up = [0.10, 0.98, -0.14];
- *
- *      // Restore the camera state again
- *      objectsMemento.restoreCamera(viewer.scene);
- * });
- * ````
- */
-class CameraMemento {
-
-    /**
-     * Creates a CameraState.
-     *
-     * @param {Scene} [scene] When given, immediately saves the state of the given {@link Scene}'s {@link Camera}.
-     */
-    constructor(scene) {
-
-        /** @private */
-        this._eye = math.vec3();
-
-        /** @private */
-        this._look = math.vec3();
-
-        /** @private */
-        this._up = math.vec3();
-
-        /** @private */
-        this._projection = {};
-
-        if (scene) {
-            this.saveCamera(scene);
-        }
-    }
-
-    /**
-     * Saves the state of the given {@link Scene}'s {@link Camera}.
-     *
-     * @param {Scene} scene The scene that contains the {@link Camera}.
-     */
-    saveCamera(scene) {
-
-        const camera = scene.camera;
-        const project = camera.project;
-
-        this._eye.set(camera.eye);
-        this._look.set(camera.look);
-        this._up.set(camera.up);
-
-        switch (camera.projection) {
-
-            case "perspective":
-                this._projection = {
-                    projection: "perspective",
-                    fov: project.fov,
-                    fovAxis: project.fovAxis,
-                    near: project.near,
-                    far: project.far
-                };
-                break;
-
-            case "ortho":
-                this._projection = {
-                    projection: "ortho",
-                    scale: project.scale,
-                    near: project.near,
-                    far: project.far
-                };
-                break;
-
-            case "frustum":
-                this._projection = {
-                    projection: "frustum",
-                    left: project.left,
-                    right: project.right,
-                    top: project.top,
-                    bottom: project.bottom,
-                    near: project.near,
-                    far: project.far
-                };
-                break;
-
-            case "custom":
-                this._projection = {
-                    projection: "custom",
-                    matrix: project.matrix.slice()
-                };
-                break;
-        }
-    }
-
-    /**
-     * Restores a {@link Scene}'s {@link Camera} to the state previously captured with {@link CameraMemento#saveCamera}.
-     *
-     * @param {Scene} scene The scene.
-     * @param {Function} [done] When this callback is given, will fly the {@link Camera} to the saved state then fire the callback. Otherwise will just jump the Camera to the saved state.
-     */
-    restoreCamera(scene, done) {
-
-        const camera = scene.camera;
-        const savedProjection = this._projection;
-
-        function restoreProjection() {
-
-            switch (savedProjection.type) {
-
-                case "perspective":
-                    camera.perspective.fov = savedProjection.fov;
-                    camera.perspective.fovAxis = savedProjection.fovAxis;
-                    camera.perspective.near = savedProjection.near;
-                    camera.perspective.far = savedProjection.far;
-                    break;
-
-                case "ortho":
-                    camera.ortho.scale = savedProjection.scale;
-                    camera.ortho.near = savedProjection.near;
-                    camera.ortho.far = savedProjection.far;
-                    break;
-
-                case "frustum":
-                    camera.frustum.left = savedProjection.left;
-                    camera.frustum.right = savedProjection.right;
-                    camera.frustum.top = savedProjection.top;
-                    camera.frustum.bottom = savedProjection.bottom;
-                    camera.frustum.near = savedProjection.near;
-                    camera.frustum.far = savedProjection.far;
-                    break;
-
-                case "custom":
-                    camera.customProjection.matrix = savedProjection.matrix;
-                    break;
-            }
-        }
-
-        if (done) {
-            scene.viewer.cameraFlight.flyTo({
-                eye: this._eye,
-                look: this._look,
-                up: this._up,
-                orthoScale: savedProjection.scale,
-                projection: savedProjection.projection
-            }, () => {
-                restoreProjection();
-                done();
-            });
-        } else {
-            camera.eye = this._eye;
-            camera.look = this._look;
-            camera.up = this._up;
-            restoreProjection();
-            camera.projection = savedProjection.projection;
-        }
-    }
-}
-
-/**
- * @desc A 2D plan view image of an ````IfcBuildingStorey````.
- *
- * These are created by a {@link StoreyViewsPlugin}.
- */
-class StoreyMap {
-
-    /**
-     * @private
-     */
-    constructor(storeyId, imageData, format, width, height, padding) {
-
-        /**
-         * ID of the IfcBuildingStorey.
-         *
-         * This matches IDs of the IfcBuildingStorey's {@link MetaObject} and {@link Entity}.
-         *
-         * @property storeyId
-         * @type {String}
-         */
-        this.storeyId = storeyId;
-
-        /**
-         * Base64-encoded plan view image.
-         *
-         * @property imageData
-         * @type {String}
-         */
-        this.imageData = imageData;
-
-        /**
-         * The image format - "png" or "jpeg".
-         *
-         * @property format
-         * @type {String}
-         */
-        this.format = format;
-
-        /**
-         * Width of the image, in pixels.
-         *
-         * @property width
-         * @type {Number}
-         */
-        this.width = width;
-
-        /**
-         * Height of the image, in pixels.
-         *
-         * @property height
-         * @type {Number}
-         */
-        this.height = height;
-    }
-}
-
-const tempVec3a$3 = math.vec3();
-const tempMat4$2 = math.mat4();
-
-const EMPTY_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
-
-
-
-/**
- * @desc A {@link Viewer} plugin that provides methods for visualizing IfcBuildingStoreys.
- *
- *  <a href="https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_recipe2"><img src="http://xeokit.io/img/docs/StoreyViewsPlugin/minimap.gif"></a>
- *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_recipe2)]
- *
- * ## Overview
- *
- * StoreyViewsPlugin provides a flexible set of methods for visualizing building storeys in 3D and 2D.
- *
- * Use the first two methods to set up 3D views of storeys:
- *
- * * [showStoreyObjects](#instance-method-showStoreyObjects) - shows the {@link Entity}s within a storey, and
- * * [gotoStoreyCamera](#instance-method-gotoStoreyCamera) - positions the {@link Camera} for a plan view of the Entitys within a storey.
- * <br> <br>
- *
- * Use the second two methods to create 2D plan view mini-map images:
- *
- * * [createStoreyMap](#instance-method-createStoreyMap) - creates a 2D plan view image of a storey, and
- * * [pickStoreyMap](#instance-method-pickStoreyMap) - picks the {@link Entity} at the given 2D pixel coordinates within a plan view image.
- *
- * ## Usage
- *
- * Let's start by creating a {@link Viewer} with a StoreyViewsPlugin and an {@link XKTLoaderPlugin}.
- *
- * Then we'll load a BIM building model from an  ```.xkt``` file.
- *
- * ````javascript
- * import {Viewer} from "../src/viewer/Viewer.js";
- * import {XKTLoaderPlugin} from "../src/viewer/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
- * import {StoreyViewsPlugin} from "../src/viewer/plugins/StoreyViewsPlugin/StoreyViewsPlugin.js";
- *
- * // Create a Viewer, arrange the camera
- *
- * const viewer = new Viewer({
- *        canvasId: "myCanvas",
- *        transparent: true
- *    });
- *
- * viewer.camera.eye = [-2.56, 8.38, 8.27];
- * viewer.camera.look = [13.44, 3.31, -14.83];
- * viewer.camera.up = [0.10, 0.98, -0.14];
- *
- * // Add an XKTLoaderPlugin
- *
- * const xktLoader = new XKTLoaderPlugin(viewer);
- *
- * // Add a StoreyViewsPlugin
- *
- * const storeyViewsPlugin = new StoreyViewsPlugin(viewer);
- *
- * // Load a BIM model from .xkt format
- *
- * const model = xktLoader.load({
- *      id: "myModel",
- *      src: "./models/xkt/schependomlaan/schependomlaan.xkt",
- *      metaModelSrc: "./metaModels/schependomlaan/metaModel.json",
- *      edges: true
- * });
- * ````
- *
- * ## Finding Storeys
- *
- * Getting information on a storey in our model:
- *
- * ````javascript
- * const storey = storeyViewsPlugin.storeys["2SWZMQPyD9pfT9q87pgXa1"]; // ID of the IfcBuildingStorey
- *
- * const modelId  = storey.modelId;  // "myModel"
- * const storeyId = storey.storeyId; // "2SWZMQPyD9pfT9q87pgXa1"
- * const aabb     = storey.aabb;     // Axis-aligned 3D World-space boundary of the IfcBuildingStorey
- * ````
- *
- * We can also get a "storeys" event every time the set of storeys changes, ie. every time a storey is created or destroyed:
- *
- * ````javascript
- * storeyViewsPlugin.on("storeys", ()=> {
- *      const storey = storeyViewsPlugin.storeys["2SWZMQPyD9pfT9q87pgXa1"];
- *      //...
- * });
- * ````
- *
- * ## Showing Entitys within Storeys
- *
- * Showing the {@link Entity}s within a storey:
- *
- * ````javascript
- * storeyViewsPlugin.showStoreyObjects("2SWZMQPyD9pfT9q87pgXa1");
- * ````
- *
- * Showing **only** the Entitys in a storey, hiding all others:
- *
- * ````javascript
- * storeyViewsPlugin.showStoreyObjects("2SWZMQPyD9pfT9q87pgXa1", {
- *     hideOthers: true
- * });
- * ````
- * Showing only the storey Entitys, applying custom appearances configured on {@link StoreyViewsPlugin#objectStates}:
- *
- * ````javascript
- * storeyViewsPlugin.showStoreyObjects("2SWZMQPyD9pfT9q87pgXa1", {
- *     hideOthers: true,
- *     useObjectStates: true
- * });
- * ````
- *
- * <a href="https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_showStoreyObjects"><img src="http://xeokit.io/img/docs/StoreyViewsPlugin/showStoreyObjects.gif"></a>
- *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_showStoreyObjects)]
- *
- * When using this option, at some point later you'll probably want to restore all Entitys to their original visibilities and
- * appearances.
- *
- * To do that, save their visibility and appearance states in an {@link ObjectsMemento} beforehand, from
- * which you can restore them later:
- *
- * ````javascript
- * const objectsMemento = new ObjectsMemento();
- *
- * // Save all Entity visibility and appearance states
- *
- * objectsMemento.saveObjects(viewer.scene);
- *
- * // Show storey view Entitys, with custom appearances as configured for IFC types
- *
- * storeyViewsPlugin.showStoreyObjects("2SWZMQPyD9pfT9q87pgXa1", {
- *     useObjectStates: true // <<--------- Apply custom appearances
- * });
- *
- * //...
- *
- * // Later, restore all Entitys to their saved visibility and appearance states
- * objectsMemento.restoreObjects(viewer.scene);
- * ````
- *
- * ## Arranging the Camera for Storey Plan Views
- *
- * The {@link StoreyViewsPlugin#gotoStoreyCamera} method positions the {@link Camera} for a plan view of
- * the {@link Entity}s within the given storey.
- *
- * <a href="https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_gotoStoreyCamera"><img src="http://xeokit.io/img/docs/StoreyViewsPlugin/gotoStoreyCamera.gif"></a>
- *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_gotoStoreyCamera)]
- *
- * Let's fly the {@link Camera} to a downward-looking orthographic view of the Entitys within our storey.
- *
- * ````javascript
- * storeyViewsPlugin.gotoStoreyCamera("2SWZMQPyD9pfT9q87pgXa1", {
- *     projection: "ortho", // Orthographic projection
- *     duration: 2.5,       // 2.5 second transition
- *     done: () => {
- *         viewer.cameraControl.planView = true; // Disable rotation
- *     }
- * });
- * ````
- *
- * Note that we also set {@link CameraControl#planView} ````true````, which prevents the CameraControl from rotating
- * or orbiting. In orthographic mode, this effectively makes the {@link Viewer} behave as if it were a 2D viewer, with
- * picking, panning and zooming still enabled.
- *
- * If you need to be able to restore the Camera to its previous state, you can save it to a {@link CameraMemento}
- * beforehand, from which you can restore it later:
- *
- * ````javascript
- * const cameraMemento = new CameraMemento();
- *
- * // Save camera state
- *
- * cameraMemento.saveCamera(viewer.scene);
- *
- * // Position camera for a downward-looking orthographic view of our storey
- *
- * storeyViewsPlugin.gotoStoreyCamera("2SWZMQPyD9pfT9q87pgXa1", {
- *     projection: "ortho",
- *     duration: 2.5,
- *     done: () => {
- *         viewer.cameraControl.planView = true; // Disable rotation
- *     }
- * });
- *
- * //...
- *
- * // Later, restore the Camera to its saved state
- * cameraMemento.restoreCamera(viewer.scene);
- * ````
- *
- * ## Creating StoreyMaps
- *
- * The {@link StoreyViewsPlugin#createStoreyMap} method creates a 2D orthographic plan image of the given storey.
- *
- * <a href="https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_createStoreyMap"><img src="http://xeokit.io/img/docs/StoreyViewsPlugin/createStoreyMap.png"></a>
- *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_createStoreyMap)]
- *
- * This method creates a {@link StoreyMap}, which provides the plan image as a Base64-encoded string.
- *
- * Let's create a 2D plan image of our building storey:
- *
- * ````javascript
- * const storeyMap = storeyViewsPlugin.createStoreyMap("2SWZMQPyD9pfT9q87pgXa1", {
- *     width: 300,
- *     format: "png"
- * });
- *
- * const imageData = storeyMap.imageData; // Base64-encoded image data string
- * const width     = storeyMap.width; // 300
- * const height    = storeyMap.height; // Automatically derived from width
- * const format    = storeyMap.format; // "png"
- * ````
- *
- * As with ````showStoreyEntitys````,  We also have the option to customize the appearance of the Entitys in our plan
- * images according to their IFC types, using the lookup table configured on {@link StoreyViewsPlugin#objectStates}.
- *
- * For example, we usually want to show only element types like ````IfcWall````,  ````IfcDoor```` and
- * ````IfcFloor```` in our plan images.
- *
- * Let's create another StoreyMap, this time applying the custom appearances:
- *
- * ````javascript
- * const storeyMap = storeyViewsPlugin.createStoreyMap("2SWZMQPyD9pfT9q87pgXa1", {
- *     width: 300,
- *     format: "png",
- *     useObjectStates: true // <<--------- Apply custom appearances
- * });
- *````
- *
- * ## Picking Entities in StoreyMaps
- *
- * We can use {@link StoreyViewsPlugin#pickStoreyMap} to pick Entities in our building storey, using 2D coordinates from mouse or touch events on our {@link StoreyMap}'s 2D plan image.
- *
- * <a href="https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_recipe2"><img src="http://xeokit.io/img/docs/StoreyViewsPlugin/recipe2.gif"></a>
- *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#storeyViews_StoreyViewsPlugin_recipe2)]
- *
- * Let's programmatically pick the Entity at the given 2D pixel coordinates within our image:
- *
- * ````javascript
- * const mouseCoords = [65, 120]; // Mouse coords within the image extents
- *
- * const pickResult = storeyViewsPlugin.pickStoreyMap(storeyMap, mouseCoords);
- *
- * if (pickResult && pickResult.entity) {
- *     pickResult.entity.highlighted = true;
- * }
- * ````
- */
-class StoreyViewsPlugin extends Plugin {
-
-    /**
-     * @constructor
-     *
-     * @param {Viewer} viewer The Viewer.
-     * @param {Object} cfg  Plugin configuration.
-     * @param {String} [cfg.id="StoreyViews"] Optional ID for this plugin, so that we can find it within {@link Viewer#plugins}.
-     * @param {Object} [cfg.objectStates] Map of visual states for the {@link Entity}s as rendered within each {@link Storey}.  Default value is {@link IFCStoreyPlanObjectStates}.
-     */
-    constructor(viewer, cfg = {}) {
-
-        super("StoreyViews", viewer);
-
-        this._objectsMemento = new ObjectsMemento();
-        this._cameraMemento = new CameraMemento();
-
-        /**
-         * A {@link Storey} for each ````IfcBuildingStorey```.
-         *
-         * There will be a {@link Storey} for every existing {@link MetaObject} whose {@link MetaObject#type} equals "IfcBuildingStorey".
-         *
-         * These are created and destroyed automatically as models are loaded and destroyed.
-         *
-         * @type {{String:Storey}}
-         */
-        this.storeys = {};
-
-        /**
-         * A set of {@link Storey}s for each {@link MetaModel}.
-         *
-         * These are created and destroyed automatically as models are loaded and destroyed.
-         *
-         * @type {{String: {String:Storey}}}
-         */
-        this.modelStoreys = {};
-
-        this.objectStates = cfg.objectStates;
-
-        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
-            this._registerModelStoreys(modelId);
-            this.fire("storeys", this.storeys);
-        });
-    }
-
-    _registerModelStoreys(modelId) {
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const metaScene = viewer.metaScene;
-        const metaModel = metaScene.metaModels[modelId];
-        const model = scene.models[modelId];
-        if (!metaModel || !metaModel.rootMetaObject) {
-            return;
-        }
-        const storeyIds = metaModel.rootMetaObject.getObjectIDsInSubtreeByType(["IfcBuildingStorey"]);
-        for (let i = 0, len = storeyIds.length; i < len; i++) {
-            const storeyId = storeyIds[i];
-            const metaObject = metaScene.metaObjects[storeyId];
-            const childObjectIds = metaObject.getObjectIDsInSubtree();
-            const aabb = scene.getAABB(childObjectIds);
-            const numObjects = (Math.random() > 0.5) ? childObjectIds.length : 0;
-            const storey = new Storey(this, aabb, modelId, storeyId, numObjects);
-            storey._onModelDestroyed = model.once("destroyed", () => {
-                this._deregisterModelStoreys(modelId);
-                this.fire("storeys", this.storeys);
-            });
-            this.storeys[storeyId] = storey;
-            if (!this.modelStoreys[modelId]) {
-                this.modelStoreys[modelId] = {};
-            }
-            this.modelStoreys[modelId][storeyId] = storey;
-        }
-    }
-
-    _deregisterModelStoreys(modelId) {
-        const storeys = this.modelStoreys[modelId];
-        if (storeys) {
-            const scene = this.viewer.scene;
-            for (let storyObjectId in storeys) {
-                if (storeys.hasOwnProperty(storyObjectId)) {
-                    const storey = storeys[storyObjectId];
-                    const model = scene.models[storey.modelId];
-                    if (model) {
-                        model.off("destroyed", storey._onModelDestroyed);
-                    }
-                    delete this.storeys[storyObjectId];
-                }
-            }
-            delete this.modelStoreys[modelId];
-        }
-    }
-
-    /**
-     * Sets map of visual states for the {@link Entity}s as rendered within each {@link Storey}.
-     *
-     * Default value is {@link IFCStoreyPlanObjectStates}.
-     *
-     * @type {{String: Object}}
-     */
-    set objectStates(value) {
-        this._objectStates = value || IFCStoreyPlanObjectStates;
-    }
-
-    /**
-     * Gets map of visual states for the {@link Entity}s as rendered within each {@link Storey}.
-     *
-     * Default value is {@link IFCStoreyPlanObjectStates}.
-     *
-     * @type {{String: Object}}
-     */
-    get objectStates() {
-        return this._objectStates;
-    }
-
-    /**
-     * Arranges the {@link Camera} for a 3D orthographic view of the {@link Entity}s within the given storey.
-     *
-     * See also: {@link CameraMemento}, which saves and restores the state of the {@link Scene}'s {@link Camera}
-     *
-     * @param {String} storeyId ID of the ````IfcBuildingStorey```` object.
-     * @param {*} [options] Options for arranging the Camera.
-     * @param {String} [options.projection] Projection type to transition the Camera to. Accepted values are "perspective" and "ortho".
-     * @param {Function} [options.done] Callback to fire when the Camera has arrived. When provided, causes an animated flight to the saved state. Otherwise jumps to the saved state.
-     */
-    gotoStoreyCamera(storeyId, options = {}) {
-
-        const storey = this.storeys[storeyId];
-
-        if (!storey) {
-            this.error("IfcBuildingStorey not found with this ID: " + storeyId);
-            if (options.done) {
-                options.done();
-            }
-            return;
-        }
-
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        const aabb = storey.aabb;
-
-        if (aabb[3] < aabb[0] || aabb[4] < aabb[1] || aabb[5] < aabb[2]) { // Don't fly to an inverted boundary
-            if (options.done) {
-                options.done();
-            }
-            return;
-        }
-        if (aabb[3] === aabb[0] && aabb[4] === aabb[1] && aabb[5] === aabb[2]) { // Don't fly to an empty boundary
-            if (options.done) {
-                options.done();
-            }
-            return;
-        }
-        const look2 = math.getAABB3Center(aabb);
-        const diag = math.getAABB3Diag(aabb);
-        const fitFOV = 45; // fitFOV;
-        const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
-
-        const orthoScale2 = diag * 1.3;
-
-        const eye2 = tempVec3a$3;
-
-        eye2[0] = look2[0] + (camera.worldUp[0] * sca);
-        eye2[1] = look2[1] + (camera.worldUp[1] * sca);
-        eye2[2] = look2[2] + (camera.worldUp[2] * sca);
-
-        const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
-
-        if (options.done) {
-
-            viewer.cameraFlight.flyTo(utils.apply(options, {
-                eye: eye2,
-                look: look2,
-                up: up2,
-                orthoScale: orthoScale2
-            }), () => {
-                options.done();
-            });
-
-        } else {
-
-            viewer.cameraFlight.jumpTo(utils.apply(options, {
-                eye: eye2,
-                look: look2,
-                up: up2,
-                orthoScale: orthoScale2
-            }));
-
-            viewer.camera.ortho.scale = orthoScale2;
-        }
-    }
-
-    /**
-     * Shows the {@link Entity}s within the given storey.
-     *
-     * Optionally hides all other Entitys.
-     *
-     * Optionally sets the visual appearance of each of the Entitys according to its IFC type. The appearance of
-     * IFC types in plan views is configured by {@link StoreyViewsPlugin#objectStates}.
-     *
-     * See also: {@link ObjectsMemento}, which saves and restores a memento of the visual state
-     * of the {@link Entity}'s that represent objects within a {@link Scene}.
-     *
-     * @param {String} storeyId ID of the ````IfcBuildingStorey```` object.
-     * @param {*} [options] Options for showing the Entitys within the storey.
-     * @param {Boolean} [options.hideOthers=false] When ````true````, hide all other {@link Entity}s.
-     * @param {Boolean} [options.useObjectStates=false] When ````true````, apply the custom visibilities and appearances configured for IFC types in {@link StoreyViewsPlugin#objectStates}.
-     */
-    showStoreyObjects(storeyId, options = {}) {
-
-        const storey = this.storeys[storeyId];
-
-        if (!storey) {
-            this.error("IfcBuildingStorey not found with this ID: " + storeyId);
-            return;
-        }
-
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const metaScene = viewer.metaScene;
-        const storeyMetaObject = metaScene.metaObjects[storeyId];
-
-        if (!storeyMetaObject) {
-            return;
-        }
-
-        if (options.hideOthers) {
-            scene.setObjectsVisible(viewer.scene.visibleObjectIds, false);
-        }
-
-        this.withStoreyObjects(storeyId, (entity, metaObject) => {
-            if (entity) {
-                if (options.useObjectStates) {
-                    const props = this._objectStates[metaObject.type] || this._objectStates["DEFAULT"];
-                    if (props) {
-                        entity.visible = props.visible;
-                        entity.edges = props.edges;
-                        // entity.xrayed = props.xrayed; // FIXME: Buggy
-                        // entity.highlighted = props.highlighted;
-                        // entity.selected = props.selected;
-                        if (props.colorize) {
-                            entity.colorize = props.colorize;
-                        }
-                        if (props.opacity !== null && props.opacity !== undefined) {
-                            entity.opacity = props.opacity;
-                        }
-                    }
-                } else {
-                    entity.visible = true;
-                }
-            }
-        });
-    }
-
-    /**
-     * Executes a callback on each of the objects within the given storey.
-     *
-     * ## Usage
-     *
-     * In the example below, we'll show all the {@link Entity}s, within the given ````IfcBuildingStorey````,
-     * that have {@link MetaObject}s with type ````IfcSpace````. Note that the callback will only be given
-     * an {@link Entity} when one exists for the given {@link MetaObject}.
-     *
-     * ````JavaScript
-     * myStoreyViewsPlugin.withStoreyObjects(storeyId, (entity, metaObject) => {
-     *      if (entity && metaObject && metaObject.type === "IfcSpace") {
-     *          entity.visible = true;
-     *      }
-     * });
-     * ````
-     *
-     * @param {String} storeyId ID of the ````IfcBuildingStorey```` object.
-     * @param {Function} callback The callback.
-     */
-    withStoreyObjects(storeyId, callback) {
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const metaScene = viewer.metaScene;
-        const rootMetaObject = metaScene.metaObjects[storeyId];
-        if (!rootMetaObject) {
-            return;
-        }
-        const storeySubObjects = rootMetaObject.getObjectIDsInSubtree();
-        for (var i = 0, len = storeySubObjects.length; i < len; i++) {
-            const objectId = storeySubObjects[i];
-            const metaObject = metaScene.metaObjects[objectId];
-            const entity = scene.objects[objectId];
-            if (entity) {
-                callback(entity, metaObject);
-            }
-        }
-    }
-
-    /**
-     * Creates a 2D map of the given storey.
-     *
-     * @param {String} storeyId ID of the ````IfcBuildingStorey```` object.
-     * @param {*} [options] Options for creating the image.
-     * @param {Number} [options.width=300] Image width in pixels. Height will be automatically determined.
-     * @param {String} [options.format="png"] Image format. Accepted values are "png" and "jpeg".
-     * @returns {StoreyMap} The StoreyMap.
-     */
-    createStoreyMap(storeyId, options = {}) {
-
-        const storey = this.storeys[storeyId];
-        if (!storey) {
-            this.error("IfcBuildingStorey not found with this ID: " + storeyId);
-            return EMPTY_IMAGE;
-        }
-
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const format = options.format || "png";
-        const width = options.width || 300;
-        const aabb = storey.aabb;
-        const aspect = (aabb[5] - aabb[2]) / (aabb[3] - aabb[0]);
-        const height = width * aspect;
-        const padding = options.padding || 0;
-
-        this._objectsMemento.saveObjects(scene);
-        this._cameraMemento.saveCamera(scene);
-
-        this.showStoreyObjects(storeyId, utils.apply(options, {
-            useObjectStates: true,
-            hideOthers: true
-        }));
-
-        this._arrangeStoreyMapCamera(storey);
-
-        //scene.render(true); // Force-render a frame
-
-        const src = viewer.getSnapshot({
-            width: width,
-            height: height,
-            format: format,
-        });
-
-        this._objectsMemento.restoreObjects(scene);
-        this._cameraMemento.restoreCamera(scene);
-
-        return new StoreyMap(storeyId, src, format, width, height, padding);
-    }
-
-    _arrangeStoreyMapCamera(storey) {
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        const aabb = storey.aabb;
-        const look = math.getAABB3Center(aabb);
-        const sca = 0.5;
-        const eye = tempVec3a$3;
-        eye[0] = look[0] + (camera.worldUp[0] * sca);
-        eye[1] = look[1] + (camera.worldUp[1] * sca);
-        eye[2] = look[2] + (camera.worldUp[2] * sca);
-        const up = camera.worldForward;
-        viewer.cameraFlight.jumpTo({eye: eye, look: look, up: up});
-        const xHalfSize = (aabb[3] - aabb[0]) / 2;
-        const yHalfSize = (aabb[4] - aabb[1]) / 2;
-        const zHalfSize = (aabb[5] - aabb[2]) / 2;
-        const xmin = -xHalfSize;
-        const xmax = +xHalfSize;
-        const ymin = -yHalfSize;
-        const ymax = +yHalfSize;
-        const zmin = -zHalfSize;
-        const zmax = +zHalfSize;
-        viewer.camera.customProjection.matrix = math.orthoMat4c(xmin, xmax, zmin, zmax, ymin, ymax, tempMat4$2);
-        viewer.camera.projection = "customProjection";
-    }
-
-    /**
-     * Attempts to pick an {@link Entity} at the given pixel coordinates within a StoreyMap image.
-     *
-     * @param {StoreyMap} storeyMap The StoreyMap.
-     * @param {Number[]} imagePos 2D pixel coordinates within the bounds of {@link StoreyMap#imageData}.
-     * @param {*} [options] Picking options.
-     * @param {Boolean} [options.pickSurface=false] Whether to return the picked position on the surface of the Entity.
-     * @returns {PickResult} The pick result, if an Entity was successfully picked, else null.
-     */
-    pickStoreyMap(storeyMap, imagePos, options={}) {
-
-        const storeyId = storeyMap.storeyId;
-        const storey = this.storeys[storeyId];
-
-        if (!storey) {
-            this.error("IfcBuildingStorey not found with this ID: " + storeyId);
-            return null
-        }
-
-        const normX = 1.0 - (imagePos[0] / storeyMap.width);
-        const normZ = 1.0 - (imagePos[1] / storeyMap.height);
-
-        const aabb = storey.aabb;
-
-        const xmin = aabb[0];
-        const ymin = aabb[1];
-        const zmin = aabb[2];
-        const xmax = aabb[3];
-        const ymax = aabb[4];
-        const zmax = aabb[5];
-
-        const xWorldSize = xmax - xmin;
-        const yWorldSize = ymax - ymin;
-        const zWorldSize = zmax - zmin;
-
-        const origin = math.vec3([xmin + (xWorldSize * normX), ymin + (yWorldSize * 0.5), zmin + (zWorldSize * normZ)]);
-        const direction = math.vec3([0, -1, 0]);
-        const look = math.addVec3(origin, direction, tempVec3a$3);
-        const worldForward = this.viewer.camera.worldForward;
-        const matrix = math.lookAtMat4v(origin, look, worldForward, tempMat4$2);
-
-        const pickResult = this.viewer.scene.pick({  // Picking with arbitrarily-positioned ray
-            pickSurface: options.pickSurface,
-            pickInvisible: true,
-            matrix: matrix
-        });
-
-        if (pickResult) {
-            const metaObject = this.viewer.metaScene.metaObjects[pickResult.entity.id];
-            const objectState = this.objectStates[metaObject.type];
-            if (!objectState || !objectState.visible) {
-                return null;
-            }
-        }
-
-        return pickResult;
-    }
-
-    /**
-     * Gets the ID of the storey that contains the given 3D World-space position.
-     *.
-     * @param {Number[]} worldPos 3D World-space position.
-     * @returns {String} ID of the storey containing the position, or null if the position falls outside all the storeys.
-     */
-    getStoreyContainingWorldPos(worldPos) {
-        for (var storeyId in this.storeys) {
-            const storey = this.storeys[storeyId];
-            if (math.point3AABB3Intersect(storey.aabb, worldPos)) {
-                return storeyId;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Converts a 3D World-space position to a 2D position within a StoreyMap image.
-     *
-     * Use {@link StoreyViewsPlugin#pickStoreyMap} to convert 2D image positions to 3D world-space.
-     *
-     * @param {StoreyMap} storeyMap The StoreyMap.
-     * @param {Number[]} worldPos 3D World-space position within the storey.
-     * @param {Number[]} imagePos 2D pixel position within the {@link StoreyMap#imageData}.
-     * @returns {Boolean} True if ````imagePos```` is within the bounds of the {@link StoreyMap#imageData}, else ````false```` if it falls outside.
-     */
-    worldPosToStoreyMap(storeyMap, worldPos, imagePos) {
-
-        const storeyId = storeyMap.storeyId;
-        const storey = this.storeys[storeyId];
-
-        if (!storey) {
-            this.error("IfcBuildingStorey not found with this ID: " + storeyId);
-            return false
-        }
-
-        const aabb = storey.aabb;
-
-        const xmin = aabb[0];
-        const ymin = aabb[1];
-        const zmin = aabb[2];
-
-        const xmax = aabb[3];
-        const ymax = aabb[4];
-        const zmax = aabb[5];
-
-        const xWorldSize = xmax - xmin;
-        const yWorldSize = ymax - ymin;
-        const zWorldSize = zmax - zmin;
-
-        const camera = this.viewer.camera;
-        const worldUp = camera.worldUp;
-
-        const xUp = worldUp[0] > worldUp[1] && worldUp[0] > worldUp[2];
-        const yUp = !xUp && worldUp[1] > worldUp[0] && worldUp[1] > worldUp[2];
-        const zUp = !xUp && !yUp && worldUp[2] > worldUp[0] && worldUp[2] > worldUp[1];
-
-        const ratioX = (storeyMap.width / xWorldSize);
-        const ratioY = yUp ? (storeyMap.height / zWorldSize) : (storeyMap.height / yWorldSize); // Assuming either Y or Z is "up", but never X
-
-        imagePos[0] = Math.floor(storeyMap.width - ((worldPos[0] - xmin) * ratioX));
-        imagePos[1] = Math.floor(storeyMap.height - ((worldPos[2] - zmin) * ratioY));
-
-        return (imagePos[0] >= 0 && imagePos[0] < storeyMap.width && imagePos[1] >= 0 && imagePos[1] <= storeyMap.height);
-    }
-
-    // /**
-    //  * Converts 2D position within a StoreyMap image to a 3D World-space position.
-    //  *
-    //  * @param {StoreyMap} storeyMap The StoreyMap.
-    //  * @param {Number[]} imagePos 2D pixel position within the bounds of {@link StoreyMap#imageData}.
-    //  * @param {Number[]} worldPos 3D World-space position within the storey.
-    //  */
-    // storeyMapToWorldPos(storeyMap, imagePos, worldPos) {
-    //
-    // }
-
-    /**
-     * Converts a 3D World-space direction vector to a 2D vector within a StoreyMap image.
-     *
-     * @param {StoreyMap} storeyMap The StoreyMap.
-     * @param {Number[]} worldDir 3D World-space direction vector.
-     * @param {Number[]} imageDir Normalized 2D direction vector.
-     */
-    worldDirToStoreyMap(storeyMap, worldDir, imageDir) {
-        const camera = this.viewer.camera;
-        const eye = camera.eye;
-        const look = camera.look;
-        const eyeLookDir = math.subVec3(look, eye, tempVec3a$3);
-        const worldUp = camera.worldUp;
-        const xUp = worldUp[0] > worldUp[1] && worldUp[0] > worldUp[2];
-        const yUp = !xUp && worldUp[1] > worldUp[0] && worldUp[1] > worldUp[2];
-        const zUp = !xUp && !yUp && worldUp[2] > worldUp[0] && worldUp[2] > worldUp[1];
-        if (xUp) {
-            imageDir[0] = eyeLookDir[1];
-            imageDir[1] = eyeLookDir[2];
-        } else if (yUp) {
-            imageDir[0] = eyeLookDir[0];
-            imageDir[1] = eyeLookDir[2];
-        } else {
-            imageDir[0] = eyeLookDir[0];
-            imageDir[1] = eyeLookDir[1];
-        }
-        math.normalizeVec2(imageDir);
-    }
-
-    /**
-     * Destroys this StoreyViewsPlugin.
-     */
-    destroy() {
-        this.viewer.scene.off(this._onModelLoaded);
-        super.destroy();
-    }
-}
-
 class Storeys extends Controller {
 
-    constructor(parent, cfg) {
+    constructor(parent, cfg = {}) {
 
-        super(parent, cfg);
+        super(parent);
 
         if (!cfg.storeysTabElement) {
             throw "Missing config: storeysTabElement";
+        }
+
+        if (!cfg.showAllStoreysButtonElement) {
+            throw "Missing config: showAllStoreysButtonElement";
+        }
+
+        if (!cfg.hideAllStoreysButtonElement) {
+            throw "Missing config: hideAllStoreysButtonElement";
         }
 
         if (!cfg.storeysElement) {
@@ -55393,143 +54161,74 @@ class Storeys extends Controller {
         }
 
         this._storeysTabElement = cfg.storeysTabElement;
-        this._storeysElement = cfg.storeysElement;
+        this._showAllStoreysButtonElement = cfg.showAllStoreysButtonElement;
+        this._hideAllStoreysButtonElement = cfg.hideAllStoreysButtonElement;
         this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
 
         if (!this._storeysTabButtonElement) {
             throw "Missing DOM element: ,xeokit-tab-btn";
         }
 
-        this._storeyViewsPlugin = new StoreyViewsPlugin(this.viewer);
+        const storeysElement = cfg.storeysElement;
 
-        this._storeyViewsPlugin.on("storeys", () => {
-            this._repaint();
+        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
+        this._muteTreeEvents = false;
+        this._muteEntityEvents = false;
+
+        this._tree = new TreeViewPlugin(this.viewer, {
+            containerElement: storeysElement,
+            mode: "storeys"
         });
-
-        const viewer = this.viewer;
-
-        viewer.scene.xrayMaterial.fill = false;
-        viewer.scene.xrayMaterial.fillColor = [0.0, 0.0, 0.0];
-        viewer.scene.xrayMaterial.edgeColor = [0.0, 0.0, 0.0];
-        viewer.scene.xrayMaterial.fillAlpha = 0.06;
-        viewer.scene.xrayMaterial.edgeAlpha = 0.4;
     }
 
-    _repaint() {
-        const html = [];
-        var storeyId;
-        const models = this.viewer.scene.models;
-        const metaScene = this.viewer.metaScene;
-        const storeyIds = [];
-        for (var modelId in models) {
-            const model = this.viewer.scene.models[modelId];
-            const metaModel = metaScene.metaModels[modelId];
-            const rootMetaObject = metaModel.rootMetaObject;
-            if (!metaModel) {
-                continue;
-            }
-            const storeys = this._storeyViewsPlugin.modelStoreys[modelId];
-            if (!storeys) {
-                continue;
-            }
-            html.push("<div>" + (rootMetaObject ? rootMetaObject.name : metaModel.id) + "</div>");
-            html.push("<ul>");
-            for (storeyId in storeys) {
-                const storey = storeys[storeyId];
-                const metaObject = metaScene.metaObjects[storeyId];
-                if (storey) {
-                    html.push("<li>");
-                    html.push("<a id='" + storey.storeyId + "' href=''>" + metaObject.name + "</a>");
-                    html.push("</li>");
-                    storeyIds.push(storeyId);
-                }
-            }
-            html.push("</ul>");
-            html.push("<br>");
-        }
-        this._storeysElement.innerHTML = html.join("");
-        for (var i = 0, len = storeyIds.length; i < len; i++) {
-            const _storeyId = storeyIds[i];
-            const link = document.getElementById("" + _storeyId);
-            link.addEventListener("click", (e) => {
-                this.showStorey(_storeyId, () => {
-                });
-                e.preventDefault();
-            });
-        }
+    _addModel(modelId) {
+        this._tree.addModel(modelId);
     }
 
-    showStorey(storeyId, done) {
+    _removeModel(modelId) {
+        this._tree.removeModel(modelId);
+    }
 
-        const storey = this._storeyViewsPlugin.storeys[storeyId];
+    _synchTreeFromScene(modelId) {
 
-        if (!storey) {
-            return;
-        }
+    }
 
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        const metaScene = viewer.metaScene;
-        const metaObject = metaScene.metaObjects[storeyId];
+    _setObjectVisibilities(metaObject) {
 
-        this.viewerUI.section.setActive(false);
-        this.viewerUI.section.clear();
-        this.viewerUI.firstPerson.setActive(false);
-
-        const threeDMode = this.viewerUI.threeD.getActive();
-
-        scene.setObjectsVisible(scene.objectIds, true);
-        scene.setObjectsXRayed(scene.objectIds, true);
-        scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-        const objectIds = metaObject.getObjectIDsInSubtree();
-
-        scene.setObjectsXRayed(objectIds, false);
-
-        if (!threeDMode) {
-
-            this._storeyViewsPlugin.gotoStoreyCamera(storeyId, {
-                duration: 0.5,       // 2.5 second transition
-                done: () => {
-
-                    this._storeyViewsPlugin.showStoreyObjects(storeyId, {
-                        hideOthers: true,
-                        useObjectStates: false
-                    });
-
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-
-                    if (done) {
-                        done();
-                    }
-                }
-            });
-        } else {
-
-            viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
-                duration: 0.5
-            }, () => {
-                scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-            });
-        }
     }
 
     setEnabled(enabled) {
         if (!enabled) {
             this._storeysTabButtonElement.classList.add("disabled");
-            this._storeysTabElement.classList.add("disabled");
-           } else {
+            this._showAllStoreysButtonElement.classList.add("disabled");
+            this._hideAllStoreysButtonElement.classList.add("disabled");
+        } else {
             this._storeysTabButtonElement.classList.remove("disabled");
-            this._storeysTabElement.classList.remove("disabled");
+            this._showAllStoreysButtonElement.classList.remove("disabled");
+            this._hideAllStoreysButtonElement.classList.remove("disabled");
         }
     }
 
-    /** @private */
+    muteEvents() {
+        this._muteTreeEvents = true;
+        this._muteEntityEvents = true;
+    }
+
+    unmuteEvents() {
+        this._muteTreeEvents = false;
+        this._muteEntityEvents = false;
+    }
+
+    selectAll() {
+        //  this._tree.selectDeep();
+    }
+
+    deselectAll() {
+        //    this._tree.deselectDeep();
+    }
+
     destroy() {
         super.destroy();
-        this._storeyViewsPlugin.destroy();
     }
 }
 
@@ -56026,7 +54725,7 @@ function ZToY(vec) {
     return new Float64Array([vec[0], vec[2], -vec[1]]);
 }
 
-const tempVec3a$4 = math.vec3();
+const tempVec3a$3 = math.vec3();
 
 class ThreeDMode extends Controller {
 
@@ -56064,7 +54763,7 @@ class ThreeDMode extends Controller {
                 const scene = viewer.scene;
                 const aabb = scene.getAABB(scene.visibleObjectIds);
                 const diag = math.getAABB3Diag(aabb);
-                const center = math.getAABB3Center(aabb, tempVec3a$4);
+                const center = math.getAABB3Center(aabb, tempVec3a$3);
                 const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
                 const camera = scene.camera;
                 const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
@@ -56097,7 +54796,7 @@ class ThreeDMode extends Controller {
                 const fitFOV = 45; // fitFOV;
                 const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
                 const orthoScale2 = diag * 1.3;
-                const eye2 = tempVec3a$4;
+                const eye2 = tempVec3a$3;
 
                 eye2[0] = look2[0] + (camera.worldUp[0] * sca);
                 eye2[1] = look2[1] + (camera.worldUp[1] * sca);
@@ -56173,6 +54872,10 @@ const explorerTemplate = `<div class="xeokit-tabs">
      <div class="xeokit-tab xeokit-storeysTab">
         <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
         <div class="xeokit-tab-content">
+         <div class="xeokit-btn-group">
+                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled">Show all</button>
+                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled">Hide all</button>
+            </div>
              <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
         </div>
     </div>
@@ -56195,10 +54898,6 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group" role="group">
         <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
     </div>
-<!--    &lt;!&ndash; Ortho mode button &ndash;&gt;-->
-<!--    <div class="xeokit-btn-group" role="group">-->
-<!--        <button type="button" class="xeokit-ortho xeokit-btn fa fa-cube fa-2x disabled" style="visibility: hidden;"></button>-->
-<!--    </div>-->
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
@@ -56334,6 +55033,8 @@ class ViewerUI extends Controller {
 
         this.storeys = new Storeys(this, {
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
+            showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
+            hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
 
@@ -56414,6 +55115,16 @@ class ViewerUI extends Controller {
         });
 
         explorerElement.querySelector(".xeokit-hideAllClasses").addEventListener("click", (event) => {
+            this._hideAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(".xeokit-showAllStoreys").addEventListener("click", (event) => {
+            this._showAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(".xeokit-hideAllStoreys").addEventListener("click", (event) => {
             this._hideAllObjects();
             event.preventDefault();
         });

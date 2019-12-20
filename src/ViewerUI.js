@@ -52,6 +52,10 @@ const explorerTemplate = `<div class="xeokit-tabs">
      <div class="xeokit-tab xeokit-storeysTab">
         <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
         <div class="xeokit-tab-content">
+         <div class="xeokit-btn-group">
+                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled">Show all</button>
+                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled">Hide all</button>
+            </div>
              <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
         </div>
     </div>
@@ -209,6 +213,8 @@ class ViewerUI extends Controller {
 
         this.storeys = new Storeys(this, {
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
+            showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
+            hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
 
@@ -289,6 +295,16 @@ class ViewerUI extends Controller {
         });
 
         explorerElement.querySelector(".xeokit-hideAllClasses").addEventListener("click", (event) => {
+            this._hideAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(".xeokit-showAllStoreys").addEventListener("click", (event) => {
+            this._showAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(".xeokit-hideAllStoreys").addEventListener("click", (event) => {
             this._hideAllObjects();
             event.preventDefault();
         });

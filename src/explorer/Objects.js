@@ -1,5 +1,5 @@
 import {Controller} from "../Controller.js";
-import {StructureTreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/StructureTreeViewPlugin/StructureTreeViewPlugin.js";
+import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 
 class Objects extends Controller {
 
@@ -38,8 +38,9 @@ class Objects extends Controller {
         this._muteTreeEvents = false;
         this._muteEntityEvents = false;
 
-        this._tree = new StructureTreeViewPlugin(this.viewer, {
-            containerElement: objectsElement
+        this._tree = new TreeViewPlugin(this.viewer, {
+            containerElement: objectsElement,
+            mode: "structure"
         });
     }
 
