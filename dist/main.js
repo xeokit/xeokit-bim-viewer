@@ -49681,6 +49681,8 @@ class Models extends Controller {
     }
 }
 
+const idMap = new Map();
+
 /** @private
  */
 class ModelTreeView {
@@ -49699,22 +49701,24 @@ class ModelTreeView {
             return;
         }
 
+        this._id = idMap.addItem();
+        this._baseId = "" + this._id;
+
         this._viewer = viewer;
         this._rootMetaObject = rootMetaObject;
-        this._model = model;
         this._containerElement = cfg.containerElement;
         this._rootElement = null;
         this._muteSceneEvents = false;
         this._muteTreeEvents = false;
         this._rootNodes = [];
-        this._nodeMap = {};
+        this._objectNodeMap = {};
 
         this._onObjectVisibility = this._viewer.scene.on("objectVisibility", (entity) => {
             if (this._muteSceneEvents) {
                 return;
             }
             const objectId = entity.id;
-            const node = this._nodeMap[objectId];
+            const node = this._objectNodeMap[objectId];
             if (!node) {
                 return; // Not in this tree
             }
@@ -49730,7 +49734,7 @@ class ModelTreeView {
             } else {
                 node.numVisibleEntities--;
             }
-            const checkbox = document.getElementById(objectId);
+            const checkbox = document.getElementById(node.nodeId);
             if (checkbox) {
                 checkbox.checked = visible;
             }
@@ -49742,7 +49746,7 @@ class ModelTreeView {
                 } else {
                     parent.numVisibleEntities--;
                 }
-                const parentCheckbox = document.getElementById(parent.id);
+                const parentCheckbox = document.getElementById(parent.nodeId);
                 if (parentCheckbox) {
                     const newChecked = (parent.numVisibleEntities > 0);
                     if (newChecked !== parentCheckbox.checked) {
@@ -49775,12 +49779,14 @@ class ModelTreeView {
             this._muteSceneEvents = true;
             const checkbox = event.target;
             const visible = checkbox.checked;
-            const checkedObjectId = checkbox.id;
-            const checkedNode = this._nodeMap[checkedObjectId];
+            const nodeId = checkbox.id;
+            const checkedObjectId = this._nodeToObjectID(nodeId);
+            const checkedNode = this._objectNodeMap[checkedObjectId];
             const objects = this._viewer.scene.objects;
             let numUpdated = 0;
             this._withNodeTree(checkedNode, (node) => {
-                const objectId = node.id;
+                const objectId = node.objectId;
+                const checkBoxId = node.nodeId;
                 const entity = objects[objectId];
                 const isLeaf = (node.children.length === 0);
                 node.numVisibleEntities = visible ? node.numEntities : 0;
@@ -49788,7 +49794,7 @@ class ModelTreeView {
                     numUpdated++;
                 }
                 node.checked = visible;
-                const checkbox = document.getElementById(objectId);
+                const checkbox = document.getElementById(checkBoxId);
                 if (checkbox) {
                     checkbox.checked = visible;
                 }
@@ -49799,7 +49805,7 @@ class ModelTreeView {
             let parent = checkedNode.parent;
             while (parent) {
                 parent.checked = visible;
-                const checkbox = document.getElementById(parent.id); // Parent checkboxes are always in DOM
+                const checkbox = document.getElementById(parent.nodeId); // Parent checkboxes are always in DOM
                 if (visible) {
                     parent.numVisibleEntities += numUpdated;
                 } else {
@@ -49825,6 +49831,14 @@ class ModelTreeView {
         this._createNodesWithoutError = true;
     }
 
+    _nodeToObjectID(nodeId) {
+        return nodeId.substring(this._baseId.length);
+    }
+
+    _objectToNodeID(objectId) {
+        return this._baseId + objectId;
+    }
+
     setMode(mode) {
         if (this._mode === mode) {
             return;
@@ -49839,7 +49853,7 @@ class ModelTreeView {
             this._rootElement = null;
         }
         this._rootNodes = [];
-        this._nodeMap = {};
+        this._objectNodeMap = {};
         switch (this._mode) {
             case "storeys":
                 this._createStoreysNodes();
@@ -49864,7 +49878,8 @@ class ModelTreeView {
         const metaObjectName = metaObject.name;
         if (metaObjectType === "IfcProject") {
             projectNode = {
-                id: metaObject.id,
+                nodeId: this._objectToNodeID(metaObject.id),
+                objectId: metaObject.id,
                 name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: null,
                 numEntities: 0,
@@ -49873,10 +49888,11 @@ class ModelTreeView {
                 children: []
             };
             this._rootNodes.push(projectNode);
-            this._nodeMap[projectNode.id] = projectNode;
+            this._objectNodeMap[projectNode.objectId] = projectNode;
         } else if (metaObjectType === "IfcBuildingStorey") {
             storeyNode = {
-                id: metaObject.id,
+                nodeId: this._objectToNodeID(metaObject.id),
+                objectId: metaObject.id,
                 name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: projectNode,
                 numEntities: 0,
@@ -49885,15 +49901,18 @@ class ModelTreeView {
                 children: []
             };
             projectNode.children.push(storeyNode);
-            this._nodeMap[storeyNode.id] = storeyNode;
+            this._objectNodeMap[storeyNode.objectId] = storeyNode;
             typeNodes = {};
         } else {
             if (storeyNode) {
                 typeNodes = typeNodes || {};
                 var typeNode = typeNodes[metaObjectType];
                 if (!typeNode) {
+                    const typeNodeObjectId = storeyNode.objectId + "." + metaObjectType;
+                    const typeNodeNodeId = this._objectToNodeID(typeNodeObjectId);
                     typeNode = {
-                        id: storeyNode.id + "." + metaObjectType,
+                        nodeId: typeNodeNodeId,
+                        objectId: typeNodeObjectId,
                         name: metaObjectType,
                         parent: storeyNode,
                         numEntities: 0,
@@ -49902,11 +49921,12 @@ class ModelTreeView {
                         children: []
                     };
                     storeyNode.children.push(typeNode);
-                    this._nodeMap[typeNode.id] = typeNode;
+                    this._objectNodeMap[typeNodeObjectId] = typeNode;
                     typeNodes[metaObjectType] = typeNode;
                 }
                 const node = {
-                    id: metaObject.id,
+                    nodeId: this._objectToNodeID(metaObject.id),
+                    objectId: metaObject.id,
                     name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                     parent: typeNode,
                     numEntities: 0,
@@ -49915,7 +49935,7 @@ class ModelTreeView {
                     children: []
                 };
                 typeNode.children.push(node);
-                this._nodeMap[node.id] = node;
+                this._objectNodeMap[node.objectId] = node;
             }
         }
         const children = metaObject.children;
@@ -49936,7 +49956,8 @@ class ModelTreeView {
             var typeNode = typeNodes[metaObjectType];
             if (!typeNode) {
                 typeNode = {
-                    id: metaObjectType,
+                    nodeId: this._objectToNodeID(metaObjectType),
+                    objectId: metaObjectType,
                     name: metaObjectType,
                     parent: null,
                     numEntities: 0,
@@ -49945,11 +49966,12 @@ class ModelTreeView {
                     children: []
                 };
                 this._rootNodes.push(typeNode);
-                this._nodeMap[typeNode.id] = typeNode;
+                this._objectNodeMap[typeNode.objectId] = typeNode;
                 typeNodes[metaObjectType] = typeNode;
             }
             const node = {
-                id: metaObject.id,
+                nodeId: this._objectToNodeID(metaObject.id),
+                objectId: metaObject.id,
                 name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: typeNode,
                 numEntities: 0,
@@ -49958,7 +49980,7 @@ class ModelTreeView {
                 children: []
             };
             typeNode.children.push(node);
-            this._nodeMap[node.id] = node;
+            this._objectNodeMap[node.objectId] = node;
         }
         const children = metaObject.children;
         if (children) {
@@ -49972,7 +49994,8 @@ class ModelTreeView {
     _createStructureNodes(metaObject = this._rootMetaObject, parent) {
         const metaObjectName = metaObject.name;
         const node = {
-            id: metaObject.id,
+            nodeId: this._objectToNodeID(metaObject.id),
+            objectId: metaObject.id,
             name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
             parent: parent,
             numEntities: 0,
@@ -49985,7 +50008,7 @@ class ModelTreeView {
         } else {
             this._rootNodes.push(node);
         }
-        this._nodeMap[node.id] = node;
+        this._objectNodeMap[node.objectId] = node;
         const children = metaObject.children;
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
@@ -50004,7 +50027,7 @@ class ModelTreeView {
             const objectId = objectIds[i];
             const metaObject = metaObjects[objectId];
             if (metaObject) {
-                const node = this._nodeMap[objectId];
+                const node = this._objectNodeMap[objectId];
                 if (node) {
                     const entity = objects[objectId];
                     if (entity) {
@@ -50060,9 +50083,10 @@ class ModelTreeView {
 
     _createNodeElement(node) {
         const nodeElement = document.createElement('li');
-        nodeElement.id = 'node-' + node.id;
+        const nodeId = this._objectToNodeID(node.objectId);
+        nodeElement.id = 'node-' + nodeId;
         if (node.children.length > 0) {
-            const groupElementId = "a-" + node.id;
+            const groupElementId = "a-" + nodeId;
             const groupElement = document.createElement('a');
             groupElement.href = '#';
             groupElement.id = groupElementId;
@@ -50072,7 +50096,7 @@ class ModelTreeView {
             nodeElement.appendChild(groupElement);
         }
         const checkbox = document.createElement('input');
-        checkbox.id = node.id;
+        checkbox.id = nodeId;
         checkbox.type = "checkbox";
         checkbox.checked = node.checked;
         checkbox.addEventListener("change", this._checkboxChangeHandler);
@@ -50086,12 +50110,14 @@ class ModelTreeView {
         return nodeElement;
     }
 
-    _expandToDepth(depth) {        const expand = (metaObject, countDepth) => {
+    _expandToDepth(depth) {
+        const expand = (metaObject, countDepth) => {
             if (countDepth === depth) {
                 return;
             }
             const objectId = metaObject.id;
-            const groupElementId = "a-" + objectId;
+            const nodeId = this._objectToNodeID(objectId);
+            const groupElementId = "a-" + nodeId;
             const groupElement = document.getElementById(groupElementId);
             if (groupElement) {
                 this._expandGroupElement(groupElement);
@@ -50107,7 +50133,8 @@ class ModelTreeView {
     }
 
     _expandNode(objectId) {
-        const groupElementId = "a-" + objectId;
+        const nodeId = this._objectToNodeID(node.objectId);
+        const groupElementId = "a-" + nodeId;
         const groupElement = document.getElementById(groupElementId);
         if (groupElement) {
             this._expandGroupElement(groupElement);
@@ -50115,18 +50142,19 @@ class ModelTreeView {
         }
         const path = [];
         path.unshift(objectId);
-        const node = this._nodeMap[objectId];
+        const node = this._objectNodeMap[objectId];
         let parent = node.parent;
         while (parent) {
-            path.unshift(parent.id);
+            path.unshift(parent.nodeId);
             parent = parent.parent;
         }
     }
 
     _expandGroupElement(groupElement) {
         const parentElement = groupElement.parentElement;
-        const id = parentElement.id.replace('node-', '');
-        const groupNode = this._nodeMap[id];
+        const nodeId = parentElement.id.replace('node-', '');
+        const objectId = this._nodeToObjectID(nodeId);
+        const groupNode = this._objectNodeMap[objectId];
         const childNodes = groupNode.children;
         const nodeElements = childNodes.map((node) => {
             return this._createNodeElement(node);
@@ -50166,6 +50194,7 @@ class ModelTreeView {
             this._rootElement.parentNode.removeChild(this._rootElement);
             this._viewer.scene.off(this._onObjectVisibility);
             this._destroyed = true;
+            idMap.removeItem(this._id);
         }
     }
 }
@@ -54841,10 +54870,10 @@ class ThreeDMode extends Controller {
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
-        <a class="xeokit-tab-btn" href="#">Models</a>
+        <a class="xeokit-tab-btn" href="#" data-tippy-content="Models in this project">Models</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled">Unload all</button>
+                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="Unload all models">Unload all</button>
             </div>
             <div class="xeokit-models" style="overflow-y:scroll;"></div>
         </div>
@@ -54853,18 +54882,18 @@ const explorerTemplate = `<div class="xeokit-tabs">
         <a class="xeokit-tab-btn disabled" href="#">Objects</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
-            <button type="button" class="xeokit-showAllObjects xeokit-btn disabled">Show all</button>
-            <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled">Hide all</button>
+            <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="Show all objects">Show all</button>
+            <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="Hide all objects">Hide all</button>
         </div>
         <div class="xeokit-objects tree-panel" style="overflow-y:scroll;"></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
-        <a class="xeokit-tab-btn disabled" href="#">Classes</a>
+        <a class="xeokit-tab-btn disabled" href="#" data-tippy-content="Classes explorer">Classes</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-showAllClasses xeokit-btn disabled">Show all</button>
-                <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled">Hide all</button>
+                <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="Show all classes">Show all</button>
+                <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="Hide all classes">Hide all</button>
             </div>
             <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
         </div>
@@ -55367,30 +55396,31 @@ class ViewerUI extends Controller {
 
     _showAllObjects() {
 
-        this.objects.muteEvents();
-        this.classes.muteEvents();
+        // this.objects.muteEvents();
+        // this.classes.muteEvents();
+        // this.storeys.muteEvents();
 
         this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
 
-        this.objects.selectAll();
-        this.classes.selectAll();
-
-        this.objects.unmuteEvents();
-        this.classes.unmuteEvents();
+        // this.objects.selectAll();
+        // this.classes.selectAll();
+        //
+        // this.objects.unmuteEvents();
+        // this.classes.unmuteEvents();
     }
 
     _hideAllObjects() {
 
-        this.objects.muteEvents();
-        this.classes.muteEvents();
+        // this.objects.muteEvents();
+        // this.classes.muteEvents();
 
         this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
 
-        this.objects.deselectAll();
-        this.classes.deselectAll();
-
-        this.objects.unmuteEvents();
-        this.classes.unmuteEvents();
+        // this.objects.deselectAll();
+        // this.classes.deselectAll();
+        //
+        // this.objects.unmuteEvents();
+        // this.classes.unmuteEvents();
     }
 
     _enableControls(enabled) {
