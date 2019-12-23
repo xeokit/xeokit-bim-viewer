@@ -199,7 +199,8 @@
         }
 
         .xeokit-btn.active:hover {
-           color: transparent;
+           /*color: transparent;*/
+            color: white;
             background: #477dca;
             border: 2px solid #477dca;
         }
@@ -221,7 +222,6 @@
         .xeokit-tabs {
             /* Clearfix */
             line-height: 1.5;
-            margin-bottom: 1.5em;
             padding: 0;
         }
 
@@ -594,6 +594,9 @@
 
 </body>
 
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@5/dist/backdrop.css" />
+<script src="https://unpkg.com/popper.js@1"></script>
+<script src="https://unpkg.com/tippy.js@5"></script>
 
 <script type="module">
 
@@ -631,6 +634,8 @@
 
     viewerUI.loadProject(project);
     viewerUI.openTab(tab);
+
+    tippy('[data-tippy-content]');
 
 </script>
 
