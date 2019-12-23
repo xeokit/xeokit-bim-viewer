@@ -54870,12 +54870,12 @@ class ThreeDMode extends Controller {
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
-        <a class="xeokit-tab-btn" href="#" data-tippy-content="Models in this project">Models</a>
+        <a class="xeokit-tab-btn" href="#">Models</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="Unload all models">Unload all</button>
             </div>
-            <div class="xeokit-models" style="overflow-y:scroll;"></div>
+            <div class="xeokit-models" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-objectsTab">
@@ -54885,27 +54885,27 @@ const explorerTemplate = `<div class="xeokit-tabs">
             <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="Show all objects">Show all</button>
             <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="Hide all objects">Hide all</button>
         </div>
-        <div class="xeokit-objects tree-panel" style="overflow-y:scroll;"></div>
+        <div class="xeokit-objects tree-panel" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
-        <a class="xeokit-tab-btn disabled" href="#" data-tippy-content="Classes explorer">Classes</a>
+        <a class="xeokit-tab-btn disabled" href="#">Classes</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="Show all classes">Show all</button>
                 <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="Hide all classes">Hide all</button>
             </div>
-            <div class="xeokit-classes tree-panel" style="overflow-y:scroll;"></div>
+            <div class="xeokit-classes tree-panel" ></div>
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
         <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled">Show all</button>
-                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled">Hide all</button>
+                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled" data-tippy-content="Show all storeys">Show all</button>
+                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled" data-tippy-content="Hide all storeys">Hide all</button>
             </div>
-             <div class="xeokit-storeys" style="overflow-y:scroll;"></div>
+             <div class="xeokit-storeys" ></div>
         </div>
     </div>
 </div>`;
@@ -54913,30 +54913,30 @@ const explorerTemplate = `<div class="xeokit-tabs">
 const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
     <div class="xeokit-btn-group">
-        <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled"></button>
+        <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled" data-tippy-content="Reset view"></button>
     </div>
     <!-- 3D Mode button -->
     <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x"></button>
+        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
     </div>
     <!-- Fit button -->
     <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled"></button>
+        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="Fit to view"></button>
     </div>
     <!-- First Person mode button -->
     <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled"></button>
+        <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled" data-tippy-content="First person"></button>
     </div>
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
-        <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled"></button>
+        <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled" data-tippy-content="Hide objects"></button>
         <!-- Select tool button -->
-        <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled"></button>
+        <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-tippy-content="Select objects"></button>
         <!-- Query tool button -->
-        <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled"></button>
+        <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
         <!-- Slice tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled"></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"></button>
     </div>
 </div>`;
 
@@ -55395,32 +55395,11 @@ class ViewerUI extends Controller {
     }
 
     _showAllObjects() {
-
-        // this.objects.muteEvents();
-        // this.classes.muteEvents();
-        // this.storeys.muteEvents();
-
         this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
-
-        // this.objects.selectAll();
-        // this.classes.selectAll();
-        //
-        // this.objects.unmuteEvents();
-        // this.classes.unmuteEvents();
     }
 
     _hideAllObjects() {
-
-        // this.objects.muteEvents();
-        // this.classes.muteEvents();
-
         this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
-
-        // this.objects.deselectAll();
-        // this.classes.deselectAll();
-        //
-        // this.objects.unmuteEvents();
-        // this.classes.unmuteEvents();
     }
 
     _enableControls(enabled) {
