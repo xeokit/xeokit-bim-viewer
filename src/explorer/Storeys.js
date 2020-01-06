@@ -29,35 +29,29 @@ class Storeys extends Controller {
         this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
 
         if (!this._storeysTabButtonElement) {
-            throw "Missing DOM element: ,xeokit-tab-btn";
+            throw "Missing DOM element: .xeokit-tab-btn";
         }
 
         const storeysElement = cfg.storeysElement;
 
-        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-
-        this._tree = new TreeViewPlugin(this.viewer, {
+        this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: storeysElement,
-            mode: "storeys"
+            autoAddModels: false,
+            autoExpandDepth: 1, // Initially expand tree one level deep
+            hierarchy: "storeys"
         });
-    }
 
-    _addModel(modelId) {
-        this._tree.addModel(modelId);
-    }
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.addModel(modelId);
+            }
+        });
 
-    _removeModel(modelId) {
-        this._tree.removeModel(modelId);
-    }
-
-    _synchTreeFromScene(modelId) {
-
-    }
-
-    _setObjectVisibilities(metaObject) {
-
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
+            }
+        });
     }
 
     setEnabled(enabled) {
@@ -72,26 +66,11 @@ class Storeys extends Controller {
         }
     }
 
-    muteEvents() {
-        this._muteTreeEvents = true;
-        this._muteEntityEvents = true;
-    }
-
-    unmuteEvents() {
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-    }
-
-    selectAll() {
-        //  this._tree.selectDeep();
-    }
-
-    deselectAll() {
-        //    this._tree.deselectDeep();
-    }
-
     destroy() {
         super.destroy();
+        this._treeView.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
     }
 }
 
