@@ -115,11 +115,8 @@ function initTabs(containerElement) {
     let tabbedContainers = containerElement.querySelectorAll('.' + tabsClass);
     for (let i = 0; i < tabbedContainers.length; i++) {
         let tabbedContainer = tabbedContainers[i];
-        // List of tabs for this tabbed container
         let tabList = tabbedContainer.querySelectorAll('.' + tabClass);
-        // Make the first tab active when the page loads
         activateTab(tabList[0]);
-        // Activate a tab when you click its button
         for (let i = 0; i < tabList.length; i++) {
             let tabElement = tabList[i];
             let tabButton = tabElement.querySelector('.' + tabButtonClass);
@@ -239,11 +236,6 @@ class ViewerUI extends Controller {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
-        //
-        // this.ortho = new OrthoMode(this, {
-        //     buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
-        //     active: false
-        // });
 
         this.hide = new HideMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-hide"),
@@ -276,7 +268,6 @@ class ViewerUI extends Controller {
 
         this.threeD.setActive(true);
         this.firstPerson.setActive(false);
-        //this.ortho.setActive(false);
         this.navCube.setActive(true);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -315,12 +306,7 @@ class ViewerUI extends Controller {
             event.preventDefault();
         });
 
-        // Handling model load events here ensures that we
-        // are able to fire "modelLoaded" after both trees updated.
-
         this.models.on("modelLoaded", (modelId) => {
-            this.objects._addModel(modelId);
-            this.classes._addModel(modelId);
             if (this.models.getNumModelsLoaded() === 1) {
                 this._enableControls(true);
             }
@@ -328,8 +314,6 @@ class ViewerUI extends Controller {
         });
 
         this.models.on("modelUnloaded", (modelId) => {
-            this.objects._removeModel(modelId);
-            this.classes._removeModel(modelId);
             if (this.models.getNumModelsLoaded() === 0) {
                 this._enableControls(false);
             }
@@ -392,6 +376,14 @@ class ViewerUI extends Controller {
             intensity: 1.0,
             space: "world"
         });
+    }
+
+    _showAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    }
+
+    _hideAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
     }
 
     /**
@@ -545,14 +537,6 @@ class ViewerUI extends Controller {
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
-    _showAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
-    }
-
-    _hideAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
-    }
-
     _enableControls(enabled) {
 
         // Explorer
@@ -568,7 +552,6 @@ class ViewerUI extends Controller {
         this.fit.setEnabled(enabled);
         this.threeD.setEnabled(enabled);
         this.firstPerson.setEnabled(enabled);
-      //  this.ortho.setEnabled(enabled);
         this.query.setEnabled(enabled);
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
