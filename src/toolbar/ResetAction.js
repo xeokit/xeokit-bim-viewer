@@ -60,7 +60,6 @@ class ResetAction extends Controller {
     _saveModelMemento(modelId) {
         const metaModel = this.viewer.metaScene.metaModels[modelId];
         if (!metaModel) {
-            this.error("MetaModel not found: " + modelId);
             return;
         }
         const modelMemento = new ModelMemento();
@@ -71,7 +70,6 @@ class ResetAction extends Controller {
     _restoreModelMemento(modelId) {
         const metaModel = this.viewer.metaScene.metaModels[modelId];
         if (!metaModel) {
-            this.error("MetaModel not found: " + modelId);
             return;
         }
         const modelMemento = this._modelMementos[modelId];

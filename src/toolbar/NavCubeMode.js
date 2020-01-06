@@ -21,14 +21,6 @@ class NavCubeMode extends Controller {
 
         this._navCube.setVisible(this._active);
 
-        // this.on("active", (active) => {
-        //     if (active) {
-        //         buttonElement.classList.add("active");
-        //     } else {
-        //         buttonElement.classList.remove("active");
-        //     }
-        // });
-
         this.on("active", (active) => {
             this._navCube.setVisible(active);
         });
