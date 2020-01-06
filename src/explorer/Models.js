@@ -44,7 +44,7 @@ class Models extends Controller {
             var html = "";
             const modelsInfo = projectInfo.models || [];
             this._modelsInfo = {};
-            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+            for (let i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
                 html += "<div class='xeokit-form-check'>";
@@ -52,7 +52,7 @@ class Models extends Controller {
                 html += "</div>";
             }
             this._modelsElement.innerHTML = html;
-            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+            for (let i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 const modelId = modelInfo.id;
                 const checkBox = document.getElementById("" + modelId);
