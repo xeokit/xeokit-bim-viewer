@@ -236,8 +236,8 @@ function loadArraybuffer(url, ok, err) {
  Tests if the given object is an array
  @private
  */
-function isArray(testMesh) {
-    return testMesh && !(testMesh.propertyIsEnumerable('length')) && typeof testMesh === 'object' && typeof testMesh.length === 'number';
+function isArray(value) {
+    return value && !(value.propertyIsEnumerable('length')) && typeof value === 'object' && typeof value.length === 'number';
 }
 
 /**
@@ -745,42 +745,6 @@ class Controller {
         message = "[ERROR]" + this._message(message);
         window.console.error(message);
     }
-
-    // _mutexActivationOLD(controllers) {
-    //     const mutedControllers = [];
-    //     const numControllers = controllers.length;
-    //     for (let i = 0; i < numControllers; i++) {
-    //         mutedControllers[i] = false;
-    //     }
-    //     for (let i = 0; i < numControllers; i++) {
-    //         const controller = controllers[i];
-    //         controller.on("active", (function () {
-    //             const _i = i;
-    //             return function (active) {
-    //
-    //                 if (!active) {
-    //                     console.log("  returning (" + controller.id + " active == false)");
-    //                     return;
-    //                 }
-    //                 if (mutedControllers[_i]) {
-    //                     console.log("  returning (" + controller.id + " muted)");
-    //                     return;
-    //                 }
-    //                 for (let j = 0; j < numControllers; j++) {
-    //                     if (j === _i) {
-    //                         continue;
-    //                     }
-    //                     console.log("   muting: " + controllers[j].id);
-    //                     mutedControllers[j] = true;
-    //                     console.log("   deactivating: " + controllers[j].id);
-    //                     controllers[j].setActive(false);
-    //                     console.log("   unmuting " + controllers[j].id);
-    //                     mutedControllers[j] = false;
-    //                 }
-    //             };
-    //         })());
-    //     }
-    // }
 
     _mutexActivation(controllers) {
         const numControllers = controllers.length;
@@ -6304,7 +6268,6 @@ class ResetAction extends Controller {
     _saveModelMemento(modelId) {
         const metaModel = this.viewer.metaScene.metaModels[modelId];
         if (!metaModel) {
-            this.error("MetaModel not found: " + modelId);
             return;
         }
         const modelMemento = new ModelMemento();
@@ -6315,7 +6278,6 @@ class ResetAction extends Controller {
     _restoreModelMemento(modelId) {
         const metaModel = this.viewer.metaScene.metaModels[modelId];
         if (!metaModel) {
-            this.error("MetaModel not found: " + modelId);
             return;
         }
         const modelMemento = this._modelMementos[modelId];
@@ -21532,10 +21494,6 @@ class Canvas extends Component {
             }
         });
 
-        this.canvas.oncontextmenu = function (e) {
-            e.preventDefault();
-        };
-
         this._spinner = new Spinner(this.scene, {
             canvas: this.canvas,
             elementId: cfg.spinnerElementId
@@ -32875,14 +32833,6 @@ class NavCubeMode extends Controller {
 
         this._navCube.setVisible(this._active);
 
-        // this.on("active", (active) => {
-        //     if (active) {
-        //         buttonElement.classList.add("active");
-        //     } else {
-        //         buttonElement.classList.remove("active");
-        //     }
-        // });
-
         this.on("active", (active) => {
             this._navCube.setVisible(active);
         });
@@ -33125,7 +33075,16 @@ class PerformanceNode {
         this._isObject = isObject;
 
         /**
-         * The PerformanceModel that contains this PerformanceModelNode.
+         * The {@link Scene} that contains this PerformanceNode.
+         *
+         * @property scene
+         * @type {Scene}
+         * @final
+         */
+         this.scene = model.scene;
+        
+        /**
+         * The PerformanceModel that contains this PerformanceNode.
          * @property model
          * @type {PerformanceModel}
          * @final
@@ -33133,7 +33092,7 @@ class PerformanceNode {
         this.model = model;
 
         /**
-         * The PerformanceModelMesh instances contained by this PerformanceModelNode
+         * The PerformanceModelMesh instances contained by this PerformanceNode
          * @property meshes
          * @type {{Array of PerformanceModelMesh}}
          * @final
@@ -33146,7 +33105,7 @@ class PerformanceNode {
         }
 
         /**
-         * ID of this PerformanceModelNode, unique within the {@link Scene}.
+         * ID of this PerformanceNode, unique within the {@link Scene}.
          * @property id
          * @type {String|Number
          * @final}
@@ -33168,7 +33127,7 @@ class PerformanceNode {
     //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns true to indicate that PerformanceModelNode is an {@link Entity}.
+     * Returns true to indicate that PerformanceNode is an {@link Entity}.
      * @type {Boolean}
      */
     get isEntity() {
@@ -33176,7 +33135,7 @@ class PerformanceNode {
     }
 
     /**
-     * Always returns ````false```` because a PerformanceModelNode can never represent a model.
+     * Always returns ````false```` because a PerformanceNode can never represent a model.
      *
      * @type {Boolean}
      */
@@ -33185,9 +33144,9 @@ class PerformanceNode {
     }
 
     /**
-     * Returns ````true```` if this PerformanceModelNode represents an object.
+     * Returns ````true```` if this PerformanceNode represents an object.
      *
-     * When ````true```` the PerformanceModelNode will be registered by {@link PerformanceNode#id} in
+     * When ````true```` the PerformanceNode will be registered by {@link PerformanceNode#id} in
      * {@link Scene#objects} and may also have a {@link MetaObject} with matching {@link MetaObject#id}.
      *
      * @type {Boolean}
@@ -33197,7 +33156,7 @@ class PerformanceNode {
     }
 
     /**
-     * World-space 3D axis-aligned bounding box (AABB) of this PerformanceModelNode.
+     * World-space 3D axis-aligned bounding box (AABB) of this PerformanceNode.
      *
      * Represented by a six-element Float32Array containing the min/max extents of the
      * axis-aligned volume, ie. ````[xmin, ymin,zmin,xmax,ymax, zmax]````.
@@ -33209,11 +33168,11 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is visible.
+     * Sets if this PerformanceNode is visible.
      *
      * Only rendered when {@link PerformanceNode#visible} is ````true```` and {@link PerformanceNode#culled} is ````false````.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#visible} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#visible} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#visibleObjects}.
      *
      * @type {Boolean}
@@ -33237,11 +33196,11 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is visible.
+     * Gets if this PerformanceNode is visible.
      *
      * Only rendered when {@link PerformanceNode#visible} is ````true```` and {@link PerformanceNode#culled} is ````false````.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#visible} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#visible} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#visibleObjects}.
      *
      * @type {Boolean}
@@ -33255,9 +33214,9 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is highlighted.
+     * Sets if this PerformanceNode is highlighted.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#highlightedObjects}.
      *
      * @type {Boolean}
@@ -33281,9 +33240,9 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is highlighted.
+     * Gets if this PerformanceNode is highlighted.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#highlightedObjects}.
      *
      * @type {Boolean}
@@ -33293,9 +33252,9 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is xrayed.
+     * Sets if this PerformanceNode is xrayed.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#xrayed} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#xrayed} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#xrayedObjects}.
      *
      * @type {Boolean}
@@ -33319,9 +33278,9 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is xrayed.
+     * Gets if this PerformanceNode is xrayed.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#highlighted} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#highlightedObjects}.
      *
      * @type {Boolean}
@@ -33331,9 +33290,9 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is selected.
+     * Gets if this PerformanceNode is selected.
      *
-     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#selected} are ````true```` the PerformanceModelNode will be
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#selected} are ````true```` the PerformanceNode will be
      * registered by {@link PerformanceNode#id} in {@link Scene#selectedObjects}.
      *
      * @type {Boolean}
@@ -33357,7 +33316,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode's edges are enhanced.
+     * Sets if this PerformanceNode's edges are enhanced.
      *
      * @type {Boolean}
      */
@@ -33366,7 +33325,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode's edges are enhanced.
+     * Sets if this PerformanceNode's edges are enhanced.
      *
      * @type {Boolean}
      */
@@ -33386,7 +33345,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode's edges are enhanced.
+     * Gets if this PerformanceNode's edges are enhanced.
      *
      * @type {Boolean}
      */
@@ -33395,7 +33354,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is culled.
+     * Sets if this PerformanceNode is culled.
      *
      * Only rendered when {@link PerformanceNode#visible} is ````true```` and {@link PerformanceNode#culled} is ````false````.
      *
@@ -33405,7 +33364,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is culled.
+     * Gets if this PerformanceNode is culled.
      *
      * Only rendered when {@link PerformanceNode#visible} is ````true```` and {@link PerformanceNode#culled} is ````false````.
      *
@@ -33416,7 +33375,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is clippable.
+     * Sets if this PerformanceNode is clippable.
      *
      * Clipping is done by the {@link SectionPlane}s in {@link Scene#sectionPlanes}.
      *
@@ -33438,7 +33397,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is clippable.
+     * Gets if this PerformanceNode is clippable.
      *
      * Clipping is done by the {@link SectionPlane}s in {@link Scene#sectionPlanes}.
      *
@@ -33449,7 +33408,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is included in boundary calculations.
+     * Sets if this PerformanceNode is included in boundary calculations.
      *
      * @type {Boolean}
      */
@@ -33468,7 +33427,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is included in boundary calculations.
+     * Gets if this PerformanceNode is included in boundary calculations.
      *
      * @type {Boolean}
      */
@@ -33477,7 +33436,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceModelNode is pickable.
+     * Sets if this PerformanceNode is pickable.
      *
      * Picking is done via calls to {@link Scene#pick}.
      *
@@ -33498,7 +33457,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode is pickable.
+     * Gets if this PerformanceNode is pickable.
      *
      * Picking is done via calls to {@link Scene#pick}.
      *
@@ -33509,7 +33468,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets the PerformanceModelNode's RGB colorize color, multiplies by the PerformanceModelNode's rendered fragment colors.
+     * Gets the PerformanceNode's RGB colorize color, multiplies by the PerformanceNode's rendered fragment colors.
      *
      * Each element of the color is in range ````[0..1]````.
      *
@@ -33527,7 +33486,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets the PerformanceModelNode's RGB colorize color, multiplies by the PerformanceModelNode's rendered fragment colors.
+     * Gets the PerformanceNode's RGB colorize color, multiplies by the PerformanceNode's rendered fragment colors.
      *
      * Each element of the color is in range ````[0..1]````.
      *
@@ -33541,7 +33500,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets the PerformanceModelNode's opacity factor, multiplies by the PerformanceModelNode's rendered fragment alphas.
+     * Sets the PerformanceNode's opacity factor, multiplies by the PerformanceNode's rendered fragment alphas.
      *
      * This is a factor in range ````[0..1]````.
      *
@@ -33567,7 +33526,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets the PerformanceModelNode's opacity factor.
+     * Gets the PerformanceNode's opacity factor.
      *
      * This is a factor in range ````[0..1]```` which multiplies by the rendered fragment alphas.
      *
@@ -33578,7 +33537,7 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if to this PerformanceModelNode casts shadows.
+     * Sets if to this PerformanceNode casts shadows.
      *
      * @type {Boolean}
      */
@@ -33587,7 +33546,7 @@ class PerformanceNode {
     }
 
     /**
-     * Gets if this PerformanceModelNode casts shadows.
+     * Gets if this PerformanceNode casts shadows.
      *
      * @type {Boolean}
      */
@@ -33596,7 +33555,7 @@ class PerformanceNode {
     }
 
     /**
-     * Whether or not this PerformanceModelNode can have shadows cast upon it
+     * Whether or not this PerformanceNode can have shadows cast upon it
      *
      * @type {Boolean}
      */
@@ -33605,7 +33564,7 @@ class PerformanceNode {
     }
 
     /**
-     * Whether or not this PerformanceModelNode can have shadows cast upon it
+     * Whether or not this PerformanceNode can have shadows cast upon it
      *
      * @type {Boolean}
      */
@@ -49547,7 +49506,7 @@ class Models extends Controller {
             var html = "";
             const modelsInfo = projectInfo.models || [];
             this._modelsInfo = {};
-            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+            for (let i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 this._modelsInfo[modelInfo.id] = modelInfo;
                 html += "<div class='xeokit-form-check'>";
@@ -49555,7 +49514,7 @@ class Models extends Controller {
                 html += "</div>";
             }
             this._modelsElement.innerHTML = html;
-            for (var i = 0, len = modelsInfo.length; i < len; i++) {
+            for (let i = 0, len = modelsInfo.length; i < len; i++) {
                 const modelInfo = modelsInfo[i];
                 const modelId = modelInfo.id;
                 const checkBox = document.getElementById("" + modelId);
@@ -49690,7 +49649,7 @@ class ModelTreeView {
     /**
      * @private
      */
-    constructor(viewer, model, metaModel, cfg) {
+    constructor(viewer, treeViewPlugin, contextMenu, model, metaModel, cfg) {
 
         if (!cfg.containerElement) {
             throw "Config expected: containerElement";
@@ -49703,22 +49662,26 @@ class ModelTreeView {
 
         this._id = idMap.addItem();
         this._baseId = "" + this._id;
-
         this._viewer = viewer;
+        this._treeViewPlugin = treeViewPlugin;
         this._rootMetaObject = rootMetaObject;
         this._containerElement = cfg.containerElement;
         this._rootElement = null;
         this._muteSceneEvents = false;
         this._muteTreeEvents = false;
         this._rootNodes = [];
-        this._objectNodeMap = {};
+        this._objectNodes = {};
 
+        this._containerElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+        
         this._onObjectVisibility = this._viewer.scene.on("objectVisibility", (entity) => {
             if (this._muteSceneEvents) {
                 return;
             }
             const objectId = entity.id;
-            const node = this._objectNodeMap[objectId];
+            const node = this._objectNodes[objectId];
             if (!node) {
                 return; // Not in this tree
             }
@@ -49781,7 +49744,7 @@ class ModelTreeView {
             const visible = checkbox.checked;
             const nodeId = checkbox.id;
             const checkedObjectId = this._nodeToObjectID(nodeId);
-            const checkedNode = this._objectNodeMap[checkedObjectId];
+            const checkedNode = this._objectNodes[checkedObjectId];
             const objects = this._viewer.scene.objects;
             let numUpdated = 0;
             this._withNodeTree(checkedNode, (node) => {
@@ -49820,15 +49783,10 @@ class ModelTreeView {
             this._muteSceneEvents = false;
         };
 
-        this._mode = cfg.mode || "structure";
+        this._hierarchy = cfg.hierarchy || "structure";
+        this._autoExpandDepth = cfg.autoExpandDepth || 0;
 
         this._createNodes();
-
-        if (cfg.autoExpandDepth) {
-            this._expandToDepth(cfg.autoExpandDepth);
-        }
-
-        this._createNodesWithoutError = true;
     }
 
     _nodeToObjectID(nodeId) {
@@ -49839,11 +49797,15 @@ class ModelTreeView {
         return this._baseId + objectId;
     }
 
-    setMode(mode) {
-        if (this._mode === mode) {
+    setAutoExpandDepth(depth = 0) {
+        this._autoExpandDepth = depth;
+    }
+
+    setHierarchy(hierarchy) {
+        if (this._hierarchy === hierarchy) {
             return;
         }
-        this._mode = mode;
+        this._hierarchy = hierarchy;
         this._createNodes();
     }
 
@@ -49853,8 +49815,8 @@ class ModelTreeView {
             this._rootElement = null;
         }
         this._rootNodes = [];
-        this._objectNodeMap = {};
-        switch (this._mode) {
+        this._objectNodes = {};
+        switch (this._hierarchy) {
             case "storeys":
                 this._createStoreysNodes();
                 break;
@@ -49867,6 +49829,7 @@ class ModelTreeView {
         }
         this._synchNodesToEntities();
         this._createTrees();
+        this.expandToDepth(this._autoExpandDepth);
     }
 
     _createStoreysNodes(
@@ -49880,7 +49843,7 @@ class ModelTreeView {
             projectNode = {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
-                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: null,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -49888,12 +49851,12 @@ class ModelTreeView {
                 children: []
             };
             this._rootNodes.push(projectNode);
-            this._objectNodeMap[projectNode.objectId] = projectNode;
+            this._objectNodes[projectNode.objectId] = projectNode;
         } else if (metaObjectType === "IfcBuildingStorey") {
             storeyNode = {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
-                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: projectNode,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -49901,7 +49864,7 @@ class ModelTreeView {
                 children: []
             };
             projectNode.children.push(storeyNode);
-            this._objectNodeMap[storeyNode.objectId] = storeyNode;
+            this._objectNodes[storeyNode.objectId] = storeyNode;
             typeNodes = {};
         } else {
             if (storeyNode) {
@@ -49913,7 +49876,7 @@ class ModelTreeView {
                     typeNode = {
                         nodeId: typeNodeNodeId,
                         objectId: typeNodeObjectId,
-                        name: metaObjectType,
+                        title: metaObjectType,
                         parent: storeyNode,
                         numEntities: 0,
                         numVisibleEntities: 0,
@@ -49921,13 +49884,13 @@ class ModelTreeView {
                         children: []
                     };
                     storeyNode.children.push(typeNode);
-                    this._objectNodeMap[typeNodeObjectId] = typeNode;
+                    this._objectNodes[typeNodeObjectId] = typeNode;
                     typeNodes[metaObjectType] = typeNode;
                 }
                 const node = {
                     nodeId: this._objectToNodeID(metaObject.id),
                     objectId: metaObject.id,
-                    name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                    title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                     parent: typeNode,
                     numEntities: 0,
                     numVisibleEntities: 0,
@@ -49935,7 +49898,7 @@ class ModelTreeView {
                     children: []
                 };
                 typeNode.children.push(node);
-                this._objectNodeMap[node.objectId] = node;
+                this._objectNodes[node.objectId] = node;
             }
         }
         const children = metaObject.children;
@@ -49958,7 +49921,7 @@ class ModelTreeView {
                 typeNode = {
                     nodeId: this._objectToNodeID(metaObjectType),
                     objectId: metaObjectType,
-                    name: metaObjectType,
+                    title: metaObjectType,
                     parent: null,
                     numEntities: 0,
                     numVisibleEntities: 0,
@@ -49966,13 +49929,13 @@ class ModelTreeView {
                     children: []
                 };
                 this._rootNodes.push(typeNode);
-                this._objectNodeMap[typeNode.objectId] = typeNode;
+                this._objectNodes[typeNode.objectId] = typeNode;
                 typeNodes[metaObjectType] = typeNode;
             }
             const node = {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
-                name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 parent: typeNode,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -49980,7 +49943,7 @@ class ModelTreeView {
                 children: []
             };
             typeNode.children.push(node);
-            this._objectNodeMap[node.objectId] = node;
+            this._objectNodes[node.objectId] = node;
         }
         const children = metaObject.children;
         if (children) {
@@ -49996,7 +49959,7 @@ class ModelTreeView {
         const node = {
             nodeId: this._objectToNodeID(metaObject.id),
             objectId: metaObject.id,
-            name: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
+            title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
             parent: parent,
             numEntities: 0,
             numVisibleEntities: 0,
@@ -50008,7 +49971,7 @@ class ModelTreeView {
         } else {
             this._rootNodes.push(node);
         }
-        this._objectNodeMap[node.objectId] = node;
+        this._objectNodes[node.objectId] = node;
         const children = metaObject.children;
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
@@ -50027,7 +49990,7 @@ class ModelTreeView {
             const objectId = objectIds[i];
             const metaObject = metaObjects[objectId];
             if (metaObject) {
-                const node = this._objectNodeMap[objectId];
+                const node = this._objectNodes[objectId];
                 if (node) {
                     const entity = objects[objectId];
                     if (entity) {
@@ -50102,59 +50065,99 @@ class ModelTreeView {
         checkbox.addEventListener("change", this._checkboxChangeHandler);
         nodeElement.appendChild(checkbox);
         const span = document.createElement('span');
-        span.textContent = node.name;
+        span.textContent = node.title;
         nodeElement.appendChild(span);
         span.addEventListener('click', () =>{
             //alert("clicked");
         });
+        span.oncontextmenu = (e) => {
+            this._treeViewPlugin.fire("contextmenu", {
+                event: e,
+                viewer: this._viewer,
+                treeViewPlugin: this._treeViewPlugin,
+                treeViewNode: node
+            });
+            e.preventDefault();
+        };
         return nodeElement;
     }
 
-    _expandToDepth(depth) {
-        const expand = (metaObject, countDepth) => {
+    expandToDepth(depth) {
+        const expand = (node, countDepth) => {
             if (countDepth === depth) {
                 return;
             }
-            const objectId = metaObject.id;
-            const nodeId = this._objectToNodeID(objectId);
+            const nodeId = node.nodeId;
             const groupElementId = "a-" + nodeId;
             const groupElement = document.getElementById(groupElementId);
             if (groupElement) {
                 this._expandGroupElement(groupElement);
-                const childMetaObjects = metaObject.children;
-                for (var i = 0, len = childMetaObjects.length; i < len; i++) {
-                    const childMetaObject = childMetaObjects[i];
-                    expand(childMetaObject, countDepth + 1);
+                const childNodes = node.children;
+                for (var i = 0, len = childNodes.length; i < len; i++) {
+                    const childNode = childNodes[i];
+                    expand(childNode, countDepth + 1);
                 }
             }
         };
-        const rootMetaObject = this._rootMetaObject;
-        expand(rootMetaObject, 0);
+        for (let i = 0, len = this._rootNodes.length; i < len; i++) {
+            const rootNode = this._rootNodes[i];
+            expand(rootNode, 0);
+        }
     }
 
-    _expandNode(objectId) {
-        const nodeId = this._objectToNodeID(node.objectId);
+    collapse() {
+        if (!this._rootMetaObject) {
+            return;
+        }
+        this._collapseNode(this._rootMetaObject.id);
+    }
+
+    showNode(objectId) {
+        const nodeId = this._objectToNodeID(objectId);
         const groupElementId = "a-" + nodeId;
         const groupElement = document.getElementById(groupElementId);
         if (groupElement) {
             this._expandGroupElement(groupElement);
+            groupElement.scrollIntoView();
             return;
         }
         const path = [];
-        path.unshift(objectId);
-        const node = this._objectNodeMap[objectId];
+        const node = this._objectNodes[objectId];
+        path.unshift(node);
         let parent = node.parent;
         while (parent) {
-            path.unshift(parent.nodeId);
+            path.unshift(parent);
             parent = parent.parent;
         }
+        for (let i = 0, len = path.length; i < len; i++) {
+            const node = path[i];
+            const nodeId = node.nodeId;
+            const groupElementId = "a-" + nodeId;
+            const groupElement = document.getElementById(groupElementId);
+            if (groupElement) {
+                this._expandGroupElement(groupElement);
+            }
+        }
+        const nodeElement = document.getElementById(nodeId);
+        const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
+        //spanElement.scrollIntoView();
+        spanElement.scrollIntoView({block: "center"});
+        const background = spanElement.style.background;
+        spanElement.style.background = "yellow";
+        setTimeout(function () {
+            spanElement.style.background = background;
+        }, 1500);
     }
 
     _expandGroupElement(groupElement) {
         const parentElement = groupElement.parentElement;
+        const expanded = parentElement.getElementsByTagName('li')[0];
+        if (expanded) {
+            return;
+        }
         const nodeId = parentElement.id.replace('node-', '');
         const objectId = this._nodeToObjectID(nodeId);
-        const groupNode = this._objectNodeMap[objectId];
+        const groupNode = this._objectNodes[objectId];
         const childNodes = groupNode.children;
         const nodeElements = childNodes.map((node) => {
             return this._createNodeElement(node);
@@ -50172,12 +50175,24 @@ class ModelTreeView {
     }
 
     _collapseNode(objectId) {
-
+        const nodeId = this._objectToNodeID(objectId);
+        const groupElementId = "a-" + nodeId;
+        const groupElement = document.getElementById(groupElementId);
+        this._collapseGroupElement(groupElement);
     }
 
     _collapseGroupElement(groupElement) {
+        if (!groupElement) {
+            return;
+        }
         const parent = groupElement.parentElement;
+        if (!parent) {
+            return;
+        }
         const ul = parent.querySelector('ul');
+        if (!ul) {
+            return;
+        }
         parent.removeChild(ul);
         groupElement.classList.remove('minus');
         groupElement.classList.add('plus');
@@ -50190,7 +50205,7 @@ class ModelTreeView {
      * Destroys this ModelTreeView.
      */
     destroy() {
-        if (this._createNodesWithoutError && !this._destroyed) {
+        if (this._rootElement && !this._destroyed) {
             this._rootElement.parentNode.removeChild(this._rootElement);
             this._viewer.scene.off(this._onObjectVisibility);
             this._destroyed = true;
@@ -50200,7 +50215,7 @@ class ModelTreeView {
 }
 
 /**
- * @desc A {@link Viewer} plugin that provides an HTML tree view to navigate the structural hierarchy of IFC elements in models.
+ * @desc A {@link Viewer} plugin that provides an HTML tree view to navigate the IFC elements in models.
  * <br>
  *
  * <a href="https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_XKT_WestRiverSideHospital" style="border: 1px solid black;"><img src="http://xeokit.io/img/docs/TreeViewPlugin/TreeViewPlugin.png"></a>
@@ -50209,11 +50224,12 @@ class ModelTreeView {
  *
  * ## Overview
  *
- * * A fast HTML tree widget, with zero external dependencies, that works with huge numbers of objects.
- * * Each node has a checkbox to control the visibility of its object.
- * * Automatically includes all models (that have metadata) that are currently in the {@link Scene}.
- * * Has three modes for organizing nodes: "structure", "storeys" and "types".
+ * * A fast HTML tree view, with zero external dependencies, that works with huge numbers of objects.
+ * * Each tree node has a checkbox to control the visibility of its object.
+ * * Has three hierarchy modes: "containment", "types" and "storeys".
+ * * Automatically contains all models (that have metadata) that are currently in the {@link Scene}.
  * * Allows custom CSS styling.
+ * * Use {@link ContextMenu} to create a context menu for the tree nodes.
  *
  * ## Credits
  *
@@ -50221,7 +50237,7 @@ class ModelTreeView {
  *
  * ## Usage
  *
- * In the example below we'll add a TreeViewPlugin which, by default, will automatically show the structural
+ * In the example below, we'll add a TreeViewPlugin which, by default, will automatically show the structural
  * hierarchy of the IFC elements in each model we load.
  *
  * Then we'll use an {@link XKTLoaderPlugin} to load the Schependomlaan model from an
@@ -50260,9 +50276,9 @@ class ModelTreeView {
  *
  * ## Manually Adding Models
  *
- * We can control which models appear in our TreeViewPlugin by adding them manually.
+ * Instead of adding models automatically, we can control which models appear in our TreeViewPlugin by adding them manually.
  *
- * In the next example, we'll configure the TreeViewPlugin to not automatically add models. Once the model
+ * In the next example, we'll configure the TreeViewPlugin to not add models automatically. Then, once the model
  * has loaded, we'll add it manually using {@link TreeViewPlugin#addModel}.
  *
  * ````javascript
@@ -50285,9 +50301,9 @@ class ModelTreeView {
  * });
  * ````
  *
- * ## Initially Expanding Nodes
+ * ## Initially Expanding the Hierarchy
  *
- * We can configure TreeViewPlugin to initially expand each model's nodes to a given depth.
+ * We can also configure TreeViewPlugin to initially expand each model's nodes to a given depth.
  *
  * Let's automatically expand the first three nodes from the root, for every model added:
  *
@@ -50298,25 +50314,40 @@ class ModelTreeView {
  * });
  * ````
  *
+ * ## Showing a Node by ID
+ *
+ * We can show a given node using its ID. This causes the TreeViewPlugin to expand and scroll the node into view.
+ *
+ * Let's make the TreeViewPlugin show the node corresponding to whatever object {@link Entity} that we pick:
+ *
+ * ````javascript
+ * viewer.cameraControl.on("picked", function (e) {
+ *     var objectId = e.entity.id;
+ *     treeView.showNode(objectId);
+ * });
+ * ````
+ *
+ * Note that only works if the picked {@link Entity} is an object that belongs to a model that's represented in the TreeViewPlugin.
+ *
  * ## Customizing Appearance
  *
  * We can customize the appearance of our TreeViewPlugin by defining custom CSS for its HTML
  * elements. See our example's [source code](https://github.com/xeokit/xeokit-sdk/blob/master/examples/BIMOffline_XKT_Schependomlaan.html)
  * for an example of custom CSS rules.
  *
- * ## Organization Mode
+ * ## Model Hierarchies
  *
- * TreeViewPlugin has three modes for organizing its nodes:
+ * TreeViewPlugin has three hierarchies for organizing its nodes:
  *
- * * "structure" - organizes the tree nodes to indicate the structural hierarchy of the {@link MetaObject}s.
- * * "storeys" - groups nodes within their ````IfcBuildingStoreys````, and sub-groups them by their IFC types.
+ * * "containment" - organizes the tree nodes to indicate the containment hierarchy of the {@link MetaObject}s.
  * * "types" - groups nodes by their IFC types.
+ * * "storeys" - groups nodes within their ````IfcBuildingStoreys````, and sub-groups them by their IFC types.
  *
  * <br>
- * The table below shows what the modes look like:
+ * The table below shows what the hierarchies look like:
  * <br>
  *
- * | 1. Structure Mode | 2. Types Mode | 3. Storeys Mode |
+ * | 1. Containment Hierarchy | 2. Types Hierarchy | 3. Storeys Hierarchy |
  * |---|---|---|
  * | <img src="http://xeokit.io/img/docs/TreeViewPlugin/structureMode.png"> | <img src="http://xeokit.io/img/docs/TreeViewPlugin/typesMode.png"> | <img src="http://xeokit.io/img/docs/TreeViewPlugin/storeysMode.png"> |
  * <br>
@@ -50326,7 +50357,97 @@ class ModelTreeView {
  * ````javascript
  * const treeView = new TreeViewPlugin(viewer, {
  *      containerElement: document.getElementById("myTreeViewContainer"),
- *      mode: "stories"
+ *      hierarchy: "stories"
+ * });
+ * ````
+ *
+ * ## Context menu
+ *
+ * TreeViewPlugin fires a "contextmenu" event whenever we right-click on a tree node.
+ *
+ * The event contains:
+ *
+ * * ````event```` - the original [contextmenu](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event) [MouseEvent](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent)
+ * * ````viewer```` - the {@link Viewer}
+ * * ````treeViewPlugin```` - the TreeViewPlugin
+ * * ````treeViewNode```` - the {@link TreeViewNode} representing the tree node
+ *<br><br>
+ *
+ * Let's use {@link ContextMenu} to show a simple context menu for the node we clicked.
+ *
+ * [[Run an example](https://xeokit.github.io/xeokit-sdk/examples/#ContextMenu_Canvas_TreeViewPlugin_Custom)]
+ *
+ * ````javascript
+ * import {ContextMenu} from "../src/extras/ContextMenu/ContextMenu.js";
+ *
+ * const treeViewContextMenu = new ContextMenu({
+ *     items: [
+ *         [
+ *             [
+ *                 {
+ *                     title: "Hide",
+ *                     callback: function (context) {
+ *                         context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+ *                             if (treeViewNode.objectId) {
+ *                                 const entity = context.viewer.scene.objects[treeViewNode.objectId];
+ *                                 if (entity) {
+ *                                     entity.visible = false;
+ *                                 }
+ *                             }
+ *                         });
+ *                     }
+ *                 },
+ *                 {
+ *                     title: "Hide all",
+ *                     callback: function (context) {
+ *                         context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+ *                     }
+ *                 }
+ *             ],
+ *             [
+ *                 {
+ *                     title: "Show",
+ *                     callback: function (context) {
+ *                         context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+ *                             if (treeViewNode.objectId) {
+ *                                 const entity = context.viewer.scene.objects[treeViewNode.objectId];
+ *                                 if (entity) {
+ *                                     entity.visible = true;
+ *                                     entity.xrayed = false;
+ *                                     entity.selected = false;
+ *                                 }
+ *                             }
+ *                         });
+ *                     }
+ *                 },
+ *                 {
+ *                     title: "Show all",
+ *                     callback: function (context) {
+ *                         const scene = context.viewer.scene;
+ *                         scene.setObjectsVisible(scene.objectIds, true);
+ *                         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+ *                         scene.setObjectsSelected(scene.selectedObjectIds, false);
+ *                     }
+ *                 }
+ *             ]
+ *         ]
+ *     ]
+ * });
+ *
+ * treeView.on("contextmenu", (e) => {
+ *
+ *     const event = e.event;                           // MouseEvent
+ *     const viewer = e.viewer;                         // Viewer
+ *     const treeViewPlugin = e.treeViewPlugin;         // TreeViewPlugin
+ *     const treeViewNode = e.treeViewNode;             // TreeViewNode
+ *
+ *     treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+ *
+ *     treeViewContextMenu.context = {
+ *         viewer: e.viewer,
+ *         treeViewPlugin: e.treeViewPlugin,
+ *         treeViewNode: e.treeViewNode
+ *     };
  * });
  * ````
  *
@@ -50342,7 +50463,7 @@ class TreeViewPlugin extends Plugin {
      * @param {HTMLElement} cfg.containerElement DOM element to contain the TreeViewPlugin.
      * @param {Boolean} [cfg.autoAddModels=true] When ````true```` (default), will automatically add each model as it's created. Set this ````false```` if you want to manually add models using {@link TreeViewPlugin#addModel} instead.
      * @param {Number} [cfg.autoExpandDepth] Optional depth to which to initially expand the tree.
-     * @param {String} [cfg.mode="structure"] How to organize the tree: "structure", "storeys" or "types". See the usage documentation (above) for details.
+     * @param {String} [cfg.hierarchy="containment"] How to organize the tree nodes: "containment", "storeys" or "types". See the class documentation for details.
      */
     constructor(viewer, cfg = {}) {
 
@@ -50354,6 +50475,7 @@ class TreeViewPlugin extends Plugin {
         }
 
         this._containerElement = cfg.containerElement;
+        this._modelTreeViews = {};
         this._modelTreeViews = {};
         this._autoAddModels = (cfg.autoAddModels !== false);
         this._autoExpandDepth = (cfg.autoExpandDepth || 0);
@@ -50371,51 +50493,50 @@ class TreeViewPlugin extends Plugin {
             });
         }
 
-        this.mode = cfg.mode;
+        this.hierarchy = cfg.hierarchy;
     }
 
     /**
-     * Sets how the tree nodes are organized.
+     * Sets how the nodes are organized within this tree view.
      *
-     * * "structure" - organizes the nodes to indicate the containment hierarchy of the IFC objects.
-     * * "storeys" - groups the nodes within ````IfcBuildingStoreys```` and sub-groups them by their IFC types.
+     * Accepted values are:
+     *
+     * * "containment" - organizes the nodes to indicate the containment hierarchy of the IFC objects.
      * * "types" - groups the nodes within their IFC types.
+     * * "storeys" - groups the nodes within ````IfcBuildingStoreys```` and sub-groups them by their IFC types.
      *
-     * Default value is "structure".
+     * <br>
+     * This can be updated dynamically.
+     *
+     * Default value is "containment".
      *
      * @type {String}
      */
-    set mode(mode) {
-        mode = mode || "structure";
-        if (mode !== "structure" && mode !== "storeys" && mode !== "types") {
-            this.error("Unsupported value for `mode' - defaulting to 'structure'");
-            mode = "structure";
+    set hierarchy(hierarchy) {
+        hierarchy = hierarchy || "containment";
+        if (hierarchy !== "containment" && hierarchy !== "storeys" && hierarchy !== "types") {
+            this.error("Unsupported value for `hierarchy' - defaulting to 'containment'");
+            hierarchy = "containment";
         }
-        this._mode = mode;
+        this._hierarchy = hierarchy;
         for (let modelId in this._modelTreeViews) {
             if (this._modelTreeViews.hasOwnProperty(modelId)) {
-                this._modelTreeViews.setMode(this._mode);
+                this._modelTreeViews[modelId].setHierarchy(this._hierarchy);
             }
         }
     }
 
     /**
-     * Gets how the tree nodes are organized.
-     *
-     * * "structure" - organizes the nodes to indicate the containment hierarchy of the IFC objects.
-     * * "storeys" - groups the nodes within ````IfcBuildingStoreys```` and sub-groups them by their IFC types.
-     * * "types" - groups the nodes within their IFC types.
-     *
-     * Default value is "structure".
+     * Gets how the nodes are organized within this tree view.
      *
      * @type {String}
      */
-    get mode() {
-        return this._mode;
+    get hierarchy() {
+        return this._hierarchy;
     }
 
     /**
-     * Adds a model.
+     * Adds a model to this tree view.
      *
      * The model will be automatically removed when destroyed.
      *
@@ -50441,10 +50562,10 @@ class TreeViewPlugin extends Plugin {
             this.warn("Model already added: " + modelId);
             return;
         }
-        this._modelTreeViews[modelId] = new ModelTreeView(this.viewer, model, metaModel, {
+        this._modelTreeViews[modelId] = new ModelTreeView(this.viewer, this, this._contextMenu, model, metaModel, {
             containerElement: this._containerElement,
             autoExpandDepth: this._autoExpandDepth,
-            mode: this._mode
+            hierarchy: this._hierarchy
         });
         model.on("destroyed", () => {
             this.removeModel(model.id);
@@ -50452,7 +50573,7 @@ class TreeViewPlugin extends Plugin {
     }
 
     /**
-     * Removes a model.
+     * Removes a model from this tree view.
      *
      * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
      */
@@ -50469,35 +50590,73 @@ class TreeViewPlugin extends Plugin {
         delete this._modelTreeViews[modelId];
     }
 
-    // expandToDepth(depth) {
-    //
-    // }
+    /**
+     * Collapses all trees within this tree view.
+     */
+    collapse() {
+        for (let modelId in this._modelTreeViews) {
+            if (this._modelTreeViews.hasOwnProperty(modelId)) {
+                const modelTreeView = this._modelTreeViews[modelId];
+                modelTreeView.collapse();
+            }
+        }
+    }
 
     /**
-     * Expands the tree node corresponding to the given object.
+     * Shows the tree view node that represents the given object {@link Entity}.
      *
-     * @param {String} objectId ID of the object.
-     *
+     * @param {String} objectId ID of the {@link Entity}.
      */
-    // expandNode(objectId) {
-    //
-    // }
+    showNode(objectId) {
+        const metaObject = this.viewer.metaScene.metaObjects[objectId];
+        if (!metaObject) {
+            this.error("MetaObject not found: " + objectId);
+            return;
+        }
+        const metaModel = metaObject.metaModel;
+        const modelId = metaModel.id;
+        const modelTreeView = this._modelTreeViews[modelId];
+        if (!modelTreeView) {
+            this.error("Object not in this TreeView: " + objectId);
+            return;
+        }
+        modelTreeView.showNode(objectId);
+    }
 
     /**
-     * Collapses the tree node corresponding to the given object.
+     * Expands the tree to the given depth.
      *
-     * @param {String} objectId ID of the object.
+     * Collapses the tree first.
+     *
+     * @param {Number} depth Depth to expand to.
      */
-    // collapseNode(objectId) {
-    //
-    // }
+    expandToDepth(depth) {
+        for (let modelId in this._modelTreeViews) {
+            if (this._modelTreeViews.hasOwnProperty(modelId)) {
+                const modelTreeView = this._modelTreeViews[modelId];
+                modelTreeView.collapse();
+                modelTreeView.expandToDepth(depth);
+            }
+        }
+    }
 
     /**
-     * Collapses all model trees.
+     * Iterates over a subtree of the tree view's {@link TreeViewNode}s, calling the given callback for each
+     * node in depth-first pre-order.
+     *
+     * @param {TreeViewNode} node Root of the subtree.
+     * @param {Function} callback Callback called at each {@link TreeViewNode}, with the TreeViewNode given as the argument.
      */
-    // collapseAll() {
-    //
-    // }
+    withNodeTree(node, callback) {
+        callback(node);
+        const children = node.children;
+        if (!children) {
+            return;
+        }
+        for (let i = 0, len = children.length; i < len; i++) {
+            this.withNodeTree(children[i], callback);
+        }
+    }
 
     /**
      * Destroys this TreeViewPlugin.
@@ -50512,6 +50671,7 @@ class TreeViewPlugin extends Plugin {
             }
         }
         this._modelTreeViews = {};
+        //this._contextMenu.destroy();
         super.destroy();
     }
 }
@@ -50549,30 +50709,23 @@ class Objects extends Controller {
 
         const objectsElement = cfg.objectsElement;
 
-        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-
-        this._tree = new TreeViewPlugin(this.viewer, {
+        this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: objectsElement,
-            mode: "structure"
+            hierarchy: "containment",
+            autoAddModels: false
         });
-    }
 
-    _addModel(modelId) {
-        this._tree.addModel(modelId);
-    }
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.addModel(modelId);
+            }
+        });
 
-    _removeModel(modelId) {
-        this._tree.removeModel(modelId);
-    }
-
-    _synchTreeFromScene(modelId) {
-
-    }
-
-    _setObjectVisibilities(metaObject) {
-
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
+            }
+        });
     }
 
     setEnabled(enabled) {
@@ -50587,26 +50740,11 @@ class Objects extends Controller {
         }
     }
 
-    muteEvents() {
-        this._muteTreeEvents = true;
-        this._muteEntityEvents = true;
-    }
-
-    unmuteEvents() {
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-    }
-
-    selectAll() {
-      //  this._tree.selectDeep();
-    }
-
-    deselectAll() {
-    //    this._tree.deselectDeep();
-    }
-
     destroy() {
         super.destroy();
+        this._treeView.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
     }
 }
 
@@ -50635,126 +50773,31 @@ class Classes extends Controller {
         this._classesTabElement = cfg.classesTabElement;
         this._showAllClassesButtonElement = cfg.showAllClassesButtonElement;
         this._hideAllClassesButtonElement = cfg.hideAllClassesButtonElement;
-        this._classesElement = cfg.classesElement;
         this._classesTabButtonElement = this._classesTabElement.querySelector(".xeokit-tab-btn");
 
         if (!this._classesTabButtonElement) {
-            throw "Missing DOM element: ,xeokit-tab-btn";
+            throw "Missing DOM element: xeokit-tab-btn";
         }
 
-        this._muteCheckBoxEvents = false;
-        this._muteEntityEvents = false;
+        const classesElement = cfg.classesElement;
 
-        this._data = {};
-
-        this.viewer.scene.on("objectVisibility", (entity) => {
-            if (this._muteEntityEvents) {
-                return;
-            }
-            const metaObject = this.viewer.metaScene.metaObjects[entity.id];
-            if (!metaObject) {
-                return;
-            }
-            const type = metaObject.type;
-            const classData = this._data[type];
-            if (!classData) {
-                return;
-            }
-            this._muteCheckBoxEvents = true;
-            if (entity.visible) {
-                classData.numObjectsVisible++;
-                if (classData.numObjectsVisible === 1) {
-                    document.getElementById("" + type).checked = true;
-                }
-            } else {
-                classData.numObjectsVisible--;
-                if (classData.numObjectsVisible === 0) {
-                    document.getElementById("" + type).checked = false;
-                }
-            }
-            this._muteCheckBoxEvents = false;
+        this._treeView = new TreeViewPlugin(this.viewer, {
+            containerElement: classesElement,
+            hierarchy: "types",
+            autoAddModels: false
         });
 
-    }
-
-    _addModel(modelId) {
-        this._rebuild();
-    }
-
-    _removeModel(modelId) {
-        this._rebuild();
-    }
-
-    _rebuild(cfg) {
-        this._createData();
-        this._repaint();
-    }
-
-    _createData() {
-        var t0 = performance.now();
-        this._data = {};
-        const objectIds = this.viewer.scene.objectIds;
-        const metaObjects = this.viewer.metaScene.metaObjects;
-        const objects = this.viewer.scene.objects;
-        for (var i = 0, len = objectIds.length; i < len; i++) {
-            const objectId = objectIds[i];
-            const metaObject = metaObjects[objectId];
-            if (metaObject) {
-                const type = metaObject.type;
-                const entity = objects[objectId];
-                var classData = this._data[type];
-                if (!classData) {
-                    classData = {
-                        numObjectsVisible: 0,
-                        numObjects: 0
-                    };
-                    this._data[type] = classData;
-                }
-                if (entity.visible) {
-                    classData.numObjectsVisible++;
-                }
-                classData.numObjects++;
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.addModel(modelId);
             }
-        }
-        var t1 = performance.now();
-        // console.log("Classes._createData() " + (t1 - t0));
-    }
+        });
 
-    _repaint() {
-        const html = [];
-        for (var type in this._data) {
-            const classData = this._data[type];
-            html.push("<div class='xeokit-form-check'>");
-            html.push("<input id='");
-            html.push(type);
-            html.push("' type='checkbox' value=''");
-            if (classData.numObjectsVisible > 0) {
-                html.push(" checked ");
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
             }
-            html.push(">");
-            html.push(type);
-            html.push("</div>");
-        }
-        this._classesElement.innerHTML = html.join("");
-        for (var type in this._data) {
-            const classData = this._data[type];
-            const checkBox = document.getElementById("" + type);
-            const objectIds = this.viewer.metaScene.getObjectIDsByType(type);
-            checkBox.addEventListener("click", () => {
-                if (this._muteCheckBoxEvents) {
-                    return;
-                }
-                const visible = checkBox.checked;
-                this._muteEntityEvents = true;
-                this.viewer.scene.setObjectsVisible(objectIds, visible);
-                if (visible) {
-                    classData.numObjectsVisible += objectIds.length;
-                } else {
-                    classData.numObjectsVisible -= objectIds.length;
-                }
-                this._muteEntityEvents = false;
-            });
-        }
+        });
     }
 
     setEnabled(enabled) {
@@ -50768,34 +50811,12 @@ class Classes extends Controller {
             this._hideAllClassesButtonElement.classList.remove("disabled");
         }
     }
-    muteEvents() {
-        this._muteCheckBoxEvents = true;
-        this._muteEntityEvents = true;
-    }
-
-    unmuteEvents() {
-        this._muteCheckBoxEvents = false;
-        this._muteEntityEvents = false;
-    }
-
-    selectAll() {
-        for (var type in this._data) {
-            const classData = this._data[type];
-            classData.numObjectsVisible = classData.numObjects;
-            document.getElementById("" + type).checked = true;
-        }
-    }
-
-    deselectAll() {
-        for (var type in this._data) {
-            const classData = this._data[type];
-            classData.numObjectsVisible = 0;
-            document.getElementById("" + type).checked = false;
-        }
-    }
 
     destroy() {
         super.destroy();
+        this._treeView.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
     }
 }
 
@@ -52469,7 +52490,7 @@ class CameraControl extends Component {
                             mouseDownRight = false;
                             break;
                     }
-                    self.scene.canvas.canvas.style.cursor = "default";
+                    self.scene.canvas.canvas.style.removeProperty("cursor");
                     down = false;
                     xDelta = 0;
                     yDelta = 0;
@@ -52488,6 +52509,7 @@ class CameraControl extends Component {
                             mouseDownRight = false;
                             break;
                     }
+                    self.scene.canvas.canvas.style.removeProperty("cursor");
                     down = false;
                     xDelta = 0;
                     yDelta = 0;
@@ -53547,6 +53569,29 @@ class MetaObject {
         return objectIds;
     }
 
+
+    /**
+     * Iterates over the {@link MetaObject}s within the subtree.
+     *
+     * @param {Function} callback Callback fired at each {@link MetaObject}.
+     */
+    withMetaObjectsInSubtree(callback) {
+
+        function visit(metaObject) {
+            if (!metaObject) {
+                return;
+            }
+            callback(metaObject);
+            const children = metaObject.children;
+            if (children) {
+                for (var i = 0, len = children.length; i < len; i++) {
+                    visit(children[i]);
+                }
+            }
+        }
+
+        visit(this);
+    }
     /**
      * Gets the {@link MetaObject#id}s of the {@link MetaObject}s within the subtree that have the given {@link MetaObject#type}s.
      *
@@ -54195,35 +54240,29 @@ class Storeys extends Controller {
         this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
 
         if (!this._storeysTabButtonElement) {
-            throw "Missing DOM element: ,xeokit-tab-btn";
+            throw "Missing DOM element: .xeokit-tab-btn";
         }
 
         const storeysElement = cfg.storeysElement;
 
-        this._modelNodeIDs = {}; // For each model, an array of IDs of tree nodes
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-
-        this._tree = new TreeViewPlugin(this.viewer, {
+        this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: storeysElement,
-            mode: "storeys"
+            autoAddModels: false,
+            autoExpandDepth: 1, // Initially expand tree one level deep
+            hierarchy: "storeys"
         });
-    }
 
-    _addModel(modelId) {
-        this._tree.addModel(modelId);
-    }
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.addModel(modelId);
+            }
+        });
 
-    _removeModel(modelId) {
-        this._tree.removeModel(modelId);
-    }
-
-    _synchTreeFromScene(modelId) {
-
-    }
-
-    _setObjectVisibilities(metaObject) {
-
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
+            }
+        });
     }
 
     setEnabled(enabled) {
@@ -54238,26 +54277,11 @@ class Storeys extends Controller {
         }
     }
 
-    muteEvents() {
-        this._muteTreeEvents = true;
-        this._muteEntityEvents = true;
-    }
-
-    unmuteEvents() {
-        this._muteTreeEvents = false;
-        this._muteEntityEvents = false;
-    }
-
-    selectAll() {
-        //  this._tree.selectDeep();
-    }
-
-    deselectAll() {
-        //    this._tree.deselectDeep();
-    }
-
     destroy() {
         super.destroy();
+        this._treeView.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
     }
 }
 
@@ -54964,11 +54988,8 @@ function initTabs(containerElement) {
     let tabbedContainers = containerElement.querySelectorAll('.' + tabsClass);
     for (let i = 0; i < tabbedContainers.length; i++) {
         let tabbedContainer = tabbedContainers[i];
-        // List of tabs for this tabbed container
         let tabList = tabbedContainer.querySelectorAll('.' + tabClass);
-        // Make the first tab active when the page loads
         activateTab(tabList[0]);
-        // Activate a tab when you click its button
         for (let i = 0; i < tabList.length; i++) {
             let tabElement = tabList[i];
             let tabButton = tabElement.querySelector('.' + tabButtonClass);
@@ -55088,11 +55109,6 @@ class ViewerUI extends Controller {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
-        //
-        // this.ortho = new OrthoMode(this, {
-        //     buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
-        //     active: false
-        // });
 
         this.hide = new HideMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-hide"),
@@ -55125,7 +55141,6 @@ class ViewerUI extends Controller {
 
         this.threeD.setActive(true);
         this.firstPerson.setActive(false);
-        //this.ortho.setActive(false);
         this.navCube.setActive(true);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -55164,12 +55179,7 @@ class ViewerUI extends Controller {
             event.preventDefault();
         });
 
-        // Handling model load events here ensures that we
-        // are able to fire "modelLoaded" after both trees updated.
-
         this.models.on("modelLoaded", (modelId) => {
-            this.objects._addModel(modelId);
-            this.classes._addModel(modelId);
             if (this.models.getNumModelsLoaded() === 1) {
                 this._enableControls(true);
             }
@@ -55177,8 +55187,6 @@ class ViewerUI extends Controller {
         });
 
         this.models.on("modelUnloaded", (modelId) => {
-            this.objects._removeModel(modelId);
-            this.classes._removeModel(modelId);
             if (this.models.getNumModelsLoaded() === 0) {
                 this._enableControls(false);
             }
@@ -55241,6 +55249,14 @@ class ViewerUI extends Controller {
             intensity: 1.0,
             space: "world"
         });
+    }
+
+    _showAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    }
+
+    _hideAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
     }
 
     /**
@@ -55394,14 +55410,6 @@ class ViewerUI extends Controller {
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
-    _showAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
-    }
-
-    _hideAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
-    }
-
     _enableControls(enabled) {
 
         // Explorer
@@ -55417,7 +55425,6 @@ class ViewerUI extends Controller {
         this.fit.setEnabled(enabled);
         this.threeD.setEnabled(enabled);
         this.firstPerson.setEnabled(enabled);
-      //  this.ortho.setEnabled(enabled);
         this.query.setEnabled(enabled);
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
