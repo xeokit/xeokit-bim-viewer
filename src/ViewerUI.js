@@ -18,6 +18,9 @@ import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 import {Storeys} from "./explorer/Storeys.js";
 import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
 import {ThreeDMode} from "./toolbar/ThreeDMode.js";
+import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
+import {ObjectContextMenuItems} from "./contextMenuItems/ObjectContextMenuItems.js";
+import {CanvasContextMenuItems} from "./contextMenuItems/CanvasContextMenuItems.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
@@ -36,7 +39,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
             <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="Show all objects">Show all</button>
             <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="Hide all objects">Hide all</button>
         </div>
-        <div class="xeokit-objects tree-panel" ></div>
+        <div class="xeokit-objects xeokit-tree-panel" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
@@ -46,7 +49,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
                 <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="Show all classes">Show all</button>
                 <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="Hide all classes">Hide all</button>
             </div>
-            <div class="xeokit-classes tree-panel" ></div>
+            <div class="xeokit-classes xeokit-tree-panel" ></div>
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
@@ -170,12 +173,29 @@ class ViewerUI extends Controller {
         const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
 
+        explorerElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        toolbarElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        navCubeCanvasElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        sectionPlanesOverviewCanvasElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
         super(null, cfg, server, new Viewer({
             canvasElement: canvasElement,
             transparent: true
         }));
 
         this._customizeViewer();
+        this._initCanvasContextMenus();
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
@@ -342,12 +362,18 @@ class ViewerUI extends Controller {
 
         const scene = this.viewer.scene;
 
+        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fillAlpha = 0.1;
+        scene.xrayMaterial.fillColor = [0, 0, 0];
+        scene.xrayMaterial.edgeAlpha = 0.3;
+        scene.xrayMaterial.edgeColor = [0, 0, 0];
+
         scene.highlightMaterial.edges = true;
         scene.highlightMaterial.edgeColor = [.5, .5, 0];
         scene.highlightMaterial.edgeAlpha = 1.0;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
-        scene.highlightMaterial.fillColor = [1, 1, 0];
+        scene.highlightMaterial.fillColor = [1, 0, 0];
 
         scene.clearLights();
 
@@ -376,6 +402,52 @@ class ViewerUI extends Controller {
             intensity: 1.0,
             space: "world"
         });
+    }
+
+    _initCanvasContextMenus() {
+
+        this._canvasContextMenu = new ContextMenu({
+            context: {
+                viewer: this.viewer
+            },
+            items: CanvasContextMenuItems
+        });
+
+        this._objectContextMenu = new ContextMenu({
+            items: ObjectContextMenuItems
+        });
+
+        this.viewer.scene.canvas.canvas.oncontextmenu = (e) => {
+
+            const hit = this.viewer.scene.pick({
+                canvasPos: [e.offsetX, e.offsetY]
+            });
+
+            if (hit && hit.entity.isObject) {
+                this._canvasContextMenu.hide();
+                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.context = {
+                    viewer: this.viewer,
+                    viewerUI: this,
+                    showNodeInTreeViews: (objectId) => {
+                        this.objects.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
+                        this.classes.showNodeInTreeView(objectId);
+                        this.storeys.showNodeInTreeView(objectId);
+                    },
+                    entity: hit.entity
+                };
+            } else {
+                this._objectContextMenu.hide();
+                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.context = {
+                    viewer: this.viewer,
+                    viewerUI: this
+                };
+            }
+
+            e.preventDefault();
+        };
+
     }
 
     _showAllObjects() {
@@ -537,6 +609,13 @@ class ViewerUI extends Controller {
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
+    /**
+     * Resets the view.
+     */
+    resetView() {
+        this.reset.reset();
+    }
+
     _enableControls(enabled) {
 
         // Explorer
@@ -556,8 +635,13 @@ class ViewerUI extends Controller {
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
         this.section.setEnabled(enabled);
+    }
 
+    destroy() {
+        this.viewer.destroy();
         this._bcfViewpointsPlugin.destroy();
+        this._canvasContextMenu.destroy();
+        this._objectContextMenu.destroy();
     }
 }
 

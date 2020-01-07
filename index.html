@@ -33,6 +33,7 @@
             height: 100%;
             align-items: stretch;
             z-index: 10000;
+            overflow: hidden;
         }
 
         #myExplorer {
@@ -44,7 +45,7 @@
             color: #fff;
             transition: all 0.3s;
             padding: 0;
-            padding-left: 5px;
+            padding-left: 15px;
         }
 
         #myExplorer.active {
@@ -211,18 +212,13 @@
             border: 2px solid #6c757d !important;
         }
 
-        /*.xeokit-btn.active disabled:hover {*/
-        /*    opacity: .55;*/
-        /*    color: #99A4AD;*/
-        /*    border: 2px solid #6c757d !important;*/
-        /*}*/
-
         /*  Tabs    */
 
         .xeokit-tabs {
-            /* Clearfix */
             line-height: 1.5;
             padding: 0;
+            /*padding-left: 10px;*/
+            height: 100%;
         }
 
         .xeokit-tabs::before, .xeokit-tabs::after {
@@ -284,6 +280,8 @@
             display: block;
             font-weight: bold;
             padding: 0.75em 5px;
+            padding-left: 0;
+            padding-right: 10px;
             text-decoration: none;
         }
 
@@ -309,9 +307,11 @@
         .xeokit-tabs .xeokit-tab-content {
             background: #03103F;
             display: none;
-            padding: 2em 15px;
-            width: 100%;
-            height: 100%;
+            padding-top: 2em;
+            padding-left: 0;
+            padding-right: 5px;
+            width: calc(100% - 10px);
+            height: calc(100% - 30px);
         }
 
         @media (min-width: 40em) {
@@ -510,6 +510,55 @@
             position: fixed;
             right: 1em;
             top: 1em;
+        }
+
+        .xeokit-tree-panel {
+            overflow-y: scroll;
+            overflow-x: hidden;
+            height: calc(100% - 150px);
+        }
+
+        /* Context menu */
+
+        .xeokit-context-menu {
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            display: none;
+            z-index: 300000;
+            background: rgba(255, 255, 255, 0.46);
+            border: 1px solid black;
+            border-radius: 6px;
+            padding: 0;
+            line-height: 1.2em;
+        }
+
+        .xeokit-context-menu ul {
+            list-style: none;
+            margin-left: 0;
+            padding: 0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .xeokit-context-menu ul li {
+            list-style-type: none;
+            padding-left: 10px;
+            padding-right: 20px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            color: black;
+            /*border-bottom: 1px solid gray;*/
+            background: rgba(255, 255, 255, 0.46);
+            cursor: pointer;
+        }
+
+        .xeokit-context-menu ul li:hover {
+            background: black;
+            color: rgba(255, 255, 255, 0.46);
+        }
+
+        .xeokit-context-menu ul li span {
+            display: inline-block;
         }
 
         /* Busy modal dialog */

@@ -50676,6 +50676,514 @@ class TreeViewPlugin extends Plugin {
     }
 }
 
+/**
+ * ContextMenu items for when user right-clicks on a TreeViewPlugin node.
+ */
+const TreeViewContextMenuItems = [
+    [
+        {
+            title: "View fit",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                const objectIds = [];
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        objectIds.push(treeViewNode.objectId);
+                    }
+                });
+                scene.setObjectsVisible(objectIds, true);
+                scene.setObjectsHighlighted(objectIds, true);
+                context.viewer.cameraFlight.flyTo({
+                    projection: "perspective",
+                    aabb: scene.getAABB(objectIds),
+                    duration: 0.5
+                }, () => {
+                    setTimeout(function () {
+                        scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                    }, 500);
+                });
+            }
+        },
+        {
+            title: "View fit all",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                context.viewer.cameraFlight.flyTo({
+                    projection: "perspective",
+                    aabb: scene.getAABB({}),
+                    duration: 0.5
+                });
+            }
+        }
+    ],
+    [
+        {
+            title: "Hide",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.visible = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Hide others",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.visibleObjectIds, false);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.visible = true;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Hide all",
+            callback: function (context) {
+                context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "Show",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.visible = true;
+                            entity.xrayed = false;
+                            entity.selected = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Show others",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.visible = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Show all",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "X-ray",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.xrayed = true;
+                            entity.visible = true;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Don't X-ray",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.xrayed = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "X-ray others",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.objectIds, true);
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.xrayed = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Reset X-ray",
+            callback: function (context) {
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "Select",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.selected = true;
+                            entity.visible = true;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Deselect",
+            callback: function (context) {
+                context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                    if (treeViewNode.objectId) {
+                        const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                        if (entity) {
+                            entity.selected = false;
+                        }
+                    }
+                });
+            }
+        },
+        {
+            title: "Reset Selection",
+            callback: function (context) {
+                context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
+            }
+        }
+    ]
+];
+
+const idMap$1 = new Map();
+
+/**
+ * @desc A customizable HTML context menu.
+ *
+ * [<img src="http://xeokit.io/img/docs/ContextMenu/ContextMenu.gif">](https://xeokit.github.io/xeokit-sdk/examples/#ContextMenu_Canvas_TreeViewPlugin_Custom)
+ *
+ * * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#ContextMenu_Canvas_TreeViewPlugin_Custom)]
+ *
+ * ## Overview
+ *
+ * * Attach to anything that fires a [contextmenu](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event) event
+ * * Configure custom items
+ * * Configure custom style with custom CSS (see examples above)
+ *
+ * ## Usage
+ *
+ * In the example below we'll create a ContextMenu that pops up whenever we right-click on an {@link Entity} within
+ * our {@link Scene}.
+ *
+ * First, we'll create the ContextMenu, configuring it with a list of menu items. Each item has a title to display
+ * in the menu, along with a callback to fire when its title is clicked. Note how each callback accepts a ````context````
+ * object, which we set on the ContextMenu whenever we show it. The context object can be anything. In this example,
+ * we'll use the context object to provide the callbacks with the Entity that we right-clicked.
+ *
+ * We'll also initially enable the ContextMenu.
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#ContextMenu_Canvas_Custom)]
+ *
+ * ````javascript
+ * const canvasContextMenu = new ContextMenu({
+ *
+ *    enabled: true,
+ *
+ *    items: [
+ *       [
+ *          {
+ *             title: "Hide object",
+ *             callback: function (context) {
+ *                 context.entity.visible = false;
+ *             }
+ *          }
+ *       ],
+ *       [
+ *          {
+ *             title: "Select object",
+ *             callback: function (context) {
+ *                 context.entity.selected = true;
+ *             }
+ *          }
+ *       ],
+ *       [
+ *          {
+ *             title: "X-ray object",
+ *             callback: function (context) {
+ *                 context.entity.xrayed = true;
+ *             }
+ *          }
+ *       ]
+ *    });
+ * ````
+ *
+ * Next, we'll make the ContextMenu appear whenever we right-click on an Entity. Whenever we right-click
+ * on the canvas, we'll attempt to pick the Entity at those mouse coordinates. If we succeed, we'll feed the
+ * Entity into ContextMenu via the context object, then show the ContextMenu.
+ *
+ * From there, if we click an item in the ContextMenu, the corresponding callback will be invoked with our
+ * context object.
+ *
+ * ````javascript*
+ * viewer.scene.canvas.canvas.oncontextmenu = (e) => { // Right-clicked on the canvas
+ *
+ *     if (!objectContextMenu.enabled) {
+ *         return;
+ *     }
+ *
+ *     var hit = viewer.scene.pick({ // Try to pick an Entity at the coordinates
+ *         canvasPos: [e.pageX, e.pageY]
+ *     });
+ *
+ *     if (hit) { // Picked an Entity
+ *
+ *         objectContextMenu.context = { // Feed entity to ContextMenu
+ *             entity: hit.entity
+ *         };
+ *
+ *         objectContextMenu.show(e.pageX, e.pageY); // Show the ContextMenu
+ *     }
+ *
+ *     e.preventDefault();
+ * });
+ * ````
+ *
+ * Note how we only show the ContextMenu if it's enabled. We can use that mechanism to switch between multiple
+ * ContextMenu instances depending on what we clicked.
+ */
+class ContextMenu {
+
+    /**
+     * Creates a context menu.
+     *
+     * @param {Object} [cfg] Context menu configuration.
+     * @param {Object} [cfg.items] The context menu items. These can also be dynamically set on {@link ContextMenu#items}. See {@link DefaultEntityContextMenuItems} for an example.
+     * @param {Object} [cfg.context] The context, which is passed into the item callbacks. This can also be dynamically set on {@link ContextMenu#context}.
+     * @param {Boolean} [cfg.enabled=true] Whether this context menu is initially enabled. {@link ContextMenu#show} does nothing while this is ````false````.
+     */
+    constructor(cfg = {}) {
+        this._id = idMap$1.addItem();
+        this._context = {};
+        this._menuElement = null;
+        this._enabled = false;
+        this._items = [];
+        document.addEventListener("click", (e) => {
+            this.hide();
+        });
+        if (cfg.items) {
+            this.items = cfg.items;
+        }
+        this.context = cfg.context;
+        this.enabled = cfg.enabled !== false;
+        this.hide();
+    }
+
+    /**
+     * Sets the context menu items.
+     *
+     * These can be dynamically updated.
+     *
+     * See {@link DefaultEntityContextMenuItems} for an example.
+     *
+     * @type {Object[]}
+     */
+    set items(items) {
+        this._items = items || {};
+        if (this._menuElement) {
+            this._menuElement.parentElement.removeChild(this._menuElement);
+            this._menuElement = null;
+        }
+        const html = [];
+        const idClass = "xeokit-context-menu-" + this._id;
+        html.push('<div class="xeokit-context-menu ' + idClass + '" style="z-index:300000; position: absolute;">');
+        html.push('<ul>');
+        this._buildActionLinks(this._items, html);
+        html.push('</ul>');
+        html.push('</div>');
+        const htmlStr = html.join("");
+        document.body.insertAdjacentHTML('beforeend', htmlStr);
+        this._menuElement = document.querySelector("." + idClass);
+        this._menuElement.style["border-radius"] = 4 + "px";
+        this._menuElement.style.display = 'none';
+        this._menuElement.style["z-index"] = 300000;
+        this._menuElement.style.background = "white";
+        this._menuElement.style.border = "1px solid black";
+        this._menuElement.style["box-shadow"] = "0 4px 5px 0 gray";
+        this._menuElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+        this._bindActionLinks(this._items);
+    }
+
+    /**
+     * Gets the context menu items.
+     *
+     * @type {Object[]}
+     */
+    get items() {
+        return this._items;
+    }
+
+    _buildActionLinks(items, html, ctx = {id: 0}) {
+        for (let i = 0, len = items.length; i < len; i++) {
+            const itemsGroup = items[i];
+            ctx.groupIdx = i;
+            ctx.groupLen = len;
+            this._buildActionLinks2(itemsGroup, html, ctx);
+        }
+    }
+
+    _buildActionLinks2(itemsGroup, html, ctx) {
+        for (let i = 0, len = itemsGroup.length; i < len; i++) {
+            const action = itemsGroup[i];
+            const actionId = "xeokit-context-menu-" + this._id + "-" + ctx.id++;
+            const actionTitle = action.title;
+            html.push('<li class="' + actionId + '" style="' + ((ctx.groupIdx === ctx.groupLen - 1) || ((i < len - 1)) ? 'border-bottom: 0' : 'border-bottom: 1px solid black') + '">' + actionTitle + '</li>');
+        }
+    }
+
+    _bindActionLinks(items, ctx = {id: 0}) {
+        const self = this;
+        for (let i = 0, len = items.length; i < len; i++) {
+            const action = items[i];
+            if (utils.isArray(action)) {
+                this._bindActionLinks(action, ctx);
+            } else {
+                const actionId = "xeokit-context-menu-" + this._id + "-" + ctx.id++;
+                document.querySelector("." + actionId).addEventListener("click", (function () {
+                    const callback = action.callback;
+                    return function (event) {
+                        if (!self._context) {
+                            return;
+                        }
+                        callback(self._context);
+                        self.hide();
+                        event.preventDefault();
+                    };
+                })());
+            }
+        }
+    }
+
+    /**
+     * Sets whether this context menu is enabled.
+     *
+     * When disabling, will hide the menu if currently shown.
+     *
+     * @type {Boolean}
+     */
+    set enabled(enabled) {
+        this._enabled = enabled;
+        if (!this._enabled) {
+            this.hide();
+        }
+    }
+
+    /**
+     * Gets whether this context menu is enabled.
+     *
+     * {@link ContextMenu#show} does nothing while this is ````false````.
+     *
+     * @type {Boolean}
+     */
+    get enabled() {
+        return this._enabled;
+    }
+
+    /**
+     * Sets the menu's current context.
+     *
+     * The context can be any object that you need to be provides to the callbacks configured on {@link ContextMenu#items}.
+     *
+     * @type {Object}
+     */
+    set context(context) {
+        this._context = context || {};
+    }
+
+    /**
+     * Gets the menu's current context.
+     *
+     * @type {Object}
+     */
+    get context() {
+        return this._context;
+    }
+
+    /**
+     * Shows this context menu at the given page coordinates.
+     *
+     * Does nothing when {@link ContextMenu#enabled} is ````false````.
+     *
+     * @param {Number} pageX Page X-coordinate.
+     * @param {Number} pageY Page Y-coordinate.
+     */
+    show(pageX, pageY) {
+        if (!this._enabled || !this._menuElement) {
+            return;
+        }
+        this._menuElement.style.left = pageX + 'px';
+        this._menuElement.style.top = pageY + 'px';
+        this._menuElement.style.display = 'block';
+    }
+
+    /**
+     * Hides this context menu.
+     */
+    hide() {
+        if (!this._menuElement) {
+            return;
+        }
+        this._menuElement.style.display = 'none';
+    }
+
+    /**
+     * Destroys this context menu.
+     */
+    destroy() {
+        if (this._menuElement) {
+            this._menuElement.parentElement.removeChild(this._menuElement);
+            this._menuElement = null;
+        }
+        if (this._id !== null) {
+            idMap$1.removeItem(this._id);
+            this._id = null;
+        }
+    }
+}
+
 class Objects extends Controller {
 
     constructor(parent, cfg = {}) {
@@ -50715,7 +51223,20 @@ class Objects extends Controller {
             autoAddModels: false
         });
 
-        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on("contextmenu", (e) => {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.addModel(modelId);
             }
@@ -50740,9 +51261,15 @@ class Objects extends Controller {
         }
     }
 
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
         this.viewer.scene.off(this._onModelLoaded);
         this.viewer.scene.off(this._onModelUnloaded);
     }
@@ -50787,6 +51314,19 @@ class Classes extends Controller {
             autoAddModels: false
         });
 
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on("contextmenu", (e) => {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.addModel(modelId);
@@ -50812,9 +51352,15 @@ class Classes extends Controller {
         }
     }
 
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
         this.viewer.scene.off(this._onModelLoaded);
         this.viewer.scene.off(this._onModelUnloaded);
     }
@@ -54252,6 +54798,19 @@ class Storeys extends Controller {
             hierarchy: "storeys"
         });
 
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on("contextmenu", (e) => {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.addModel(modelId);
@@ -54277,9 +54836,15 @@ class Storeys extends Controller {
         }
     }
 
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
         this.viewer.scene.off(this._onModelLoaded);
         this.viewer.scene.off(this._onModelUnloaded);
     }
@@ -54892,6 +55457,205 @@ class ThreeDMode extends Controller {
     }
 }
 
+/**
+ * ContextMenu items for when user right-clicks on an object.
+ */
+const ObjectContextMenuItems = [
+    [
+        {
+            title: "View fit",
+            callback: function (context) {
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const entity = context.entity;
+                viewer.cameraFlight.flyTo({
+                    aabb: entity.aabb,
+                    duration: 0.5
+                }, () => {
+                    setTimeout(function () {
+                        scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                    }, 500);
+                });
+            }
+        },
+        {
+            title: "View fit all",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                context.viewer.cameraFlight.flyTo({
+                    projection: "perspective",
+                    aabb: scene.getAABB(),
+                    duration: 0.5
+                });
+            }
+        },
+        {
+            title: "Show in tree",
+            callback: function (context) {
+                const objectId = context.entity.id;
+                context.showNodeInTreeViews(objectId);
+            }
+        }
+    ],
+    [
+        {
+            title: "Hide",
+            callback: function (context) {
+                context.entity.visible = false;
+            }
+        },
+        {
+            title: "Hide others",
+            callback: function (context) {
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const entity = context.entity;
+                const metaObject = viewer.metaScene.metaObjects[entity.id];
+                if (!metaObject) {
+                    return;
+                }
+                scene.setObjectsVisible(scene.visibleObjectIds, false);
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                metaObject.withMetaObjectsInSubtree((metaObject) => {
+                    const entity = scene.objects[metaObject.id];
+                    if (entity) {
+                        entity.visible = true;
+                    }
+                });
+            }
+        },
+        {
+            title: "Hide all",
+            callback: function (context) {
+                context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+            }
+        },
+        {
+            title: "Show all ",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.objectIds, true);
+            }
+        }
+    ],
+    [
+        {
+            title: "X-ray",
+            callback: function (context) {
+                context.entity.xrayed = true;
+            }
+        },
+        {
+            title: "Don't X-ray",
+            callback: function (context) {
+                context.entity.xrayed = false;
+            }
+        },
+        {
+            title: "X-ray others",
+            callback: function (context) {
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const entity = context.entity;
+                const metaObject = viewer.metaScene.metaObjects[entity.id];
+                if (!metaObject) {
+                    return;
+                }
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.objectIds, true);
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                metaObject.withMetaObjectsInSubtree((metaObject) => {
+                    const entity = scene.objects[metaObject.id];
+                    if (entity) {
+                        entity.xrayed = false;
+                    }
+                });
+            }
+        },
+        {
+            title: "Reset X-ray",
+            callback: function (context) {
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "Select",
+            callback: function (context) {
+                context.entity.selected = true;
+            }
+        },
+        {
+            title: "Deselect",
+            callback: function (context) {
+                context.entity.selected = false;
+            }
+        },
+        {
+            title: "Reset selection",
+            callback: function (context) {
+                context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
+            }
+        }
+    ]
+];
+
+/**
+ * ContextMenu items for when user right-clicks on empty canvas space.
+ */
+const CanvasContextMenuItems = [
+    [
+        {
+            title: "Hide all",
+            callback: function (context) {
+                context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+            }
+        },
+        {
+            title: "Show all",
+            callback: function (context) {
+                const scene = context.viewer.scene;
+                scene.setObjectsVisible(scene.objectIds, true);
+            }
+        }
+    ],
+    [
+        {
+            title: "View fit all",
+            callback: function (context) {
+                context.viewer.cameraFlight.flyTo({
+                    aabb: context.viewer.scene.getAABB()
+                });
+            }
+        }
+    ],
+    [
+        {
+            title: "Reset X-ray",
+            callback: function (context) {
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "Reset selection",
+            callback: function (context) {
+                context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
+            }
+        }
+    ],
+    [
+        {
+            title: "Reset view",
+            callback: function (context) {
+                context.viewerUI.resetView();
+            }
+        }
+    ]
+];
+
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
         <a class="xeokit-tab-btn" href="#">Models</a>
@@ -54909,7 +55673,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
             <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="Show all objects">Show all</button>
             <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="Hide all objects">Hide all</button>
         </div>
-        <div class="xeokit-objects tree-panel" ></div>
+        <div class="xeokit-objects xeokit-tree-panel" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
@@ -54919,7 +55683,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
                 <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="Show all classes">Show all</button>
                 <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="Hide all classes">Hide all</button>
             </div>
-            <div class="xeokit-classes tree-panel" ></div>
+            <div class="xeokit-classes xeokit-tree-panel" ></div>
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
@@ -55043,12 +55807,29 @@ class ViewerUI extends Controller {
         const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
 
+        explorerElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        toolbarElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        navCubeCanvasElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
+        sectionPlanesOverviewCanvasElement.oncontextmenu = (e) => {
+            e.preventDefault();
+        };
+
         super(null, cfg, server, new Viewer({
             canvasElement: canvasElement,
             transparent: true
         }));
 
         this._customizeViewer();
+        this._initCanvasContextMenus();
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
@@ -55215,12 +55996,18 @@ class ViewerUI extends Controller {
 
         const scene = this.viewer.scene;
 
+        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fillAlpha = 0.1;
+        scene.xrayMaterial.fillColor = [0, 0, 0];
+        scene.xrayMaterial.edgeAlpha = 0.3;
+        scene.xrayMaterial.edgeColor = [0, 0, 0];
+
         scene.highlightMaterial.edges = true;
         scene.highlightMaterial.edgeColor = [.5, .5, 0];
         scene.highlightMaterial.edgeAlpha = 1.0;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
-        scene.highlightMaterial.fillColor = [1, 1, 0];
+        scene.highlightMaterial.fillColor = [1, 0, 0];
 
         scene.clearLights();
 
@@ -55249,6 +56036,52 @@ class ViewerUI extends Controller {
             intensity: 1.0,
             space: "world"
         });
+    }
+
+    _initCanvasContextMenus() {
+
+        this._canvasContextMenu = new ContextMenu({
+            context: {
+                viewer: this.viewer
+            },
+            items: CanvasContextMenuItems
+        });
+
+        this._objectContextMenu = new ContextMenu({
+            items: ObjectContextMenuItems
+        });
+
+        this.viewer.scene.canvas.canvas.oncontextmenu = (e) => {
+
+            const hit = this.viewer.scene.pick({
+                canvasPos: [e.offsetX, e.offsetY]
+            });
+
+            if (hit && hit.entity.isObject) {
+                this._canvasContextMenu.hide();
+                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.context = {
+                    viewer: this.viewer,
+                    viewerUI: this,
+                    showNodeInTreeViews: (objectId) => {
+                        this.objects.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
+                        this.classes.showNodeInTreeView(objectId);
+                        this.storeys.showNodeInTreeView(objectId);
+                    },
+                    entity: hit.entity
+                };
+            } else {
+                this._objectContextMenu.hide();
+                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.context = {
+                    viewer: this.viewer,
+                    viewerUI: this
+                };
+            }
+
+            e.preventDefault();
+        };
+
     }
 
     _showAllObjects() {
@@ -55410,6 +56243,13 @@ class ViewerUI extends Controller {
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
+    /**
+     * Resets the view.
+     */
+    resetView() {
+        this.reset.reset();
+    }
+
     _enableControls(enabled) {
 
         // Explorer
@@ -55429,8 +56269,13 @@ class ViewerUI extends Controller {
         this.hide.setEnabled(enabled);
         this.select.setEnabled(enabled);
         this.section.setEnabled(enabled);
+    }
 
+    destroy() {
+        this.viewer.destroy();
         this._bcfViewpointsPlugin.destroy();
+        this._canvasContextMenu.destroy();
+        this._objectContextMenu.destroy();
     }
 }
 

@@ -1,5 +1,7 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
+import {TreeViewContextMenuItems} from "../contextMenuItems/TreeViewContextMenuItems.js";
+import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
 
 class Objects extends Controller {
 
@@ -40,7 +42,20 @@ class Objects extends Controller {
             autoAddModels: false
         });
 
-        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on("contextmenu", (e) => {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.addModel(modelId);
             }
@@ -65,9 +80,15 @@ class Objects extends Controller {
         }
     }
 
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
         this.viewer.scene.off(this._onModelLoaded);
         this.viewer.scene.off(this._onModelUnloaded);
     }
