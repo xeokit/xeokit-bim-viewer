@@ -59,7 +59,7 @@ const explorerTemplate = `<div class="xeokit-tabs">
                 <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled" data-tippy-content="Show all storeys">Show all</button>
                 <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled" data-tippy-content="Hide all storeys">Hide all</button>
             </div>
-             <div class="xeokit-storeys" ></div>
+             <div class="xeokit-storeys xeokit-tree-panel"></div>
         </div>
     </div>
 </div>`;
