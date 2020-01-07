@@ -21,7 +21,7 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.50;
             -webkit-font-smoothing: antialiased;
             margin: 0;
@@ -37,15 +37,16 @@
         }
 
         #myExplorer {
-            min-width: 400px;
-            max-width: 400px;
+            min-width: 450px;
+            max-width: 450px;
             height: 100%;
-            margin-left: -400px;
+            margin-left: -450px;
             background: #03103F;
             color: #fff;
             transition: all 0.3s;
             padding: 0;
             padding-left: 15px;
+            overflow-y: hidden;
         }
 
         #myExplorer.active {
@@ -93,7 +94,7 @@
         }
 
         #myContent {
-            width: calc(100% - 400px);
+            width: calc(100% - 450px);
             height: 100%;
             background: #ebebeb;
         }
@@ -219,6 +220,7 @@
             padding: 0;
             /*padding-left: 10px;*/
             height: 100%;
+            overflow:hidden;
         }
 
         .xeokit-tabs::before, .xeokit-tabs::after {
@@ -344,7 +346,7 @@
             overflow: visible;
             box-sizing: border-box;
             align-items: flex-start;
-            /*font: 400 13.3333px Arial;*/
+            /*font: 450 13.3333px Arial;*/
         }
 
         .xeokit-tabs .xeokit-btn:hover {
@@ -375,6 +377,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
+            width: 450px;
         }
 
         .xeokit-objectsTab ul li a {
@@ -424,6 +427,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
+            /*width: 450px;*/
         }
 
         .xeokit-storeysTab ul li a {
@@ -473,6 +477,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
+            width: 450px;
         }
 
         .xeokit-classesTab ul li a {
@@ -513,7 +518,7 @@
         }
 
         .xeokit-tree-panel {
-            overflow-y: scroll;
+            overflow-y: auto;
             overflow-x: hidden;
             height: calc(100% - 150px);
         }
@@ -583,7 +588,7 @@
             padding: 0;
             border: 2px solid #888;
             border-radius: 0.5em;
-            width: 500px;
+            width: 450px;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             -webkit-animation-name: xeokit-busy-modal-animatetop;
             -webkit-animation-duration: 0.6s;
