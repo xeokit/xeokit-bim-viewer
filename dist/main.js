@@ -20378,10 +20378,6 @@ class Control {
         const camera = this._viewer.camera;
         const scene = this._viewer.scene;
 
-        canvas.oncontextmenu = function (e) {
-            e.preventDefault();
-        };
-
         { // Keep gizmo screen size constant
             const tempVec3a = math.vec3([0, 0, 0]);
             var lastDist = -1;
