@@ -24,7 +24,6 @@ const ObjectContextMenuItems = [
             callback: function (context) {
                 const scene = context.viewer.scene;
                 context.viewer.cameraFlight.flyTo({
-                    projection: "perspective",
                     aabb: scene.getAABB(),
                     duration: 0.5
                 });
