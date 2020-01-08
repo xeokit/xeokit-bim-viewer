@@ -16,7 +16,6 @@ const TreeViewContextMenuItems = [
                 scene.setObjectsVisible(objectIds, true);
                 scene.setObjectsHighlighted(objectIds, true);
                 context.viewer.cameraFlight.flyTo({
-                    projection: "perspective",
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
