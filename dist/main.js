@@ -416,7 +416,6 @@ function flattenParentChildHierarchy(root) {
     }
 
     visit(root);
-    console.log(JSON.stringify(list, null, "\t"));
     return list;
 }
 
@@ -30919,7 +30918,7 @@ class SectionPlanesPlugin extends Plugin {
             id: params.id,
             pos: params.pos,
             dir: params.dir,
-            active: true || params.active
+            active: true 
         });
         return sectionPlane;
     }
@@ -50694,7 +50693,6 @@ const TreeViewContextMenuItems = [
                 scene.setObjectsVisible(objectIds, true);
                 scene.setObjectsHighlighted(objectIds, true);
                 context.viewer.cameraFlight.flyTo({
-                    projection: "perspective",
                     aabb: scene.getAABB(objectIds),
                     duration: 0.5
                 }, () => {
@@ -51687,6 +51685,8 @@ class CameraFlightAnimation extends Component {
                 this._projMatrix2 = camera.perspective.matrix.slice();
                 camera.projection = "customProjection";
             }
+        } else {
+            this._projection2 = null;
         }
 
         this.fire("started", params, true);
