@@ -1,6 +1,6 @@
 # xeokit-viewer (beta)
 
-xeokit-viewer is a BIM model viewer built on the [xeokit SDK](http://xeokit.io). 
+xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http://xeokit.io). 
 
 The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models.
 
@@ -16,7 +16,7 @@ The viewer is developed for integration within [OpenProject's](https://www.openp
 * 3D and 2D viewing modes.
 * Tree view with three hierarchy modes: containment, IFC type and storeys.
 * X-ray, highlight, show, hide and slice objects. 
-* Implemented in JavaScript (ES6), with no external library dependencies (other than xeokit).
+* Implemented in JavaScript (ES6), with no external dependencies (other than xeokit).
 
 ## Demos 
 
@@ -28,10 +28,18 @@ The viewer is developed for integration within [OpenProject's](https://www.openp
 | [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
 
-## Licensing
+## Roadmap
 
+- [x] Standalone viewer
+- [ ] Integration into [OpenProject](https://www.openproject.org/)
+- [ ] Save and load BCF viewpoints
+- [ ] Measurement tools
+- [ ] Memory usage monitoring
+- [ ] Explode tool  
+  
+## License
 
-xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for xeokit's commercial licensing options.
+xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
 
 ## Building 
 
