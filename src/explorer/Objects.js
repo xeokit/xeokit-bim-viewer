@@ -66,6 +66,10 @@ class Objects extends Controller {
                 this._treeView.removeModel(modelId);
             }
         });
+
+        this.viewerUI.on("reset", ()=>{
+            this._treeView.collapse();
+        });
     }
 
     setEnabled(enabled) {

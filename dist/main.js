@@ -51252,6 +51252,10 @@ class Objects extends Controller {
                 this._treeView.removeModel(modelId);
             }
         });
+
+        this.viewerUI.on("reset", ()=>{
+            this._treeView.collapse();
+        });
     }
 
     setEnabled(enabled) {
@@ -51342,6 +51346,10 @@ class Classes extends Controller {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.removeModel(modelId);
             }
+        });
+
+        this.viewerUI.on("reset", () => {
+            this._treeView.collapse();
         });
     }
 
@@ -54828,6 +54836,11 @@ class Storeys extends Controller {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 this._treeView.removeModel(modelId);
             }
+        });
+
+        this.viewerUI.on("reset", () => {
+            this._treeView.collapse();
+            this._treeView.expandToDepth(1);
         });
     }
 

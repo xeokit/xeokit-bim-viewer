@@ -67,6 +67,11 @@ class Storeys extends Controller {
                 this._treeView.removeModel(modelId);
             }
         });
+
+        this.viewerUI.on("reset", () => {
+            this._treeView.collapse();
+            this._treeView.expandToDepth(1);
+        });
     }
 
     setEnabled(enabled) {
