@@ -16,7 +16,7 @@
 
         html, body {
             height: 100%;
-
+            background: #f2f2f2;
         }
 
         body {
@@ -37,10 +37,10 @@
         }
 
         #myExplorer {
-            min-width: 450px;
-            max-width: 450px;
+            min-width: 400px;
+            max-width: 400px;
             height: 100%;
-            margin-left: -450px;
+            margin-left: -400px;
             background: #03103F;
             color: #fff;
             transition: all 0.3s;
@@ -94,9 +94,9 @@
         }
 
         #myContent {
-            width: calc(100% - 450px);
+            width: calc(100% - 400px);
             height: 100%;
-            background: #ebebeb;
+            background: #f2f2f2;
         }
 
         #myToolbar {
@@ -311,8 +311,8 @@
             display: none;
             padding-top: 2em;
             padding-left: 0;
-            padding-right: 5px;
-            width: calc(100% - 10px);
+            padding-right: 0px;
+            width: calc(100% - 0px);
             height: calc(100% - 30px);
         }
 
@@ -346,7 +346,7 @@
             overflow: visible;
             box-sizing: border-box;
             align-items: flex-start;
-            /*font: 450 13.3333px Arial;*/
+            /*font: 400 13.3333px Arial;*/
         }
 
         .xeokit-tabs .xeokit-btn:hover {
@@ -377,7 +377,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
-            width: 450px;
+            width: 400px;
         }
 
         .xeokit-objectsTab ul li a {
@@ -427,7 +427,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
-            /*width: 450px;*/
+            /*width: 400px;*/
         }
 
         .xeokit-storeysTab ul li a {
@@ -477,7 +477,7 @@
             border-top-left-radius: 0.75em;
             margin: 2px 0;
             position: relative;
-            width: 450px;
+            width: 400px;
         }
 
         .xeokit-classesTab ul li a {
@@ -588,7 +588,7 @@
             padding: 0;
             border: 2px solid #888;
             border-radius: 0.5em;
-            width: 450px;
+            width: 400px;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             -webkit-animation-name: xeokit-busy-modal-animatetop;
             -webkit-animation-duration: 0.6s;
@@ -648,9 +648,9 @@
 
 </body>
 
-<link rel="stylesheet" href="https://unpkg.com/tippy.js@5/dist/backdrop.css" />
-<script src="https://unpkg.com/popper.js@1"></script>
-<script src="https://unpkg.com/tippy.js@5"></script>
+<link rel="stylesheet" href="lib/backdrop.css" />
+<script src="lib/popper.js"></script>
+<script src="lib/tippy.js"></script>
 
 <script type="module">
 
@@ -689,7 +689,23 @@
     viewerUI.loadProject(project);
     viewerUI.openTab(tab);
 
-    tippy('[data-tippy-content]');
+    window.onload = function () {
+
+        // Tooltips
+
+        tippy('[data-tippy-content]');
+
+        // Split.JS - adjustable vertical divider between left and center panels
+
+        // Split(['#myExplorer', '#myContent'], {
+        //     gutterAlign: 'center',
+        //     gutterSize: 15,
+        //     snapOffset: 30,
+        //     minSize: [350, 1000],
+        //     sizes: [350, 1000],
+        //     dragInterval: 20
+        // });
+    }
 
 </script>
 
