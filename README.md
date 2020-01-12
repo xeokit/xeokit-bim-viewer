@@ -1,6 +1,6 @@
 # xeokit-viewer
 
-xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http://xeokit.io). The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models. 
+xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeokit SDK](http://xeokit.io). The viewer is developed by [xeolabs](http://xeolabs.com) for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. 
 
 [![Screenshothttps://xeokit.github.io/xeokit-licensing/](images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys).
 
@@ -18,9 +18,8 @@ xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http:
   
 ## Features
 
-* Uses [xeokit SDK](https://xeokit.io) for fast loading and rendering of large models.
+* Uses [xeokit SDK](https://xeokit.io) for super fast loading and rendering of large models.
 * Works in all major browsers, including mobile.
-* Super fast loading and rendering for large numbers of objects.
 * Loads BIM geometry and metadata from the file system.
 * Loads multiple models.
 * Supports IFC2x3 and IFC4.
