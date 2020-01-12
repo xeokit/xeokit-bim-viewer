@@ -2,9 +2,9 @@
 
 xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http://xeokit.io). 
 
-The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models.
+[![Screenshothttps://xeokit.github.io/xeokit-licensing/](images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys).
 
-[![Screenshothttps://xeokit.github.io/xeokit-licensing/](https://xeokit.github.io/xeokit-viewer/images/screenshot.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys).
+The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models.
 
 ## Features
 
