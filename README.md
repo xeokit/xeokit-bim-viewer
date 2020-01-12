@@ -1,21 +1,33 @@
-# xeokit-viewer (beta)
+# xeokit-viewer
 
-xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http://xeokit.io). 
+xeokit-viewer is an open source BIM model viewer built on the [xeokit SDK](http://xeokit.io). The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models. 
 
 [![Screenshothttps://xeokit.github.io/xeokit-licensing/](images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys).
 
-The viewer is developed for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, but is also usable as a stand-alone viewer for your BIM models.
+## Contents
 
+  * [Contents](#contents)
+  * [Features](#features)
+  * [Demos](#demos)
+  * [Roadmap](#roadmap)
+  * [License](#license)
+  * [Usage](#usage)
+    + [Adding your own models](#adding-your-own-models)
+    + [Customizing appearance](#customizing-appearance)
+  * [Building](#building)
+  
 ## Features
 
 * Uses [xeokit SDK](https://xeokit.io) for fast loading and rendering of large models.
 * Works in all major browsers, including mobile.
+* Super fast loading and rendering for large numbers of objects.
 * Loads BIM geometry and metadata from the file system.
 * Loads multiple models.
 * Supports IFC2x3 and IFC4.
 * 3D and 2D viewing modes.
 * Tree view with three hierarchy modes: containment, IFC type and storeys.
 * X-ray, highlight, show, hide and slice objects. 
+* Customize with your own CSS.
 * Implemented in JavaScript (ES6), with no external dependencies (other than xeokit).
 
 ## Demos 
@@ -36,10 +48,23 @@ The viewer is developed for integration within [OpenProject's](https://www.openp
 - [ ] Measurement tools
 - [ ] Memory usage monitoring
 - [ ] Explode tool  
+- [ ] Ambient shadows
+
+Do you have feedback, or features you'd like to see in the viewer? Let us know in the [issue tracker](https://github.com/xeokit/xeokit-viewer/issues).  
   
 ## License
 
 xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
+
+## Usage
+
+### Adding your own models
+
+TODO
+
+### Customizing appearance
+
+TODO
 
 ## Building 
 
