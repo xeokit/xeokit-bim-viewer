@@ -41,8 +41,8 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 
 ## Roadmap
 
-- [x] Standalone viewer
-- [ ] Integration into [OpenProject](https://www.openproject.org/)
+- [x] Standalone viewer MVP
+- [x] Integration into [OpenProject](https://www.openproject.org/)
 - [ ] Save and load BCF viewpoints
 - [ ] Measurement tools
 - [ ] Memory usage monitoring
