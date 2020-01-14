@@ -1,4 +1,4 @@
-# xeokit-viewer
+# xeokit-viewer [*beta MVP*]
 
 xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeokit SDK](http://xeokit.io). The viewer is developed by [xeolabs](http://xeolabs.com) for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. 
 
@@ -41,8 +41,8 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 
 ## Roadmap
 
-- [x] Standalone viewer
-- [ ] Integration into [OpenProject](https://www.openproject.org/)
+- [x] Standalone viewer MVP
+- [x] Integration into [OpenProject](https://www.openproject.org/)
 - [ ] Save and load BCF viewpoints
 - [ ] Measurement tools
 - [ ] Memory usage monitoring
