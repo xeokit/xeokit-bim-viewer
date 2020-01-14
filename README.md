@@ -59,13 +59,25 @@ xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero
 
 ### Adding your own models
 
-The standalone viewer loads models from the file system. These are contained within the [./data](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory, which also contains a number of sample models to get you started.
+The standalone viewer loads models from the file system. These are contained within the [./data](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
 
 Each model consists of an ````.XKT```` binary geometry file and a JSON metadata file which classifies its IFC elements. 
 
 Models are grouped within *projects*. Each project can contain multiple models, and has a JSON ````index.json```` manifest which lists its models.
 
 At the root of ````./data```` is a JSON ````index.json```` manifest that lists all the projects.
+
+The directory structure is designed to support RESTful queries, ie:
+
+
+| Query  | Path |
+|---|---|
+| Get all projects | ````GET ./data/index.json```` |
+| Get project | ````GET ./data/WestRiversideHospital/index.json````  |
+| Get model geometry | ````GET ./data/WestRiversideHospital/electrical/geometry.xkt```` |
+| Get model metadata | ````GET ./data/WestRiversideHospital/electrical/metadata.json```` |
+
+````GET ./data/index.json````
 
 Shown below is a portion of the ````./data```` directory, showing the directory structure.
 
@@ -100,7 +112,7 @@ Shown below is a portion of the ````./data```` directory, showing the directory 
                   └── metadata.json
 ````
 
-The ````index.json```` for ````./data```` shown below. The ````id```` of each project matches the name of that project's subdirectory. 
+The ````index.json```` at the root of ````./data```` shown below. The ````id```` of each project matches the name of that project's subdirectory. 
 
 ````json
 {
@@ -118,7 +130,7 @@ The ````index.json```` for ````./data```` shown below. The ````id```` of each pr
 }
 ```` 
 
-The ````index.json```` for the "WestRiversideHospital" project is shown below. The ````id```` of each model matches the name of that model's subdirectory. The ````name```` is the string that is displayed for the model in the viewers Models tab.
+The ````index.json```` for the "WestRiversideHospital" project is shown below. The ````id```` of each model matches the name of that model's subdirectory, while ````name```` is the string that's displayed for the model in the viewers Models tab.
 
 ````json
 {
@@ -150,12 +162,12 @@ The ````index.json```` for the "WestRiversideHospital" project is shown below. T
 }
 ````
 
-To add your own project, you therefore need to 
+To add your own project, you therefore need to: 
 
- * Create a new project directory within ````./data````,
- * create a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
- * create a ````index.json```` manifest of the models within the project directory, which lists the models, and
- * add your project to the ````index.json```` at the root of ````./data````.    
+ * add a new project directory within ````./data````,
+ * add a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
+ * add a ````index.json```` manifest of the models within the project directory, which lists the models, and
+ * list your project in the ````index.json```` at the root of ````./data````.    
 
 ### Customizing CSS
 
