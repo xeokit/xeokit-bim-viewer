@@ -77,8 +77,6 @@ The directory structure is designed to support RESTful queries, ie:
 | Get model geometry | ````GET ./data/WestRiversideHospital/electrical/geometry.xkt```` |
 | Get model metadata | ````GET ./data/WestRiversideHospital/electrical/metadata.json```` |
 
-````GET ./data/index.json````
-
 Shown below is a portion of the ````./data```` directory, showing the directory structure.
 
 ````
