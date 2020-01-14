@@ -29,6 +29,12 @@ const CanvasContextMenuItems = [
     ],
     [
         {
+            title: "X-ray all",
+            callback: function (context) {
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.objectIds, true);
+            }
+        },
+        {
             title: "Reset X-ray",
             callback: function (context) {
                 context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);

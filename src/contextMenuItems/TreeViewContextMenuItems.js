@@ -164,6 +164,12 @@ const TreeViewContextMenuItems = [
             }
         },
         {
+            title: "X-ray all",
+            callback: function (context) {
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.objectIds, false);
+            }
+        },
+        {
             title: "Reset X-ray",
             callback: function (context) {
                 context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
