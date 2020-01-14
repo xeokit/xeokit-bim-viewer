@@ -62,6 +62,19 @@ class Server {
         console.log("Loading model geometry: " + url);
         utils.loadArraybuffer(url, done, error);
     }
+
+    /**
+     * Gets issues for a model within a project.
+     * @param projectId
+     * @param modelId
+     * @param done
+     * @param error
+     */
+    getIssues(projectId, modelId, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/issues.json";
+        console.log("Loading model issues: " + url);
+        utils.loadJSON(url, done, error);
+    }
 }
 
 export {Server};
