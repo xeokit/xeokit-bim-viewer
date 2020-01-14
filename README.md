@@ -100,7 +100,7 @@ Shown below is a portion of the ````./data```` directory, showing the directory 
                   └── metadata.json
 ````
 
-The ````index.json```` for ````./data```` looks like this:
+The ````index.json```` for ````./data```` shown below. The ````id```` of each project matches the name of that project's subdirectory. 
 
 ````json
 {
@@ -118,7 +118,7 @@ The ````index.json```` for ````./data```` looks like this:
 }
 ```` 
 
-The ````index.json```` for the "WestRiversideHospital" project looks like this:
+The ````index.json```` for the "WestRiversideHospital" project is shown below. The ````id```` of each model matches the name of that model's subdirectory. The ````name```` is the string that is displayed for the model in the viewers Models tab.
 
 ````json
 {
@@ -150,6 +150,12 @@ The ````index.json```` for the "WestRiversideHospital" project looks like this:
 }
 ````
 
+To add your own project, you therefore need to 
+
+ * Create a new project directory within ````./data````,
+ * create a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
+ * create a ````index.json```` manifest of the models within the project directory, which lists the models, and
+ * add your project to the ````index.json```` at the root of ````./data````.    
 
 ### Customizing CSS
 
