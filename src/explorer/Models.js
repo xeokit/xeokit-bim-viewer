@@ -161,6 +161,14 @@ class Models extends Controller {
         return this._numModelsLoaded;
     }
 
+    getModelsInfo() {
+        return this._modelsInfo;
+    }
+
+    getModelInfo(modelId) {
+        return this._modelsInfo[modelId];
+    }
+
     setEnabled(enabled) {
         if (!enabled) {
             this._modelsTabButtonElement.classList.add("disabled");
