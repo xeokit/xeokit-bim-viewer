@@ -1,0 +1,18 @@
+{
+  "id": "ManyModels",
+  "name": "Many Models",
+  "models": [
+    {
+      "id": "Schependomlaan",
+      "name": "Schependomlaan",
+      "position": [-100,0,0],
+      "default": true
+    },
+    {
+      "id": "OTCConferenceCenter",
+      "name": "OTC Conference Center",
+      "position": [100,0,0],
+      "default": false
+    }
+  ]
+}

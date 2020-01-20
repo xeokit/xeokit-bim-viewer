@@ -6,15 +6,18 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 
 ## Contents
 
-  * [Contents](#contents)
-  * [Features](#features)
-  * [Demos](#demos)
-  * [Roadmap](#roadmap)
-  * [License](#license)
-  * [Usage](#usage)
+- [Contents](#contents)
+- [Features](#features)
+- [Demos](#demos)
+- [Roadmap](#roadmap)
+- [License](#license)
+- [Usage](#usage)
+  * [Model Database](#model-database)
     + [Adding your own models](#adding-your-own-models)
-    + [Customizing appearance](#customizing-appearance)
-  * [Building](#building)
+    + [Loading models from a custom source](#loading-models-from-a-custom-source)
+  * [Customizing CSS](#customizing-css)
+  * [Tooltips](#tooltips)
+- [Building](#building)
   
 ## Features
 
@@ -57,9 +60,9 @@ xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero
 
 ## Usage
 
-### Adding your own models
+### Model Database
 
-The standalone viewer loads models from the file system. These are contained within the [./data](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
+The viewer loads models from the file system by default. These are contained within the [./data](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
 
 Each model consists of an ````.XKT```` binary geometry file and a JSON metadata file which classifies its IFC elements. 
 
@@ -117,11 +120,17 @@ The ````index.json```` at the root of ````./data```` shown below. The ````id````
   "projects": [
     {
       "id": "Duplex",
-      "name": "Duplex"
+      "name": "Duplex",
+      "position": [-20, 0.0, -10.0],
+      "scale": [1.0, 1.0, 1.0],
+      "rotation": [0.0, 0.0, 0.0]
     },
     {
       "id": "WestRiversideHospital",
-      "name": "West Riverside Hospital"
+      "name": "West Riverside Hospital",
+      "position": [20, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "rotation": [0.0, 0.0, 0.0]
     },
     //...
   ]
@@ -160,12 +169,23 @@ The ````index.json```` for the "WestRiversideHospital" project is shown below. T
 }
 ````
 
-To add your own project, you therefore need to: 
+#### Adding your own models
+
+To add your own project to the database, you need to: 
 
  * add a new project directory within ````./data````,
  * add a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
  * add a ````index.json```` manifest of the models within the project directory, which lists the models, and
  * list your project in the ````index.json```` at the root of ````./data````.    
+
+#### Loading models from a custom source
+
+To load models from a different source than the file system, configure
+
+````javascript
+
+
+````
 
 ### Customizing CSS
 

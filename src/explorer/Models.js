@@ -88,7 +88,11 @@ class Models extends Controller {
                             metaModelData: json,
                             xkt: arraybuffer,
                             excludeUnclassifiedObjects: true,
-                            edges: true
+                            edges: true,
+                            position: modelInfo.position,
+                            scale: modelInfo.scale,
+                            rotation: modelInfo.rotation,
+                            matrix: modelInfo.matrix
                         });
                         model.on("loaded", () => {
                             const scene = this.viewer.scene;
