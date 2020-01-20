@@ -55635,7 +55635,7 @@ const ObjectContextMenuItems = [
         {
             title: "X-ray all",
             callback: function (context) {
-                context.viewer.scene.setObjectsXRayed(context.viewer.scene.objectIds, false);
+                context.viewer.scene.setObjectsXRayed(context.viewer.scene.objectIds, true);
             }
         },
         {
