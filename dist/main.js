@@ -470,7 +470,6 @@ class Server {
      */
     getProjects(done, error) {
         const url = this._dataDir + "/projects/index.json";
-        console.log("Loading database manifest: " + url);
         utils.loadJSON(url, done, error);
     }
 
@@ -482,7 +481,6 @@ class Server {
      */
     getProject(projectId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/index.json";
-        console.log("Loading project manifest: " + url);
         utils.loadJSON(url, done, error);
     }
 
@@ -495,7 +493,6 @@ class Server {
      */
     getMetadata(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/metadata.json";
-        console.log("Loading model metadata: " + url);
         utils.loadJSON(url, done, error);
     }
 
@@ -508,7 +505,6 @@ class Server {
      */
     getGeometry(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/geometry.xkt";
-        console.log("Loading model geometry: " + url);
         utils.loadArraybuffer(url, done, error);
     }
 
@@ -521,7 +517,6 @@ class Server {
      */
     getIssues(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/issues.json";
-        console.log("Loading model issues: " + url);
         utils.loadJSON(url, done, error);
     }
 }
@@ -49631,6 +49626,14 @@ class Models extends Controller {
         return this._numModelsLoaded;
     }
 
+    getModelsInfo() {
+        return this._modelsInfo;
+    }
+
+    getModelInfo(modelId) {
+        return this._modelsInfo[modelId];
+    }
+
     setEnabled(enabled) {
         if (!enabled) {
             this._modelsTabButtonElement.classList.add("disabled");
@@ -49657,7 +49660,7 @@ class ModelTreeView {
     /**
      * @private
      */
-    constructor(viewer, treeViewPlugin, contextMenu, model, metaModel, cfg) {
+    constructor(viewer, treeViewPlugin, model, metaModel, cfg) {
 
         if (!cfg.containerElement) {
             throw "Config expected: containerElement";
@@ -49679,6 +49682,7 @@ class ModelTreeView {
         this._muteTreeEvents = false;
         this._rootNodes = [];
         this._objectNodes = {};
+        this._rootName = cfg.rootName;
 
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -49791,7 +49795,7 @@ class ModelTreeView {
             this._muteSceneEvents = false;
         };
 
-        this._hierarchy = cfg.hierarchy || "structure";
+        this._hierarchy = cfg.hierarchy || "containment";
         this._autoExpandDepth = cfg.autoExpandDepth || 0;
 
         this._createNodes();
@@ -49831,9 +49835,9 @@ class ModelTreeView {
             case "types":
                 this._createTypesNodes();
                 break;
-            case "structure":
+            case "containment":
             default:
-                this._createStructureNodes();
+                this._createContainmentNodes();
         }
         this._synchNodesToEntities();
         this._createTrees();
@@ -49851,7 +49855,7 @@ class ModelTreeView {
             projectNode = {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
-                title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                title: this._rootName || ((metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType),
                 parent: null,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -49962,12 +49966,12 @@ class ModelTreeView {
         }
     }
 
-    _createStructureNodes(metaObject = this._rootMetaObject, parent) {
-        const metaObjectName = metaObject.name;
+    _createContainmentNodes(metaObject = this._rootMetaObject, parent) {
+        const metaObjectName = metaObject.name || metaObject.type;
         const node = {
             nodeId: this._objectToNodeID(metaObject.id),
             objectId: metaObject.id,
-            title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
+            title: (!parent) ? (this._rootName || metaObjectName) : (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
             parent: parent,
             numEntities: 0,
             numVisibleEntities: 0,
@@ -49984,7 +49988,7 @@ class ModelTreeView {
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 const childMetaObject = children[i];
-                this._createStructureNodes(childMetaObject, node);
+                this._createContainmentNodes(childMetaObject, node);
             }
         }
     }
@@ -50309,6 +50313,17 @@ class ModelTreeView {
  * });
  * ````
  *
+ * Adding models manually also allows us to set some options for the model. For example, the ````rootName```` option allows us to provide a custom name for
+ * the root node, which is sometimes desirable when the model's "IfcProject" element's name is not suitable:
+ *
+ * ````javascript
+ * model.on("loaded", () => {
+ *      treeView.addModel(model.id, {
+ *          rootName: "Schependomlaan Model"
+ *      });
+ * });
+ * ````
+ *
  * ## Initially Expanding the Hierarchy
  *
  * We can also configure TreeViewPlugin to initially expand each model's nodes to a given depth.
@@ -50552,8 +50567,10 @@ class TreeViewPlugin extends Plugin {
      * provide a ````autoAddModels: true```` to the TreeViewPlugin constructor.
      *
      * @param {String} modelId ID of a model {@link Entity} in {@link Scene#models}.
+     * @param {Object} [options] Options for model in the tree view.
+     * @param {String} [options.rootName] Optional display name for the root node. Ordinary, for "containment" and "storeys" hierarchy types, the tree would derive the root node name from the model's "IfcProject" element name. This option allows to override that name when it is not suitable as a display name.
      */
-    addModel(modelId) {
+    addModel(modelId, options={}) {
         if (!this._containerElement) {
             return;
         }
@@ -50570,10 +50587,11 @@ class TreeViewPlugin extends Plugin {
             this.warn("Model already added: " + modelId);
             return;
         }
-        this._modelTreeViews[modelId] = new ModelTreeView(this.viewer, this, this._contextMenu, model, metaModel, {
+        this._modelTreeViews[modelId] = new ModelTreeView(this.viewer, this, model, metaModel, {
             containerElement: this._containerElement,
             autoExpandDepth: this._autoExpandDepth,
-            hierarchy: this._hierarchy
+            hierarchy: this._hierarchy,
+            rootName: options.rootName
         });
         model.on("destroyed", () => {
             this.removeModel(model.id);
@@ -50679,7 +50697,6 @@ class TreeViewPlugin extends Plugin {
             }
         }
         this._modelTreeViews = {};
-        //this._contextMenu.destroy();
         super.destroy();
     }
 }
@@ -51258,7 +51275,13 @@ class Objects extends Controller {
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
-                this._treeView.addModel(modelId);
+                const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+                if (!modelInfo) {
+                    return;
+                }
+                this._treeView.addModel(modelId, {
+                    rootName: modelInfo.name
+                });
             }
         });
 
