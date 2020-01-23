@@ -7,17 +7,18 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 ## Contents
 
 - [Contents](#contents)
-- [Features](#features)
-- [Demos](#demos)
-- [Roadmap](#roadmap)
-- [License](#license)
-- [Usage](#usage)
-  * [Model Database](#model-database)
-    + [Adding your own models](#adding-your-own-models)
-    + [Loading models from a custom source](#loading-models-from-a-custom-source)
-  * [Customizing CSS](#customizing-css)
-  * [Tooltips](#tooltips)
-- [Building](#building)
+ * [Features](#features)
+  * [Demos](#demos)
+  * [Roadmap](#roadmap)
+  * [License](#license)
+  * [Usage](#usage)
+    + [Model Database](#model-database)
+      - [Adding your own models](#adding-your-own-models)
+      - [Loading models from a custom source](#loading-models-from-a-custom-source)
+    + [Customizing CSS](#customizing-css)
+    + [Tooltips](#tooltips)
+    + [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
+  * [Building](#building)
   
 ## Features
 
@@ -203,6 +204,33 @@ For example, the *Toggle 2D/3D* button's element looks like this:
 
 In the [index.html](https://github.com/xeokit/xeokit-viewer/blob/master/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
 
+### Customizing Appearances of IFC Types
+
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
+
+You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
+
+For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
+
+````javascript
+const IFCObjectDefaults = {
+    IfcSpace: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.5
+    }
+};
+
+export {IFCObjectDefaults};
+```` 
+ 
+Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
+ 
 ## Building 
 
 Initialize:
