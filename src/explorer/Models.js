@@ -1,6 +1,7 @@
 import {Controller} from "../Controller.js";
 import {XKTLoaderPlugin} from "@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {IFCObjectDefaults} from "../IFCObjectDefaults/IFCObjectDefaults.js";
 
 const tempVec3 = math.vec3();
 
@@ -31,7 +32,9 @@ class Models extends Controller {
             throw "Missing DOM element: ,xeokit-tab-btn";
         }
 
-        this._xktLoader = new XKTLoaderPlugin(this.viewer);
+        this._xktLoader = new XKTLoaderPlugin(this.viewer, {
+            objectDefaults: IFCObjectDefaults
+        });
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._projectId = null;
