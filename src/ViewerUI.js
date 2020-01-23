@@ -21,7 +21,6 @@ import {ThreeDMode} from "./toolbar/ThreeDMode.js";
 import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
 import {ObjectContextMenuItems} from "./contextMenuItems/ObjectContextMenuItems.js";
 import {CanvasContextMenuItems} from "./contextMenuItems/CanvasContextMenuItems.js";
-import {ViewerCameraControl} from "./interaction/ViewerCameraControl.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
@@ -404,9 +403,7 @@ class ViewerUI extends Controller {
             space: "world"
         });
 
-        // HACK: Custom camera control with middle button drag, until xeokit CameraControl allows customization
-        this.viewer.cameraControl.active = false;
-        this.cameraControl = new ViewerCameraControl(scene);
+        this.viewer.cameraControl.panRightClick = false; // Pan on left-click
     }
 
     _initCanvasContextMenus() {
