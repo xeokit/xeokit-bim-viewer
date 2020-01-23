@@ -25,7 +25,8 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 * Uses [xeokit SDK](https://xeokit.io) for super fast loading and rendering of large models.
 * Works in all major browsers, including mobile.
 * Loads BIM geometry and metadata from the file system.
-* Loads multiple models.
+* Loads multiple models, at arbitrary position, scale and rotation.
+* Configure custom appearances for IFC types.
 * Supports IFC2x3 and IFC4.
 * 3D and 2D viewing modes.
 * Tree view with three hierarchy modes: containment, IFC type and storeys.
@@ -42,6 +43,7 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 | [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/index.html?project=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
 | [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
+| [Duplex and Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=ManyModels)| [Duplex](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274), [Conference Center](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
 
 ## Roadmap
 
