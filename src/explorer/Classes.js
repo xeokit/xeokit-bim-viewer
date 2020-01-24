@@ -57,7 +57,13 @@ class Classes extends Controller {
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             if (this.viewer.metaScene.metaModels[modelId]) {
-                this._treeView.addModel(modelId);
+                const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+                if (!modelInfo) {
+                    return;
+                }
+                this._treeView.addModel(modelId, {
+                    rootName: modelInfo.name
+                });
             }
         });
 
