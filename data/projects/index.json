@@ -15,6 +15,14 @@
     {
       "id": "OTCConferenceCenter",
       "name": "OTC Conference Center"
+    },
+    {
+      "id": "ManyModels",
+      "name": "Duplex and Conference Center"
+    },
+    {
+      "id": "Systhema",
+      "name": "Systhema Test Model"
     }
   ]
 }
