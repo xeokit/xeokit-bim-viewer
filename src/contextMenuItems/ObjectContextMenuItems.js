@@ -1,3 +1,5 @@
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
 /**
  * ContextMenu items for when user right-clicks on an object.
  */
@@ -17,16 +19,20 @@ const ObjectContextMenuItems = [
                         scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                     }, 500);
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
             }
         },
         {
             title: "View fit all",
             callback: function (context) {
-                const scene = context.viewer.scene;
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB(),
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
                     duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         },
         {

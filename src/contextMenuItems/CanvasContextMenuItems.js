@@ -1,3 +1,5 @@
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
 /**
  * ContextMenu items for when user right-clicks on empty canvas space.
  */
@@ -21,9 +23,14 @@ const CanvasContextMenuItems = [
         {
             title: "View fit all",
             callback: function (context) {
-                context.viewer.cameraFlight.flyTo({
-                    aabb: context.viewer.scene.getAABB()
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
+                    duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         }
     ],

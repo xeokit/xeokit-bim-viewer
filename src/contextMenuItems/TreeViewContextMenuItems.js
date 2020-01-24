@@ -1,3 +1,5 @@
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
 /**
  * ContextMenu items for when user right-clicks on a TreeViewPlugin node.
  */
@@ -6,7 +8,8 @@ const TreeViewContextMenuItems = [
         {
             title: "View fit",
             callback: function (context) {
-                const scene = context.viewer.scene;
+                const viewer = context.viewer;
+                const scene = viewer.scene;
                 const objectIds = [];
                 context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                     if (treeViewNode.objectId) {
@@ -15,24 +18,29 @@ const TreeViewContextMenuItems = [
                 });
                 scene.setObjectsVisible(objectIds, true);
                 scene.setObjectsHighlighted(objectIds, true);
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB(objectIds),
+                const aabb = scene.getAABB(objectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: aabb,
                     duration: 0.5
                 }, () => {
                     setTimeout(function () {
                         scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                     }, 500);
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
             }
         },
         {
             title: "View fit all",
             callback: function (context) {
-                const scene = context.viewer.scene;
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB({}),
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
                     duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         }
     ],
