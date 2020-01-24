@@ -42,6 +42,6 @@
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "^0.6.8"
+    "@xeokit/xeokit-sdk": "^0.6.9"
   }
 }
