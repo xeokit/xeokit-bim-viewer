@@ -509,6 +509,19 @@ class Server {
     }
 
     /**
+     * Gets properties for an object within a model within a project.
+     * @param projectId
+     * @param modelId
+     * @param objectId
+     * @param done
+     * @param error
+     */
+    getProperties(projectId, modelId, objectId, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/objects/" + objectId + "/properties.json";
+        utils.loadJSON(url, done, error);
+    }
+
+    /**
      * Gets issues for a model within a project.
      * @param projectId
      * @param modelId
@@ -29989,8 +30002,6 @@ class Scene extends Component {
      *
      * Each {@link Entity} is only included in the AABB when {@link Entity#collidable} is ````true````.
      *
-     * Returns the AABB of all {@link Entity}s in {@link Scene#objects} by default, or TODO
-     *
      * @param {String[]} ids Array of {@link Entity#id} values.
      * @returns {[Number, Number, Number, Number, Number, Number]} An axis-aligned World-space bounding box, given as elements ````[xmin, ymin, zmin, xmax, ymax, zmax]````.
      */
@@ -50787,7 +50798,8 @@ const TreeViewContextMenuItems = [
         {
             title: "View fit",
             callback: function (context) {
-                const scene = context.viewer.scene;
+                const viewer = context.viewer;
+                const scene = viewer.scene;
                 const objectIds = [];
                 context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                     if (treeViewNode.objectId) {
@@ -50796,24 +50808,29 @@ const TreeViewContextMenuItems = [
                 });
                 scene.setObjectsVisible(objectIds, true);
                 scene.setObjectsHighlighted(objectIds, true);
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB(objectIds),
+                const aabb = scene.getAABB(objectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: aabb,
                     duration: 0.5
                 }, () => {
                     setTimeout(function () {
                         scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                     }, 500);
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
             }
         },
         {
             title: "View fit all",
             callback: function (context) {
-                const scene = context.viewer.scene;
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB({}),
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
                     duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         }
     ],
@@ -52277,6 +52294,7 @@ class CameraControl extends Component {
 
             this.setPivotPos = function (worldPos) {
                 pivotPoint.set(worldPos);
+                pivoting = true;
             };
 
             this.getPivotPos = function () {
@@ -53162,7 +53180,7 @@ class CameraControl extends Component {
                             }
                             break;
                         case 3: // Right button
-                             mouseDownRight = true;
+                            mouseDownRight = true;
                             if (self._panRightClick) {
                                 self.scene.canvas.canvas.style.cursor = "move";
                                 down = true;
@@ -53319,6 +53337,9 @@ class CameraControl extends Component {
                         const wkey = input.keyDown[input.KEY_ADD];
                         const skey = input.keyDown[input.KEY_SUBTRACT];
                         if (wkey || skey) {
+                            if (self._pivoting) {
+                                self._pivoter.startPivot();
+                            }
                             if (skey) {
                                 vZoom = elapsed * getZoomRate() * keyboardZoomRate;
                             } else if (wkey) {
@@ -53360,6 +53381,9 @@ class CameraControl extends Component {
                             down = input.keyDown[input.KEY_X];
                         }
                         if (front || back || left || right || up || down) {
+                            if (self._pivoting) {
+                                self._pivoter.startPivot();
+                            }
                             if (down) {
                                 panVy += elapsed * keyboardPanRate;
                             } else if (up) {
@@ -53513,6 +53537,9 @@ class CameraControl extends Component {
                     const up = input.keyDown[input.KEY_UP_ARROW];
                     const down = input.keyDown[input.KEY_DOWN_ARROW];
                     if (left || right || up || down) {
+                        if (self._pivoting) {
+                            self._pivoter.startPivot();
+                        }
                         if (right) {
                             rotateVy += -elapsed * keyboardOrbitRate;
 
@@ -55643,16 +55670,20 @@ const ObjectContextMenuItems = [
                         scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                     }, 500);
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
             }
         },
         {
             title: "View fit all",
             callback: function (context) {
-                const scene = context.viewer.scene;
-                context.viewer.cameraFlight.flyTo({
-                    aabb: scene.getAABB(),
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
                     duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         },
         {
@@ -55796,9 +55827,14 @@ const CanvasContextMenuItems = [
         {
             title: "View fit all",
             callback: function (context) {
-                context.viewer.cameraFlight.flyTo({
-                    aabb: context.viewer.scene.getAABB()
+                const viewer = context.viewer;
+                const scene = viewer.scene;
+                const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                viewer.cameraFlight.flyTo({
+                    aabb: sceneAABB,
+                    duration: 0.5
                 });
+                viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
             }
         }
     ],
