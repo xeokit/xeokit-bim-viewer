@@ -1,0 +1,11 @@
+{
+  "id": "Systhema",
+  "name": "Systhema",
+  "models": [
+    {
+      "id": "model1",
+      "name": "Test Model",
+      "default": true
+    }
+  ]
+}
