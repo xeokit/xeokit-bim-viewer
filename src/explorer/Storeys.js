@@ -39,7 +39,6 @@ class Storeys extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: storeysElement,
             autoAddModels: false,
-            autoExpandDepth: 1, // Initially expand tree one level deep
             hierarchy: "storeys"
         });
 
