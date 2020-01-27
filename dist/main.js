@@ -464,7 +464,8 @@ class Server {
     }
 
     /**
-     * Gets the manifest of all projects.
+     * Gets in formation on all avaialable projects.
+     *
      * @param done
      * @param error
      */
@@ -474,7 +475,8 @@ class Server {
     }
 
     /**
-     * Gets a manifest for a project.
+     * Gets information for a project.
+     *
      * @param projectId
      * @param done
      * @param error
@@ -486,6 +488,7 @@ class Server {
 
     /**
      * Gets metadata for a model within a project.
+     *
      * @param projectId
      * @param modelId
      * @param done
@@ -498,6 +501,7 @@ class Server {
 
     /**
      * Gets geometry for a model within a project.
+     *
      * @param projectId
      * @param modelId
      * @param done
@@ -510,6 +514,7 @@ class Server {
 
     /**
      * Gets properties for an object within a model within a project.
+     *
      * @param projectId
      * @param modelId
      * @param objectId
@@ -518,11 +523,13 @@ class Server {
      */
     getProperties(projectId, modelId, objectId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/objects/" + objectId + "/properties.json";
+        console.log(url);
         utils.loadJSON(url, done, error);
     }
 
     /**
      * Gets issues for a model within a project.
+     *
      * @param projectId
      * @param modelId
      * @param done
@@ -578,17 +585,15 @@ class Map {
     }
 }
 
-/**
- * @desc Base class for all xeokit-ui components.
- */
+/** @private */
 class Controller {
 
     /**
-     * @private
+     * @protected
      */
     constructor(parent, cfg, server, viewer) {
 
-        this.viewerUI = (parent ? (parent.viewerUI || parent) : this);
+        this.bimViewer = (parent ? (parent.bimViewer || parent) : this);
         this.server = parent ? parent.server : server;
         this.viewer = parent ? parent.viewer : viewer;
 
@@ -610,6 +615,8 @@ class Controller {
 
     /**
      * Fires an event on this Controller.
+     *
+     * @protected
      *
      * @param {String} event The event type name
      * @param {Object} value The event parameters
@@ -731,15 +738,13 @@ class Controller {
      *
      * The console message will have this format: *````[LOG] [<component type> <component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     log(message) {
-        message = "[LOG]" + this._message(message);
+        message = "[LOG] " + message;
         window.console.log(message);
-    }
-
-    _message(message) {
-        return " [" + utils.inQuotes(this.id) + "]: " + message;
     }
 
     /**
@@ -747,10 +752,12 @@ class Controller {
      *
      * The console message will have this format: *````[WARN] [<component type> =<component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     warn(message) {
-        message = "[WARN]" + this._message(message);
+        message = "[WARN] " + message;
         window.console.warn(message);
     }
 
@@ -759,10 +766,12 @@ class Controller {
      *
      * The console message will have this format: *````[ERROR] [<component type> =<component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     error(message) {
-        message = "[ERROR]" + this._message(message);
+        message = "[ERROR] " + message;
         window.console.error(message);
     }
 
@@ -792,6 +801,9 @@ class Controller {
      *
      * Fires an "enabled" event on update.
      *
+     * @protected
+     *
+     *
      * @param {boolean} enabled Whether or not to enable.
      */
     setEnabled(enabled) {
@@ -804,6 +816,9 @@ class Controller {
 
     /**
      * Gets whether or not this Controller is enabled.
+     *
+     * @protected
+     *
      * @returns {boolean}
      */
     getEnabled() {
@@ -814,6 +829,8 @@ class Controller {
      * Activates or deactivates this Controller.
      *
      * Fires an "active" event on update.
+     *
+     * @protected
      *
      * @param {boolean} active Whether or not to activate.
      */
@@ -827,6 +844,9 @@ class Controller {
 
     /**
      * Gets whether or not this Controller is active.
+     *
+     * @protected
+     *
      * @returns {boolean}
      */
     getActive() {
@@ -835,6 +855,9 @@ class Controller {
 
     /**
      * Destroys this Controller.
+     *
+     * @protected
+     *
      */
     destroy() {
         if (this.destroyed) {
@@ -857,6 +880,7 @@ class Controller {
     }
 }
 
+/** @private */
 class BusyModal extends Controller {
 
     constructor(parent, cfg = {}) {
@@ -6066,6 +6090,9 @@ class ModelMemento {
 
         /** @private */
         this.objectsColorize = [];
+        
+        /** @private */
+        this.objectsColorizing = [];
 
         /** @private */
         this.objectsOpacity = [];
@@ -6150,9 +6177,13 @@ class ModelMemento {
             }
             if (colorize) {
                 const objectColor = object.colorize;
-                this.objectsColorize[i * 3 + 0] = objectColor[0];
-                this.objectsColorize[i * 3 + 1] = objectColor[1];
-                this.objectsColorize[i * 3 + 2] = objectColor[2];
+                const colorizing = (!!objectColor);
+                this.objectsColorizing[i] = colorizing;
+                if (colorizing) {
+                    this.objectsColorize[i * 3 + 0] = objectColor[0];
+                    this.objectsColorize[i * 3 + 1] = objectColor[1];
+                    this.objectsColorize[i * 3 + 2] = objectColor[2];
+                }
             }
             if (opacity) {
                 this.objectsOpacity[i] = object.opacity;
@@ -6220,10 +6251,13 @@ class ModelMemento {
                 object.pickable = this.objectsPickable[i];
             }
             if (colorize) {
-                color[0] = this.objectsColorize[i * 3 + 0];
-                color[1] = this.objectsColorize[i * 3 + 1];
-                color[2] = this.objectsColorize[i * 3 + 2];
-                object.colorize = color;
+                const colorizing = this.objectsColorizing[i];
+                if (colorizing) {
+                    color[0] = this.objectsColorize[i * 3 + 0];
+                    color[1] = this.objectsColorize[i * 3 + 1];
+                    color[2] = this.objectsColorize[i * 3 + 2];
+                    object.colorize = color;
+                }
             }
             if (opacity) {
                 object.opacity = this.objectsOpacity[i];
@@ -6234,6 +6268,7 @@ class ModelMemento {
 
 const tempVec3a = math.vec3();
 
+/** @private */
 class ResetAction extends Controller {
 
     constructor(parent, cfg = {}) {
@@ -6255,11 +6290,11 @@ class ResetAction extends Controller {
         camera.look = [0,0,0];
         camera.up = [-1, 1, -1];
 
-        this.viewerUI.models.on("modelLoaded", (modelId) => {
+        this.bimViewer._modelsExplorer.on("modelLoaded", (modelId) => {
             this._saveModelMemento(modelId);
         });
 
-        this.viewerUI.models.on("modelUnloaded", (modelId) => {
+        this.bimViewer._modelsExplorer.on("modelUnloaded", (modelId) => {
             this._destroyModelMemento(modelId);
         });
 
@@ -6347,6 +6382,7 @@ class ResetAction extends Controller {
 
 const tempVec3 = math.vec3();
 
+/** @private */
 class FitAction extends Controller {
 
     constructor(parent, cfg={}) {
@@ -6409,6 +6445,7 @@ class FitAction extends Controller {
     }
 }
 
+/** @private */
 class FirstPersonMode extends Controller {
 
     constructor(parent, cfg) {
@@ -6464,7 +6501,7 @@ class FirstPersonMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
     }
@@ -6475,7 +6512,8 @@ function closeEnough(p, q) {
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-class HideMode extends Controller {
+/** @private */
+class HideTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -6512,7 +6550,7 @@ class HideMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.setActive(false);
         });
 
@@ -6568,7 +6606,8 @@ function closeEnough$1(p, q) {
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-class SelectMode extends Controller {
+/** @private */
+class SelectionTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -6605,7 +6644,7 @@ class SelectMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.setActive(false);
         });
 
@@ -6665,7 +6704,8 @@ function closeEnough$2(p, q) {
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-class QueryMode extends Controller {
+/** @private */
+class QueryTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -6702,7 +6742,7 @@ class QueryMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
 
@@ -31095,7 +31135,8 @@ class SectionPlanesPlugin extends Plugin {
     }
 }
 
-class SectionMode extends Controller {
+/** @private */
+class SectionTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -31148,7 +31189,7 @@ class SectionMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.clear();
             this.setActive(false);
         });
@@ -32829,6 +32870,7 @@ class NavCubePlugin extends Plugin {
     }
 }
 
+/** @private */
 class NavCubeMode extends Controller {
 
     constructor(parent, cfg) {
@@ -49514,9 +49556,40 @@ class XKTLoaderPlugin extends Plugin {
     }
 }
 
+/**
+ * @desc Default initial properties for {@link Entity}s loaded from models accompanied by metadata.
+ *
+ * When loading a model, a loader plugins such as {@link GLTFLoaderPlugin} and {@link BIMServerLoaderPlugin} create
+ * a tree of {@link Entity}s that represent the model. These loaders can optionally load metadata, to create
+ * a {@link MetaModel} corresponding to the root {@link Entity}, with a {@link MetaObject} corresponding to each
+ * object {@link Entity} within the tree.
+ *
+ * @private
+ * @type {{String:Object}}
+ */
+const IFCObjectDefaults$1 = {
+    IfcSpace: { // IfcSpace elements should be visible and pickable
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { // Some IFC models have opaque IfcWindow elements(!)
+        pickable: true,
+        opacity: 0.5
+    },
+    IfcOpeningElement: { // These tend to obscure windows
+        visible: false
+    },
+    IfcPlate: { // These tend to be windows(!)
+        colorize: [0.8470588235, 0.427450980392, 0, 0.5],
+        opacity: 0.5
+    }
+};
+
 const tempVec3$3 = math.vec3();
 
-class Models extends Controller {
+/** @private */
+class ModelsExplorer extends Controller {
 
     constructor(parent, cfg) {
 
@@ -49544,15 +49617,16 @@ class Models extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            // objectDefaults: IFCObjectDefaults
+            objectDefaults: IFCObjectDefaults$1
         });
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._projectId = null;
     }
 
-    _loadProject(projectId) {
+    loadProject(projectId, done, error) {
         this.server.getProject(projectId, (projectInfo) => {
+            this.unloadProject();
             this._projectId = projectId;
             var html = "";
             const modelsInfo = projectInfo.models || [];
@@ -49571,27 +49645,68 @@ class Models extends Controller {
                 const checkBox = document.getElementById("" + modelId);
                 checkBox.addEventListener("click", () => {
                     if (checkBox.checked) {
-                        this._loadModel(modelId);
+                        this.loadModel(modelId);
                     } else {
-                        this._unloadModel(modelInfo.id);
+                        this.unloadModel(modelInfo.id);
                     }
                 });
                 if (modelInfo.default) {
                     checkBox.checked = true;
-                    this._loadModel(modelId);
+                    this.loadModel(modelId, done, error); // TODO: buffer and load at end
+                } else {
+                    if (done) {
+                        done();
+                    }
                 }
             }
         }, (errMsg) => {
             this.error(errMsg);
+            if (error) {
+                error(errMsg);
+            }
         });
     }
 
-    _loadModel(modelId) {
-        const modelInfo = this._modelsInfo[modelId];
-        if (!modelInfo) {
+    unloadProject() {
+        if (!this._projectId) {
             return;
         }
-        this.viewerUI.busyModal.show("Loading " + modelInfo.name);
+        const models = this.viewer.scene.models;
+        for (var modelId in models) {
+            if (models.hasOwnProperty(modelId)) {
+                const model = models[modelId];
+                model.destroy();
+            }
+        }
+        this._modelsElement.innerHTML = "";
+        this._numModelsLoaded = 0;
+        this._unloadModelsButtonElement.classList.add("disabled");
+        const lastProjectId = this._projectId;
+        this._projectId = null;
+        this.fire("projectUnloaded", {
+            projectId: lastProjectId
+        });
+    }
+
+    getLoadedProjectId() {
+        return this._projectId;
+    }
+
+    loadModel(modelId, done, error) {
+        if (!this._projectId) {
+            if (error) {
+                error("No project currently loaded");
+            }
+            return;
+        }
+        const modelInfo = this._modelsInfo[modelId];
+        if (!modelInfo) {
+            if (error) {
+                error("Model not in currently loaded project");
+            }
+            return;
+        }
+        this.bimViewer._busyModal.show("Loading " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -49618,30 +49733,36 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
                                 this.fire("modelLoaded", modelId);
-                                this.viewerUI.busyModal.hide();
+                                this.bimViewer._busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
                                     this.fire("modelLoaded", modelId);
-                                    this.viewerUI.busyModal.hide();
+                                    this.bimViewer._busyModal.hide();
+                                    if (done) {
+                                        done();
+                                    }
                                 });
                             }
                         });
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        this.viewerUI.busyModal.hide();
+                        this.bimViewer._busyModal.hide();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                this.viewerUI.busyModal.hide();
+                this.bimViewer._busyModal.hide();
             });
     }
 
-    _unloadModel(modelId) {
+    unloadModel(modelId) {
         const model = this.viewer.scene.models[modelId];
         if (!model) {
             this.error("Model not loaded: " + modelId);
@@ -49665,17 +49786,21 @@ class Models extends Controller {
         });
     }
 
-    _unloadModels() {
+    unloadAllModels() {
         const models = this.viewer.scene.models;
         const modelIds = Object.keys(models);
         for (var i = 0, len = modelIds.length; i < len; i++) {
             const modelId = modelIds[i];
-            this._unloadModel(modelId);
+            this.unloadModel(modelId);
         }
     }
 
     getNumModelsLoaded() {
         return this._numModelsLoaded;
+    }
+
+    _getLoadedModelIds() {
+        return Object.keys(this.viewer.scene.models);
     }
 
     getModelsInfo() {
@@ -50786,6 +50911,7 @@ class TreeViewPlugin extends Plugin {
 
 /**
  * ContextMenu items for when user right-clicks on a TreeViewPlugin node.
+ * @private
  */
 const TreeViewContextMenuItems = [
     [
@@ -51310,7 +51436,8 @@ class ContextMenu {
     }
 }
 
-class Objects extends Controller {
+/** @private */
+class ObjectsExplorer extends Controller {
 
     constructor(parent, cfg = {}) {
 
@@ -51364,7 +51491,7 @@ class Objects extends Controller {
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
-                const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+                const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
                 if (!modelInfo) {
                     return;
                 }
@@ -51380,7 +51507,7 @@ class Objects extends Controller {
             }
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this._treeView.collapse();
         });
     }
@@ -51411,7 +51538,8 @@ class Objects extends Controller {
     }
 }
 
-class Classes extends Controller {
+/** @private */
+class ClassesExplorer extends Controller {
 
     constructor(parent, cfg = {}) {
 
@@ -51465,7 +51593,7 @@ class Classes extends Controller {
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             if (this.viewer.metaScene.metaModels[modelId]) {
-                const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+                const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
                 if (!modelInfo) {
                     return;
                 }
@@ -51481,7 +51609,7 @@ class Classes extends Controller {
             }
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this._treeView.collapse();
         });
     }
@@ -51495,6 +51623,107 @@ class Classes extends Controller {
             this._classesTabButtonElement.classList.remove("disabled");
             this._showAllClassesButtonElement.classList.remove("disabled");
             this._hideAllClassesButtonElement.classList.remove("disabled");
+        }
+    }
+
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
+    destroy() {
+        super.destroy();
+        this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
+    }
+}
+
+/** @private */
+class StoreysExplorer extends Controller {
+
+    constructor(parent, cfg = {}) {
+
+        super(parent);
+
+        if (!cfg.storeysTabElement) {
+            throw "Missing config: storeysTabElement";
+        }
+
+        if (!cfg.showAllStoreysButtonElement) {
+            throw "Missing config: showAllStoreysButtonElement";
+        }
+
+        if (!cfg.hideAllStoreysButtonElement) {
+            throw "Missing config: hideAllStoreysButtonElement";
+        }
+
+        if (!cfg.storeysElement) {
+            throw "Missing config: storeysElement";
+        }
+
+        this._storeysTabElement = cfg.storeysTabElement;
+        this._showAllStoreysButtonElement = cfg.showAllStoreysButtonElement;
+        this._hideAllStoreysButtonElement = cfg.hideAllStoreysButtonElement;
+        this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._storeysTabButtonElement) {
+            throw "Missing DOM element: .xeokit-tab-btn";
+        }
+
+        const storeysElement = cfg.storeysElement;
+
+        this._treeView = new TreeViewPlugin(this.viewer, {
+            containerElement: storeysElement,
+            autoAddModels: false,
+            hierarchy: "storeys"
+        });
+
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on("contextmenu", (e) => {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+            const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
+            if (!modelInfo) {
+                return;
+            }
+            this._treeView.addModel(modelId, {
+                rootName: modelInfo.name
+            });
+        });
+
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
+            }
+        });
+
+        this.bimViewer.on("reset", () => {
+            this._treeView.collapse();
+            this._treeView.expandToDepth(1);
+        });
+    }
+
+    setEnabled(enabled) {
+        if (!enabled) {
+            this._storeysTabButtonElement.classList.add("disabled");
+            this._showAllStoreysButtonElement.classList.add("disabled");
+            this._hideAllStoreysButtonElement.classList.add("disabled");
+        } else {
+            this._storeysTabButtonElement.classList.remove("disabled");
+            this._showAllStoreysButtonElement.classList.remove("disabled");
+            this._hideAllStoreysButtonElement.classList.remove("disabled");
         }
     }
 
@@ -54619,6 +54848,20 @@ class MetaScene {
         visit(metaObject);
         return list;
     }
+
+    /**
+     * Iterates over the {@link MetaObject}s within the subtree.
+     *
+     * @param {String} id ID of root {@link MetaObject}.
+     * @param {Function} callback Callback fired at each {@link MetaObject}.
+     */
+    withMetaObjectsInSubtree(id, callback) {
+        const metaObject = this.metaObjects[id];
+        if (!metaObject) {
+            return;
+        }
+        metaObject.withMetaObjectsInSubtree(callback);
+    }
 }
 
 /**
@@ -54937,106 +55180,6 @@ class Viewer {
             }
         }
         this.scene.destroy();
-    }
-}
-
-class Storeys extends Controller {
-
-    constructor(parent, cfg = {}) {
-
-        super(parent);
-
-        if (!cfg.storeysTabElement) {
-            throw "Missing config: storeysTabElement";
-        }
-
-        if (!cfg.showAllStoreysButtonElement) {
-            throw "Missing config: showAllStoreysButtonElement";
-        }
-
-        if (!cfg.hideAllStoreysButtonElement) {
-            throw "Missing config: hideAllStoreysButtonElement";
-        }
-
-        if (!cfg.storeysElement) {
-            throw "Missing config: storeysElement";
-        }
-
-        this._storeysTabElement = cfg.storeysTabElement;
-        this._showAllStoreysButtonElement = cfg.showAllStoreysButtonElement;
-        this._hideAllStoreysButtonElement = cfg.hideAllStoreysButtonElement;
-        this._storeysTabButtonElement = this._storeysTabElement.querySelector(".xeokit-tab-btn");
-
-        if (!this._storeysTabButtonElement) {
-            throw "Missing DOM element: .xeokit-tab-btn";
-        }
-
-        const storeysElement = cfg.storeysElement;
-
-        this._treeView = new TreeViewPlugin(this.viewer, {
-            containerElement: storeysElement,
-            autoAddModels: false,
-            hierarchy: "storeys"
-        });
-
-        this._treeViewContextMenu = new ContextMenu({
-            items: TreeViewContextMenuItems
-        });
-
-        this._treeView.on("contextmenu", (e) => {
-            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
-            this._treeViewContextMenu.context = {
-                viewer: e.viewer,
-                treeViewPlugin: e.treeViewPlugin,
-                treeViewNode: e.treeViewNode
-            };
-        });
-
-        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
-            const modelInfo = this.viewerUI.models.getModelInfo(modelId);
-            if (!modelInfo) {
-                return;
-            }
-            this._treeView.addModel(modelId, {
-                rootName: modelInfo.name
-            });
-        });
-
-        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
-            if (this.viewer.metaScene.metaModels[modelId]) {
-                this._treeView.removeModel(modelId);
-            }
-        });
-
-        this.viewerUI.on("reset", () => {
-            this._treeView.collapse();
-            this._treeView.expandToDepth(1);
-        });
-    }
-
-    setEnabled(enabled) {
-        if (!enabled) {
-            this._storeysTabButtonElement.classList.add("disabled");
-            this._showAllStoreysButtonElement.classList.add("disabled");
-            this._hideAllStoreysButtonElement.classList.add("disabled");
-        } else {
-            this._storeysTabButtonElement.classList.remove("disabled");
-            this._showAllStoreysButtonElement.classList.remove("disabled");
-            this._hideAllStoreysButtonElement.classList.remove("disabled");
-        }
-    }
-
-    showNodeInTreeView(objectId) {
-        this._treeView.collapse();
-        this._treeView.showNode(objectId);
-    }
-
-    destroy() {
-        super.destroy();
-        this._treeView.destroy();
-        this._treeViewContextMenu.destroy();
-        this.viewer.scene.off(this._onModelLoaded);
-        this.viewer.scene.off(this._onModelUnloaded);
     }
 }
 
@@ -55538,6 +55681,7 @@ function ZToY(vec) {
 
 const tempVec3a$3 = math.vec3();
 
+/** @private */
 class ThreeDMode extends Controller {
 
     constructor(parent, cfg) {
@@ -55591,12 +55735,12 @@ class ThreeDMode extends Controller {
                     duration: 1
                 });
 
-                this.viewerUI.navCube.setActive(true);
+                this.bimViewer._navCubeMode.setActive(true);
 
             } else {
 
-                this.viewerUI.section.setActive(false);
-                this.viewerUI.section.clear();
+                this.bimViewer._sectionTool.setActive(false);
+                this.bimViewer._sectionTool.clear();
 
                 const viewer = this.viewer;
                 const scene = viewer.scene;
@@ -55622,18 +55766,18 @@ class ThreeDMode extends Controller {
                     up: up2,
                     orthoScale: orthoScale2
                 }, () =>{
-                    this.viewerUI.navCube.setActive(false);
+                    this.bimViewer._navCubeMode.setActive(false);
                 });
             }
 
             this.viewer.cameraControl.planView = !active;
-            this.viewerUI.firstPerson.setEnabled(active);
-           // this.viewerUI.ortho.setEnabled(active);
-            this.viewerUI.section.setEnabled(active);
+            this.bimViewer._firstPersonMode.setEnabled(active);
+           // this.bimViewer._ortho.setEnabled(active);
+            this.bimViewer._sectionTool.setEnabled(active);
 
             if (!active) {
-                this.viewerUI.section.setActive(false);
-                //this.viewerUI.firstPerson.setActive(false);
+                this.bimViewer._sectionTool.setActive(false);
+                //this.bimViewer._firstPersonMode.setActive(false);
             }
 
         });
@@ -55644,7 +55788,7 @@ class ThreeDMode extends Controller {
         });
 
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.setActive(true);
         });
     }
@@ -55652,6 +55796,7 @@ class ThreeDMode extends Controller {
 
 /**
  * ContextMenu items for when user right-clicks on an object.
+ * @private
  */
 const ObjectContextMenuItems = [
     [
@@ -55805,6 +55950,7 @@ const ObjectContextMenuItems = [
 
 /**
  * ContextMenu items for when user right-clicks on empty canvas space.
+ * @private
  */
 const CanvasContextMenuItems = [
     [
@@ -55863,7 +56009,7 @@ const CanvasContextMenuItems = [
         {
             title: "Reset view",
             callback: function (context) {
-                context.viewerUI.resetView();
+                context.bimViewer.resetView();
             }
         }
     ]
@@ -55982,9 +56128,9 @@ function initTabs(containerElement) {
 }
 
 /**
- * @desc UI controller for a xeokit {@link Viewer} toolbar.
+ * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
  */
-class ViewerUI extends Controller {
+class BIMViewer extends Controller {
 
     /**
      * Constructs a ViewerUI.
@@ -56036,10 +56182,19 @@ class ViewerUI extends Controller {
             e.preventDefault();
         };
 
-        super(null, cfg, server, new Viewer({
+        const viewer = new Viewer({
             canvasElement: canvasElement,
             transparent: true
-        }));
+        });
+
+        super(null, cfg, server, viewer);
+
+        /**
+         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIM viewer.
+         *
+         * @type {Viewer}
+         */
+        this.viewer = viewer;
 
         this._customizeViewer();
         this._initCanvasContextMenus();
@@ -56051,94 +56206,120 @@ class ViewerUI extends Controller {
 
         initTabs(explorerElement);
 
-        this.busyModal = new BusyModal(this); // TODO: Support external spinner dialog
+        this._busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
-        // Explorer
-
-        this.models = new Models(this, {
+        this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
             modelsElement: explorerElement.querySelector(".xeokit-models")
         });
 
-        this.objects = new Objects(this, {
+        this._objectsExplorer = new ObjectsExplorer(this, {
             objectsTabElement: explorerElement.querySelector(".xeokit-objectsTab"),
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
             objectsElement: explorerElement.querySelector(".xeokit-objects")
         });
 
-        this.classes = new Classes(this, {
+        this._classesExplorer = new ClassesExplorer(this, {
             classesTabElement: explorerElement.querySelector(".xeokit-classesTab"),
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
             classesElement: explorerElement.querySelector(".xeokit-classes")
         });
 
-        this.storeys = new Storeys(this, {
+        this._storeysExplorer = new StoreysExplorer(this, {
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
 
-        // Toolbar
-
-        this.reset = new ResetAction(this, {
+        this._resetAction = new ResetAction(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-reset"),
             active: false
         });
 
-        this.fit = new FitAction(this, {
+        this._fitAction = new FitAction(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-fit"),
             active: false
         });
 
-        this.threeD = new ThreeDMode(this, {
+        this._threeDMode = new ThreeDMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
             active: false
         });
 
-        this.firstPerson = new FirstPersonMode(this, {
+        this._firstPersonMode = new FirstPersonMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
             active: false
         });
 
-        this.hide = new HideMode(this, {
+        this._hideTool = new HideTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-hide"),
             active: false
         });
 
-        this.select = new SelectMode(this, {
+        this._selectionTool = new SelectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-select"),
             active: false
         });
 
-        this.query = new QueryMode(this, {
+        this._queryTool = new QueryTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-query"),
             queryInfoPanelElement: queryInfoPanelElement,
             active: false
         });
 
-        this.section = new SectionMode(this, {
+        this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-section"),
             sectionPlanesOverviewCanvasElement: sectionPlanesOverviewCanvasElement,
             active: false
         });
 
-        this.navCube = new NavCubeMode(this, {
+        this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
             active: true
         });
 
-        this._mutexActivation([this.query, this.hide, this.select, this.section]);
+        this._threeDMode.setActive(true);
+        this._firstPersonMode.setActive(false);
+        this._navCubeMode.setActive(true);
 
-        this.threeD.setActive(true);
-        this.firstPerson.setActive(false);
-        this.navCube.setActive(true);
+        this._modelsExplorer.on("modelLoaded", (modelId) => {
+            if (this._modelsExplorer.getNumModelsLoaded() === 1) {
+                this.setControlsEnabled(true);
+            }
+            this.fire("modelLoaded", modelId);
+        });
+
+        this._modelsExplorer.on("modelUnloaded", (modelId) => {
+            if (this._modelsExplorer.getNumModelsLoaded() === 0) {
+                this.setControlsEnabled(false);
+                this.openTab("models");
+            }
+            this.fire("modelUnloaded", modelId);
+        });
+
+        this._queryTool.on("queryPicked", (entityId) => {
+            const event = {};
+            event.entity = this.viewer.scene.objects[entityId];
+            event.metaObject = this.viewer.metaScene.metaObjects[entityId];
+            this.fire("queryPicked", event);
+        });
+
+        this._queryTool.on("queryNotPicked", () => {
+            this.fire("queryNotPicked", true);
+        });
+
+        this.resetView("reset", () => {
+            this.fire("reset", true);
+        });
+
+        this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
-            this._showAllObjects();
+            this.showAllObjects();
             event.preventDefault();
         });
 
@@ -56148,58 +56329,29 @@ class ViewerUI extends Controller {
         });
 
         explorerElement.querySelector(".xeokit-showAllClasses").addEventListener("click", (event) => {
-            this._showAllObjects();
+            this.showAllObjects();
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-hideAllClasses").addEventListener("click", (event) => {
-            this._hideAllObjects();
+            this.hideAllObjects();
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-showAllStoreys").addEventListener("click", (event) => {
-            this._showAllObjects();
+            this.showAllObjects();
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-hideAllStoreys").addEventListener("click", (event) => {
-            this._hideAllObjects();
+            this.hideAllObjects();
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-unloadAllModels").addEventListener("click", (event) => {
-            this._enableControls(false); // For quick UI feedback
-            this.models._unloadModels();
+            this.setControlsEnabled(false); // For quick UI feedback
+            this._modelsExplorer.unloadAllModels();
             event.preventDefault();
-        });
-
-        this.models.on("modelLoaded", (modelId) => {
-            if (this.models.getNumModelsLoaded() === 1) {
-                this._enableControls(true);
-            }
-            this.fire("modelLoaded", modelId);
-        });
-
-        this.models.on("modelUnloaded", (modelId) => {
-            if (this.models.getNumModelsLoaded() === 0) {
-                this._enableControls(false);
-            }
-            this.fire("modelUnloaded", modelId);
-        });
-
-        this.query.on("queryPicked", (entityId) => {
-            const event = {};
-            event.entity = this.viewer.scene.objects[entityId];
-            event.metaObject = this.viewer.metaScene.metaObjects[entityId];
-            this.fire("queryPicked", event);
-        });
-
-        this.query.on("queryNotPicked", () => {
-            this.fire("queryNotPicked", true);
-        });
-
-        this.reset.on("reset", () => {
-            this.fire("reset", true);
         });
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
@@ -56277,11 +56429,11 @@ class ViewerUI extends Controller {
                 this._objectContextMenu.show(e.pageX, e.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
-                    viewerUI: this,
+                    bimViewer: this,
                     showNodeInTreeViews: (objectId) => {
-                        this.objects.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
-                        this.classes.showNodeInTreeView(objectId);
-                        this.storeys.showNodeInTreeView(objectId);
+                        this._objectsExplorer.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
+                        this._classesExplorer.showNodeInTreeView(objectId);
+                        this._storeysExplorer.showNodeInTreeView(objectId);
                     },
                     entity: hit.entity
                 };
@@ -56290,7 +56442,7 @@ class ViewerUI extends Controller {
                 this._canvasContextMenu.show(e.pageX, e.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
-                    viewerUI: this
+                    bimViewer: this
                 };
             }
 
@@ -56299,28 +56451,470 @@ class ViewerUI extends Controller {
 
     }
 
-    _showAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    /**
+     * Gets information on all available projects.
+     *
+     * ### Example
+     *
+     * ````javascript
+     * myViewer.getProjectsInfo((projectsInfo) => {
+     *      console.log(JSON.stringify(projectsInfo, null, "\t"));
+     * });
+     * ````
+     *
+     * Returns JSON similar to:
+     *
+     * ````json
+     * {
+     *      "projects": [
+     *          {
+     *              "id": "Duplex",
+     *              "name": "Duplex"
+     *          },
+     *          {
+     *              "id": "Schependomlaan",
+     *              "name": "Schependomlaan"
+     *          },
+     *          {
+     *              "id": "WestRiversideHospital",
+     *              "name": "West Riverside Hospital"
+     *          }
+     *	    ]
+     * }
+     * ````
+     * @param {Function} done Callback invoked on success, into which the projects information JSON is passed.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    getProjectsInfo(done, error) {
+        if (!done) {
+            this.error("getProjectsInfo() - Argument expected: 'done'");
+            return;
+        }
+        this.server.getProjects( done, (errorMsg) => {
+            this.error("getProjectsInfo() - " + errorMsg);
+            if (error) {
+                error(errorMsg);
+            }
+        });
     }
 
-    _hideAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
+    /**
+     * Gets information on the given project.
+     *
+     * Use {@link BIMViewer#getProjects} to get information on all available projects.
+     *
+     * ### Example
+     *
+     * ````javascript
+     * myViewer.getProjectInfo(("Duplex") => {
+     *      console.log(JSON.stringify(projectInfo, null, "\t"));
+     * });
+     * ````
+     *
+     * Returns JSON similar to:
+     *
+     * ````json
+     * {
+     *      "id": "Duplex",
+     *      "name": "Duplex"
+     * }
+     * ````
+     *
+     * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
+     * @param {Function} done Callback invoked on success, into which the project information JSON is passed.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    getProjectInfo(projectId, done, error) {
+        if (!projectId) {
+            this.error("getProjectInfo() - Argument expected: objectId");
+            return;
+        }
+        if (!done) {
+            this.error("getProjectInfo() - Argument expected: 'done'");
+            return;
+        }
+        this.server.getProject(projectId,
+            done, (errorMsg) => {
+                this.error("getProjectInfo() - " + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
     }
 
     /**
      * Loads a project into the viewer.
-     * Unloads any project already loaded.
-     * @param projectId
+     *
+     * Unloads any currently loaded project and its models first. If the given project is already loaded, will unload that project first.
+     *
+     * @param {String} projectId ID of the project to load. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
+     * @param {Function} done Callback invoked on success.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
      */
-    loadProject(projectId) {
-        this.models._loadProject(projectId);
+    loadProject(projectId, done, error) {
+        if (!projectId) {
+            this.error("loadProject() - Argument expected: objectId");
+            return;
+        }
+        this._modelsExplorer.loadProject(projectId,
+            () => {
+                if (done) {
+                    done();
+                }
+            }, (errorMsg) => {
+                this.error("loadProject() - " + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
     }
 
     /**
-     * Opens a tab.
-     * @param tabId
+     * Unloads whatever project is currently loaded.
+     */
+    unloadProject() {
+        this._modelsExplorer.unloadProject();
+        this.openTab("models");
+        this.setControlsEnabled(false); // For quick UI feedback
+    }
+
+    /**
+     * Returns the ID of the currently loaded project, if any.
+     *
+     * @returns {String} The ID of the currently loaded project, otherwise ````null```` if no project is currently loaded.
+     */
+    getLoadedProjectId() {
+        return this._modelsExplorer.getLoadedProjectId();
+    }
+
+    /**
+     * Loads a model into the viewer.
+     *
+     * Assumes that the project containing the model is currently loaded.
+     *
+     * @param {String} modelId ID of the model to load. Must be the ID of one of the models in the currently loaded project.
+     * @param {Function} done Callback invoked on success.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    loadModel(modelId, done, error) {
+        if (!modelId) {
+            this.error("loadModel() - Argument expected: modelId");
+            return;
+        }
+        this._modelsExplorer.loadModel(modelId,
+            () => {
+                if (done) {
+                    done();
+                }
+            }, (errorMsg) => {
+                this.error("loadModel() - " + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
+    }
+
+    /**
+     * Returns the IDs of the currently loaded models, if any.
+     *
+     * @returns {String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded.
+     */
+    getLoadedModelIds() {
+        return this._modelsExplorer._getLoadedModelIds();
+    }
+
+    /**
+     * Unloads a model from the viewer.
+     *
+     * Does nothing if the model is not currently loaded.
+     *
+     * @param modelId
+     */
+    unLoadModel(modelId) {
+        if (!modelId) {
+            this.error("unLoadModel() - Argument expected: modelId");
+            return;
+        }
+        this._modelsExplorer.unloadModel(modelId);
+    }
+
+    /**
+     * Unloads all currently loaded models.
+     */
+    unloadAllModels() {
+        this._modelsExplorer.unloadAllModels();
+    }
+
+    /**
+     * Show the given object in the Objects tab.
+     * @param {String} objectId ID of the object
+     */
+    showObjectInObjectsTab(objectId) {
+        if (!objectId) {
+            this.error("showObjectInObjectsTab() - Argument expected: objectId");
+            return;
+        }
+        this._objectsExplorer.showNodeInTreeView(objectId);
+    }
+
+    /**
+     * Show the given object in the Classes tab.
+     * @param {String} objectId ID of the object
+     */
+    showObjectInClassesTab(objectId) {
+        if (!objectId) {
+            this.error("showObjectInClassesTab() - Argument expected: objectId");
+            return;
+        }
+        this._classesExplorer.showNodeInTreeView(objectId);
+
+    }
+
+    /**
+     *
+     * @param {String} objectId ID of the object
+     */
+    showObjectInStoreysTab(objectId) {
+        if (!objectId) {
+            this.error("showObjectInStoreysTab() - Argument expected: objectId");
+            return;
+        }
+        this._storeysExplorer.showNodeInTreeView(objectId);
+    }
+
+    /**
+     * Shows the object with the given ID.
+     * @param {String} objectId ID of object to show.
+     */
+    showObject(objectId) {
+        if (!objectId) {
+            this.error("showObject() - Argument expected: objectId");
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.visible = true;
+            }
+        });
+    }
+
+    /**
+     * Shows all objects currently in the viewer.
+     */
+    showAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * Shows all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not show.
+     */
+    showAllObjectsExceptFor(objectIds) {
+        if (!objectId) {
+            this.error("showAllObjectsExceptFor() - Argument expected: objectId");
+            return;
+        }
+    }
+
+    /**
+     * Hides the object with the given ID.
+     * @param {String} objectId ID of object to hide.
+     */
+    hideObject(objectId) {
+        if (!objectId) {
+            this.error("hideObject() - Argument expected: objectId");
+            return;
+        }
+    }
+
+    /**
+     * Hides all objects currently in the viewer.
+     */
+    hideAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
+    }
+
+    /**
+     * Hides all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not hide.
+     */
+    hideAllObjectsExceptFor(objectIds) {
+        if (!objectIds) {
+            this.error("hideAllObjectsExceptFor() - Argument expected: objectId");
+            return;
+        }
+    }
+
+    /**
+     * flies the camera to fit the given object in view.
+     *
+     * @param {String} objectId ID of the object
+     * @param {Function} done Callback invoked on completion
+     */
+    flyToObject(objectId, done) {
+        if (!objectId) {
+            this.error("flyToObject() - Argument expected: objectId");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const objectIds = [];
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+            if (scene.objects[metaObject.id]) {
+                objectIds.push(metaObject.id);
+            }
+        });
+        if (objectIds.length === 0) {
+            this.error("Object not found in viewer: '" + objectId + "'");
+            if (done) {
+                done();
+            }
+            return;
+        }
+        scene.setObjectsVisible(objectIds, true);
+        scene.setObjectsHighlighted(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        viewer.cameraFlight.flyTo({
+            aabb: aabb,
+            duration: 0.5
+        }, () => {
+            if (done) {
+                done();
+            }
+            setTimeout(function () {
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            }, 500);
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * Jumps the camera to fit the given object in view.
+     *
+     * @param {String} objectId ID of the object
+     */
+    jumpToObject(objectId) {
+        if (!objectId) {
+            this.error("jumpToObject() - Argument expected: objectId");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const objectIds = [];
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+            if (scene.objects[metaObject.id]) {
+                objectIds.push(metaObject.id);
+            }
+        });
+        if (objectIds.length === 0) {
+            this.error("Object not found in viewer: '" + objectId + "'");
+            return;
+        }
+        scene.setObjectsVisible(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        viewer.cameraFlight.jumpTo({
+            aabb: aabb
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * X-ray the object with the given ID.
+     *
+     * @param {String} objectId ID of object to x-ray.
+     */
+    xrayObject(objectId) {
+        if (!objectId) {
+            this.error("xrayObject() - Argument expected: objectId");
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.xrayed = true;
+            }
+        });
+    }
+
+    /**
+     * X-rays all objects currently in the viewer.
+     */
+    xrayAllObjects() {
+        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * X-rays all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not x-ray.
+     */
+    xrayAllObjectsExceptFor(objectIds) {
+
+    }
+
+    /**
+     * Un-x-rays all objects currently in the viewer.
+     */
+    xrayNoObjects() {
+        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, false);
+    }
+
+    /**
+     * Selects the objects with the given ID.
+     * @param {String} objectId ID of object to select.
+     */
+    selectObject(objectId) {
+        if (!objectId) {
+            this.error("selectObject() - Argument expected: objectId");
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.selected = true;
+            }
+        });
+    }
+
+    /**
+     * Selects all objects currently in the viewer.
+     */
+    selectAllObjects() {
+        this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * Selects all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not select.
+     */
+    selectAllObjectsExceptFor(objectIds) {
+
+    }
+
+    /**
+     * De-selects all objects currently in the viewer.
+     */
+    deselectAllObjects() {
+        this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
+    }
+
+    /**
+     * Opens the specified viewer tab.
+     *
+     * The available tabs are:
+     *
+     *  * "models" - the Models tab, which lists the models available within the currently loaded project,
+     *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *
+     * @param {String} tabId ID of the tab to open - see method description.
      */
     openTab(tabId) {
+        if (!tabId) {
+            this.error("openTab() - Argument expected: tabId");
+            return;
+        }
         const tabClass = 'xeokit-tab';
         const activeClass = 'active';
         let tabSelector;
@@ -56338,7 +56932,8 @@ class ViewerUI extends Controller {
                 tabSelector = "xeokit-storeysTab";
                 break;
             default:
-                tabSelector = "xeokit-objectsTab";
+                this.error("openTab() - tab not recognized: '" + tabId + "'");
+                return;
         }
         let tabs = this._explorerElement.querySelectorAll("." + tabClass);
         let tab = this._explorerElement.querySelector("." + tabSelector);
@@ -56355,6 +56950,10 @@ class ViewerUI extends Controller {
     /**
      * Saves viewer state to a BCF viewpoint.
      *
+     * This does not save information about the project and model(s) that are currently loaded. When loading the viewpoint,
+     * the viewer will assume that the same project and models will be currently loaded (the BCF viewpoint specification
+     * does not contain that information).
+     *
      * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
      * direction vector. Therefore, we save ````camera_direction```` as the vector from {@link Camera#eye} to {@link Camera#look}.
      *
@@ -56365,13 +56964,7 @@ class ViewerUI extends Controller {
      * @returns {*} BCF JSON viewpoint object
      * @example
      *
-     * const viewer = new Viewer();
-     *
-     * const bcfPlugin = new BCFPlugin(viewer, {
-     *     //...
-     * });
-     *
-     * const viewpoint = viewerUI.saveBCFViewpoint({
+     * const viewpoint = bimViewer.saveBCFViewpoint({
      *     spacesVisible: false,          // Default
      *     spaceBoundariesVisible: false, // Default
      *     openingsVisible: false         // Default
@@ -56438,6 +57031,9 @@ class ViewerUI extends Controller {
     /**
      * Sets viewer state to the given BCF viewpoint.
      *
+     * This assumes that the viewer currently contains the same project and model(s) that were loaded at the time that the
+     * viewpoint was originally saved (the BCF viewpoint specification does not contain that information).
+     *
      * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
      * direction vector. Therefore, when loading a BCF viewpoint, we set {@link Camera#look} to the absolute position
      * obtained by offsetting the BCF ````camera_view_point````  along ````camera_direction````.
@@ -56455,6 +57051,10 @@ class ViewerUI extends Controller {
      * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
      */
     loadBCFViewpoint(bcfViewpoint, options) {
+        if (!bcfViewpoint) {
+            this.error("loadBCFViewpoint() - Argument expected: bcfViewpoint");
+            return;
+        }
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
@@ -56462,30 +57062,40 @@ class ViewerUI extends Controller {
      * Resets the view.
      */
     resetView() {
-        this.reset.reset();
+        this._resetAction.reset();
     }
 
-    _enableControls(enabled) {
+    /**
+     * Enables or disables the various buttons and controls throughout the viewer.
+     *
+     * This also makes various buttons appear disabled.
+     *
+     * @param {Boolean} enabled Whether or not to disable the controls.
+     */
+    setControlsEnabled(enabled) {
 
         // Explorer
 
         // Models tab is always enabled
-        this.objects.setEnabled(enabled);
-        this.classes.setEnabled(enabled);
-        this.storeys.setEnabled(enabled);
+        this._objectsExplorer.setEnabled(enabled);
+        this._classesExplorer.setEnabled(enabled);
+        this._storeysExplorer.setEnabled(enabled);
 
         // Toolbar
 
-        this.reset.setEnabled(enabled);
-        this.fit.setEnabled(enabled);
-        this.threeD.setEnabled(enabled);
-        this.firstPerson.setEnabled(enabled);
-        this.query.setEnabled(enabled);
-        this.hide.setEnabled(enabled);
-        this.select.setEnabled(enabled);
-        this.section.setEnabled(enabled);
+        this._resetAction.setEnabled(enabled);
+        this._fitAction.setEnabled(enabled);
+        this._threeDMode.setEnabled(enabled);
+        this._firstPersonMode.setEnabled(enabled);
+        this._queryTool.setEnabled(enabled);
+        this._hideTool.setEnabled(enabled);
+        this._selectionTool.setEnabled(enabled);
+        this._sectionTool.setEnabled(enabled);
     }
 
+    /**
+     * Destroys the viewer, freeing all resources.
+     */
     destroy() {
         this.viewer.destroy();
         this._bcfViewpointsPlugin.destroy();
@@ -56494,4 +57104,4 @@ class ViewerUI extends Controller {
     }
 }
 
-export { Server, ViewerUI };
+export { BIMViewer, Server };
