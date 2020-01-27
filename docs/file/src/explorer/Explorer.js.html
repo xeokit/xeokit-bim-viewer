@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/explorer/Explorer.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="View large 3D BIM models in all major browsers and collaborate on issues using BCF"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="View large 3D BIM models in all major browsers and collaborate on issues using BCF"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="View large 3D BIM models in all major browsers and collaborate on issues using BCF"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Controller.js~Controller.html">Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/ViewerUI.js~ViewerUI.html">ViewerUI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#explorer">explorer</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/explorer/Classes.js~Classes.html">Classes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/explorer/Explorer.js~Explorer.html">Explorer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/explorer/Models.js~Models.html">Models</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/explorer/Objects.js~Objects.html">Objects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/explorer/Storeys.js~Storeys.html">Storeys</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#toolbar">toolbar</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/BCFMode.js~BCFMode.html">BCFMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/FirstPersonMode.js~FirstPersonMode.html">FirstPersonMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/FitAction.js~FitAction.html">FitAction</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/HideMode.js~HideMode.html">HideMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/NavCubeMode.js~NavCubeMode.html">NavCubeMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/OrthoMode.js~OrthoMode.html">OrthoMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/QueryMode.js~QueryMode.html">QueryMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/ResetAction.js~ResetAction.html">ResetAction</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/SectionMode.js~SectionMode.html">SectionMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/SelectMode.js~SelectMode.html">SelectMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/Toolbar.js~Toolbar.html">Toolbar</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/explorer/Explorer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+import {Classes} from &quot;./Classes.js&quot;;
+import {Objects} from &quot;./Objects.js&quot;;
+import {Models} from &quot;./Models.js&quot;;
+
+/**
+ * Manages the explorer trees.
+ *
+ * Located at {@link Toolbar#explorer}.
+ */
+class Explorer extends Controller {
+
+    /** @private */
+    constructor(parent, cfg = {}) {
+
+        super(parent);
+
+        /**
+         *
+         * @type {Models}
+         */
+        this.models = new Models(this, cfg);
+
+        /**
+         *
+         * @type {Objects}
+         */
+        this.objects = new Objects(this, cfg);
+
+        /**
+         *
+         * @type {Classes}
+         */
+        this.classes = new Classes(this, cfg);
+
+        // /**
+        //  *
+        //  * @type {Storeys}
+        //  */
+        // this.storeys = new Storeys(this, cfg);
+
+        $(&quot;#unloadAllModels&quot;).on(&apos;click&apos;, (event) =&gt; {
+            this._unloadAllModels();
+            event.preventDefault();
+        });
+
+        $(&quot;#showAllObjects&quot;).on(&apos;click&apos;, (event) =&gt; {
+            this._showAllObjects();
+            event.preventDefault();
+        });
+
+        $(&quot;#hideAllObjects&quot;).on(&apos;click&apos;, (event) =&gt; {
+            this._hideAllObjects();
+            event.preventDefault();
+        });
+
+        $(&quot;#showAllClasses&quot;).on(&apos;click&apos;, (event) =&gt; {
+            this._showAllObjects();
+            event.preventDefault();
+        });
+
+        $(&quot;#hideAllClasses&quot;).on(&apos;click&apos;, (event) =&gt; {
+            this._hideAllObjects();
+            event.preventDefault();
+        });
+
+        // Handling model load events here ensures that we
+        // are able to fire &quot;modelLoaded&quot; after both trees updated.
+
+        this.models.on(&quot;modelLoaded&quot;, (modelId) =&gt; {
+            this.objects._addModel(modelId);
+            this.classes._addModel(modelId);
+            this.fire(&quot;modelLoaded&quot;, modelId);
+        });
+
+        this.models.on(&quot;modelUnloaded&quot;, (modelId) =&gt; {
+            this.objects._removeModel(modelId);
+            this.classes._removeModel(modelId);
+            this.fire(&quot;modelUnloaded&quot;, modelId);
+        });
+    }
+
+    _unloadAllModels() {
+        // TODO
+    }
+
+    _showAllObjects() {
+
+        this.objects.muteEvents();
+        this.classes.muteEvents();
+
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+
+        this.objects.selectAll();
+        this.classes.selectAll();
+
+        this.objects.unmuteEvents();
+        this.classes.unmuteEvents();
+    }
+
+    _hideAllObjects() {
+
+        this.objects.muteEvents();
+        this.classes.muteEvents();
+
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
+
+        this.objects.deselectAll();
+        this.classes.deselectAll();
+
+        this.objects.unmuteEvents();
+        this.classes.unmuteEvents();
+    }
+
+    destroy() {
+        super.destroy();
+    }
+}
+
+export {Explorer};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

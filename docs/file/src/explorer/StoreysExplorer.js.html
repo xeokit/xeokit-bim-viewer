@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/explorer/StoreysExplorer.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/explorer/StoreysExplorer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+import {TreeViewPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js&quot;;
+import {ContextMenu} from &quot;@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js&quot;;
+import {TreeViewContextMenuItems} from &quot;../contextMenuItems/TreeViewContextMenuItems.js&quot;;
+
+/** @private */
+class StoreysExplorer extends Controller {
+
+    constructor(parent, cfg = {}) {
+
+        super(parent);
+
+        if (!cfg.storeysTabElement) {
+            throw &quot;Missing config: storeysTabElement&quot;;
+        }
+
+        if (!cfg.showAllStoreysButtonElement) {
+            throw &quot;Missing config: showAllStoreysButtonElement&quot;;
+        }
+
+        if (!cfg.hideAllStoreysButtonElement) {
+            throw &quot;Missing config: hideAllStoreysButtonElement&quot;;
+        }
+
+        if (!cfg.storeysElement) {
+            throw &quot;Missing config: storeysElement&quot;;
+        }
+
+        this._storeysTabElement = cfg.storeysTabElement;
+        this._showAllStoreysButtonElement = cfg.showAllStoreysButtonElement;
+        this._hideAllStoreysButtonElement = cfg.hideAllStoreysButtonElement;
+        this._storeysTabButtonElement = this._storeysTabElement.querySelector(&quot;.xeokit-tab-btn&quot;);
+
+        if (!this._storeysTabButtonElement) {
+            throw &quot;Missing DOM element: .xeokit-tab-btn&quot;;
+        }
+
+        const storeysElement = cfg.storeysElement;
+
+        this._treeView = new TreeViewPlugin(this.viewer, {
+            containerElement: storeysElement,
+            autoAddModels: false,
+            hierarchy: &quot;storeys&quot;
+        });
+
+        this._treeViewContextMenu = new ContextMenu({
+            items: TreeViewContextMenuItems
+        });
+
+        this._treeView.on(&quot;contextmenu&quot;, (e) =&gt; {
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+            this._treeViewContextMenu.context = {
+                viewer: e.viewer,
+                treeViewPlugin: e.treeViewPlugin,
+                treeViewNode: e.treeViewNode
+            };
+        });
+
+        this._onModelLoaded = this.viewer.scene.on(&quot;modelLoaded&quot;, (modelId) =&gt;{
+            const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
+            if (!modelInfo) {
+                return;
+            }
+            this._treeView.addModel(modelId, {
+                rootName: modelInfo.name
+            });
+        });
+
+        this._onModelUnloaded = this.viewer.scene.on(&quot;modelUnloaded&quot;, (modelId) =&gt; {
+            if (this.viewer.metaScene.metaModels[modelId]) {
+                this._treeView.removeModel(modelId);
+            }
+        });
+
+        this.bimViewer.on(&quot;reset&quot;, () =&gt; {
+            this._treeView.collapse();
+            this._treeView.expandToDepth(1);
+        });
+    }
+
+    setEnabled(enabled) {
+        if (!enabled) {
+            this._storeysTabButtonElement.classList.add(&quot;disabled&quot;);
+            this._showAllStoreysButtonElement.classList.add(&quot;disabled&quot;);
+            this._hideAllStoreysButtonElement.classList.add(&quot;disabled&quot;);
+        } else {
+            this._storeysTabButtonElement.classList.remove(&quot;disabled&quot;);
+            this._showAllStoreysButtonElement.classList.remove(&quot;disabled&quot;);
+            this._hideAllStoreysButtonElement.classList.remove(&quot;disabled&quot;);
+        }
+    }
+
+    showNodeInTreeView(objectId) {
+        this._treeView.collapse();
+        this._treeView.showNode(objectId);
+    }
+
+    destroy() {
+        super.destroy();
+        this._treeView.destroy();
+        this._treeViewContextMenu.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
+    }
+}
+
+export {StoreysExplorer};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

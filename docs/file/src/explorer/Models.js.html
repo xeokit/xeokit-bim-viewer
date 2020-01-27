@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/explorer/Models.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/ViewerUI.js~ViewerUI.html">ViewerUI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCObjectDefaults">IFCObjectDefaults</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/explorer/Models.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+import {XKTLoaderPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {IFCObjectDefaults} from &quot;../IFCObjectDefaults/IFCObjectDefaults.js&quot;;
+
+const tempVec3 = math.vec3();
+
+/** @private */
+class Models extends Controller {
+
+    constructor(parent, cfg) {
+
+        super(parent, cfg);
+
+        if (!cfg.modelsTabElement) {
+            throw &quot;Missing config: modelsTabElement&quot;;
+        }
+
+        if (!cfg.unloadModelsButtonElement) {
+            throw &quot;Missing config: unloadModelsButtonElement&quot;;
+        }
+
+        if (!cfg.modelsElement) {
+            throw &quot;Missing config: modelsElement&quot;;
+        }
+
+        this._modelsTabElement = cfg.modelsTabElement;
+        this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
+        this._modelsElement = cfg.modelsElement;
+        this._modelsTabButtonElement = this._modelsTabElement.querySelector(&quot;.xeokit-tab-btn&quot;);
+
+        if (!this._modelsTabButtonElement) {
+            throw &quot;Missing DOM element: ,xeokit-tab-btn&quot;;
+        }
+
+        this._xktLoader = new XKTLoaderPlugin(this.viewer, {
+            // objectDefaults: IFCObjectDefaults
+        });
+        this._modelsInfo = {};
+        this._numModelsLoaded = 0;
+        this._projectId = null;
+    }
+
+    _loadProject(projectId, done, error) {
+        const params = {};
+        this.server.getProject(projectId, (projectInfo) =&gt; {
+            this._projectId = projectId;
+            var html = &quot;&quot;;
+            const modelsInfo = projectInfo.models || [];
+            this._modelsInfo = {};
+            for (let i = 0, len = modelsInfo.length; i &lt; len; i++) {
+                const modelInfo = modelsInfo[i];
+                this._modelsInfo[modelInfo.id] = modelInfo;
+                html += &quot;&lt;div class=&apos;xeokit-form-check&apos;&gt;&quot;;
+                html += &quot;&lt;input id=&apos;&quot; + modelInfo.id + &quot;&apos; type=&apos;checkbox&apos; value=&apos;&apos;&gt;&quot; + modelInfo.name;
+                html += &quot;&lt;/div&gt;&quot;;
+            }
+            this._modelsElement.innerHTML = html;
+            for (let i = 0, len = modelsInfo.length; i &lt; len; i++) {
+                const modelInfo = modelsInfo[i];
+                const modelId = modelInfo.id;
+                const checkBox = document.getElementById(&quot;&quot; + modelId);
+                checkBox.addEventListener(&quot;click&quot;, () =&gt; {
+                    if (checkBox.checked) {
+                        this._loadModel(modelId);
+                    } else {
+                        this._unloadModel(modelInfo.id);
+                    }
+                });
+                if (modelInfo.default) {
+                    checkBox.checked = true;
+                    this._loadModel(modelId, done, error); // TODO: buffer and load at end
+                }
+            }
+        }, (errMsg) =&gt; {
+            this.error(errMsg);
+            if (error) {
+                error(errMsg);
+            }
+        });
+    }
+
+    _loadModel(modelId, done, error) {
+        const modelInfo = this._modelsInfo[modelId];
+        if (!modelInfo) {
+            if (error) {
+                error(&quot;Model not in current project&quot;);
+            }
+            return;
+        }
+        this.viewerUI._controllers.busyModal.show(&quot;Loading &quot; + modelInfo.name);
+        this.server.getMetadata(this._projectId, modelId,
+            (json) =&gt; {
+                this.server.getGeometry(this._projectId, modelId,
+                    (arraybuffer) =&gt; {
+                        const model = this._xktLoader.load({
+                            id: modelId,
+                            metaModelData: json,
+                            xkt: arraybuffer,
+                            excludeUnclassifiedObjects: true,
+                            edges: true,
+                            position: modelInfo.position,
+                            scale: modelInfo.scale,
+                            rotation: modelInfo.rotation,
+                            matrix: modelInfo.matrix
+                        });
+                        model.on(&quot;loaded&quot;, () =&gt; {
+                            const scene = this.viewer.scene;
+                            const aabb = scene.getAABB(scene.visibleObjectIds);
+                            this._numModelsLoaded++;
+                            this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+                            if (this._numModelsLoaded === 1) { // Jump camera when only one model
+                                this.viewer.cameraFlight.jumpTo({
+                                    aabb: aabb
+                                });
+                                this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+                                this.fire(&quot;modelLoaded&quot;, modelId);
+                                this.viewerUI._controllers.busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
+                            } else { // Fly camera when multiple models
+                                this.viewer.cameraFlight.flyTo({
+                                    aabb: aabb
+                                }, () =&gt; {
+                                    this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+                                    this.fire(&quot;modelLoaded&quot;, modelId);
+                                    this.viewerUI._controllers.busyModal.hide();
+                                    if (done) {
+                                        done();
+                                    }
+                                });
+                            }
+                        });
+                    },
+                    (errMsg) =&gt; {
+                        this.error(errMsg);
+                        this.viewerUI._controllers.busyModal.hide();
+                    });
+            },
+            (errMsg) =&gt; {
+                this.error(errMsg);
+                this.viewerUI._controllers.busyModal.hide();
+            });
+    }
+
+    _unloadModel(modelId) {
+        const model = this.viewer.scene.models[modelId];
+        if (!model) {
+            this.error(&quot;Model not loaded: &quot; + modelId);
+            return;
+        }
+        model.destroy();
+        const scene = this.viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        document.getElementById(&quot;&quot; + modelId).checked = false;
+        this._numModelsLoaded--;
+        if (this._numModelsLoaded &gt; 0) {
+            this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+        } else {
+            this._unloadModelsButtonElement.classList.add(&quot;disabled&quot;);
+        }
+        this.viewer.cameraFlight.flyTo({
+            aabb: aabb
+        }, () =&gt; {
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+            this.fire(&quot;modelUnloaded&quot;, modelId);
+        });
+    }
+
+    _unloadModels() {
+        const models = this.viewer.scene.models;
+        const modelIds = Object.keys(models);
+        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
+            const modelId = modelIds[i];
+            this._unloadModel(modelId);
+        }
+    }
+
+    getNumModelsLoaded() {
+        return this._numModelsLoaded;
+    }
+
+    getModelsInfo() {
+        return this._modelsInfo;
+    }
+
+    getModelInfo(modelId) {
+        return this._modelsInfo[modelId];
+    }
+
+    setEnabled(enabled) {
+        if (!enabled) {
+            this._modelsTabButtonElement.classList.add(&quot;disabled&quot;);
+            this._unloadModelsButtonElement.classList.add(&quot;disabled&quot;);
+        } else {
+            this._modelsTabButtonElement.classList.remove(&quot;disabled&quot;);
+            this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+        }
+    }
+
+    /** @private */
+    destroy() {
+        super.destroy();
+        this._xktLoader.destroy();
+    }
+}
+
+export {Models};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

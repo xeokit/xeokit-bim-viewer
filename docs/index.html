@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-viewer">xeokit-viewer</h1><p>xeokit-viewer is an open source BIM viewer for the Web, built on the <a href="http://xeokit.io">xeokit SDK</a>. The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> for integration within <a href="https://www.openproject.org/">OpenProject&apos;s</a> BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. </p>
+<p><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png" alt="Screenshothttps://xeokit.github.io/xeokit-licensing/"></a>.</p>
+<h2 id="contents">Contents</h2><ul>
+<li><a href="#links">Links</a></li>
+<li><a href="#features">Features</a><ul>
+<li><a href="#demos">Demos</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#model-database">Model Database</a><ul>
+<li><a href="#adding-your-own-models">Adding your own models</a></li>
+<li><a href="#loading-models-from-a-custom-source">Loading models from a custom source</a></li>
+</ul>
+</li>
+<li><a href="#customizing-css">Customizing CSS</a></li>
+<li><a href="#tooltips">Tooltips</a></li>
+<li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
+</ul>
+</li>
+<li><a href="#building">Building</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="links">Links</h2><ul>
+<li><a href="https://xeokit.github.io/xeokit-viewer/">Homepage</a></li>
+<li><a href="https://github.com/xeokit/xeokit-viewer">Source Code</a></li>
+<li><a href="https://xeokit.github.io/xeokit-viewer/docs">API Docs</a></li>
+<li><a href="http://xeokit.io">xeokit SDK</a></li>
+</ul>
+<h2 id="features">Features</h2><ul>
+<li>Uses <a href="https://xeokit.io">xeokit SDK</a> for super fast loading and rendering of large models.</li>
+<li>Works in all major browsers, including mobile.</li>
+<li>Loads BIM geometry and metadata from the file system.</li>
+<li>Loads multiple models, at arbitrary position, scale and rotation.</li>
+<li>Configure custom appearances for IFC types.</li>
+<li>Supports IFC2x3 and IFC4.</li>
+<li>3D and 2D viewing modes.</li>
+<li>Tree view with three hierarchy modes: containment, IFC type and storeys.</li>
+<li>X-ray, highlight, show, hide and slice objects. </li>
+<li>Customize with your own CSS.</li>
+<li>JavaScript programming API - load models, move camera, show/hide/select/xray objects etc.</li>
+<li>Implemented in JavaScript (ES6), with no external dependencies (other than xeokit).</li>
+</ul>
+<h2 id="demos">Demos</h2><table>
+<thead>
+<tr>
+<th>Live Demo</th>
+<th>Model Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=OTCConferenceCenter&amp;tab=storeys">OTC Conference Center</a></td>
+<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301">Details</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=HolterTower&amp;tab=storeys">Holter Tower</a></td>
+<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/316">Details</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=WestRiversideHospital&amp;tab=models">West Riverside Hospital</a></td>
+<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/308">Details</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=Schependomlaan&amp;tab=storeys">Schependomlaan</a></td>
+<td><a href="https://github.com/openBIMstandards/DataSetSchependomlaan">Details</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=Duplex&amp;tab=storeys">Duplex</a></td>
+<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/274">Details</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?project=ManyModels">Duplex and Conference Center</a></td>
+<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/274">Duplex</a>, <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301">Conference Center</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="roadmap">Roadmap</h2><ul>
+<li>[x] Standalone viewer MVP</li>
+<li>[x] Integration into <a href="https://www.openproject.org/">OpenProject</a></li>
+<li>[x] Save and load BCF viewpoints</li>
+<li>[x] Programming API</li>
+<li>[ ] Measurement tools</li>
+<li>[ ] Memory usage monitoring</li>
+<li>[ ] Explode tool  </li>
+<li>[ ] Ambient shadows (SAO)</li>
+</ul>
+<p>Do you have feedback, or features you&apos;d like to see in the viewer? Let us know in the <a href="https://github.com/xeokit/xeokit-viewer/issues">issue tracker</a>.  </p>
+<h2 id="license">License</h2><p>xeokit-viewer is bundled with the xeokit SDK, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please <a href="https://xeokit.github.io/xeokit-licensing/">see here</a> for commercial licensing options.</p>
+<h2 id="usage">Usage</h2><h3 id="model-database">Model Database</h3><p>The viewer loads models from the file system by default. These are contained within the <a href="https://github.com/xeokit/xeokit-viewer/tree/master/data">./data</a> directory, which also contains a number of sample models to get you started. </p>
+<p>Each model consists of an <code>.XKT</code> binary geometry file and a JSON metadata file which classifies its IFC elements. </p>
+<p>Models are grouped within <em>projects</em>. Each project can contain multiple models, and has a JSON <code>index.json</code> manifest which lists its models.</p>
+<p>At the root of <code>./data</code> is a JSON <code>index.json</code> manifest that lists all the projects.</p>
+<p>The directory structure is designed to support RESTful queries, ie:</p>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get all projects</td>
+<td><code>GET ./data/index.json</code></td>
+</tr>
+<tr>
+<td>Get project</td>
+<td><code>GET ./data/WestRiversideHospital/index.json</code></td>
+</tr>
+<tr>
+<td>Get model geometry</td>
+<td><code>GET ./data/WestRiversideHospital/electrical/geometry.xkt</code></td>
+</tr>
+<tr>
+<td>Get model metadata</td>
+<td><code>GET ./data/WestRiversideHospital/electrical/metadata.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>Shown below is a portion of the <code>./data</code> directory, showing the directory structure.</p>
+<pre><code><code class="source-code prettyprint">./data/
+&#x2514;&#x2500;&#x2500; projects
+    &#x251C;&#x2500;&#x2500; index.json
+    &#x251C;&#x2500;&#x2500; Duplex
+    &#x2502;   &#x251C;&#x2500;&#x2500; index.json
+    &#x2502;   &#x2514;&#x2500;&#x2500; models
+    &#x2502;       &#x2514;&#x2500;&#x2500; design
+    &#x2502;           &#x251C;&#x2500;&#x2500; geometry.xkt
+    &#x2502;           &#x251C;&#x2500;&#x2500; issues.json
+    &#x2502;           &#x2514;&#x2500;&#x2500; metadata.json
+    &#x2514;&#x2500;&#x2500; WestRiversideHospital
+          &#x251C;&#x2500;&#x2500; index.json
+          &#x2514;&#x2500;&#x2500; models
+              &#x251C;&#x2500;&#x2500; electrical
+              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
+              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
+              &#x251C;&#x2500;&#x2500; fireAlarms
+              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
+              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
+              &#x251C;&#x2500;&#x2500; plumbing
+              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
+              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
+              &#x251C;&#x2500;&#x2500; sprinklers
+              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
+              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
+              &#x2514;&#x2500;&#x2500; structure
+                  &#x251C;&#x2500;&#x2500; geometry.xkt
+                  &#x2514;&#x2500;&#x2500; metadata.json</code>
+</code></pre><p>The <code>index.json</code> at the root of <code>./data</code> shown below. The <code>id</code> of each project matches the name of that project&apos;s subdirectory. </p>
+<pre><code class="lang-json"><code class="source-code prettyprint">{
+  &quot;projects&quot;: [
+    {
+      &quot;id&quot;: &quot;Duplex&quot;,
+      &quot;name&quot;: &quot;Duplex&quot;,
+      &quot;position&quot;: [-20, 0.0, -10.0],
+      &quot;scale&quot;: [1.0, 1.0, 1.0],
+      &quot;rotation&quot;: [0.0, 0.0, 0.0]
+    },
+    {
+      &quot;id&quot;: &quot;WestRiversideHospital&quot;,
+      &quot;name&quot;: &quot;West Riverside Hospital&quot;,
+      &quot;position&quot;: [20, 0.0, 0.0],
+      &quot;scale&quot;: [1.0, 1.0, 1.0],
+      &quot;rotation&quot;: [0.0, 0.0, 0.0]
+    },
+    //...
+  ]
+}</code>
+</code></pre>
+<p>The <code>index.json</code> for the &quot;WestRiversideHospital&quot; project is shown below. The <code>id</code> of each model matches the name of that model&apos;s subdirectory, while <code>name</code> is the string that&apos;s displayed for the model in the viewers Models tab.</p>
+<pre><code class="lang-json"><code class="source-code prettyprint">{
+  &quot;id&quot;: &quot;WestRiversideHospital&quot;,
+  &quot;name&quot;: &quot;West Riverside Hospital&quot;,
+  &quot;models&quot;: [
+    {
+      &quot;id&quot;: &quot;structure&quot;,
+      &quot;name&quot;: &quot;Hospital Structure&quot;,
+      &quot;default&quot;: true
+    },
+    {
+      &quot;id&quot;: &quot;electrical&quot;,
+      &quot;name&quot;: &quot;Hospital Electrical&quot;
+    },
+    {
+      &quot;id&quot;: &quot;sprinklers&quot;,
+      &quot;name&quot;: &quot;Hospital Sprinklers&quot;
+    },
+    {
+      &quot;id&quot;: &quot;plumbing&quot;,
+      &quot;name&quot;: &quot;Hospital Plumbing&quot;
+    },
+    {
+      &quot;id&quot;: &quot;fireAlarms&quot;,
+      &quot;name&quot;: &quot;Hospital Fire Alarms&quot;
+    }
+  ]
+}</code>
+</code></pre>
+<h4 id="adding-your-own-models">Adding your own models</h4><p>To add your own project to the database, you need to: </p>
+<ul>
+<li>add a new project directory within <code>./data</code>,</li>
+<li>add a subdirectory within that for each model, containing each model&apos;s <code>.XKT</code> and metadata files,</li>
+<li>add a <code>index.json</code> manifest of the models within the project directory, which lists the models, and</li>
+<li>list your project in the <code>index.json</code> at the root of <code>./data</code>.    </li>
+</ul>
+<h4 id="loading-models-from-a-custom-source">Loading models from a custom source</h4><p>To load models from a different source than the file system, configure</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">
+</code>
+</code></pre>
+<h3 id="customizing-css">Customizing CSS</h3><p>The <a href="https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html">viewer.html</a> file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.</p>
+<h3 id="tooltips">Tooltips</h3><p>Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with <code>data-tippy-content</code> attributes that provide strings to show in their tooltips. </p>
+<p>For example, the <em>Toggle 2D/3D</em> button&apos;s element looks like this:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;</code>
+</code></pre>
+<p>In the <a href="https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html">viewer.html</a> file for the standalone viewer, we&apos;re using <a href="https://github.com/atomiks/tippyjs">tippy.js</a>, which automatically creates tooltips for those elements.</p>
+<h3 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h3><p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file <a href="src/IFCObjectDefaults/IFCObjectDefaults.js">src/IFCObjectDefaults/IFCObjectDefaults.js</a>.</p>
+<p>You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.</p>
+<p>For example, to ensure that <code>IfcWindow</code> and <code>IfcSpace</code> types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">const IFCObjectDefaults = {
+    IfcSpace: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.5
+    }
+};
+
+export {IFCObjectDefaults};</code>
+</code></pre>
+<p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have configurations in there so that we can see through them.</p>
+<h2 id="building">Building</h2><p>Initialize:</p>
+<pre><code><code class="source-code prettyprint">sudo npm install</code>
+</code></pre><p>Building ES6 module in <code>/dist/main.js</code>:</p>
+<pre><code><code class="source-code prettyprint">npm run build</code>
+</code></pre><p>Then, within <code>index.hml</code>, we use the module like so:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">import {Server, ViewerUI} from &quot;./dist/main.js&quot;;
+
+const server = new Server({
+    dataDir: &quot;./data/&quot;
+});
+
+const viewerUI = new ViewerUI(server, {
+    //...
+});</code>
+</code></pre>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

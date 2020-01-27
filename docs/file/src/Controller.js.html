@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/Controller.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Controller.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Map} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/utils/Map.js&quot;;
+import {utils} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/utils.js&quot;;
+
+/** @private */
+class Controller {
+
+    /**
+     * @protected
+     */
+    constructor(parent, cfg, server, viewer) {
+
+        this.bimViewer = (parent ? (parent.bimViewer || parent) : this);
+        this.server = parent ? parent.server : server;
+        this.viewer = parent ? parent.viewer : viewer;
+
+        this._children = [];
+
+        if (parent) {
+            parent._children.push(this);
+        }
+
+        this._subIdMap = null; // Subscription subId pool
+        this._subIdEvents = null; // Subscription subIds mapped to event names
+        this._eventSubs = null; // Event names mapped to subscribers
+        this._events = null; // Maps names to events
+        this._eventCallDepth = 0; // Helps us catch stack overflows from recursive events
+
+        this._enabled = null; // Used by #setEnabled() and #getEnabled()
+        this._active = null; // Used by #setActive() and #getActive()
+    }
+
+    /**
+     * Fires an event on this Controller.
+     *
+     * @protected
+     *
+     * @param {String} event The event type name
+     * @param {Object} value The event parameters
+     * @param {Boolean} [forget=false] When true, does not retain for subsequent subscribers
+     */
+    fire(event, value, forget) {
+        if (!this._events) {
+            this._events = {};
+        }
+        if (!this._eventSubs) {
+            this._eventSubs = {};
+        }
+        if (forget !== true) {
+            this._events[event] = value || true; // Save notification
+        }
+        const subs = this._eventSubs[event];
+        let sub;
+        if (subs) { // Notify subscriptions
+            for (const subId in subs) {
+                if (subs.hasOwnProperty(subId)) {
+                    sub = subs[subId];
+                    this._eventCallDepth++;
+                    if (this._eventCallDepth &lt; 300) {
+                        sub.callback.call(sub.scope, value);
+                    } else {
+                        this.error(&quot;fire: potential stack overflow from recursive event &apos;&quot; + event + &quot;&apos; - dropping this event&quot;);
+                    }
+                    this._eventCallDepth--;
+                }
+            }
+        }
+    }
+
+    /**
+     * Subscribes to an event on this Controller.
+     *
+     * The callback is be called with this component as scope.
+     *
+     * @param {String} event The event
+     * @param {Function} callback Called fired on the event
+     * @param {Object} [scope=this] Scope for the callback
+     * @return {String} Handle to the subscription, which may be used to unsubscribe with {@link #off}.
+     */
+    on(event, callback, scope) {
+        if (!this._events) {
+            this._events = {};
+        }
+        if (!this._subIdMap) {
+            this._subIdMap = new Map(); // Subscription subId pool
+        }
+        if (!this._subIdEvents) {
+            this._subIdEvents = {};
+        }
+        if (!this._eventSubs) {
+            this._eventSubs = {};
+        }
+        let subs = this._eventSubs[event];
+        if (!subs) {
+            subs = {};
+            this._eventSubs[event] = subs;
+        }
+        const subId = this._subIdMap.addItem(); // Create unique subId
+        subs[subId] = {
+            callback: callback,
+            scope: scope || this
+        };
+        this._subIdEvents[subId] = event;
+        const value = this._events[event];
+        if (value !== undefined) { // A publication exists, notify callback immediately
+            callback.call(scope || this, value);
+        }
+        return subId;
+    }
+
+    /**
+     * Cancels an event subscription that was previously made with {@link Controller#on} or {@link Controller#once}.
+     *
+     * @param {String} subId Subscription ID
+     */
+    off(subId) {
+        if (subId === undefined || subId === null) {
+            return;
+        }
+        if (!this._subIdEvents) {
+            return;
+        }
+        const event = this._subIdEvents[subId];
+        if (event) {
+            delete this._subIdEvents[subId];
+            const subs = this._eventSubs[event];
+            if (subs) {
+                delete subs[subId];
+            }
+            this._subIdMap.removeItem(subId); // Release subId
+        }
+    }
+
+    /**
+     * Subscribes to the next occurrence of the given event, then un-subscribes as soon as the event is handled.
+     *
+     * This is equivalent to calling {@link Controller#on}, and then calling {@link Controller#off} inside the callback function.
+     *
+     * @param {String} event Data event to listen to
+     * @param {Function} callback Called when fresh data is available at the event
+     * @param {Object} [scope=this] Scope for the callback
+     */
+    once(event, callback, scope) {
+        const self = this;
+        const subId = this.on(event,
+            function (value) {
+                self.off(subId);
+                callback.call(scope || this, value);
+            },
+            scope);
+    }
+
+    /**
+     * Logs a console debugging message for this Controller.
+     *
+     * The console message will have this format: *````[LOG] [&lt;component type&gt; &lt;component id&gt;: &lt;message&gt;````*
+     *
+     * @protected
+     *
+     * @param {String} message The message to log
+     */
+    log(message) {
+        message = &quot;[LOG] &quot; + message;
+        window.console.log(message);
+    }
+
+    /**
+     * Logs a warning for this Controller to the JavaScript console.
+     *
+     * The console message will have this format: *````[WARN] [&lt;component type&gt; =&lt;component id&gt;: &lt;message&gt;````*
+     *
+     * @protected
+     *
+     * @param {String} message The message to log
+     */
+    warn(message) {
+        message = &quot;[WARN] &quot; + message;
+        window.console.warn(message);
+    }
+
+    /**
+     * Logs an error for this Controller to the JavaScript console.
+     *
+     * The console message will have this format: *````[ERROR] [&lt;component type&gt; =&lt;component id&gt;: &lt;message&gt;````*
+     *
+     * @protected
+     *
+     * @param {String} message The message to log
+     */
+    error(message) {
+        message = &quot;[ERROR] &quot; + message;
+        window.console.error(message);
+    }
+
+    _mutexActivation(controllers) {
+        const numControllers = controllers.length;
+        for (let i = 0; i &lt; numControllers; i++) {
+            const controller = controllers[i];
+            controller.on(&quot;active&quot;, (function () {
+                const _i = i;
+                return function (active) {
+                    if (!active) {
+                        return;
+                    }
+                    for (let j = 0; j &lt; numControllers; j++) {
+                        if (j === _i) {
+                            continue;
+                        }
+                        controllers[j].setActive(false);
+                    }
+                };
+            })());
+        }
+    }
+
+    /**
+     * Enables or disables this Controller.
+     *
+     * Fires an &quot;enabled&quot; event on update.
+     *
+     * @protected
+     *
+     *
+     * @param {boolean} enabled Whether or not to enable.
+     */
+    setEnabled(enabled) {
+        if (this._enabled === enabled) {
+            return;
+        }
+        this._enabled = enabled;
+        this.fire(&quot;enabled&quot;, this._enabled);
+    }
+
+    /**
+     * Gets whether or not this Controller is enabled.
+     *
+     * @protected
+     *
+     * @returns {boolean}
+     */
+    getEnabled() {
+        return this._enabled;
+    }
+
+    /**
+     * Activates or deactivates this Controller.
+     *
+     * Fires an &quot;active&quot; event on update.
+     *
+     * @protected
+     *
+     * @param {boolean} active Whether or not to activate.
+     */
+    setActive(active) {
+        if (this._active === active) {
+            return;
+        }
+        this._active = active;
+        this.fire(&quot;active&quot;, this._active);
+    }
+
+    /**
+     * Gets whether or not this Controller is active.
+     *
+     * @protected
+     *
+     * @returns {boolean}
+     */
+    getActive() {
+        return this._active;
+    }
+
+    /**
+     * Destroys this Controller.
+     *
+     * @protected
+     *
+     */
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+        /**
+         * Fired when this Controller is destroyed.
+         * @event destroyed
+         */
+        this.fire(&quot;destroyed&quot;, this.destroyed = true);
+        this._subIdMap = null;
+        this._subIdEvents = null;
+        this._eventSubs = null;
+        this._events = null;
+        this._eventCallDepth = 0;
+        for (let i = 0, len = this._children.length; i &lt; len; i++) {
+            this._children.destroy();
+        }
+        this._children = [];
+    }
+}
+
+export {Controller};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

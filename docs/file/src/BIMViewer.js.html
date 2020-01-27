@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/BIMViewer.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/BIMViewer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;./Controller.js&quot;;
+import {BusyModal} from &quot;./BusyModal.js&quot;;
+import {ResetAction} from &quot;./toolbar/ResetAction.js&quot;;
+import {FitAction} from &quot;./toolbar/FitAction.js&quot;;
+import {FirstPersonMode} from &quot;./toolbar/FirstPersonMode.js&quot;;
+import {HideTool} from &quot;./toolbar/HideTool.js&quot;;
+import {SelectionTool} from &quot;./toolbar/SelectionTool.js&quot;;
+import {QueryTool} from &quot;./toolbar/QueryTool.js&quot;;
+import {SectionTool} from &quot;./toolbar/SectionTool.js&quot;;
+import {NavCubeMode} from &quot;./toolbar/NavCubeMode.js&quot;;
+
+import {ModelsExplorer} from &quot;./explorer/ModelsExplorer.js&quot;;
+import {ObjectsExplorer} from &quot;./explorer/ObjectsExplorer.js&quot;;
+import {ClassesExplorer} from &quot;./explorer/ClassesExplorer.js&quot;;
+import {StoreysExplorer} from &quot;./explorer/StoreysExplorer.js&quot;;
+
+import {Viewer} from &quot;@xeokit/xeokit-sdk/src/viewer/Viewer.js&quot;;
+import {AmbientLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js&quot;;
+import {DirLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js&quot;;
+import {BCFViewpointsPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js&quot;;
+import {ThreeDMode} from &quot;./toolbar/ThreeDMode.js&quot;;
+import {ContextMenu} from &quot;@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js&quot;;
+import {ObjectContextMenuItems} from &quot;./contextMenuItems/ObjectContextMenuItems.js&quot;;
+import {CanvasContextMenuItems} from &quot;./contextMenuItems/CanvasContextMenuItems.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+
+const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;
+    &lt;div class=&quot;xeokit-tab xeokit-modelsTab&quot;&gt;
+        &lt;a class=&quot;xeokit-tab-btn&quot; href=&quot;#&quot;&gt;Models&lt;/a&gt;
+        &lt;div class=&quot;xeokit-tab-content&quot;&gt;
+            &lt;div class=&quot;xeokit-btn-group&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-unloadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;Unload all models&quot;&gt;Unload all&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;xeokit-models&quot; &gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;xeokit-tab xeokit-objectsTab&quot;&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Objects&lt;/a&gt;
+        &lt;div class=&quot;xeokit-tab-content&quot;&gt;
+         &lt;div class=&quot;xeokit-btn-group&quot;&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;Show all objects&quot;&gt;Show all&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all objects&quot;&gt;Hide all&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;xeokit-objects xeokit-tree-panel&quot; &gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;xeokit-tab xeokit-classesTab&quot;&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Classes&lt;/a&gt;
+        &lt;div class=&quot;xeokit-tab-content&quot;&gt;
+            &lt;div class=&quot;xeokit-btn-group&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;Show all classes&quot;&gt;Show all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all classes&quot;&gt;Hide all&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;xeokit-classes xeokit-tree-panel&quot; &gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+     &lt;div class=&quot;xeokit-tab xeokit-storeysTab&quot;&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Storeys&lt;/a&gt;
+        &lt;div class=&quot;xeokit-tab-content&quot;&gt;
+         &lt;div class=&quot;xeokit-btn-group&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;Show all storeys&quot;&gt;Show all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all storeys&quot;&gt;Hide all&lt;/button&gt;
+            &lt;/div&gt;
+             &lt;div class=&quot;xeokit-storeys xeokit-tree-panel&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;`;
+
+const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
+    &lt;!-- Reset button --&gt;
+    &lt;div class=&quot;xeokit-btn-group&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-reset xeokit-btn fa fa-home fa-2x disabled&quot; data-tippy-content=&quot;Reset view&quot;&gt;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- 3D Mode button --&gt;
+    &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- Fit button --&gt;
+    &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-tippy-content=&quot;Fit to view&quot;&gt;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- First Person mode button --&gt;
+    &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-tippy-content=&quot;First person&quot;&gt;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- Tools button group --&gt;
+    &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
+        &lt;!-- Hide tool button --&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled&quot; data-tippy-content=&quot;Hide objects&quot;&gt;&lt;/button&gt;
+        &lt;!-- Select tool button --&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled&quot; data-tippy-content=&quot;Select objects&quot;&gt;&lt;/button&gt;
+        &lt;!-- Query tool button --&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;Query objects&quot;&gt;&lt;/button&gt;
+        &lt;!-- Slice tool button --&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;`;
+
+function initTabs(containerElement) {
+
+    const tabsClass = &apos;xeokit-tabs&apos;;
+    const tabClass = &apos;xeokit-tab&apos;;
+    const tabButtonClass = &apos;xeokit-tab-btn&apos;;
+    const activeClass = &apos;active&apos;;
+
+    // Activates the chosen tab and deactivates the rest
+    function activateTab(chosenTabElement) {
+        let tabList = chosenTabElement.parentNode.querySelectorAll(&apos;.&apos; + tabClass);
+        for (let i = 0; i &lt; tabList.length; i++) {
+            let tabElement = tabList[i];
+            if (tabElement.isEqualNode(chosenTabElement)) {
+                tabElement.classList.add(activeClass)
+            } else {
+                tabElement.classList.remove(activeClass)
+            }
+        }
+    }
+
+    // Initialize each tabbed container
+    let tabbedContainers = containerElement.querySelectorAll(&apos;.&apos; + tabsClass);
+    for (let i = 0; i &lt; tabbedContainers.length; i++) {
+        let tabbedContainer = tabbedContainers[i];
+        let tabList = tabbedContainer.querySelectorAll(&apos;.&apos; + tabClass);
+        activateTab(tabList[0]);
+        for (let i = 0; i &lt; tabList.length; i++) {
+            let tabElement = tabList[i];
+            let tabButton = tabElement.querySelector(&apos;.&apos; + tabButtonClass);
+            tabButton.addEventListener(&apos;click&apos;, function (event) {
+                event.preventDefault();
+                if (this.classList.contains(&quot;disabled&quot;)) {
+                    return;
+                }
+                activateTab(event.target.parentNode);
+            })
+        }
+    }
+}
+
+/**
+ * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
+ */
+class BIMViewer extends Controller {
+
+    /**
+     * Constructs a ViewerUI.
+     * @param {Server} server Data access strategy.
+     * @param {*} cfg Configuration.
+     */
+    constructor(server, cfg = {}) {
+
+        if (!cfg.canvasElement) {
+            throw &quot;Config expected: canvasElement&quot;;
+        }
+
+        if (!cfg.explorerElement) {
+            throw &quot;Config expected: explorerElement&quot;;
+        }
+
+        if (!cfg.toolbarElement) {
+            throw &quot;Config expected: toolbarElement&quot;;
+        }
+
+        if (!cfg.navCubeCanvasElement) {
+            throw &quot;Config expected: navCubeCanvasElement&quot;;
+        }
+
+        if (!cfg.sectionPlanesOverviewCanvasElement) {
+            throw &quot;Config expected: sectionPlanesOverviewCanvasElement&quot;;
+        }
+
+        const canvasElement = cfg.canvasElement;
+        const explorerElement = cfg.explorerElement;
+        const toolbarElement = cfg.toolbarElement;
+        const navCubeCanvasElement = cfg.navCubeCanvasElement;
+        const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
+        const queryInfoPanelElement = cfg.queryInfoPanelElement;
+
+        explorerElement.oncontextmenu = (e) =&gt; {
+            e.preventDefault();
+        };
+
+        toolbarElement.oncontextmenu = (e) =&gt; {
+            e.preventDefault();
+        };
+
+        navCubeCanvasElement.oncontextmenu = (e) =&gt; {
+            e.preventDefault();
+        };
+
+        sectionPlanesOverviewCanvasElement.oncontextmenu = (e) =&gt; {
+            e.preventDefault();
+        };
+
+        const viewer = new Viewer({
+            canvasElement: canvasElement,
+            transparent: true
+        });
+
+        super(null, cfg, server, viewer);
+
+        /**
+         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIM viewer.
+         *
+         * @type {Viewer}
+         */
+        this.viewer = viewer;
+
+        this._customizeViewer();
+        this._initCanvasContextMenus();
+
+        explorerElement.innerHTML = explorerTemplate;
+        toolbarElement.innerHTML = toolbarTemplate;
+
+        this._explorerElement = explorerElement;
+
+        initTabs(explorerElement);
+
+        this._busyModal = new BusyModal(this); // TODO: Support external spinner dialog
+
+        this._modelsExplorer = new ModelsExplorer(this, {
+            modelsTabElement: explorerElement.querySelector(&quot;.xeokit-modelsTab&quot;),
+            unloadModelsButtonElement: explorerElement.querySelector(&quot;.xeokit-unloadAllModels&quot;),
+            modelsElement: explorerElement.querySelector(&quot;.xeokit-models&quot;)
+        });
+
+        this._objectsExplorer = new ObjectsExplorer(this, {
+            objectsTabElement: explorerElement.querySelector(&quot;.xeokit-objectsTab&quot;),
+            showAllObjectsButtonElement: explorerElement.querySelector(&quot;.xeokit-showAllObjects&quot;),
+            hideAllObjectsButtonElement: explorerElement.querySelector(&quot;.xeokit-hideAllObjects&quot;),
+            objectsElement: explorerElement.querySelector(&quot;.xeokit-objects&quot;)
+        });
+
+        this._classesExplorer = new ClassesExplorer(this, {
+            classesTabElement: explorerElement.querySelector(&quot;.xeokit-classesTab&quot;),
+            showAllClassesButtonElement: explorerElement.querySelector(&quot;.xeokit-showAllClasses&quot;),
+            hideAllClassesButtonElement: explorerElement.querySelector(&quot;.xeokit-hideAllClasses&quot;),
+            classesElement: explorerElement.querySelector(&quot;.xeokit-classes&quot;)
+        });
+
+        this._storeysExplorer = new StoreysExplorer(this, {
+            storeysTabElement: explorerElement.querySelector(&quot;.xeokit-storeysTab&quot;),
+            showAllStoreysButtonElement: explorerElement.querySelector(&quot;.xeokit-showAllStoreys&quot;),
+            hideAllStoreysButtonElement: explorerElement.querySelector(&quot;.xeokit-hideAllStoreys&quot;),
+            storeysElement: explorerElement.querySelector(&quot;.xeokit-storeys&quot;)
+        });
+
+        this._resetAction = new ResetAction(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-reset&quot;),
+            active: false
+        });
+
+        this._fitAction = new FitAction(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-fit&quot;),
+            active: false
+        });
+
+        this._threeDMode = new ThreeDMode(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-threeD&quot;),
+            active: false
+        });
+
+        this._firstPersonMode = new FirstPersonMode(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-firstPerson&quot;),
+            active: false
+        });
+
+        this._hideTool = new HideTool(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-hide&quot;),
+            active: false
+        });
+
+        this._selectionTool = new SelectionTool(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-select&quot;),
+            active: false
+        });
+
+        this._queryTool = new QueryTool(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-query&quot;),
+            queryInfoPanelElement: queryInfoPanelElement,
+            active: false
+        });
+
+        this._sectionTool = new SectionTool(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-section&quot;),
+            sectionPlanesOverviewCanvasElement: sectionPlanesOverviewCanvasElement,
+            active: false
+        });
+
+        this._navCubeMode = new NavCubeMode(this, {
+            navCubeCanvasElement: navCubeCanvasElement,
+            active: true
+        });
+
+        this._threeDMode.setActive(true);
+        this._firstPersonMode.setActive(false);
+        this._navCubeMode.setActive(true);
+
+        this._modelsExplorer.on(&quot;modelLoaded&quot;, (modelId) =&gt; {
+            if (this._modelsExplorer.getNumModelsLoaded() === 1) {
+                this.setControlsEnabled(true);
+            }
+            this.fire(&quot;modelLoaded&quot;, modelId);
+        });
+
+        this._modelsExplorer.on(&quot;modelUnloaded&quot;, (modelId) =&gt; {
+            if (this._modelsExplorer.getNumModelsLoaded() === 0) {
+                this.setControlsEnabled(false);
+                this.openTab(&quot;models&quot;);
+            }
+            this.fire(&quot;modelUnloaded&quot;, modelId);
+        });
+
+        this._queryTool.on(&quot;queryPicked&quot;, (entityId) =&gt; {
+            const event = {};
+            event.entity = this.viewer.scene.objects[entityId];
+            event.metaObject = this.viewer.metaScene.metaObjects[entityId];
+            this.fire(&quot;queryPicked&quot;, event);
+        });
+
+        this._queryTool.on(&quot;queryNotPicked&quot;, () =&gt; {
+            this.fire(&quot;queryNotPicked&quot;, true);
+        });
+
+        this.resetView(&quot;reset&quot;, () =&gt; {
+            this.fire(&quot;reset&quot;, true);
+        });
+
+        this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);
+
+        explorerElement.querySelector(&quot;.xeokit-showAllObjects&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.showAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-hideAllObjects&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this._hideAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-showAllClasses&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.showAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-hideAllClasses&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.hideAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-showAllStoreys&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.showAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-hideAllStoreys&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.hideAllObjects();
+            event.preventDefault();
+        });
+
+        explorerElement.querySelector(&quot;.xeokit-unloadAllModels&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
+            this.setControlsEnabled(false); // For quick UI feedback
+            this._modelsExplorer.unloadAllModels();
+            event.preventDefault();
+        });
+
+        this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
+    }
+
+    _customizeViewer() {
+
+        const scene = this.viewer.scene;
+
+        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fillAlpha = 0.1;
+        scene.xrayMaterial.fillColor = [0, 0, 0];
+        scene.xrayMaterial.edgeAlpha = 0.3;
+        scene.xrayMaterial.edgeColor = [0, 0, 0];
+
+        scene.highlightMaterial.edges = true;
+        scene.highlightMaterial.edgeColor = [.5, .5, 0];
+        scene.highlightMaterial.edgeAlpha = 1.0;
+        scene.highlightMaterial.fill = true;
+        scene.highlightMaterial.fillAlpha = 0.1;
+        scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        scene.clearLights();
+
+        new AmbientLight(scene, {
+            color: [0.3, 0.3, 0.3],
+            intensity: 1.0
+        });
+
+        new DirLight(scene, {
+            dir: [0.8, -0.6, -0.8],
+            color: [1.0, 1.0, 1.0],
+            intensity: 1.0,
+            space: &quot;world&quot;
+        });
+
+        new DirLight(scene, {
+            dir: [-0.8, -0.4, 0.4],
+            color: [1.0, 1.0, 1.0],
+            intensity: 1.0,
+            space: &quot;world&quot;
+        });
+
+        new DirLight(scene, {
+            dir: [0.2, -0.8, 0.8],
+            color: [0.6, 0.6, 0.6],
+            intensity: 1.0,
+            space: &quot;world&quot;
+        });
+
+        this.viewer.cameraControl.panRightClick = false; // Pan on left-click
+    }
+
+    _initCanvasContextMenus() {
+
+        this._canvasContextMenu = new ContextMenu({
+            context: {
+                viewer: this.viewer
+            },
+            items: CanvasContextMenuItems
+        });
+
+        this._objectContextMenu = new ContextMenu({
+            items: ObjectContextMenuItems
+        });
+
+        this.viewer.scene.canvas.canvas.oncontextmenu = (e) =&gt; {
+
+            const hit = this.viewer.scene.pick({
+                canvasPos: [e.offsetX, e.offsetY]
+            });
+
+            if (hit &amp;&amp; hit.entity.isObject) {
+                this._canvasContextMenu.hide();
+                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.context = {
+                    viewer: this.viewer,
+                    bimViewer: this,
+                    showNodeInTreeViews: (objectId) =&gt; {
+                        this._objectsExplorer.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
+                        this._classesExplorer.showNodeInTreeView(objectId);
+                        this._storeysExplorer.showNodeInTreeView(objectId);
+                    },
+                    entity: hit.entity
+                };
+            } else {
+                this._objectContextMenu.hide();
+                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.context = {
+                    viewer: this.viewer,
+                    bimViewer: this
+                };
+            }
+
+            e.preventDefault();
+        };
+
+    }
+
+    /**
+     * Gets information on all available projects.
+     *
+     * ### Example
+     *
+     * ````javascript
+     * myViewer.getProjectsInfo((projectsInfo) =&gt; {
+     *      console.log(JSON.stringify(projectsInfo, null, &quot;\t&quot;));
+     * });
+     * ````
+     *
+     * Returns JSON similar to:
+     *
+     * ````json
+     * {
+     *      &quot;projects&quot;: [
+     *          {
+     *              &quot;id&quot;: &quot;Duplex&quot;,
+     *              &quot;name&quot;: &quot;Duplex&quot;
+     *          },
+     *          {
+     *              &quot;id&quot;: &quot;Schependomlaan&quot;,
+     *              &quot;name&quot;: &quot;Schependomlaan&quot;
+     *          },
+     *          {
+     *              &quot;id&quot;: &quot;WestRiversideHospital&quot;,
+     *              &quot;name&quot;: &quot;West Riverside Hospital&quot;
+     *          }
+     *	    ]
+     * }
+     * ````
+     * @param {Function} done Callback invoked on success, into which the projects information JSON is passed.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    getProjectsInfo(done, error) {
+        if (!done) {
+            this.error(&quot;getProjectsInfo() - Argument expected: &apos;done&apos;&quot;);
+            return;
+        }
+        this.server.getProjects( done, (errorMsg) =&gt; {
+            this.error(&quot;getProjectsInfo() - &quot; + errorMsg);
+            if (error) {
+                error(errorMsg);
+            }
+        });
+    }
+
+    /**
+     * Gets information on the given project.
+     *
+     * Use {@link BIMViewer#getProjects} to get information on all available projects.
+     *
+     * ### Example
+     *
+     * ````javascript
+     * myViewer.getProjectInfo((&quot;Duplex&quot;) =&gt; {
+     *      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
+     * });
+     * ````
+     *
+     * Returns JSON similar to:
+     *
+     * ````json
+     * {
+     *      &quot;id&quot;: &quot;Duplex&quot;,
+     *      &quot;name&quot;: &quot;Duplex&quot;
+     * }
+     * ````
+     *
+     * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
+     * @param {Function} done Callback invoked on success, into which the project information JSON is passed.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    getProjectInfo(projectId, done, error) {
+        if (!projectId) {
+            this.error(&quot;getProjectInfo() - Argument expected: objectId&quot;);
+            return;
+        }
+        if (!done) {
+            this.error(&quot;getProjectInfo() - Argument expected: &apos;done&apos;&quot;);
+            return;
+        }
+        this.server.getProject(projectId,
+            done, (errorMsg) =&gt; {
+                this.error(&quot;getProjectInfo() - &quot; + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
+    }
+
+    /**
+     * Loads a project into the viewer.
+     *
+     * Unloads any currently loaded project and its models first. If the given project is already loaded, will unload that project first.
+     *
+     * @param {String} projectId ID of the project to load. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
+     * @param {Function} done Callback invoked on success.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    loadProject(projectId, done, error) {
+        if (!projectId) {
+            this.error(&quot;loadProject() - Argument expected: objectId&quot;);
+            return;
+        }
+        this._modelsExplorer.loadProject(projectId,
+            () =&gt; {
+                if (done) {
+                    done();
+                }
+            }, (errorMsg) =&gt; {
+                this.error(&quot;loadProject() - &quot; + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
+    }
+
+    /**
+     * Unloads whatever project is currently loaded.
+     */
+    unloadProject() {
+        this._modelsExplorer.unloadProject();
+        this.openTab(&quot;models&quot;);
+        this.setControlsEnabled(false); // For quick UI feedback
+    }
+
+    /**
+     * Returns the ID of the currently loaded project, if any.
+     *
+     * @returns {String} The ID of the currently loaded project, otherwise ````null```` if no project is currently loaded.
+     */
+    getLoadedProjectId() {
+        return this._modelsExplorer.getLoadedProjectId();
+    }
+
+    /**
+     * Loads a model into the viewer.
+     *
+     * Assumes that the project containing the model is currently loaded.
+     *
+     * @param {String} modelId ID of the model to load. Must be the ID of one of the models in the currently loaded project.
+     * @param {Function} done Callback invoked on success.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    loadModel(modelId, done, error) {
+        if (!modelId) {
+            this.error(&quot;loadModel() - Argument expected: modelId&quot;);
+            return;
+        }
+        this._modelsExplorer.loadModel(modelId,
+            () =&gt; {
+                if (done) {
+                    done();
+                }
+            }, (errorMsg) =&gt; {
+                this.error(&quot;loadModel() - &quot; + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
+    }
+
+    /**
+     * Returns the IDs of the currently loaded models, if any.
+     *
+     * @returns {String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded.
+     */
+    getLoadedModelIds() {
+        return this._modelsExplorer._getLoadedModelIds();
+    }
+
+    /**
+     * Unloads a model from the viewer.
+     *
+     * Does nothing if the model is not currently loaded.
+     *
+     * @param modelId
+     */
+    unLoadModel(modelId) {
+        if (!modelId) {
+            this.error(&quot;unLoadModel() - Argument expected: modelId&quot;);
+            return;
+        }
+        this._modelsExplorer.unloadModel(modelId);
+    }
+
+    /**
+     * Unloads all currently loaded models.
+     */
+    unloadAllModels() {
+        this._modelsExplorer.unloadAllModels();
+    }
+
+    /**
+     * Show the given object in the Objects tab.
+     * @param {String} objectId ID of the object
+     */
+    showObjectInObjectsTab(objectId) {
+        if (!objectId) {
+            this.error(&quot;showObjectInObjectsTab() - Argument expected: objectId&quot;);
+            return;
+        }
+        this._objectsExplorer.showNodeInTreeView(objectId);
+    }
+
+    /**
+     * Show the given object in the Classes tab.
+     * @param {String} objectId ID of the object
+     */
+    showObjectInClassesTab(objectId) {
+        if (!objectId) {
+            this.error(&quot;showObjectInClassesTab() - Argument expected: objectId&quot;);
+            return;
+        }
+        this._classesExplorer.showNodeInTreeView(objectId);
+
+    }
+
+    /**
+     *
+     * @param {String} objectId ID of the object
+     */
+    showObjectInStoreysTab(objectId) {
+        if (!objectId) {
+            this.error(&quot;showObjectInStoreysTab() - Argument expected: objectId&quot;);
+            return;
+        }
+        this._storeysExplorer.showNodeInTreeView(objectId);
+    }
+
+    /**
+     * Shows the object with the given ID.
+     * @param {String} objectId ID of object to show.
+     */
+    showObject(objectId) {
+        if (!objectId) {
+            this.error(&quot;showObject() - Argument expected: objectId&quot;);
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.visible = true;
+            }
+        });
+    }
+
+    /**
+     * Shows all objects currently in the viewer.
+     */
+    showAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * Shows all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not show.
+     */
+    showAllObjectsExceptFor(objectIds) {
+        if (!objectId) {
+            this.error(&quot;showAllObjectsExceptFor() - Argument expected: objectId&quot;);
+            return;
+        }
+    }
+
+    /**
+     * Hides the object with the given ID.
+     * @param {String} objectId ID of object to hide.
+     */
+    hideObject(objectId) {
+        if (!objectId) {
+            this.error(&quot;hideObject() - Argument expected: objectId&quot;);
+            return;
+        }
+    }
+
+    /**
+     * Hides all objects currently in the viewer.
+     */
+    hideAllObjects() {
+        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
+    }
+
+    /**
+     * Hides all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not hide.
+     */
+    hideAllObjectsExceptFor(objectIds) {
+        if (!objectIds) {
+            this.error(&quot;hideAllObjectsExceptFor() - Argument expected: objectId&quot;);
+            return;
+        }
+    }
+
+    /**
+     * flies the camera to fit the given object in view.
+     *
+     * @param {String} objectId ID of the object
+     * @param {Function} done Callback invoked on completion
+     */
+    flyToObject(objectId, done) {
+        if (!objectId) {
+            this.error(&quot;flyToObject() - Argument expected: objectId&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const objectIds = [];
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+            if (scene.objects[metaObject.id]) {
+                objectIds.push(metaObject.id);
+            }
+        });
+        if (objectIds.length === 0) {
+            this.error(&quot;Object not found in viewer: &apos;&quot; + objectId + &quot;&apos;&quot;);
+            if (done) {
+                done();
+            }
+            return;
+        }
+        scene.setObjectsVisible(objectIds, true);
+        scene.setObjectsHighlighted(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        viewer.cameraFlight.flyTo({
+            aabb: aabb,
+            duration: 0.5
+        }, () =&gt; {
+            if (done) {
+                done();
+            }
+            setTimeout(function () {
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            }, 500);
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * Jumps the camera to fit the given object in view.
+     *
+     * @param {String} objectId ID of the object
+     */
+    jumpToObject(objectId) {
+        if (!objectId) {
+            this.error(&quot;jumpToObject() - Argument expected: objectId&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const objectIds = [];
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+            if (scene.objects[metaObject.id]) {
+                objectIds.push(metaObject.id);
+            }
+        });
+        if (objectIds.length === 0) {
+            this.error(&quot;Object not found in viewer: &apos;&quot; + objectId + &quot;&apos;&quot;);
+            return;
+        }
+        scene.setObjectsVisible(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        viewer.cameraFlight.jumpTo({
+            aabb: aabb
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * X-ray the object with the given ID.
+     *
+     * @param {String} objectId ID of object to x-ray.
+     */
+    xrayObject(objectId) {
+        if (!objectId) {
+            this.error(&quot;xrayObject() - Argument expected: objectId&quot;);
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.xrayed = true;
+            }
+        });
+    }
+
+    /**
+     * X-rays all objects currently in the viewer.
+     */
+    xrayAllObjects() {
+        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * X-rays all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not x-ray.
+     */
+    xrayAllObjectsExceptFor(objectIds) {
+
+    }
+
+    /**
+     * Un-x-rays all objects currently in the viewer.
+     */
+    xrayNoObjects() {
+        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, false);
+    }
+
+    /**
+     * Selects the objects with the given ID.
+     * @param {String} objectId ID of object to select.
+     */
+    selectObject(objectId) {
+        if (!objectId) {
+            this.error(&quot;selectObject() - Argument expected: objectId&quot;);
+            return;
+        }
+        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+            const entity = this.viewer.scene.objects[metaObject.id];
+            if (entity) {
+                entity.selected = true;
+            }
+        });
+    }
+
+    /**
+     * Selects all objects currently in the viewer.
+     */
+    selectAllObjects() {
+        this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
+    }
+
+    /**
+     * Selects all objects currently in the viewer, except for those with the given IDs.
+     * @param {String[]} objectIds IDs of objects to not select.
+     */
+    selectAllObjectsExceptFor(objectIds) {
+
+    }
+
+    /**
+     * De-selects all objects currently in the viewer.
+     */
+    deselectAllObjects() {
+        this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
+    }
+
+    /**
+     * Opens the specified viewer tab.
+     *
+     * The available tabs are:
+     *
+     *  * &quot;models&quot; - the Models tab, which lists the models available within the currently loaded project,
+     *  * &quot;objects&quot; - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
+     *  * &quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
+     *  * &quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *
+     * @param {String} tabId ID of the tab to open - see method description.
+     */
+    openTab(tabId) {
+        if (!tabId) {
+            this.error(&quot;openTab() - Argument expected: tabId&quot;);
+            return;
+        }
+        const tabClass = &apos;xeokit-tab&apos;;
+        const activeClass = &apos;active&apos;;
+        let tabSelector;
+        switch (tabId) {
+            case &quot;models&quot;:
+                tabSelector = &quot;xeokit-modelsTab&quot;;
+                break;
+            case &quot;objects&quot;:
+                tabSelector = &quot;xeokit-objectsTab&quot;;
+                break;
+            case &quot;classes&quot;:
+                tabSelector = &quot;xeokit-classesTab&quot;;
+                break;
+            case &quot;storeys&quot;:
+                tabSelector = &quot;xeokit-storeysTab&quot;;
+                break;
+            default:
+                this.error(&quot;openTab() - tab not recognized: &apos;&quot; + tabId + &quot;&apos;&quot;);
+                return;
+        }
+        let tabs = this._explorerElement.querySelectorAll(&quot;.&quot; + tabClass);
+        let tab = this._explorerElement.querySelector(&quot;.&quot; + tabSelector);
+        for (let i = 0; i &lt; tabs.length; i++) {
+            let tabElement = tabs[i];
+            if (tabElement.isEqualNode(tab)) {
+                tabElement.classList.add(activeClass)
+            } else {
+                tabElement.classList.remove(activeClass)
+            }
+        }
+    }
+
+    /**
+     * Saves viewer state to a BCF viewpoint.
+     *
+     * This does not save information about the project and model(s) that are currently loaded. When loading the viewpoint,
+     * the viewer will assume that the same project and models will be currently loaded (the BCF viewpoint specification
+     * does not contain that information).
+     *
+     * Note that xeokit&apos;s {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
+     * direction vector. Therefore, we save ````camera_direction```` as the vector from {@link Camera#eye} to {@link Camera#look}.
+     *
+     * @param {*} [options] Options for getting the viewpoint.
+     * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.
+     * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.
+     * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.
+     * @returns {*} BCF JSON viewpoint object
+     * @example
+     *
+     * const viewpoint = bimViewer.saveBCFViewpoint({
+     *     spacesVisible: false,          // Default
+     *     spaceBoundariesVisible: false, // Default
+     *     openingsVisible: false         // Default
+     * });
+     *
+     * // viewpoint will resemble the following:
+     *
+     * {
+     *     perspective_camera: {
+     *         camera_view_point: {
+     *             x: 0.0,
+     *             y: 0.0,
+     *             z: 0.0
+     *         },
+     *         camera_direction: {
+     *             x: 1.0,
+     *             y: 1.0,
+     *             z: 2.0
+     *         },
+     *         camera_up_vector: {
+     *             x: 0.0,
+     *             y: 0.0,
+     *             z: 1.0
+     *         },
+     *         field_of_view: 90.0
+     *     },
+     *     lines: [],
+     *     clipping_planes: [{
+     *         location: {
+     *             x: 0.5,
+     *             y: 0.5,
+     *             z: 0.5
+     *         },
+     *         direction: {
+     *             x: 1.0,
+     *             y: 0.0,
+     *             z: 0.0
+     *         }
+     *     }],
+     *     bitmaps: [],
+     *     snapshot: {
+     *         snapshot_type: png,
+     *         snapshot_data: &quot;data:image/png;base64,......&quot;
+     *     },
+     *     components: {
+     *         visibility: {
+     *             default_visibility: false,
+     *             exceptions: [{
+     *                 ifc_guid: 4$cshxZO9AJBebsni$z9Yk,
+     *                 originating_system: xeokit.io,
+     *                 authoring_tool_id: xeokit/v1.0
+     *             }]
+     *        },
+     *         selection: [{
+     *            ifc_guid: &quot;4$cshxZO9AJBebsni$z9Yk&quot;,
+     *         }]
+     *     }
+     * }
+     */
+    saveBCFViewpoint(options) {
+        return this._bcfViewpointsPlugin.getViewpoint(options);
+    }
+
+    /**
+     * Sets viewer state to the given BCF viewpoint.
+     *
+     * This assumes that the viewer currently contains the same project and model(s) that were loaded at the time that the
+     * viewpoint was originally saved (the BCF viewpoint specification does not contain that information).
+     *
+     * Note that xeokit&apos;s {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a
+     * direction vector. Therefore, when loading a BCF viewpoint, we set {@link Camera#look} to the absolute position
+     * obtained by offsetting the BCF ````camera_view_point````  along ````camera_direction````.
+     *
+     * When loading a viewpoint, we also have the option to find {@link Camera#look} as the closest point of intersection
+     * (on the surface of any visible and pickable {@link Entity}) with a 3D ray fired from ````camera_view_point```` in
+     * the direction of ````camera_direction````.
+     *
+     * @param {*} bcfViewpoint  BCF JSON viewpoint object or &quot;reset&quot; / &quot;RESET&quot; to reset the viewer, which clears SectionPlanes,
+     * shows default visible entities and restores camera to initial default position.
+     * @param {*} [options] Options for setting the viewpoint.
+     * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest
+     * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
+     * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
+     * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
+     */
+    loadBCFViewpoint(bcfViewpoint, options) {
+        if (!bcfViewpoint) {
+            this.error(&quot;loadBCFViewpoint() - Argument expected: bcfViewpoint&quot;);
+            return;
+        }
+        this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
+    }
+
+    /**
+     * Resets the view.
+     */
+    resetView() {
+        this._resetAction.reset();
+    }
+
+    /**
+     * Enables or disables the various buttons and controls throughout the viewer.
+     *
+     * This also makes various buttons appear disabled.
+     *
+     * @param {Boolean} enabled Whether or not to disable the controls.
+     */
+    setControlsEnabled(enabled) {
+
+        // Explorer
+
+        // Models tab is always enabled
+        this._objectsExplorer.setEnabled(enabled);
+        this._classesExplorer.setEnabled(enabled);
+        this._storeysExplorer.setEnabled(enabled);
+
+        // Toolbar
+
+        this._resetAction.setEnabled(enabled);
+        this._fitAction.setEnabled(enabled);
+        this._threeDMode.setEnabled(enabled);
+        this._firstPersonMode.setEnabled(enabled);
+        this._queryTool.setEnabled(enabled);
+        this._hideTool.setEnabled(enabled);
+        this._selectionTool.setEnabled(enabled);
+        this._sectionTool.setEnabled(enabled);
+    }
+
+    /**
+     * Destroys the viewer, freeing all resources.
+     */
+    destroy() {
+        this.viewer.destroy();
+        this._bcfViewpointsPlugin.destroy();
+        this._canvasContextMenu.destroy();
+        this._objectContextMenu.destroy();
+    }
+}
+
+export {BIMViewer};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
