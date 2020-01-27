@@ -6090,9 +6090,6 @@ class ModelMemento {
 
         /** @private */
         this.objectsColorize = [];
-        
-        /** @private */
-        this.objectsColorizing = [];
 
         /** @private */
         this.objectsOpacity = [];
@@ -6177,13 +6174,9 @@ class ModelMemento {
             }
             if (colorize) {
                 const objectColor = object.colorize;
-                const colorizing = (!!objectColor);
-                this.objectsColorizing[i] = colorizing;
-                if (colorizing) {
-                    this.objectsColorize[i * 3 + 0] = objectColor[0];
-                    this.objectsColorize[i * 3 + 1] = objectColor[1];
-                    this.objectsColorize[i * 3 + 2] = objectColor[2];
-                }
+                this.objectsColorize[i * 3 + 0] = objectColor[0];
+                this.objectsColorize[i * 3 + 1] = objectColor[1];
+                this.objectsColorize[i * 3 + 2] = objectColor[2];
             }
             if (opacity) {
                 this.objectsOpacity[i] = object.opacity;
@@ -6251,13 +6244,10 @@ class ModelMemento {
                 object.pickable = this.objectsPickable[i];
             }
             if (colorize) {
-                const colorizing = this.objectsColorizing[i];
-                if (colorizing) {
-                    color[0] = this.objectsColorize[i * 3 + 0];
-                    color[1] = this.objectsColorize[i * 3 + 1];
-                    color[2] = this.objectsColorize[i * 3 + 2];
-                    object.colorize = color;
-                }
+                color[0] = this.objectsColorize[i * 3 + 0];
+                color[1] = this.objectsColorize[i * 3 + 1];
+                color[2] = this.objectsColorize[i * 3 + 2];
+                object.colorize = color;
             }
             if (opacity) {
                 object.opacity = this.objectsOpacity[i];
@@ -52416,6 +52406,7 @@ class CameraFlightAnimation extends Component {
  * @emits "doublePickedSurface" - Double-clicked or double-tapped object, with event containing surface intersection details
  * @emits "pickedNothing" - Clicked or tapped, but not on any objects
  * @emits "doublePickedNothing" - Double-clicked or double-tapped, but not on any objects
+ * @emits "rightClick" - Right-click
  */
 class CameraControl extends Component {
 
@@ -53314,12 +53305,7 @@ class CameraControl extends Component {
                     } else {
                         // Do both zoom and ortho scale so that we can switch projections without weird scale jumps
                         if (self._panToPointer) {
-                            updatePick();
-                            if (pickedSurface && pickResult.worldPos) {
-                                panToWorldPos(pickResult.worldPos, -vZoom);
-                            } else {
-                                camera.zoom(vZoom);
-                            }
+                            panToMousePos(mousePos, -vZoom * 2);
                         } else if (self._panToPivot) {
                             panToWorldPos(self._pivoter.getPivotPos(), -vZoom); // FIXME: What about when pivotPos undefined?
                         } else {
@@ -53377,6 +53363,8 @@ class CameraControl extends Component {
 
                 let lastX;
                 let lastY;
+                let lastXDown = 0;
+                let lastYDown = 0;
                 let xDelta = 0;
                 let yDelta = 0;
                 let down = false;
@@ -53397,6 +53385,8 @@ class CameraControl extends Component {
                             getCanvasPosFromEvent(e, mousePos);
                             lastX = mousePos[0];
                             lastY = mousePos[1];
+                            lastXDown = mousePos[0];
+                            lastYDown = mousePos[1];
                             break;
                         case 2: // Middle/both buttons
                             mouseDownMiddle = true;
@@ -53408,6 +53398,8 @@ class CameraControl extends Component {
                                 getCanvasPosFromEvent(e, mousePos);
                                 lastX = mousePos[0];
                                 lastY = mousePos[1];
+                                lastXDown = mousePos[0];
+                                lastYDown = mousePos[1];
                             }
                             break;
                         case 3: // Right button
@@ -53420,6 +53412,8 @@ class CameraControl extends Component {
                                 getCanvasPosFromEvent(e, mousePos);
                                 lastX = mousePos[0];
                                 lastY = mousePos[1];
+                                lastXDown = mousePos[0];
+                                lastYDown = mousePos[1];
                             }
                             break;
                     }
@@ -53437,6 +53431,15 @@ class CameraControl extends Component {
                             break;
                         case 3: // Right button
                             mouseDownRight = false;
+                            getCanvasPosFromEvent(e, mousePos);
+                            const x = mousePos[0];
+                            const y = mousePos[1];
+                            if (Math.abs(x - lastXDown) < 3 && Math.abs(y - lastYDown) < 3) {
+                                self.fire("rightClick", {
+                                    canvasPos: pickCursorPos,
+                                    event: e
+                                }, true);
+                            }
                             break;
                     }
                     self.scene.canvas.canvas.style.removeProperty("cursor");
@@ -53541,9 +53544,6 @@ class CameraControl extends Component {
                 canvas.addEventListener("wheel", function (e) {
                     if (!(self._active && self._pointerEnabled)) {
                         return;
-                    }
-                    if (self._panToPointer) {
-                        needPickSurface = true;
                     }
                     const delta = Math.max(-1, Math.min(1, -e.deltaY * 40));
                     if (delta === 0) {
@@ -56404,7 +56404,8 @@ class BIMViewer extends Controller {
             space: "world"
         });
 
-        this.viewer.cameraControl.panRightClick = false; // Pan on left-click
+        this.viewer.cameraControl.panRightClick = true;
+        this.viewer.cameraControl.panToPointer = true;
     }
 
     _initCanvasContextMenus() {
@@ -56420,15 +56421,17 @@ class BIMViewer extends Controller {
             items: ObjectContextMenuItems
         });
 
-        this.viewer.scene.canvas.canvas.oncontextmenu = (e) => {
+        this.viewer.cameraControl.on("rightClick", (e) => {
+
+            const event = e.event;
 
             const hit = this.viewer.scene.pick({
-                canvasPos: [e.offsetX, e.offsetY]
+                canvasPos: [event.offsetX, event.offsetY]
             });
 
             if (hit && hit.entity.isObject) {
                 this._canvasContextMenu.hide();
-                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.show(event.pageX, event.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
@@ -56441,15 +56444,15 @@ class BIMViewer extends Controller {
                 };
             } else {
                 this._objectContextMenu.hide();
-                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.show(event.pageX, event.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
             }
 
-            e.preventDefault();
-        };
+            e.event.preventDefault();
+        });
 
     }
 
