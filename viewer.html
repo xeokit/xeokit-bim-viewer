@@ -8,7 +8,7 @@
 
     <title>xeokit BIM Viewer</title>
 
-    <link rel="stylesheet" href="lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
+    <link rel="stylesheet" href="./lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
 
     <style>
 
@@ -633,8 +633,6 @@
 </head>
 
 <body>
-
-
 <div id="myWrapper">
 
     <div id="myExplorer" class="active"></div>
@@ -643,70 +641,151 @@
         <canvas id="myCanvas"></canvas>
     </div>
 </div>
-
 <canvas id="myNavCubeCanvas"></canvas>
 <canvas id="mySectionPlanesOverviewCanvas"></canvas>
-
 </body>
 
-<link rel="stylesheet" href="lib/backdrop.css" />
-<script src="lib/popper.js"></script>
-<script src="lib/tippy.js"></script>
+<link rel="stylesheet" href="./lib/backdrop.css"/>
+<script src="./lib/popper.js"></script>
+<script src="./lib/tippy.js"></script>
 
 <script type="module">
 
-    import {Server, ViewerUI} from "./dist/main.js";
-
-    const server = new Server({
-        dataDir: "./data/"
-    });
-
-    const viewerUI = new ViewerUI(server, {
-        canvasElement: document.getElementById("myCanvas"), // WebGL canvas
-        explorerElement: document.getElementById("myExplorer"), // Left panel
-        toolbarElement: document.getElementById("myToolbar"), // Toolbar
-        navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
-        sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas")
-    });
-
-    viewerUI.on("queryPicked", (event) => {
-        const entity = event.entity; // Entity
-        const metaObject = event.metaObject; // MetaObject
-        alert(`Query result:\n\nObject ID = ${entity.id}\nIFC type = "${metaObject.type}"`);
-    });
-
-    const getUrlVars = () => {
-        var vars = {};
-        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
-            vars[key] = value;
-        });
-        return vars;
-    };
-
-    const urlVars = getUrlVars();
-    const project = urlVars["project"] || "OTCConferenceCenter";
-    const tab = urlVars["tab"] || "objects";
-
-    viewerUI.loadProject(project);
-    viewerUI.openTab(tab);
+    import {Server, BIMViewer} from "./dist/main.js";
 
     window.onload = function () {
 
-        // Tooltips
+        const server = new Server({
+            dataDir: "./data/"
+        });
 
-        tippy('[data-tippy-content]');
+        const bimViewer = new BIMViewer(server, {
+            canvasElement: document.getElementById("myCanvas"), // WebGL canvas
+            explorerElement: document.getElementById("myExplorer"), // Left panel
+            toolbarElement: document.getElementById("myToolbar"), // Toolbar
+            navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
+            sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas")
+        });
 
-        // Split.JS - adjustable vertical divider between left and center panels
+        tippy('[data-tippy-content]'); // Init tooltips
 
-        // Split(['#myExplorer', '#myContent'], {
-        //     gutterAlign: 'center',
-        //     gutterSize: 15,
-        //     snapOffset: 30,
-        //     minSize: [350, 1000],
-        //     sizes: [350, 1000],
-        //     dragInterval: 20
-        // });
-    }
+        window.bimViewer = bimViewer;  // Just for debugging
+
+        bimViewer.on("queryPicked", (event) => {
+            const entity = event.entity; // Entity
+            const metaObject = event.metaObject; // MetaObject
+            alert(`Query result:\n\nObject ID = ${entity.id}\nIFC type = "${metaObject.type}"`);
+        });
+
+        // Request params contain static params, such as the project to load
+
+        const requestParams = getRequestParams();
+        const projectId = requestParams.projectId;
+
+        if (!projectId) {
+            return;
+        }
+
+        bimViewer.loadProject(projectId, () => {
+
+                const tab = requestParams.tab;
+                if (tab) {
+                    bimViewer.openTab(tab);
+                    return;
+                }
+
+                // Hash params contain transient params, such as the object to focus on
+                // Start periodically listening for URL hash updates, (re)parse hash whenever it changes
+
+                window.setInterval((function () {
+                    var lastHash = "";
+                    return function () {
+                        const currentHash = window.location.hash;
+                        if (currentHash !== lastHash) {
+                            parseHashParams();
+                            lastHash = currentHash;
+                        }
+                    };
+                })(), 200);
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+
+        function getRequestParams() {
+            var vars = {};
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        function parseHashParams() {
+
+            const params = getHashParams();
+
+            const actionsStr = params.actions;
+            if (!actionsStr) {
+                return;
+            }
+
+            const actions = actionsStr.split(",");
+            if (actions.length === 0) {
+                return;
+            }
+
+            for (var i = 0, len = actions.length; i < len; i++) {
+                const action = actions[i];
+                switch (action) {
+                    case "focusObject":
+                        const objectId = params.objectId;
+                        if (!objectId) {
+                            console.error("Param expected for `focusObject` action: 'objectId'");
+                            break;
+                        }
+                        bimViewer.deselectAllObjects();
+                        bimViewer.selectObject(objectId);
+                        bimViewer.flyToObject(objectId, () => {
+
+                            // FIXME: Showing objects in tabs involves scrolling the HTML within the tabs - disable until we know how to scroll the correct DOM element. Otherwise, that function works OK.
+
+                            // bimViewer.showObjectInObjectsTab(objectId);
+                            // bimViewer.showObjectInClassesTab(objectId);
+                            // bimViewer.showObjectInStoreysTab(objectId);
+                        });
+                        break;
+
+                    case "openTab":
+                        const tabId = params.tabId;
+                        if (!tabId) {
+                            console.error("Param expected for `openTab` action: 'tabId'");
+                            break;
+                        }
+                        bimViewer.openTab(tabId);
+                        break;
+
+                    default:
+                        console.error("Action not supported: '" + action + "'");
+                        break;
+                }
+            }
+        }
+
+        function getHashParams() {
+            const hashParams = {};
+            let e;
+            const a = /\+/g;  // Regex for replacing addition symbol with a space
+            const r = /([^&;=]+)=?([^&;]*)/g;
+            const d = function (s) {
+                return decodeURIComponent(s.replace(a, " "));
+            };
+            const q = window.location.hash.substring(1);
+            while (e = r.exec(q)) {
+                hashParams[d(e[1])] = d(e[2]);
+            }
+            return hashParams;
+        }
+    };
 
 </script>
 
