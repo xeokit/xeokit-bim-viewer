@@ -86,10 +86,10 @@ class HideTool extends Controller {
             this.setActive(false);
         });
 
-        this._initHideMode();
+        this._init();
     }
 
-    _initHideMode() {
+    _init() {
         var entity = null;
         this._onHover = this.viewer.cameraControl.on(&quot;hover&quot;, (e) =&gt; {
             if (!this.getActive() || !this.getEnabled()) {

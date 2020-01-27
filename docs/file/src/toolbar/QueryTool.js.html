@@ -86,10 +86,10 @@ class QueryTool extends Controller {
             this.setActive(false);
         });
 
-        this._initQueryMode();
+        this._init();
     }
 
-    _initQueryMode() {
+    _init() {
         const viewer = this.viewer;
         const cameraControl = viewer.cameraControl;
         var entity = null;
