@@ -333,7 +333,7 @@ class BIMViewer extends Controller {
         });
 
         explorerElement.querySelector(".xeokit-hideAllObjects").addEventListener("click", (event) => {
-            this._hideAllObjects();
+            this.hideAllObjects();
             event.preventDefault();
         });
 
