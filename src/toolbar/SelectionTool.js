@@ -1,12 +1,14 @@
 import {Controller} from "../Controller.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
+
 function closeEnough(p, q) {
     const CLICK_DIST = 4;
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-class QueryMode extends Controller {
+/** @private */
+class SelectionTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -43,14 +45,14 @@ class QueryMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", () => {
             this.setActive(false);
         });
 
-        this._initQueryMode();
+        this._initSectionMode();
     }
 
-    _initQueryMode() {
+    _initSectionMode() {
         const viewer = this.viewer;
         const cameraControl = viewer.cameraControl;
         var entity = null;
@@ -91,13 +93,11 @@ class QueryMode extends Controller {
                     entity = null;
                     return;
                 }
-                this.fire("queryPicked", entity.id);
+                entity.selected = !entity.selected;
                 entity = null;
-            } else {
-                this.fire("queryNotPicked", false);
             }
         });
     }
 }
 
-export {QueryMode};
+export {SelectionTool};

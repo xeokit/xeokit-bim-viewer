@@ -4,6 +4,7 @@ import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 const tempVec3a = math.vec3();
 
+/** @private */
 class ResetAction extends Controller {
 
     constructor(parent, cfg = {}) {
@@ -25,11 +26,11 @@ class ResetAction extends Controller {
         camera.look = [0,0,0];
         camera.up = [-1, 1, -1];
 
-        this.viewerUI.models.on("modelLoaded", (modelId) => {
+        this.bimViewer._modelsExplorer.on("modelLoaded", (modelId) => {
             this._saveModelMemento(modelId);
         });
 
-        this.viewerUI.models.on("modelUnloaded", (modelId) => {
+        this.bimViewer._modelsExplorer.on("modelUnloaded", (modelId) => {
             this._destroyModelMemento(modelId);
         });
 

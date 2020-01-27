@@ -1,5 +1,6 @@
 import {Controller} from "../Controller.js";
 
+/** @private */
 class OrthoMode extends Controller {
 
     constructor(parent, cfg) {
@@ -41,7 +42,7 @@ class OrthoMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
     }

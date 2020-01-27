@@ -5,7 +5,8 @@ import {IFCObjectDefaults} from "../IFCObjectDefaults/IFCObjectDefaults.js";
 
 const tempVec3 = math.vec3();
 
-class Models extends Controller {
+/** @private */
+class ModelsExplorer extends Controller {
 
     constructor(parent, cfg) {
 
@@ -40,9 +41,9 @@ class Models extends Controller {
         this._projectId = null;
     }
 
-    _loadProject(projectId) {
-        const params = {};
+    loadProject(projectId, done, error) {
         this.server.getProject(projectId, (projectInfo) => {
+            this.unloadProject();
             this._projectId = projectId;
             var html = "";
             const modelsInfo = projectInfo.models || [];
@@ -61,27 +62,68 @@ class Models extends Controller {
                 const checkBox = document.getElementById("" + modelId);
                 checkBox.addEventListener("click", () => {
                     if (checkBox.checked) {
-                        this._loadModel(modelId);
+                        this.loadModel(modelId);
                     } else {
-                        this._unloadModel(modelInfo.id);
+                        this.unloadModel(modelInfo.id);
                     }
                 });
                 if (modelInfo.default) {
                     checkBox.checked = true;
-                    this._loadModel(modelId);
+                    this.loadModel(modelId, done, error); // TODO: buffer and load at end
+                } else {
+                    if (done) {
+                        done();
+                    }
                 }
             }
         }, (errMsg) => {
             this.error(errMsg);
+            if (error) {
+                error(errMsg);
+            }
         });
     }
 
-    _loadModel(modelId) {
-        const modelInfo = this._modelsInfo[modelId];
-        if (!modelInfo) {
+    unloadProject() {
+        if (!this._projectId) {
             return;
         }
-        this.viewerUI.busyModal.show("Loading " + modelInfo.name);
+        const models = this.viewer.scene.models;
+        for (var modelId in models) {
+            if (models.hasOwnProperty(modelId)) {
+                const model = models[modelId];
+                model.destroy();
+            }
+        }
+        this._modelsElement.innerHTML = "";
+        this._numModelsLoaded = 0;
+        this._unloadModelsButtonElement.classList.add("disabled");
+        const lastProjectId = this._projectId;
+        this._projectId = null;
+        this.fire("projectUnloaded", {
+            projectId: lastProjectId
+        });
+    }
+
+    getLoadedProjectId() {
+        return this._projectId;
+    }
+
+    loadModel(modelId, done, error) {
+        if (!this._projectId) {
+            if (error) {
+                error("No project currently loaded");
+            }
+            return;
+        }
+        const modelInfo = this._modelsInfo[modelId];
+        if (!modelInfo) {
+            if (error) {
+                error("Model not in currently loaded project");
+            }
+            return;
+        }
+        this.bimViewer._busyModal.show("Loading " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -108,30 +150,36 @@ class Models extends Controller {
                                 });
                                 this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                 this.fire("modelLoaded", modelId);
-                                this.viewerUI.busyModal.hide();
+                                this.bimViewer._busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
                             } else { // Fly camera when multiple models
                                 this.viewer.cameraFlight.flyTo({
                                     aabb: aabb
                                 }, () => {
                                     this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
                                     this.fire("modelLoaded", modelId);
-                                    this.viewerUI.busyModal.hide();
+                                    this.bimViewer._busyModal.hide();
+                                    if (done) {
+                                        done();
+                                    }
                                 });
                             }
                         });
                     },
                     (errMsg) => {
                         this.error(errMsg);
-                        this.viewerUI.busyModal.hide();
+                        this.bimViewer._busyModal.hide();
                     });
             },
             (errMsg) => {
                 this.error(errMsg);
-                this.viewerUI.busyModal.hide();
+                this.bimViewer._busyModal.hide();
             });
     }
 
-    _unloadModel(modelId) {
+    unloadModel(modelId) {
         const model = this.viewer.scene.models[modelId];
         if (!model) {
             this.error("Model not loaded: " + modelId);
@@ -155,17 +203,21 @@ class Models extends Controller {
         });
     }
 
-    _unloadModels() {
+    unloadAllModels() {
         const models = this.viewer.scene.models;
         const modelIds = Object.keys(models);
         for (var i = 0, len = modelIds.length; i < len; i++) {
             const modelId = modelIds[i];
-            this._unloadModel(modelId);
+            this.unloadModel(modelId);
         }
     }
 
     getNumModelsLoaded() {
         return this._numModelsLoaded;
+    }
+
+    _getLoadedModelIds() {
+        return Object.keys(this.viewer.scene.models);
     }
 
     getModelsInfo() {
@@ -193,4 +245,4 @@ class Models extends Controller {
     }
 }
 
-export {Models};
+export {ModelsExplorer};

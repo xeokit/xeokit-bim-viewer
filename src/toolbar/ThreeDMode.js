@@ -3,6 +3,7 @@ import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 const tempVec3a = math.vec3();
 
+/** @private */
 class ThreeDMode extends Controller {
 
     constructor(parent, cfg) {
@@ -56,12 +57,12 @@ class ThreeDMode extends Controller {
                     duration: 1
                 });
 
-                this.viewerUI.navCube.setActive(true);
+                this.bimViewer._navCubeMode.setActive(true);
 
             } else {
 
-                this.viewerUI.section.setActive(false);
-                this.viewerUI.section.clear();
+                this.bimViewer._sectionTool.setActive(false);
+                this.bimViewer._sectionTool.clear();
 
                 const viewer = this.viewer;
                 const scene = viewer.scene;
@@ -87,18 +88,18 @@ class ThreeDMode extends Controller {
                     up: up2,
                     orthoScale: orthoScale2
                 }, () =>{
-                    this.viewerUI.navCube.setActive(false);
+                    this.bimViewer._navCubeMode.setActive(false);
                 });
             }
 
             this.viewer.cameraControl.planView = !active;
-            this.viewerUI.firstPerson.setEnabled(active);
-           // this.viewerUI.ortho.setEnabled(active);
-            this.viewerUI.section.setEnabled(active);
+            this.bimViewer._firstPersonMode.setEnabled(active);
+           // this.bimViewer._ortho.setEnabled(active);
+            this.bimViewer._sectionTool.setEnabled(active);
 
             if (!active) {
-                this.viewerUI.section.setActive(false);
-                //this.viewerUI.firstPerson.setActive(false);
+                this.bimViewer._sectionTool.setActive(false);
+                //this.bimViewer._firstPersonMode.setActive(false);
             }
 
         });
@@ -109,7 +110,7 @@ class ThreeDMode extends Controller {
         });
 
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.setActive(true);
         });
     }

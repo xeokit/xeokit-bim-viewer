@@ -6,11 +6,12 @@ function closeEnough(p, q) {
     return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
 }
 
-class HideMode extends Controller {
+/** @private */
+class QueryTool extends Controller {
 
     constructor(parent, cfg) {
 
-        super(parent, cfg);
+        super(parent);
 
         if (!cfg.buttonElement) {
             throw "Missing config: buttonElement";
@@ -43,16 +44,18 @@ class HideMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
 
-        this._initHideMode();
+        this._init();
     }
 
-    _initHideMode() {
+    _init() {
+        const viewer = this.viewer;
+        const cameraControl = viewer.cameraControl;
         var entity = null;
-        this._onHover = this.viewer.cameraControl.on("hover", (e) => {
+        this._onHover = cameraControl.on("hover", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -63,7 +66,7 @@ class HideMode extends Controller {
             entity = e.entity;
             entity.highlighted = true;
         });
-        this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
+        this._onHoverOff = cameraControl.on("hoverOff", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -73,11 +76,14 @@ class HideMode extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -86,12 +92,13 @@ class HideMode extends Controller {
                     entity = null;
                     return;
                 }
-                entity.visible = false;
-                entity.highlighted = false;
+                this.fire("queryPicked", entity.id);
                 entity = null;
+            } else {
+                this.fire("queryNotPicked", false);
             }
         });
     }
 }
 
-export {HideMode};
+export {QueryTool};

@@ -3,7 +3,8 @@ import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/Tree
 import {TreeViewContextMenuItems} from "../contextMenuItems/TreeViewContextMenuItems.js";
 import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
 
-class Objects extends Controller {
+/** @private */
+class ObjectsExplorer extends Controller {
 
     constructor(parent, cfg = {}) {
 
@@ -57,7 +58,7 @@ class Objects extends Controller {
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
-                const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+                const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
                 if (!modelInfo) {
                     return;
                 }
@@ -73,7 +74,7 @@ class Objects extends Controller {
             }
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this._treeView.collapse();
         });
     }
@@ -104,4 +105,4 @@ class Objects extends Controller {
     }
 }
 
-export {Objects};
+export {ObjectsExplorer};

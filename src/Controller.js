@@ -1,17 +1,15 @@
 import {Map} from "@xeokit/xeokit-sdk/src/viewer/scene/utils/Map.js";
 import {utils} from "@xeokit/xeokit-sdk/src/viewer/scene/utils.js";
 
-/**
- * @desc Base class for all xeokit-ui components.
- */
+/** @private */
 class Controller {
 
     /**
-     * @private
+     * @protected
      */
     constructor(parent, cfg, server, viewer) {
 
-        this.viewerUI = (parent ? (parent.viewerUI || parent) : this);
+        this.bimViewer = (parent ? (parent.bimViewer || parent) : this);
         this.server = parent ? parent.server : server;
         this.viewer = parent ? parent.viewer : viewer;
 
@@ -33,6 +31,8 @@ class Controller {
 
     /**
      * Fires an event on this Controller.
+     *
+     * @protected
      *
      * @param {String} event The event type name
      * @param {Object} value The event parameters
@@ -154,15 +154,13 @@ class Controller {
      *
      * The console message will have this format: *````[LOG] [<component type> <component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     log(message) {
-        message = "[LOG]" + this._message(message);
+        message = "[LOG] " + message;
         window.console.log(message);
-    }
-
-    _message(message) {
-        return " [" + utils.inQuotes(this.id) + "]: " + message;
     }
 
     /**
@@ -170,10 +168,12 @@ class Controller {
      *
      * The console message will have this format: *````[WARN] [<component type> =<component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     warn(message) {
-        message = "[WARN]" + this._message(message);
+        message = "[WARN] " + message;
         window.console.warn(message);
     }
 
@@ -182,10 +182,12 @@ class Controller {
      *
      * The console message will have this format: *````[ERROR] [<component type> =<component id>: <message>````*
      *
+     * @protected
+     *
      * @param {String} message The message to log
      */
     error(message) {
-        message = "[ERROR]" + this._message(message);
+        message = "[ERROR] " + message;
         window.console.error(message);
     }
 
@@ -215,6 +217,9 @@ class Controller {
      *
      * Fires an "enabled" event on update.
      *
+     * @protected
+     *
+     *
      * @param {boolean} enabled Whether or not to enable.
      */
     setEnabled(enabled) {
@@ -227,6 +232,9 @@ class Controller {
 
     /**
      * Gets whether or not this Controller is enabled.
+     *
+     * @protected
+     *
      * @returns {boolean}
      */
     getEnabled() {
@@ -237,6 +245,8 @@ class Controller {
      * Activates or deactivates this Controller.
      *
      * Fires an "active" event on update.
+     *
+     * @protected
      *
      * @param {boolean} active Whether or not to activate.
      */
@@ -250,6 +260,9 @@ class Controller {
 
     /**
      * Gets whether or not this Controller is active.
+     *
+     * @protected
+     *
      * @returns {boolean}
      */
     getActive() {
@@ -258,6 +271,9 @@ class Controller {
 
     /**
      * Destroys this Controller.
+     *
+     * @protected
+     *
      */
     destroy() {
         if (this.destroyed) {

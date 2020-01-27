@@ -2,6 +2,7 @@ import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /**
  * ContextMenu items for when user right-clicks on an object.
+ * @private
  */
 const ObjectContextMenuItems = [
     [

@@ -3,6 +3,7 @@ import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 const tempVec3 = math.vec3();
 
+/** @private */
 class FitAction extends Controller {
 
     constructor(parent, cfg={}) {

@@ -1,5 +1,6 @@
 import {Controller} from "./Controller.js";
 
+/** @private */
 class BusyModal extends Controller {
 
     constructor(parent, cfg = {}) {

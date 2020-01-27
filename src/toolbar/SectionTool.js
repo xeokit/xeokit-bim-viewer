@@ -1,7 +1,8 @@
 import {Controller} from "../Controller.js";
 import {SectionPlanesPlugin} from "@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js";
 
-class SectionMode extends Controller {
+/** @private */
+class SectionTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -54,7 +55,7 @@ class SectionMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this.clear();
             this.setActive(false);
         });
@@ -85,4 +86,4 @@ class SectionMode extends Controller {
     }
 }
 
-export {SectionMode};
+export {SectionTool};

@@ -1,5 +1,6 @@
 import {Controller} from "../Controller.js";
 
+/** @private */
 class FirstPersonMode extends Controller {
 
     constructor(parent, cfg) {
@@ -55,7 +56,7 @@ class FirstPersonMode extends Controller {
             event.preventDefault();
         });
 
-        this.viewerUI.on("reset", ()=>{
+        this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
     }

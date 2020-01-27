@@ -1,5 +1,5 @@
 import {Server} from "./src/server/Server.js";
-import {ViewerUI} from "./src/ViewerUI.js";
+import {BIMViewer} from "./src/BIMViewer.js";
 
-export {ViewerUI};
+export {BIMViewer};
 export {Server};

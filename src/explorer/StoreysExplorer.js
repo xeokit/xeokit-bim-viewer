@@ -3,7 +3,8 @@ import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/Tree
 import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
 import {TreeViewContextMenuItems} from "../contextMenuItems/TreeViewContextMenuItems.js";
 
-class Storeys extends Controller {
+/** @private */
+class StoreysExplorer extends Controller {
 
     constructor(parent, cfg = {}) {
 
@@ -56,7 +57,7 @@ class Storeys extends Controller {
         });
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
-            const modelInfo = this.viewerUI.models.getModelInfo(modelId);
+            const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
             if (!modelInfo) {
                 return;
             }
@@ -71,7 +72,7 @@ class Storeys extends Controller {
             }
         });
 
-        this.viewerUI.on("reset", () => {
+        this.bimViewer.on("reset", () => {
             this._treeView.collapse();
             this._treeView.expandToDepth(1);
         });
@@ -103,4 +104,4 @@ class Storeys extends Controller {
     }
 }
 
-export {Storeys};
+export {StoreysExplorer};
