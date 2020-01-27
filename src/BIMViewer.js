@@ -411,7 +411,8 @@ class BIMViewer extends Controller {
             space: "world"
         });
 
-        this.viewer.cameraControl.panRightClick = false; // Pan on left-click
+        this.viewer.cameraControl.panRightClick = true;
+        this.viewer.cameraControl.panToPointer = true;
     }
 
     _initCanvasContextMenus() {
@@ -427,15 +428,17 @@ class BIMViewer extends Controller {
             items: ObjectContextMenuItems
         });
 
-        this.viewer.scene.canvas.canvas.oncontextmenu = (e) => {
+        this.viewer.cameraControl.on("rightClick", (e) => {
+
+            const event = e.event;
 
             const hit = this.viewer.scene.pick({
-                canvasPos: [e.offsetX, e.offsetY]
+                canvasPos: [event.offsetX, event.offsetY]
             });
 
             if (hit && hit.entity.isObject) {
                 this._canvasContextMenu.hide();
-                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.show(event.pageX, event.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
@@ -448,15 +451,15 @@ class BIMViewer extends Controller {
                 };
             } else {
                 this._objectContextMenu.hide();
-                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.show(event.pageX, event.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
             }
 
-            e.preventDefault();
-        };
+            e.event.preventDefault();
+        });
 
     }
 
