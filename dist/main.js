@@ -6328,7 +6328,9 @@ class ResetAction extends Controller {
             return;
         }
         const modelMemento = new ModelMemento();
-        modelMemento.saveObjects(this.viewer.scene, metaModel);
+        modelMemento.saveObjects(this.viewer.scene, metaModel, {
+            opacity: false // FIXME: Restoring opacity broken by colorize fix - details at https://github.com/xeokit/xeokit-sdk/issues/239
+        });
         this._modelMementos[modelId] = modelMemento;
     }
 
@@ -6554,10 +6556,10 @@ class HideTool extends Controller {
             this.setActive(false);
         });
 
-        this._initHideMode();
+        this._init();
     }
 
-    _initHideMode() {
+    _init() {
         var entity = null;
         this._onHover = this.viewer.cameraControl.on("hover", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
@@ -6746,10 +6748,10 @@ class QueryTool extends Controller {
             this.setActive(false);
         });
 
-        this._initQueryMode();
+        this._init();
     }
 
-    _initQueryMode() {
+    _init() {
         const viewer = this.viewer;
         const cameraControl = viewer.cameraControl;
         var entity = null;
@@ -56068,7 +56070,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     </div>
     <!-- Fit button -->
     <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="Fit to view"></button>
+        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="View fit"></button>
     </div>
     <!-- First Person mode button -->
     <div class="xeokit-btn-group" role="group">
