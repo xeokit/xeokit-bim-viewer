@@ -64,7 +64,9 @@ class ResetAction extends Controller {
             return;
         }
         const modelMemento = new ModelMemento();
-        modelMemento.saveObjects(this.viewer.scene, metaModel);
+        modelMemento.saveObjects(this.viewer.scene, metaModel, {
+            opacity: false // FIXME: Restoring opacity broken by colorize fix - details at https://github.com/xeokit/xeokit-sdk/issues/239
+        });
         this._modelMementos[modelId] = modelMemento;
     }
 
