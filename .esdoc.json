@@ -18,7 +18,7 @@
         "brand": {
           "logo": "./images/logo.jpg",
           "title": "xeokit-viewer",
-          "description": "View large 3D BIM models and share BCF issues in the browser",
+          "description": "BIM viewer built on xeokit",
           "repository": "https://github.com/xeokit/xeokit-viewer",
           "site": "https://github.com/xeokit/xeokit-viewer",
           "author": "http://xeolabs.com",
