@@ -39,10 +39,10 @@
     "autoprefixer": "^9.7.4",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "rollup": "^1.29.0",
+    "rollup": "^1.30.0",
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "^0.6.9"
+    "@xeokit/xeokit-sdk": "^0.7.0"
   }
 }
