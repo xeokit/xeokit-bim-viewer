@@ -457,10 +457,7 @@ class BIMViewer extends Controller {
                     bimViewer: this
                 };
             }
-
-            e.event.preventDefault();
         });
-
     }
 
     /**
