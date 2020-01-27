@@ -1,12 +1,12 @@
-# xeokit-viewer [*beta MVP*]
+# xeokit-viewer
 
-xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeokit SDK](http://xeokit.io). The viewer is developed by [xeolabs](http://xeolabs.com) for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. 
-
-[![Screenshothttps://xeokit.github.io/xeokit-licensing/](images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys).
+xeokit-viewer is an open source BIM viewer for the Web, built on the [xeokit SDK](http://xeokit.io). The viewer is developed by [xeolabs](http://xeolabs.com) for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. 
+ 
+[![Screenshothttps://xeokit.github.io/xeokit-licensing/](https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/viewer.html?project=OTCConferenceCenter&tab=storeys).
 
 ## Contents
 
-- [Contents](#contents)
+ * [Links](#links)
  * [Features](#features)
   * [Demos](#demos)
   * [Roadmap](#roadmap)
@@ -20,6 +20,13 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
     + [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
   * [Building](#building)
   
+## Links
+
+* [Homepage](https://xeokit.github.io/xeokit-viewer/)
+* [Source Code](https://github.com/xeokit/xeokit-viewer)
+* [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
+* [xeokit SDK](http://xeokit.io)
+
 ## Features
 
 * Uses [xeokit SDK](https://xeokit.io) for super fast loading and rendering of large models.
@@ -32,28 +39,30 @@ xeokit-viewer is an open source IFC model viewer for the Web, built on the [xeok
 * Tree view with three hierarchy modes: containment, IFC type and storeys.
 * X-ray, highlight, show, hide and slice objects. 
 * Customize with your own CSS.
+* JavaScript programming API - load models, move camera, show/hide/select/xray objects etc.
 * Implemented in JavaScript (ES6), with no external dependencies (other than xeokit).
 
 ## Demos 
 
 | Live Demo | Model Source |
 |---|---|
-| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
-| [Holter Tower](https://xeokit.github.io/xeokit-viewer/index.html?project=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
-| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/index.html?project=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
-| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/index.html?project=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
-| [Duplex](https://xeokit.github.io/xeokit-viewer/index.html?project=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
-| [Duplex and Conference Center](https://xeokit.github.io/xeokit-viewer/index.html?project=ManyModels)| [Duplex](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274), [Conference Center](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?project=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [Holter Tower](https://xeokit.github.io/xeokit-viewer/viewer.html?project=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
+| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/viewer.html?project=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
+| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/viewer.html?project=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Duplex](https://xeokit.github.io/xeokit-viewer/viewer.html?project=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
+| [Duplex and Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?project=ManyModels)| [Duplex](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274), [Conference Center](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
 
 ## Roadmap
 
 - [x] Standalone viewer MVP
 - [x] Integration into [OpenProject](https://www.openproject.org/)
-- [ ] Save and load BCF viewpoints
+- [x] Save and load BCF viewpoints
+- [x] Programming API
 - [ ] Measurement tools
 - [ ] Memory usage monitoring
 - [ ] Explode tool  
-- [ ] Ambient shadows
+- [ ] Ambient shadows (SAO)
 
 Do you have feedback, or features you'd like to see in the viewer? Let us know in the [issue tracker](https://github.com/xeokit/xeokit-viewer/issues).  
   
@@ -192,7 +201,7 @@ To load models from a different source than the file system, configure
 
 ### Customizing CSS
 
-The [index.html](https://github.com/xeokit/xeokit-viewer/blob/master/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+The [viewer.html](https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
 
 ### Tooltips
 
@@ -204,7 +213,7 @@ For example, the *Toggle 2D/3D* button's element looks like this:
 <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
 ```` 
 
-In the [index.html](https://github.com/xeokit/xeokit-viewer/blob/master/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
+In the [viewer.html](https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
 
 ### Customizing Appearances of IFC Types
 
