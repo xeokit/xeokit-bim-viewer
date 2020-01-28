@@ -6319,6 +6319,14 @@ class ResetAction extends Controller {
         }
         const modelMemento = new ModelMemento();
         modelMemento.saveObjects(this.viewer.scene, metaModel, {
+            visible: true,
+            edges: true,
+            xrayed: true,
+            highlighted: true,
+            selected: true,
+            clippable: true,
+            pickable: true,
+            colorize: true,
             opacity: false // FIXME: Restoring opacity broken by colorize fix - details at https://github.com/xeokit/xeokit-sdk/issues/239
         });
         this._modelMementos[modelId] = modelMemento;
@@ -56508,7 +56516,7 @@ class BIMViewer extends Controller {
      * ### Example
      *
      * ````javascript
-     * myViewer.getProjectInfo(("Duplex") => {
+     * myViewer.getProjectInfo(("Duplex", (projectInfo) => {
      *      console.log(JSON.stringify(projectInfo, null, "\t"));
      * });
      * ````
