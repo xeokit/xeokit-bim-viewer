@@ -515,7 +515,7 @@ class BIMViewer extends Controller {
      * ### Example
      *
      * ````javascript
-     * myViewer.getProjectInfo(("Duplex") => {
+     * myViewer.getProjectInfo(("Duplex", (projectInfo) => {
      *      console.log(JSON.stringify(projectInfo, null, "\t"));
      * });
      * ````
