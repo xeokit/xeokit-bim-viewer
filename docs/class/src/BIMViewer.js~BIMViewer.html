@@ -1557,7 +1557,7 @@
   
   <div data-ice="description"><p>Gets information on the given project.</p>
 <p>Use <span>BIMViewer#getProjects</span> to get information on all available projects.</p>
-<h3 id="example">Example</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getProjectInfo((&quot;Duplex&quot;) =&gt; {
+<h3 id="example">Example</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getProjectInfo((&quot;Duplex&quot;, (projectInfo) =&gt; {
      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
 });</code>
 </code></pre>

@@ -371,7 +371,7 @@ class BIMViewer extends Controller {
         });
 
         explorerElement.querySelector(&quot;.xeokit-hideAllObjects&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
-            this._hideAllObjects();
+            this.hideAllObjects();
             event.preventDefault();
         });
 
@@ -449,7 +449,8 @@ class BIMViewer extends Controller {
             space: &quot;world&quot;
         });
 
-        this.viewer.cameraControl.panRightClick = false; // Pan on left-click
+        this.viewer.cameraControl.panRightClick = true;
+        this.viewer.cameraControl.panToPointer = true;
     }
 
     _initCanvasContextMenus() {
@@ -465,15 +466,17 @@ class BIMViewer extends Controller {
             items: ObjectContextMenuItems
         });
 
-        this.viewer.scene.canvas.canvas.oncontextmenu = (e) =&gt; {
+        this.viewer.cameraControl.on(&quot;rightClick&quot;, (e) =&gt; {
+
+            const event = e.event;
 
             const hit = this.viewer.scene.pick({
-                canvasPos: [e.offsetX, e.offsetY]
+                canvasPos: [event.offsetX, event.offsetY]
             });
 
             if (hit &amp;&amp; hit.entity.isObject) {
                 this._canvasContextMenu.hide();
-                this._objectContextMenu.show(e.pageX, e.pageY);
+                this._objectContextMenu.show(event.pageX, event.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
@@ -486,16 +489,13 @@ class BIMViewer extends Controller {
                 };
             } else {
                 this._objectContextMenu.hide();
-                this._canvasContextMenu.show(e.pageX, e.pageY);
+                this._canvasContextMenu.show(event.pageX, event.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
             }
-
-            e.preventDefault();
-        };
-
+        });
     }
 
     /**
@@ -553,7 +553,7 @@ class BIMViewer extends Controller {
      * ### Example
      *
      * ````javascript
-     * myViewer.getProjectInfo((&quot;Duplex&quot;) =&gt; {
+     * myViewer.getProjectInfo((&quot;Duplex&quot;, (projectInfo) =&gt; {
      *      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
      * });
      * ````
