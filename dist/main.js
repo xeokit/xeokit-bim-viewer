@@ -9219,6 +9219,7 @@ if (canvas) {
         gl.getSupportedExtensions().forEach(function (ext) {
             WEBGL_INFO.SUPPORTED_EXTENSIONS[ext] = true;
         });
+        WEBGL_INFO.depthTexturesSupported = WEBGL_INFO.SUPPORTED_EXTENSIONS["WEBGL_depth_texture"];
     }
 }
 
@@ -22960,6 +22961,699 @@ class OcclusionTester {
 }
 
 /**
+ * SAO implementation inspired from previous SAO work in THREE.js by ludobaka / ludobaka.github.io and bhouston
+ * @private
+ */
+class SAOOcclusionRenderer {
+
+    constructor(scene) {
+
+        this._scene = scene;
+
+        // The program
+
+        this._program = null;
+        this._programError = false;
+
+        // Variable locations
+
+        this._aPosition = null;
+        this._aUV = null;
+
+        this._uDepthTexture = "uDepthTexture";
+
+        this._uCameraNear = null;
+        this._uCameraFar = null;
+        this._uCameraProjectionMatrix = null;
+        this._uCameraInverseProjectionMatrix = null;
+
+        this._uScale = null;
+        this._uIntensity = null;
+        this._uBias = null;
+        this._uKernelRadius = null;
+        this._uMinResolution = null;
+        this._uRandomSeed = null;
+
+        // VBOs
+
+        this._uvBuf = null;
+        this._positionsBuf = null;
+        this._indicesBuf = null;
+
+        // this._getInverseProjectMat = function () {
+        //     const inverseProjectMat = math.mat4();
+        //     math.inverseMat4(scene.camera.projMatrix, inverseProjectMat);
+        //     return inverseProjectMat;
+        // };
+
+        this.init();
+    }
+
+    init() {
+
+        const gl = this._scene.canvas.gl;
+
+        this._program = new Program(gl, {
+
+            vertex: [`attribute vec3 aPosition;
+                    attribute vec2 aUV;            
+                    varying vec2 vUV;
+                    void main () {
+                        gl_Position = vec4(aPosition, 1.0);
+                        vUV = aUV;
+                    }`],
+
+            fragment: [
+                `#extension GL_OES_standard_derivatives : require
+                
+                #define NORMAL_TEXTURE 0
+                #define PI 3.14159265359
+                #define PI2 6.28318530718
+                #define EPSILON 1e-6
+                #define NUM_SAMPLES 7
+                #define NUM_RINGS 4
+
+                precision highp float;
+            
+                varying vec2        vUV;
+            
+                uniform sampler2D   uDepthTexture;
+               
+                uniform float       uCameraNear;
+                uniform float       uCameraFar;
+                uniform mat4        uProjectMatrix;
+                uniform mat4        uInverseProjectMatrix;
+                
+                uniform bool        uPerspective;
+
+                uniform float       uScale;
+                uniform float       uIntensity;
+                uniform float       uBias;
+                uniform float       uKernelRadius;
+                uniform float       uMinResolution;
+                uniform vec2        uSize;
+                uniform float       uRandomSeed;
+
+                float pow2( const in float x ) { return x*x; }
+                
+                highp float rand( const in vec2 uv ) {
+                    const highp float a = 12.9898, b = 78.233, c = 43758.5453;
+                    highp float dt = dot( uv.xy, vec2( a,b ) ), sn = mod( dt, PI );
+                    return fract(sin(sn) * c);
+                }
+
+                vec3 packNormalToRGB( const in vec3 normal ) {
+                    return normalize( normal ) * 0.5 + 0.5;
+                }
+
+                vec3 unpackRGBToNormal( const in vec3 rgb ) {
+                    return 2.0 * rgb.xyz - 1.0;
+                }
+
+                const float packUpscale = 256. / 255.;
+                const float unpackDownScale = 255. / 256.; 
+
+                const vec3 packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
+                const vec4 unPackFactors = unpackDownScale / vec4( packFactors, 1. );   
+
+                const float shiftRights = 1. / 256.;
+
+                vec4 packDepthToRGBA( const in float v ) {
+                    vec4 r = vec4( fract( v * packFactors ), v );
+                    r.yzw -= r.xyz * shiftRights; 
+                    return r * packUpscale;
+                }
+
+                float unpackRGBAToDepth( const in vec4 v ) {
+                    return dot( v, unPackFactors );
+                }
+                
+                float perspectiveDepthToViewZ( const in float invClipZ, const in float near, const in float far ) {
+                    return ( near * far ) / ( ( far - near ) * invClipZ - far );
+                }
+
+                float orthographicDepthToViewZ( const in float linearClipZ, const in float near, const in float far ) {
+                    return linearClipZ * ( near - far ) - near;
+                }
+                
+                float getDepth( const in vec2 screenPos ) {
+                	return unpackRGBAToDepth( texture2D( uDepthTexture, screenPos ) );
+                }
+
+                float getViewZ( const in float depth ) {
+                     if (uPerspective) {
+                         return perspectiveDepthToViewZ( depth, uCameraNear, uCameraFar );
+                     } else {
+                        return orthographicDepthToViewZ( depth, uCameraNear, uCameraFar );
+                     }
+                }
+
+                vec3 getViewPos( const in vec2 screenPos, const in float depth, const in float viewZ ) {
+                	float clipW = uProjectMatrix[2][3] * viewZ + uProjectMatrix[3][3];
+                	vec4 clipPosition = vec4( ( vec3( screenPos, depth ) - 0.5 ) * 2.0, 1.0 );
+                	clipPosition *= clipW; 
+                	return ( uInverseProjectMatrix * clipPosition ).xyz;
+                }
+
+                vec3 getViewNormal( const in vec3 viewPosition, const in vec2 screenPos ) {               
+                    return normalize( cross( dFdx( viewPosition ), dFdy( viewPosition ) ) );
+                }
+
+                float scaleDividedByCameraFar;
+                float minResolutionMultipliedByCameraFar;
+
+                float getOcclusion( const in vec3 centerViewPosition, const in vec3 centerViewNormal, const in vec3 sampleViewPosition ) {
+                	vec3 viewDelta = sampleViewPosition - centerViewPosition;
+                	float viewDistance = length( viewDelta );
+                	float scaledScreenDistance = scaleDividedByCameraFar * viewDistance;
+                	return max(0.0, (dot(centerViewNormal, viewDelta) - minResolutionMultipliedByCameraFar) / scaledScreenDistance - uBias) / (1.0 + pow2( scaledScreenDistance ) );
+                }
+
+                const float ANGLE_STEP = PI2 * float( NUM_RINGS ) / float( NUM_SAMPLES );
+                const float INV_NUM_SAMPLES = 1.0 / float( NUM_SAMPLES );
+
+                float getAmbientOcclusion( const in vec3 centerViewPosition ) {
+            
+                	scaleDividedByCameraFar = uScale / uCameraFar;
+                	minResolutionMultipliedByCameraFar = uMinResolution * uCameraFar;
+                	vec3 centerViewNormal = getViewNormal( centerViewPosition, vUV );
+
+                	float angle = rand( vUV + uRandomSeed ) * PI2;
+                	vec2 radius = vec2( uKernelRadius * INV_NUM_SAMPLES ) / uSize;
+                	vec2 radiusStep = radius;
+
+                	float occlusionSum = 0.0;
+                	float weightSum = 0.0;
+
+                	for( int i = 0; i < NUM_SAMPLES; i ++ ) {
+                		vec2 sampleUv = vUV + vec2( cos( angle ), sin( angle ) ) * radius;
+                		radius += radiusStep;
+                		angle += ANGLE_STEP;
+
+                		float sampleDepth = getDepth( sampleUv );
+                		if( sampleDepth >= ( 1.0 - EPSILON ) ) {
+                			continue;
+                		}
+
+                		float sampleViewZ = getViewZ( sampleDepth );
+                		vec3 sampleViewPosition = getViewPos( sampleUv, sampleDepth, sampleViewZ );
+                		occlusionSum += getOcclusion( centerViewPosition, centerViewNormal, sampleViewPosition );
+                		weightSum += 1.0;
+                	}
+
+                	if( weightSum == 0.0 ) discard;
+
+                	return occlusionSum * ( uIntensity / weightSum );
+                }
+
+                void main() {
+                
+                	float centerDepth = getDepth( vUV );
+                	
+                	if( centerDepth >= ( 1.0 - EPSILON ) ) {
+                		discard;
+                	}
+
+                	float centerViewZ = getViewZ( centerDepth );
+                	vec3 viewPosition = getViewPos( vUV, centerDepth, centerViewZ );
+
+                	float ambientOcclusion = getAmbientOcclusion( viewPosition );
+                
+                	gl_FragColor = packDepthToRGBA(  1.0- ambientOcclusion );
+                }`]
+        });
+
+        if (this._program.errors) {
+            console.error(this._program.errors.join("\n"));
+            this._programError = true;
+            return;
+        }
+
+        const uv = new Float32Array([1, 1, 0, 1, 0, 0, 1, 0]);
+        const positions = new Float32Array([1, 1, 0, -1, 1, 0, -1, -1, 0, 1, -1, 0]);
+        const indices = new Uint8Array([0, 1, 2, 0, 2, 3]);
+
+        this._positionsBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, positions, positions.length, 3, gl.STATIC_DRAW);
+        this._uvBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, uv, uv.length, 2, gl.STATIC_DRAW);
+        this._indicesBuf = new ArrayBuf(gl, gl.ELEMENT_ARRAY_BUFFER, indices, indices.length, 1, gl.STATIC_DRAW);
+
+        this._program.bind();
+
+        this._uCameraNear = this._program.getLocation("uCameraNear");
+        this._uCameraFar = this._program.getLocation("uCameraFar");
+
+        this._uCameraProjectionMatrix = this._program.getLocation("uProjectMatrix");
+        this._uCameraInverseProjectionMatrix = this._program.getLocation("uInverseProjectMatrix");
+
+        this._uPerspective = this._program.getLocation("uPerspective");
+
+        this._uScale = this._program.getLocation("uScale");
+        this._uIntensity = this._program.getLocation("uIntensity");
+        this._uBias = this._program.getLocation("uBias");
+        this._uKernelRadius = this._program.getLocation("uKernelRadius");
+        this._uMinResolution = this._program.getLocation("uMinResolution");
+        this._uSize = this._program.getLocation("uSize");
+        this._uRandomSeed = this._program.getLocation("uRandomSeed");
+
+        this._aPosition = this._program.getAttribute("aPosition");
+        this._aUV = this._program.getAttribute("aUV");
+    }
+
+    render(depthTexture) {
+
+        if (this._programError) {
+            return;
+        }
+
+        if (!this._getInverseProjectMat) { // HACK: scene.camera not defined until render time
+            this._getInverseProjectMat = (() => {
+                let projMatDirty = true;
+                this._scene.camera.on("projMatrix", function () {
+                    projMatDirty = true;
+                });
+                const inverseProjectMat = math.mat4();
+                return () => {
+                    if (projMatDirty) {
+                        math.inverseMat4(scene.camera.projMatrix, inverseProjectMat);
+                    }
+                    return inverseProjectMat;
+                }
+            })();
+        }
+
+        const gl = this._scene.canvas.gl;
+        const program = this._program;
+        const scene = this._scene;
+        const sao = scene.sao;
+        const canvasBoundary = scene.canvas.boundary;
+        const canvasWidth = canvasBoundary[2];
+        const canvasHeight = canvasBoundary[3];
+        const projectState = scene.camera.project._state;
+        const near = projectState.near;
+        const far = projectState.far;
+        const projectionMatrix = projectState.matrix;
+        const inverseProjectionMatrix = this._getInverseProjectMat();
+        const randomSeed = Math.random();
+        const size = new Float32Array([canvasWidth, canvasHeight]);
+        const perspective = (scene.camera.projection === "perspective");
+
+        gl.getExtension("OES_standard_derivatives");
+
+        gl.viewport(canvasBoundary[0], canvasBoundary[1], canvasBoundary[2], canvasBoundary[3]);
+        gl.clearColor(0, 0, 0, 1);
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.frontFace(gl.CCW);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        program.bind();
+
+        gl.uniform1f(this._uCameraNear, near);
+        gl.uniform1f(this._uCameraFar, far);
+
+        gl.uniformMatrix4fv(this._uCameraProjectionMatrix, false, projectionMatrix);
+        gl.uniformMatrix4fv(this._uCameraInverseProjectionMatrix, false, inverseProjectionMatrix);
+
+        gl.uniform1i(this._uPerspective, perspective);
+
+        gl.uniform1f(this._uScale, sao.scale);
+        gl.uniform1f(this._uIntensity, sao.intensity);
+        gl.uniform1f(this._uBias, sao.bias);
+        gl.uniform1f(this._uKernelRadius, sao.kernelRadius);
+        gl.uniform1f(this._uMinResolution, sao.minResolution);
+        gl.uniform2fv(this._uSize, size);
+        gl.uniform1f(this._uRandomSeed, randomSeed);
+
+        program.bindTexture(this._uDepthTexture, depthTexture, 0);
+
+        this._aUV.bindArrayBuffer(this._uvBuf);
+        this._aPosition.bindArrayBuffer(this._positionsBuf);
+        this._indicesBuf.bind();
+
+        gl.drawElements(gl.TRIANGLES, this._indicesBuf.numItems, this._indicesBuf.itemType, 0);
+    }
+
+    destroy() {
+        this._program.destroy();
+    }
+}
+
+/**
+ * SAO implementation inspired from previous SAO work in THREE.js by ludobaka / ludobaka.github.io and bhouston
+ * @private
+ */
+class SAOBlendRenderer {
+
+    constructor(scene) {
+
+        this._scene = scene;
+
+        // The program
+
+        this._program = null;
+        this._programError = false;
+
+        // Variable locations
+
+        this._uColorTexture = "uColorTexture";
+        this._uOcclusionTexture = "uOcclusionTexture";
+        this._aPosition = null;
+        this._aUV = null;
+
+        // VBOs
+
+        this._uvBuf = null;
+        this._positionsBuf = null;
+        this._indicesBuf = null;
+
+        this.init();
+    }
+
+    init() {
+
+        const gl = this._scene.canvas.gl;
+
+        this._program = new Program(gl, {
+
+            vertex: [`#extension GL_OES_standard_derivatives : require
+            
+                    attribute   vec3 aPosition;
+                    attribute   vec2 aUV;
+            
+                    varying     vec2 vUV;
+            
+                    void main () {
+                       gl_Position = vec4(aPosition, 1.0);
+                       vUV = aUV;
+                    }`],
+
+            fragment: [`precision highp float;
+                    
+                    const float packUpscale = 256. / 255.;
+                    const float unpackDownScale = 255. / 256.; 
+
+                    const vec3 packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
+                    const vec4 unPackFactors = unpackDownScale / vec4( packFactors, 1. );   
+
+                    const float shiftRights = 1. / 256.;
+
+                    vec4 packDepthToRGBA( const in float v ) {
+                        vec4 r = vec4( fract( v * packFactors ), v );
+                        r.yzw -= r.xyz * shiftRights; 
+                        return r * packUpscale;
+                    }
+                
+                    varying vec2        vUV;
+                    
+                    uniform sampler2D   uColorTexture;
+                    uniform sampler2D   uOcclusionTexture;
+                    
+                    uniform float       uOcclusionScale;
+                    uniform float       uOcclusionCutoff;
+                    
+                    float unpackRGBAToDepth( const in vec4 v ) {
+                        return dot( v, unPackFactors );
+                    }
+                    
+                    void main() {
+                        vec4 color      = texture2D(uColorTexture, vUV);
+                        float ambient   = smoothstep(uOcclusionCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, vUV))) * uOcclusionScale;
+                        gl_FragColor    = vec4(color.rgb * (ambient), color.a);
+                    }`]
+        });
+
+        if (this._program.errors) {
+            console.error(this._program.errors.join("\n"));
+            this._programError = true;
+            return;
+        }
+
+        const positions = new Float32Array([1, 1, 0, -1, 1, 0, -1, -1, 0, 1, -1, 0]);
+        const uv = new Float32Array([1, 1, 0, 1, 0, 0, 1, 0]);
+        const indices = new Uint8Array([0, 1, 2, 0, 2, 3]);
+
+        this._positionsBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, positions, positions.length, 3, gl.STATIC_DRAW);
+        this._uvBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, uv, uv.length, 2, gl.STATIC_DRAW);
+        this._indicesBuf = new ArrayBuf(gl, gl.ELEMENT_ARRAY_BUFFER, indices, indices.length, 1, gl.STATIC_DRAW);
+
+        this._uColorTexture = "uColorTexture";
+        this._uOcclusionTexture = "uOcclusionTexture";
+        this._aPosition = this._program.getAttribute("aPosition");
+        this._aUV = this._program.getAttribute("aUV");
+        this._uOcclusionScale = this._program.getLocation("uOcclusionScale");
+        this._uOcclusionCutoff = this._program.getLocation("uOcclusionCutoff");
+    }
+
+    render(colorTexture, occlusionTexture) {
+
+        if (this._programError) {
+            return;
+        }
+
+        const gl = this._scene.canvas.gl;
+        const program = this._program;
+        const scene = this._scene;
+        const sao = scene.sao;
+        const canvasBoundary = scene.canvas.boundary;
+
+        gl.viewport(canvasBoundary[0], canvasBoundary[1], canvasBoundary[2], canvasBoundary[3]);
+        gl.clearColor(0, 0, 0, 1);
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.frontFace(gl.CCW);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        program.bind();
+
+        program.bindTexture(this._uColorTexture, colorTexture, 0);
+        program.bindTexture(this._uOcclusionTexture, occlusionTexture, 2);
+
+        gl.uniform1f(this._uOcclusionScale, 1.0);
+        gl.uniform1f(this._uOcclusionCutoff, 0.01);
+
+        this._aUV.bindArrayBuffer(this._uvBuf);
+        this._aPosition.bindArrayBuffer(this._positionsBuf);
+        this._indicesBuf.bind();
+
+        gl.drawElements(gl.TRIANGLES, this._indicesBuf.numItems, this._indicesBuf.itemType, 0);
+    }
+
+    destroy() {
+        this._program.destroy();
+    }
+}
+
+/**
+ * SAO implementation inspired from previous SAO work in THREE.js by ludobaka / ludobaka.github.io and bhouston
+ * @private
+ */
+class SAOBlurRenderer {
+
+    constructor(scene) {
+
+        this._scene = scene;
+
+        this._texelOffset = new Float32Array([0, 0]);
+
+        // The program
+
+        this._program = null;
+        this._programError = false;
+
+        // Variable locations
+
+        this._uDepthTexture = "uDepthTexture";
+        this._uOcclusionTexture = "uOcclusionTexture";
+        this._aPosition = null;
+        this._aUV = null;
+
+        // VBOs
+
+        this._uvBuf = null;
+        this._positionsBuf = null;
+        this._indicesBuf = null;
+
+        this.init();
+    }
+
+    init() {
+
+        const gl = this._scene.canvas.gl;
+
+        this._program = new Program(gl, {
+
+            vertex: [`#extension GL_OES_standard_derivatives : require
+            
+                    attribute   vec3 aPosition;
+                    attribute   vec2 aUV;
+            
+                    varying     vec2 vUV;
+            
+                    void main () {
+                       gl_Position = vec4(aPosition, 1.0);
+                       vUV = aUV;
+                    }`],
+
+            fragment: [`precision highp float;
+                    
+                    varying vec2        vUV;
+                    
+                    uniform sampler2D   uDepthTexture;
+                    uniform sampler2D   uOcclusionTexture;
+                    
+                    uniform float       uOcclusionScale;
+                    uniform float       uOcclusionCutoff;
+                    
+                    uniform vec2        uTexelOffset;
+                    
+                    const float unpackDownScale = 255. / 256.; 
+                                   
+                    const vec3 packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
+                    const vec4 unPackFactors = unpackDownScale / vec4( packFactors, 1. );  
+                
+                    float unpackRGBAToDepth( const in vec4 v ) {
+                        return dot( v, unPackFactors );
+                    }
+                    
+                    const float packUpscale = 256. / 255.;
+       
+                    const float shiftRights = 1. / 256.;
+
+                    vec4 packDepthToRGBA( const in float v ) {
+                        vec4 r = vec4( fract( v * packFactors ), v );
+                        r.yzw -= r.xyz * shiftRights; 
+                        return r * packUpscale;
+                    }
+                
+                    void main() {
+                    
+                        float centerOcclusion = unpackRGBAToDepth(texture2D(uOcclusionTexture, vUV));
+                        float centerDepth   = unpackRGBAToDepth(texture2D(uDepthTexture, vUV));
+                        
+                        float gaussian[5];
+                        
+                        gaussian[0] = 0.153170;
+                        gaussian[1] = 0.144893;
+                        gaussian[2] = 0.122649;
+                        gaussian[3] = 0.092902;
+                        gaussian[4] = 0.062970;
+                        
+                        float totalWeight = gaussian[0];
+                        float sum = centerOcclusion * totalWeight;
+            
+                        for (int r = 1; r <= 4; ++r) {
+                            
+                            vec2 uv = vUV + uTexelOffset * float(r) * 2.0;
+                            
+                            float occlusionSample = unpackRGBAToDepth(texture2D(uOcclusionTexture, uv));
+                            float depthSample = unpackRGBAToDepth(texture2D(uDepthTexture, uv));
+                            
+                            float weight = gaussian[r];
+                            weight *= max(0.0, 1.0 - 10.0 * abs(depthSample - centerDepth));
+                            
+                            sum += occlusionSample * weight;
+                            
+                            totalWeight += weight;
+                        }
+                        
+                        for (int r = 1; r <= 4; ++r) {
+                            
+                            vec2 uv = vUV + uTexelOffset * -float(r) * 2.0;
+                            
+                            float occlusionSample = unpackRGBAToDepth(texture2D(uOcclusionTexture, uv));
+                            float depthSample = unpackRGBAToDepth(texture2D(uDepthTexture, uv));
+                            
+                            float weight = gaussian[r];
+                            weight *= max(0.0, 1.0 - 10.0 * abs(depthSample - centerDepth));
+                            
+                            sum += occlusionSample * weight;
+                            
+                            totalWeight += weight;
+                        }
+                     
+                        float blurredOcclusion =  (sum / (totalWeight + 0.0001));
+                     
+                        gl_FragColor = packDepthToRGBA(blurredOcclusion);
+                       
+                    }`]
+        });
+
+        if (this._program.errors) {
+            console.error(this._program.errors.join("\n"));
+            this._programError = true;
+            return;
+        }
+
+        const positions = new Float32Array([1, 1, 0, -1, 1, 0, -1, -1, 0, 1, -1, 0]);
+        const uv = new Float32Array([1, 1, 0, 1, 0, 0, 1, 0]);
+        const indices = new Uint8Array([0, 1, 2, 0, 2, 3]);
+
+        this._positionsBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, positions, positions.length, 3, gl.STATIC_DRAW);
+        this._uvBuf = new ArrayBuf(gl, gl.ARRAY_BUFFER, uv, uv.length, 2, gl.STATIC_DRAW);
+        this._indicesBuf = new ArrayBuf(gl, gl.ELEMENT_ARRAY_BUFFER, indices, indices.length, 1, gl.STATIC_DRAW);
+
+        this._uDepthTexture = "uDepthTexture";
+        this._uOcclusionTexture = "uOcclusionTexture";
+        this._aPosition = this._program.getAttribute("aPosition");
+        this._aUV = this._program.getAttribute("aUV");
+        this._uOcclusionScale = this._program.getLocation("uOcclusionScale");
+        this._uOcclusionCutoff = this._program.getLocation("uOcclusionCutoff");
+        this._uTexelOffset = this._program.getLocation("uTexelOffset");
+    }
+
+    render(depthTexture, occlusionTexture, direction) {
+
+        if (this._programError) {
+            return;
+        }
+
+        const gl = this._scene.canvas.gl;
+        const program = this._program;
+        const scene = this._scene;
+        const canvasBoundary = scene.canvas.boundary;
+
+        const canvasWidth = canvasBoundary[2];
+        const canvasHeight = canvasBoundary[3];
+
+        if (direction === 0) {
+            // Horizontal
+            this._texelOffset[0] = 1.0 / canvasWidth;
+            this._texelOffset[1] = 0.0;
+        } else {
+            // Vertical
+            this._texelOffset[0] = 0.0;
+            this._texelOffset[1] = 1.0 / canvasHeight;
+        }
+
+        gl.viewport(canvasBoundary[0], canvasBoundary[1], canvasBoundary[2], canvasBoundary[3]);
+        gl.clearColor(0, 0, 0, 1);
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.frontFace(gl.CCW);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        program.bind();
+
+        program.bindTexture(this._uDepthTexture, depthTexture, 1);
+        program.bindTexture(this._uOcclusionTexture, occlusionTexture, 2);
+
+        gl.uniform1f(this._uOcclusionScale, 0.9);
+        gl.uniform1f(this._uOcclusionCutoff, 0.3);
+        gl.uniform2fv(this._uTexelOffset, this._texelOffset);
+
+        this._aUV.bindArrayBuffer(this._uvBuf);
+        this._aPosition.bindArrayBuffer(this._positionsBuf);
+        this._indicesBuf.bind();
+
+        gl.drawElements(gl.TRIANGLES, this._indicesBuf.numItems, this._indicesBuf.itemType, 0);
+    }
+
+    destroy() {
+        this._program.destroy();
+    }
+}
+
+/**
  * @private
  */
 const Renderer = function (scene, options) {
@@ -22982,8 +23676,17 @@ const Renderer = function (scene, options) {
 
     let blendOneMinusSrcAlpha = true;
 
-    let pickBuf = null;
-    let readPixelBuf = null;
+    const saoDepthBuffer = new RenderBuffer(canvas, gl);
+    const occlusionBuffer1 = new RenderBuffer(canvas, gl);
+    const occlusionBuffer2 = new RenderBuffer(canvas, gl);
+    const colorBuffer = new RenderBuffer(canvas, gl);
+
+    const pickBuffer = new RenderBuffer(canvas, gl);
+    const readPixelBuffer = new RenderBuffer(canvas, gl);
+
+    const saoOcclusionRenderer = new SAOOcclusionRenderer(scene);
+    const saoBlurRenderer = new SAOBlurRenderer(scene);
+    const saoBlendRenderer = new SAOBlendRenderer(scene);
 
     this._occlusionTester = null; // Lazy-created in #addMarker()
 
@@ -23006,12 +23709,18 @@ const Renderer = function (scene, options) {
     };
 
     this.webglContextRestored = function (gl) {
-        if (pickBuf) {
-            pickBuf.webglContextRestored(gl);
-        }
-        if (readPixelBuf) {
-            readPixelBuf.webglContextRestored(gl);
-        }
+
+        pickBuffer.webglContextRestored(gl);
+        readPixelBuffer.webglContextRestored(gl);
+        saoDepthBuffer.webglContextRestored(gl);
+        occlusionBuffer1.webglContextRestored(gl);
+        occlusionBuffer2.webglContextRestored(gl);
+        colorBuffer.webglContextRestored(gl);
+
+        saoOcclusionRenderer.init();
+        saoBlurRenderer.init();
+        saoBlendRenderer.init();
+
         imageDirty = true;
     };
 
@@ -23154,10 +23863,118 @@ const Renderer = function (scene, options) {
         }
     }
 
-    var draw = (function () { // Draws the drawables in drawableListSorted
+    const draw = function (params) {
 
-        // On the first pass, we'll immediately draw the opaque normal-appearance drawables, while deferring
-        // the rest to these bins, then do subsequent passes to render these bins.
+        const sao = scene.sao;
+
+        if (sao.enabled && sao.supported) {
+
+            // Render depth buffer
+
+            saoDepthBuffer.bind();
+            saoDepthBuffer.clear();
+            drawDepth(params);
+            saoDepthBuffer.unbind();
+
+            // Render occlusion buffer
+
+            occlusionBuffer1.bind();
+            occlusionBuffer1.clear();
+            saoOcclusionRenderer.render(saoDepthBuffer.getTexture(), null);
+            occlusionBuffer1.unbind();
+
+            if (sao.blur) {
+
+                // Horizontally blur occlusion buffer 1 into occlusion buffer 2
+
+                occlusionBuffer2.bind();
+                occlusionBuffer2.clear();
+                saoBlurRenderer.render(saoDepthBuffer.getTexture(), occlusionBuffer1.getTexture(), 0);
+                occlusionBuffer2.unbind();
+
+                // Vertically blur occlusion buffer 2 back into occlusion buffer 1
+
+                occlusionBuffer1.bind();
+                occlusionBuffer1.clear();
+                saoBlurRenderer.render(saoDepthBuffer.getTexture(), occlusionBuffer2.getTexture(), 1);
+                occlusionBuffer1.unbind();
+            }
+
+            // Render color buffer
+
+            colorBuffer.bind();
+            colorBuffer.clear();
+            drawColor(params);
+            colorBuffer.unbind();
+
+            // Blend color buffer with occlusion buffer 1
+
+            saoBlendRenderer.render(colorBuffer.getTexture(), occlusionBuffer1.getTexture());
+
+        } else {
+
+            drawColor(params);
+        }
+    };
+
+    const drawDepth = (function () {
+
+        const renderFlags = new RenderFlags();
+
+        return function (params) {
+
+            if (WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_element_index_uint"]) {  // In case context lost/recovered
+                gl.getExtension("OES_element_index_uint");
+            }
+
+            frameCtx.reset();
+            frameCtx.pass = params.pass;
+
+            const boundary = scene.viewport.boundary;
+            gl.viewport(boundary[0], boundary[1], boundary[2], boundary[3]);
+
+            gl.clearColor(0, 0, 0, 0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.frontFace(gl.CCW);
+            gl.enable(gl.CULL_FACE);
+            gl.depthMask(true);
+
+            if (params.clear !== false) {
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+            }
+
+            for (var type in drawableTypeInfo) {
+                if (drawableTypeInfo.hasOwnProperty(type)) {
+
+                    const drawableInfo = drawableTypeInfo[type];
+                    const drawableList = drawableInfo.drawableList;
+
+                    for (let i = 0, len = drawableList.length; i < len; i++) {
+
+                        const drawable = drawableList[i];
+
+                        if (drawable.culled === true || drawable.visible === false || !drawable.drawDepth) {
+                            continue;
+                        }
+
+                        drawable.getRenderFlags(renderFlags);
+
+                        if (renderFlags.normalFillOpaque) {
+                            drawable.drawDepth(frameCtx);
+                        }
+                    }
+                }
+            }
+
+            // const numVertexAttribs = WEBGL_INFO.MAX_VERTEX_ATTRIBS; // Fixes https://github.com/xeokit/xeokit-sdk/issues/174
+            // for (let ii = 0; ii < numVertexAttribs; ii++) {
+            //     gl.disableVertexAttribArray(ii);
+            // }
+
+        };
+    })();
+
+    const drawColor = (function () { // Draws the drawables in drawableListSorted
 
         const normalEdgesOpaqueBin = [];
         const normalFillTransparentBin = [];
@@ -23181,8 +23998,6 @@ const Renderer = function (scene, options) {
         const renderFlags = new RenderFlags();
 
         return function (params) {
-
-            const opaqueOnly = !!params.opaqueOnly;
 
             if (WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_element_index_uint"]) {  // In case context lost/recovered
                 gl.getExtension("OES_element_index_uint");
@@ -23543,13 +24358,12 @@ const Renderer = function (scene, options) {
                 canvasY = canvas.clientHeight * 0.5;
             }
 
-            pickBuf = pickBuf || new RenderBuffer(canvas, gl);
-            pickBuf.bind();
+            pickBuffer.bind();
 
             const pickable = pickPickable(canvasX, canvasY, pickViewMatrix, pickProjMatrix, params);
 
             if (!pickable) {
-                pickBuf.unbind();
+                pickBuffer.unbind();
                 return null;
             }
 
@@ -23568,7 +24382,7 @@ const Renderer = function (scene, options) {
                 }
             }
 
-            pickBuf.unbind();
+            pickBuffer.unbind();
 
             pickResult.entity = (pickable.delegatePickedEntity) ? pickable.delegatePickedEntity() : pickable;
 
@@ -23624,7 +24438,7 @@ const Renderer = function (scene, options) {
             }
         }
 
-        const pix = pickBuf.read(Math.round(canvasX), Math.round(canvasY));
+        const pix = pickBuffer.read(Math.round(canvasX), Math.round(canvasY));
         let pickID = pix[0] + (pix[1] * 256) + (pix[2] * 256 * 256) + (pix[3] * 256 * 256 * 256);
 
         if (pickID < 0) {
@@ -23660,7 +24474,7 @@ const Renderer = function (scene, options) {
 
         pickable.drawPickTriangles(frameCtx);
 
-        const pix = pickBuf.read(canvasX, canvasY);
+        const pix = pickBuffer.read(canvasX, canvasY);
 
         let primIndex = pix[0] + (pix[1] * 256) + (pix[2] * 256 * 256) + (pix[3] * 256 * 256 * 256);
 
@@ -23698,7 +24512,7 @@ const Renderer = function (scene, options) {
 
             pickable.drawPickDepths(frameCtx); // Draw color-encoded fragment screen-space depths
 
-            const pix = pickBuf.read(Math.round(canvasX), Math.round(canvasY));
+            const pix = pickBuffer.read(Math.round(canvasX), Math.round(canvasY));
 
             const screenZ = unpackDepth(pix); // Get screen-space Z at the given canvas coords
 
@@ -23756,7 +24570,7 @@ const Renderer = function (scene, options) {
 
         pickable.drawPickNormals(frameCtx); // Draw color-encoded fragment World-space normals
 
-        const pix = pickBuf.read(Math.round(canvasX), Math.round(canvasY));
+        const pix = pickBuffer.read(Math.round(canvasX), Math.round(canvasY));
 
         const worldNormal = [(pix[0] / 256.0) - 0.5, (pix[1] / 256.0) - 0.5, (pix[2] / 256.0) - 0.5];
 
@@ -23846,9 +24660,8 @@ const Renderer = function (scene, options) {
      * @private
      */
     this.readPixels = function (pixels, colors, len, opaqueOnly) {
-        readPixelBuf = readPixelBuf || (readPixelBuf = new RenderBuffer(canvas, gl));
-        readPixelBuf.bind();
-        readPixelBuf.clear();
+        readPixelBuffer.bind();
+        readPixelBuffer.clear();
         this.render({force: true, opaqueOnly: opaqueOnly});
         let color;
         let i;
@@ -23857,13 +24670,13 @@ const Renderer = function (scene, options) {
         for (i = 0; i < len; i++) {
             j = i * 2;
             k = i * 4;
-            color = readPixelBuf.read(pixels[j], pixels[j + 1]);
+            color = readPixelBuffer.read(pixels[j], pixels[j + 1]);
             colors[k] = color[0];
             colors[k + 1] = color[1];
             colors[k + 2] = color[2];
             colors[k + 3] = color[3];
         }
-        readPixelBuf.unbind();
+        readPixelBuffer.unbind();
         imageDirty = true;
     };
 
@@ -23872,14 +24685,21 @@ const Renderer = function (scene, options) {
      * @private
      */
     this.destroy = function () {
+
         drawableTypeInfo = {};
         drawables = {};
-        if (pickBuf) {
-            pickBuf.destroy();
-        }
-        if (readPixelBuf) {
-            readPixelBuf.destroy();
-        }
+
+        pickBuffer.destroy();
+        readPixelBuffer.destroy();
+        saoDepthBuffer.destroy();
+        occlusionBuffer1.destroy();
+        occlusionBuffer2.destroy();
+        colorBuffer.destroy();
+
+        saoOcclusionRenderer.destroy();
+        saoBlurRenderer.destroy();
+        saoBlendRenderer.destroy();
+
         if (this._occlusionTester) {
             this._occlusionTester.destroy();
         }
@@ -25698,7 +26518,11 @@ class Perspective extends Component {
      * @param {Number} value New Perspective near plane position.
      */
     set near(value) {
-        this._state.near = (value !== undefined && value !== null) ? value : 0.1;
+        const near = (value !== undefined && value !== null) ? value : 0.1;
+        if (this._state.near === near) {
+            return;
+        }
+        this._state.near = near;
         this._needUpdate(0); // Ensure matrix built on next "tick"
         /**
          Fired whenever this Perspective's   {@link Perspective/near} property changes.
@@ -25731,7 +26555,11 @@ class Perspective extends Component {
      * @type {Number}
      */
     set far(value) {
-        this._state.far = (value !== undefined && value !== null) ? value : 10000;
+        const far = (value !== undefined && value !== null) ? value : 10000.0;
+        if (this._state.far === far) {
+            return;
+        }
+        this._state.far = far;
         this._needUpdate(0); // Ensure matrix built on next "tick"
         /**
          Fired whenever this Perspective's  {@link Perspective/far} property changes.
@@ -25910,7 +26738,11 @@ class Ortho extends Component {
      * @param {Number} value New Ortho near plane position.
      */
     set near(value) {
-        this._state.near = (value !== undefined && value !== null) ? value : 0.1;
+       const near = (value !== undefined && value !== null) ? value : 0.1;
+        if (this._state.near === near) {
+            return;
+        }
+        this._state.near = near;
         this._needUpdate(0);
         /**
          Fired whenever this Ortho's  {@link Ortho#near} property changes.
@@ -25942,7 +26774,11 @@ class Ortho extends Component {
      * @param {Number} value New far ortho plane position.
      */
     set far(value) {
-        this._state.far = (value !== undefined && value !== null) ? value : 10000.0;
+        const far = (value !== undefined && value !== null) ? value : 10000.0;
+        if (this._state.far === far) {
+            return;
+        }
+        this._state.far = far;
         this._needUpdate(0);
         /**
          Fired whenever this Ortho's {@link Ortho#far} property changes.
@@ -28284,6 +29120,342 @@ class Metrics extends Component {
     }
 }
 
+/**
+ * @desc Configures Scalable Ambient Obscurance (SAO) for a {@link Scene}.
+ *
+ * ## Overview
+ *
+ * * This component is found on {@link Scene#sao}.
+ * * This effect approximates Ambient Occlusion in realtime. It darkens creases, cavities and surfaces
+ * that are close to each other, which tend to occlude ambient light and appear darker.
+ * * For deeper technical information on SAO, see the paper [Scalable Ambient Obscurance](https://research.nvidia.com/sites/default/files/pubs/2012-06_Scalable-Ambient-Obscurance/McGuire12SAO.pdf).
+ *
+ * <br>
+ *
+ * Scene without SAO:
+ *
+ *  <img src="http://xeokit.io/img/docs/SAO/saoDisabled.png">
+ *
+ * Scene with SAO:
+ *
+ *  <img src="http://xeokit.io/img/docs/SAO/saoEnabledNoBlur.png">
+ *
+ * Scene with SAO and blur:
+ *
+ * <img src="http://xeokit.io/img/docs/SAO/saoEnabledDefaults.png">
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#postEffects_SAO_OTCConferenceCenter)]
+ *
+
+ */
+class SAO extends Component {
+
+    /** @private */
+    constructor(owner, cfg = {}) {
+
+        super(owner, cfg);
+
+        this._supported = WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_standard_derivatives"]; // For computing normals in SAO fragment shader
+
+        this.enabled = cfg.enabled;
+        this.interactive = cfg.interactive;
+        this.interactiveDelay = cfg.interactiveDelay;
+        this.kernelRadius = cfg.kernelRadius;
+        this.intensity = cfg.intensity;
+        this.bias = cfg.bias;
+        this.scale = cfg.scale;
+        this.minResolution = cfg.minResolution;
+        this.blur = cfg.blur;
+        this.blurRadius = cfg.blurRadius;
+        this.blurStdDev = cfg.blurStdDev;
+        this.blurDepthCutoff = cfg.blurDepthCutoff;
+    }
+
+    /**
+     * Gets whether or not SAO is supported by this browser and GPU.
+     *
+     * Even when enabled, SAO will only work if supported.
+     *
+     * @type {Boolean}
+     */
+    get supported() {
+        return this._supported;
+    }
+
+    /**
+     * Sets whether SAO is enabled for the {@link Scene}.
+     *
+     * Even when enabled, SAO will only work if supported.
+     *
+     * Default value is ````false````.
+     *
+     * @type {Boolean}
+     */
+    set enabled(value) {
+        value = !!value;
+        if (this._enabled === value) {
+            return;
+        }
+        this._enabled = value;
+        this.scene._needRecompile = true;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets whether SAO is enabled for the {@link Scene}.
+     *
+     * Even when enabled, SAO will only apply if supported.
+     *
+     * Default value is ````false````.
+     * 
+     * @type {Boolean}
+     */
+    get enabled() {
+        return this._enabled;
+    }
+
+    /**
+     * Sets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
+     *
+     * When this is ````false````, SAO will only be applied when the Camera is at rest.
+     *
+     * Default value is ````true````.
+     *
+     * @type {Boolean}
+     */
+    set interactive(value) {
+        value = !!value;
+        if (this._interactive === value) {
+            return;
+        }
+        this._interactive = value;
+        //this.glRedraw();
+    }
+
+    /**
+     * Gets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
+     *
+     * When this is ````false````, SAO will only be applied when the Camera is at rest.
+     *
+     * Default value is ````true````.
+     *
+     * @type {Boolean}
+     */
+    get interactive() {
+        return this._interactive;
+    }
+
+    /**
+     * Sets the interaction time delay after the {@link Camera} stops moving before SAO is applied.
+     *
+     * Only applies when {@link SAO#interactive} is ````true````.
+     *
+     * Default value is ````2.0````.
+     *
+     * @type {Number}
+     */
+    set interactiveDelay(value) {
+        if (value === undefined || value === null) {
+            value = 2.0;
+        }
+        if (this._interactiveDelay === value) {
+            return;
+        }
+        this._interactiveDelay = value;
+
+        /////////////////////////////////
+        // TODO: implement time delay
+        /////////////////////////////////
+
+        //this.glRedraw();
+    }
+
+    /**
+     * Gets the interaction time delay after the {@link Camera} stops moving before SAO is applied.
+     *
+     * Only applies when {@link SAO#interactive} is ````true````.
+     *
+     * Default value is ````2.0````.
+     *
+     * @type {Number}
+     */
+    get interactiveDelay() {
+        return this._interactiveDelay;
+    }
+    
+    /**
+     * Sets the maximum area that SAO takes into account when checking for possible occlusion.
+     *
+     * Default value is ````100.0````.
+     *
+     * @type {Number}
+     */
+    set kernelRadius(value) {
+        if (value === undefined || value === null) {
+            value = 100.0;
+        }
+        if (this._kernelRadius === value) {
+            return;
+        }
+        this._kernelRadius = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the maximum area that SAO takes into account when checking for possible occlusion.
+     *
+     * Default value is ````100.0````.
+     * 
+     * @type {Number}
+     */
+    get kernelRadius() {
+        return this._kernelRadius;
+    }
+
+    /**
+     * Sets the degree of darkening (ambient obscurance) produced by the SAO effect.
+     *
+     * Default value is ````0.25````.
+     *
+     * @type {Number}
+     */
+    set intensity(value) {
+        if (value === undefined || value === null) {
+            value = 0.25;
+        }
+        if (this._intensity === value) {
+            return;
+        }
+        this._intensity = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the degree of darkening (ambient obscurance) produced by the SAO effect.
+     *
+     * Default value is ````0.25````.
+     * 
+     * @type {Number}
+     */
+    get intensity() {
+        return this._intensity;
+    }
+
+    /**
+     * Sets the SAO bias.
+     *
+     * Default value is ````0.5````.
+     *
+     * @type {Number}
+     */
+    set bias(value) {
+        if (value === undefined || value === null) {
+            value = 0.5;
+        }
+        if (this._bias === value) {
+            return;
+        }
+        this._bias = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the SAO bias.
+     *
+     * Default value is ````0.5````.
+     *
+     * @type {Number}
+     */
+    get bias() {
+        return this._bias;
+    }
+
+    /**
+     * Sets the SAO occlusion scale.
+     *
+     * Default value is ````1000.0````.
+     *
+     * @type {Number}
+     */
+    set scale(value) {
+        if (value === undefined || value === null) {
+            value = 1000.0;
+        }
+        if (this._scale === value) {
+            return;
+        }
+        this._scale = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the SAO occlusion scale.
+     *
+     * Default value is ````1000.0````.
+     *
+     * @type {Number}
+     */
+    get scale() {
+        return this._scale;
+    }
+
+    /**
+     * Sets the SAO minimum resolution.
+     *
+     * Default value is ````0.0````.
+     *
+     * @type {Number}
+     */
+    set minResolution(value) {
+        if (value === undefined || value === null) {
+            value = 0.0;
+        }
+        if (this._minResolution === value) {
+            return;
+        }
+        this._minResolution = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the SAO minimum resolution.
+     *
+     * Default value is ````0.0````.
+     *
+     * @type {Number}
+     */
+    get minResolution() {
+        return this._minResolution;
+    }
+
+    /**
+     * Sets whether Guassian blur is enabled.
+     *
+     * Default value is ````true````.
+     *
+     * @type {Boolean}
+     */
+    set blur(value) {
+        value = (value !== false);
+        if (this._blur === value) {
+            return;
+        }
+        this._blur = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets whether Guassian blur is enabled.
+     *
+     * Default value is ````true````.
+     *
+     * @type {Boolean}
+     */
+    get blur() {
+        return this._blur;
+    }
+}
+
 // Cached vars to avoid garbage collection
 
 function getEntityIDMap(scene, entityIds) {
@@ -28340,7 +29512,7 @@ function getEntityIDMap(scene, entityIds) {
  * ## Creating and accessing Scene components
  *
  * As a brief introduction to creating Scene components, we'll create a {@link Mesh} that has a
- * {@link uildTorusGeometry} and a {@link PhongMaterial}:
+ * {@link buildTorusGeometry} and a {@link PhongMaterial}:
  *
  * ````javascript
  * var teapotMesh = new Mesh(scene, {
@@ -28976,6 +30148,14 @@ class Scene extends Component {
             units: cfg.units,
             scale: cfg.scale,
             origin: cfg.origin
+        });
+
+        /** Configures Scalable Ambient Obscurance (SAO) for this Scene.
+         * @type {SAO}
+         * @final
+         */
+        this.sao = new SAO(this, {
+            enabled: cfg.saoEnabled
         });
 
         this.ticksPerRender = cfg.ticksPerRender;
@@ -33807,7 +34987,10 @@ function buildVertex$5(layer) {
     src.push("attribute vec3 normal;");
     src.push("attribute vec4 color;");
     src.push("attribute vec4 flags;");
-    src.push("attribute vec4 flags2;");
+
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
 
     src.push("uniform mat4 viewMatrix;");
     src.push("uniform mat4 projMatrix;");
@@ -34136,7 +35319,7 @@ BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
     frameCtx.useProgram++;
     const camera = scene.camera;
     gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
-    for (var i = 0, len = lights.length; i < len; i++) {
+    for (let i = 0, len = lights.length; i < len; i++) {
         light = lights[i];
         if (this._uLightAmbient[i]) {
             gl.uniform4f(this._uLightAmbient[i], light.color[0], light.color[1], light.color[2], light.intensity);
@@ -34649,26 +35832,25 @@ BatchingEdgesRenderer.prototype.drawLayer = function (frameCtx, layer, renderPas
         frameCtx.lastProgramId = this._program.id;
         this._bindProgram(frameCtx, layer);
     }
+
+    var material;
     if (renderPass === RENDER_PASSES.XRAYED) {
-        const material = scene.xrayMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+        material = scene.xrayMaterial._state;
     } else if (renderPass === RENDER_PASSES.HIGHLIGHTED) {
-        const material = scene.highlightMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+        material = scene.highlightMaterial._state;
     } else if (renderPass === RENDER_PASSES.SELECTED) {
-        const material = scene.selectedMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+        material = scene.selectedMaterial._state;
     } else {
-        const material = scene.edgeMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+        material = scene.edgeMaterial._state;
+    }
+
+    const edgeColor = material.edgeColor;
+    const edgeAlpha = material.edgeAlpha;
+    gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+
+    if (frameCtx.lineWidth !== material.edgeWidth) {
+        gl.lineWidth(material.edgeWidth);
+        frameCtx.lineWidth = material.edgeWidth;
     }
 
     gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
@@ -35527,7 +36709,9 @@ function buildVertex$b(layer) {
     src.push("attribute vec3 position;");
     src.push("attribute vec4 color;");
     src.push("attribute vec4 flags;");
-    src.push("attribute vec4 flags2;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
     src.push("uniform mat4 viewMatrix;");
     src.push("uniform mat4 projMatrix;");
     src.push("uniform mat4 positionsDecodeMatrix;");
@@ -35735,6 +36919,511 @@ BatchingOcclusionRenderer.prototype._bindProgram = function (frameCtx) {
     }
 };
 
+/**
+ * @private
+ */
+class BatchingDepthShaderSource {
+    constructor(layer) {
+        this.vertex = buildVertex$c(layer);
+        this.fragment = buildFragment$c(layer);
+    }
+}
+
+function buildVertex$c(layer) {
+    const scene = layer.model.scene;
+    const clipping = scene._sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+
+    src.push("// Batched geometry depth vertex shader");
+
+    src.push("attribute vec3 position;");
+    src.push("attribute vec4 color;");
+    src.push("attribute vec4 flags;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
+    src.push("uniform mat4 viewMatrix;");
+    src.push("uniform mat4 projMatrix;");
+    src.push("uniform mat4 positionsDecodeMatrix;");
+
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+    }
+    src.push("varying vec4 vViewPosition;");
+    src.push("void main(void) {");
+    src.push("  bool visible        = (float(flags.x) > 0.0);");
+    src.push("  bool xrayed         = (float(flags.y) > 0.0);");
+    src.push("  bool transparent    = ((float(color.a) / 255.0) < 1.0);");
+    src.push(`  if (!visible || transparent || xrayed) {`);
+    src.push("      gl_Position = vec4(0.0, 0.0, 0.0, 0.0);");
+    src.push("  } else {");
+    src.push("      vec4 worldPosition = positionsDecodeMatrix * vec4(position, 1.0); ");
+    src.push("      vec4 viewPosition  = viewMatrix * worldPosition; ");
+    if (clipping) {
+        src.push("      vWorldPosition = worldPosition;");
+        src.push("      vFlags2 = flags2;");
+    }
+    src.push("      vViewPosition = viewPosition;");
+    src.push("      gl_Position = projMatrix * viewPosition;");
+    src.push("  }");
+    src.push("}");
+    return src;
+}
+
+function buildFragment$c(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const clipping = (sectionPlanesState.sectionPlanes.length > 0);
+    const src = [];
+    src.push("// Batched geometry depth fragment shader");
+    src.push("precision highp float;");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+        for (let i = 0; i < sectionPlanesState.sectionPlanes.length; i++) {
+            src.push("uniform bool sectionPlaneActive" + i + ";");
+            src.push("uniform vec3 sectionPlanePos" + i + ";");
+            src.push("uniform vec3 sectionPlaneDir" + i + ";");
+        }
+    }
+    src.push("varying vec4 vViewPosition;");
+
+    src.push("const float   packUpScale = 256. / 255.;");
+    src.push("const float   unpackDownscale = 255. / 256.;");
+    src.push("const vec3    packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+    src.push("const vec4    unpackFactors = unpackDownscale / vec4( packFactors, 1. );");
+    src.push("const float   shiftRight8 = 1. / 256.;");
+
+    src.push("vec4 packDepthToRGBA( const in float v ) {");
+    src.push("    vec4 r = vec4( fract( v * packFactors ), v );");
+    src.push("    r.yzw -= r.xyz * shiftRight8;");
+    src.push("    return r * packUpScale;");
+    src.push("}");
+
+    src.push("void main(void) {");
+    if (clipping) {
+        src.push("  bool clippable = (float(vFlags2.x) > 0.0);");
+        src.push("  if (clippable) {");
+        src.push("      float dist = 0.0;");
+        for (var i = 0; i < sectionPlanesState.sectionPlanes.length; i++) {
+            src.push("      if (sectionPlaneActive" + i + ") {");
+            src.push("          dist += clamp(dot(-sectionPlaneDir" + i + ".xyz, vWorldPosition.xyz - sectionPlanePos" + i + ".xyz), 0.0, 1000.0);");
+            src.push("      }");
+        }
+        src.push("      if (dist > 0.0) { discard; }");
+        src.push("  }");
+    }
+    src.push("    gl_FragColor = packDepthToRGBA( gl_FragCoord.z); ");
+    src.push("}");
+    return src;
+}
+
+const ids$c = new Map({});
+
+/**
+ * @private
+ * @constructor
+ */
+const BatchingDepthRenderer = function (hash, layer) {
+    this.id = ids$c.addItem({});
+    this._hash = hash;
+    this._scene = layer.model.scene;
+    this._useCount = 0;
+    this._shaderSource = new BatchingDepthShaderSource(layer);
+    this._allocate(layer);
+};
+
+const renderers$b = {};
+
+BatchingDepthRenderer.get = function (layer) {
+    const scene = layer.model.scene;
+    const hash = getHash$7(scene);
+    let renderer = renderers$b[hash];
+    if (!renderer) {
+        renderer = new BatchingDepthRenderer(hash, layer);
+        if (renderer.errors) {
+            console.log(renderer.errors.join("\n"));
+            return null;
+        }
+        renderers$b[hash] = renderer;
+        stats.memory.programs++;
+    }
+    renderer._useCount++;
+    return renderer;
+};
+
+function getHash$7(scene) {
+    return [scene.canvas.canvas.id, "", "", scene._sectionPlanesState.getHash()].join(";")
+}
+
+BatchingDepthRenderer.prototype.getValid = function () {
+    return this._hash === getHash$7(this._scene);
+};
+
+BatchingDepthRenderer.prototype.put = function () {
+    if (--this._useCount === 0) {
+        ids$c.removeItem(this.id);
+        if (this._program) {
+            this._program.destroy();
+        }
+        delete renderers$b[this._hash];
+        stats.memory.programs--;
+    }
+};
+
+BatchingDepthRenderer.prototype.webglContextRestored = function () {
+    this._program = null;
+};
+
+BatchingDepthRenderer.prototype.drawLayer = function (frameCtx, layer) {
+    const model = layer.model;
+    const scene = model.scene;
+    const gl = scene.canvas.gl;
+    const state = layer._state;
+    if (!this._program) {
+        this._allocate(layer);
+    }
+    if (frameCtx.lastProgramId !== this._program.id) {
+        frameCtx.lastProgramId = this._program.id;
+        this._bindProgram(frameCtx, layer);
+    }
+    gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
+    gl.uniformMatrix4fv(this._uViewMatrix, false, model.viewMatrix);
+    this._aPosition.bindArrayBuffer(state.positionsBuf);
+    if (this._aColor) { // Needed for masking out transparent entities using alpha channel
+        this._aColor.bindArrayBuffer(state.colorsBuf);
+        frameCtx.bindArray++;
+    }
+    if (this._aFlags) {
+        this._aFlags.bindArrayBuffer(state.flagsBuf);
+        frameCtx.bindArray++;
+    }
+    if (this._aFlags2) {
+        this._aFlags2.bindArrayBuffer(state.flags2Buf);
+        frameCtx.bindArray++;
+    }
+    state.indicesBuf.bind();
+    frameCtx.bindArray++;
+    gl.drawElements(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0);
+    frameCtx.drawElements++;
+};
+
+BatchingDepthRenderer.prototype._allocate = function (layer) {
+    var scene = layer.model.scene;
+    const gl = scene.canvas.gl;
+    const sectionPlanesState = scene._sectionPlanesState;
+    this._program = new Program(gl, this._shaderSource);
+    if (this._program.errors) {
+        this.errors = this._program.errors;
+        return;
+    }
+    const program = this._program;
+    this._uRenderPass = program.getLocation("renderPass");
+    this._uPositionsDecodeMatrix = program.getLocation("positionsDecodeMatrix");
+    this._uViewMatrix = program.getLocation("viewMatrix");
+    this._uProjMatrix = program.getLocation("projMatrix");
+    this._uSectionPlanes = [];
+    const sectionPlanes = sectionPlanesState.sectionPlanes;
+    for (let i = 0, len = sectionPlanes.length; i < len; i++) {
+        this._uSectionPlanes.push({
+            active: program.getLocation("sectionPlaneActive" + i),
+            pos: program.getLocation("sectionPlanePos" + i),
+            dir: program.getLocation("sectionPlaneDir" + i)
+        });
+    }
+    this._aPosition = program.getAttribute("position");
+    this._aColor = program.getAttribute("color");
+    this._aFlags = program.getAttribute("flags");
+    this._aFlags2 = program.getAttribute("flags2");
+};
+
+BatchingDepthRenderer.prototype._bindProgram = function (frameCtx, layer) {
+    const scene = this._scene;
+    const gl = scene.canvas.gl;
+    const program = this._program;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const projectState = scene.camera.project._state;
+    program.bind();
+    frameCtx.useProgram++;
+    const camera = scene.camera;
+    gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
+    if (sectionPlanesState.sectionPlanes.length > 0) {
+        const sectionPlanes = scene._sectionPlanesState.sectionPlanes;
+        let sectionPlaneUniforms;
+        let uSectionPlaneActive;
+        let sectionPlane;
+        let uSectionPlanePos;
+        let uSectionPlaneDir;
+        for (let i = 0, len = this._uSectionPlanes.length; i < len; i++) {
+            sectionPlaneUniforms = this._uSectionPlanes[i];
+            uSectionPlaneActive = sectionPlaneUniforms.active;
+            sectionPlane = sectionPlanes[i];
+            if (uSectionPlaneActive) {
+                gl.uniform1i(uSectionPlaneActive, sectionPlane.active);
+            }
+            uSectionPlanePos = sectionPlaneUniforms.pos;
+            if (uSectionPlanePos) {
+                gl.uniform3fv(sectionPlaneUniforms.pos, sectionPlane.pos);
+            }
+            uSectionPlaneDir = sectionPlaneUniforms.dir;
+            if (uSectionPlaneDir) {
+                gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
+            }
+        }
+    }
+};
+
+/**
+ * @private
+ */
+class BatchingNormalsShaderSource {
+    constructor(layer) {
+        this.vertex = buildVertex$d(layer);
+        this.fragment = buildFragment$d(layer);
+    }
+}
+
+function buildVertex$d(layer) {
+    const scene = layer.model.scene;
+    const clipping = scene._sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+    src.push("// Batched geometry normals vertex shader");
+    src.push("attribute vec3 position;");
+    src.push("attribute vec3 normal;");
+    src.push("attribute vec4 color;");
+    src.push("attribute vec4 flags;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
+    src.push("uniform mat4 viewMatrix;");
+    src.push("uniform mat4 projMatrix;");
+    src.push("uniform mat4 viewNormalMatrix;");
+    src.push("uniform mat4 positionsDecodeMatrix;");
+    src.push("vec3 octDecode(vec2 oct) {");
+    src.push("    vec3 v = vec3(oct.xy, 1.0 - abs(oct.x) - abs(oct.y));");
+    src.push("    if (v.z < 0.0) {");
+    src.push("        v.xy = (1.0 - abs(v.yx)) * vec2(v.x >= 0.0 ? 1.0 : -1.0, v.y >= 0.0 ? 1.0 : -1.0);");
+    src.push("    }");
+    src.push("    return normalize(v);");
+    src.push("}");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+    }
+    src.push("varying vec3 vViewNormal;");
+    src.push("void main(void) {");
+    src.push("  bool visible        = (float(flags.x) > 0.0);");
+    src.push("  bool xrayed         = (float(flags.y) > 0.0);");
+    src.push("  bool transparent    = ((float(color.a) / 255.0) < 1.0);");
+    src.push(`  if (!visible || transparent || xrayed) {`);
+    src.push("      gl_Position = vec4(0.0, 0.0, 0.0, 0.0);");
+    src.push("  } else {");
+    src.push("      vec4 worldPosition  = positionsDecodeMatrix * vec4(position, 1.0); ");
+    src.push("      vec4 viewPosition   = viewMatrix * worldPosition; ");
+    src.push("      vec4 worldNormal    = vec4(octDecode(normal.xy), 0.0); ");
+    src.push("      vec3 viewNormal     = normalize((viewNormalMatrix * worldNormal).xyz);");
+    if (clipping) {
+        src.push("      vWorldPosition  = worldPosition;");
+        src.push("      vFlags2         = flags2;");
+    }
+    src.push("      vViewNormal = viewNormal;");
+    src.push("      gl_Position = projMatrix * viewPosition;");
+    src.push("  }");
+    src.push("}");
+    return src;
+}
+
+function buildFragment$d(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const clipping = (sectionPlanesState.sectionPlanes.length > 0);
+    const src = [];
+    src.push("// Batched geometry normals fragment shader");
+    src.push("precision highp float;");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+        for (let i = 0; i < sectionPlanesState.sectionPlanes.length; i++) {
+            src.push("uniform bool sectionPlaneActive" + i + ";");
+            src.push("uniform vec3 sectionPlanePos" + i + ";");
+            src.push("uniform vec3 sectionPlaneDir" + i + ";");
+        }
+    }
+    src.push("varying vec3 vViewNormal;");
+    src.push("vec3 packNormalToRGB( const in vec3 normal ) {");
+    src.push("    return normalize( normal ) * 0.5 + 0.5;");
+    src.push("}");
+    src.push("void main(void) {");
+    if (clipping) {
+        src.push("  bool clippable = (float(vFlags2.x) > 0.0);");
+        src.push("  if (clippable) {");
+        src.push("      float dist = 0.0;");
+        for (var i = 0; i < sectionPlanesState.sectionPlanes.length; i++) {
+            src.push("      if (sectionPlaneActive" + i + ") {");
+            src.push("          dist += clamp(dot(-sectionPlaneDir" + i + ".xyz, vWorldPosition.xyz - sectionPlanePos" + i + ".xyz), 0.0, 1000.0);");
+            src.push("      }");
+        }
+        src.push("      if (dist > 0.0) { discard; }");
+        src.push("  }");
+    }
+    src.push("    gl_FragColor = vec4(packNormalToRGB(vViewNormal), 1.0); ");
+    src.push("}");
+    return src;
+}
+
+const ids$d = new Map({});
+
+/**
+ * @private
+ * @constructor
+ */
+const BatchingNormalsRenderer = function (hash, layer) {
+    this.id = ids$d.addItem({});
+    this._hash = hash;
+    this._scene = layer.model.scene;
+    this._useCount = 0;
+    this._shaderSource = new BatchingNormalsShaderSource(layer);
+    this._allocate(layer);
+};
+
+const renderers$c = {};
+
+BatchingNormalsRenderer.get = function (layer) {
+    const scene = layer.model.scene;
+    const hash = getHash$8(scene);
+    let renderer = renderers$c[hash];
+    if (!renderer) {
+        renderer = new BatchingNormalsRenderer(hash, layer);
+        if (renderer.errors) {
+            console.log(renderer.errors.join("\n"));
+            return null;
+        }
+        renderers$c[hash] = renderer;
+        stats.memory.programs++;
+    }
+    renderer._useCount++;
+    return renderer;
+};
+
+function getHash$8(scene) {
+    return [scene.canvas.canvas.id, "", "", scene._sectionPlanesState.getHash()].join(";")
+}
+
+BatchingNormalsRenderer.prototype.getValid = function () {
+    return this._hash === getHash$8(this._scene);
+};
+
+BatchingNormalsRenderer.prototype.put = function () {
+    if (--this._useCount === 0) {
+        ids$d.removeItem(this.id);
+        if (this._program) {
+            this._program.destroy();
+        }
+        delete renderers$c[this._hash];
+        stats.memory.programs--;
+    }
+};
+
+BatchingNormalsRenderer.prototype.webglContextRestored = function () {
+    this._program = null;
+};
+
+BatchingNormalsRenderer.prototype.drawLayer = function (frameCtx, layer) {
+    const model = layer.model;
+    const scene = model.scene;
+    const gl = scene.canvas.gl;
+    const state = layer._state;
+    if (!this._program) {
+        this._allocate(layer);
+    }
+    if (frameCtx.lastProgramId !== this._program.id) {
+        frameCtx.lastProgramId = this._program.id;
+        this._bindProgram(frameCtx, layer);
+    }
+    gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
+    gl.uniformMatrix4fv(this._uViewMatrix, false, model.viewMatrix);
+    gl.uniformMatrix4fv(this._uViewNormalMatrix, false, model.viewNormalMatrix);
+    this._aPosition.bindArrayBuffer(state.positionsBuf);
+    this._aNormal.bindArrayBuffer(state.normalsBuf);
+    this._aColor.bindArrayBuffer(state.colorsBuf);// Needed for masking out transparent entities using alpha channel
+    this._aFlags.bindArrayBuffer(state.flagsBuf);
+    if (this._aFlags2) {
+        this._aFlags2.bindArrayBuffer(state.flags2Buf);
+    }
+    state.indicesBuf.bind();
+    gl.drawElements(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0);
+};
+
+BatchingNormalsRenderer.prototype._allocate = function (layer) {
+    var scene = layer.model.scene;
+    const gl = scene.canvas.gl;
+    const sectionPlanesState = scene._sectionPlanesState;
+    this._program = new Program(gl, this._shaderSource);
+    if (this._program.errors) {
+        this.errors = this._program.errors;
+        return;
+    }
+    const program = this._program;
+    this._uRenderPass = program.getLocation("renderPass");
+    this._uPositionsDecodeMatrix = program.getLocation("positionsDecodeMatrix");
+    this._uViewMatrix = program.getLocation("viewMatrix");
+    this._uViewNormalMatrix = program.getLocation("viewNormalMatrix");
+    this._uProjMatrix = program.getLocation("projMatrix");
+    this._uSectionPlanes = [];
+    const sectionPlanes = sectionPlanesState.sectionPlanes;
+    for (let i = 0, len = sectionPlanes.length; i < len; i++) {
+        this._uSectionPlanes.push({
+            active: program.getLocation("sectionPlaneActive" + i),
+            pos: program.getLocation("sectionPlanePos" + i),
+            dir: program.getLocation("sectionPlaneDir" + i)
+        });
+    }
+    this._aPosition = program.getAttribute("position");
+    this._aNormal = program.getAttribute("normal");
+    this._aColor = program.getAttribute("color");
+    this._aFlags = program.getAttribute("flags");
+
+    if (this._aFlags2) { // Won't be in shader when not clipping
+        this._aFlags2 = program.getAttribute("flags2");
+    }
+};
+
+BatchingNormalsRenderer.prototype._bindProgram = function (frameCtx, layer) {
+    const scene = this._scene;
+    const gl = scene.canvas.gl;
+    const program = this._program;
+    const sectionPlanesState = scene._sectionPlanesState;
+    program.bind();
+    frameCtx.useProgram++;
+    const camera = scene.camera;
+    gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
+    if (sectionPlanesState.sectionPlanes.length > 0) {
+        const sectionPlanes = scene._sectionPlanesState.sectionPlanes;
+        let sectionPlaneUniforms;
+        let uSectionPlaneActive;
+        let sectionPlane;
+        let uSectionPlanePos;
+        let uSectionPlaneDir;
+        for (let i = 0, len = this._uSectionPlanes.length; i < len; i++) {
+            sectionPlaneUniforms = this._uSectionPlanes[i];
+            uSectionPlaneActive = sectionPlaneUniforms.active;
+            sectionPlane = sectionPlanes[i];
+            if (uSectionPlaneActive) {
+                gl.uniform1i(uSectionPlaneActive, sectionPlane.active);
+            }
+            uSectionPlanePos = sectionPlaneUniforms.pos;
+            if (uSectionPlanePos) {
+                gl.uniform3fv(sectionPlaneUniforms.pos, sectionPlane.pos);
+            }
+            uSectionPlaneDir = sectionPlaneUniforms.dir;
+            if (uSectionPlaneDir) {
+                gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
+            }
+        }
+    }
+};
+
 const bigIndicesSupported$2 = WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_element_index_uint"];
 const tempUint8Vec4 = new Uint8Array((bigIndicesSupported$2 ? 5000000 : 65530) * 4); // Scratch memory for dynamic flags VBO update
 const tempMat4 = math.mat4();
@@ -35784,7 +37473,9 @@ class BatchingLayer {
                 primitive = gl.TRIANGLE_FAN;
                 break;
             default:
-                throw `Unsupported value for 'primitive': '${primitiveName}' - supported values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'. Defaulting to 'triangles'.`;
+                model.error(`Unsupported value for 'primitive': '${primitiveName}' - supported values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'. Defaulting to 'triangles'.`);
+                primitive = gl.TRIANGLES;
+                primitiveName = "triangles";
         }
 
         this._state = new RenderState({
@@ -36364,6 +38055,32 @@ class BatchingLayer {
         }
     }
 
+    //-- SPost effects supprt------------------------------------------------------------------------------------------------
+
+    drawDepth(frameCtx) {
+        if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
+            return;
+        }
+        if (!this._depthRenderer) {
+            this._depthRenderer = BatchingDepthRenderer.get(this);
+        }
+        if (this._depthRenderer) {
+            this._depthRenderer.drawLayer(frameCtx, this);
+        }
+    }
+
+    drawNormals(frameCtx) {
+        if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
+            return;
+        }
+        if (!this._normalsRenderer) {
+            this._normalsRenderer = BatchingNormalsRenderer.get(this);
+        }
+        if (this._normalsRenderer) {
+            this._normalsRenderer.drawLayer(frameCtx, this);
+        }
+    }
+
     //-- XRAYED--------------------------------------------------------------------------------------------------------
 
     drawXRayedFillOpaque(frameCtx) {
@@ -36526,6 +38243,14 @@ class BatchingLayer {
             this._drawRenderer.put();
             this._drawRenderer = null;
         }
+        if (this._depthRenderer && this._depthRenderer.getValid() === false) {
+            this._depthRenderer.put();
+            this._depthRenderer = null;
+        }
+        if (this._normalsRenderer && this._normalsRenderer.getValid() === false) {
+            this._normalsRenderer.put();
+            this._normalsRenderer = null;
+        }
         if (this._fillRenderer && this._fillRenderer.getValid() === false) {
             this._fillRenderer.put();
             this._fillRenderer = null;
@@ -36553,6 +38278,9 @@ class BatchingLayer {
         if (!this._drawRenderer) {
             this._drawRenderer = BatchingDrawRenderer.get(this);
         }
+
+        // Lazy-get normals and depth renderers when needed
+
         if (!this._fillRenderer) {
             this._fillRenderer = BatchingFillRenderer.get(this);
         }
@@ -36577,6 +38305,14 @@ class BatchingLayer {
         if (this._drawRenderer) {
             this._drawRenderer.put();
             this._drawRenderer = null;
+        }
+        if (this._depthRenderer) {
+            this._depthRenderer.put();
+            this._depthRenderer = null;
+        }
+        if (this._normalsRenderer) {
+            this._normalsRenderer.put();
+            this._normalsRenderer = null;
         }
         if (this._fillRenderer) {
             this._fillRenderer.put();
@@ -36763,11 +38499,11 @@ function dot$1(p, vec3) { // Dot product of a normal in an array against a candi
  * @private
  */
 const InstancingDrawShaderSource = function (layer) {
-    this.vertex = buildVertex$c(layer);
-    this.fragment = buildFragment$c(layer);
+    this.vertex = buildVertex$e(layer);
+    this.fragment = buildFragment$e(layer);
 };
 
-function buildVertex$c(layer) {
+function buildVertex$e(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const lightsState = scene._lightsState;
@@ -36785,7 +38521,11 @@ function buildVertex$c(layer) {
     src.push("attribute vec2 normal;");
     src.push("attribute vec4 color;");
     src.push("attribute vec4 flags;");
-    src.push("attribute vec4 flags2;");
+
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
+
 
     src.push("attribute vec4 modelMatrixCol0;"); // Modeling matrix
     src.push("attribute vec4 modelMatrixCol1;");
@@ -36910,7 +38650,7 @@ function buildVertex$c(layer) {
     return src;
 }
 
-function buildFragment$c(layer) {
+function buildFragment$e(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     let i;
@@ -36948,13 +38688,13 @@ function buildFragment$c(layer) {
     return src;
 }
 
-const ids$c = new Map({});
+const ids$e = new Map({});
 
 /**
  * @private
  */
 const InstancingDrawRenderer = function (hash, layer) {
-    this.id = ids$c.addItem({});
+    this.id = ids$e.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -36962,40 +38702,40 @@ const InstancingDrawRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$b = {};
+const renderers$d = {};
 
 InstancingDrawRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$7(scene);
-    let renderer = renderers$b[hash];
+    const hash = getHash$9(scene);
+    let renderer = renderers$d[hash];
     if (!renderer) {
         renderer = new InstancingDrawRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$b[hash] = renderer;
+        renderers$d[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$7(scene) {
+function getHash$9(scene) {
     return [scene.canvas.canvas.id, "", scene._lightsState.getHash(), scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingDrawRenderer.prototype.getValid = function () {
-    return this._hash === getHash$7(this._scene);
+    return this._hash === getHash$9(this._scene);
 };
 
 InstancingDrawRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$c.removeItem(this.id);
+        ids$e.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$b[this._hash];
+        delete renderers$d[this._hash];
         stats.memory.programs--;
     }
 };
@@ -37185,7 +38925,7 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
     const camera = scene.camera;
     const cameraState = camera._state;
     gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
-    for (var i = 0, len = lights.length; i < len; i++) {
+    for (let i = 0, len = lights.length; i < len; i++) {
         light = lights[i];
         if (this._uLightAmbient[i]) {
             gl.uniform4f(this._uLightAmbient[i], light.color[0], light.color[1], light.color[2], light.intensity);
@@ -37238,11 +38978,11 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
  * @private
  */
 const InstancingFillShaderSource = function (layer) {
-    this.vertex = buildVertex$d(layer);
-    this.fragment = buildFragment$d(layer);
+    this.vertex = buildVertex$f(layer);
+    this.fragment = buildFragment$f(layer);
 };
 
-function buildVertex$d(layer) {
+function buildVertex$f(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -37257,7 +38997,9 @@ function buildVertex$d(layer) {
 
     src.push("attribute vec3 position;");
     src.push("attribute vec4 flags;");
-    src.push("attribute vec4 flags2;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
 
     src.push("attribute vec4 modelMatrixCol0;"); // Modeling matrix
     src.push("attribute vec4 modelMatrixCol1;");
@@ -37308,7 +39050,7 @@ function buildVertex$d(layer) {
     return src;
 }
 
-function buildFragment$d(layer) {
+function buildFragment$f(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     let i;
@@ -37346,13 +39088,13 @@ function buildFragment$d(layer) {
     return src;
 }
 
-const ids$d = new Map({});
+const ids$f = new Map({});
 
 /**
  * @private
  */
 const InstancingFillRenderer = function (hash, layer) {
-    this.id = ids$d.addItem({});
+    this.id = ids$f.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -37360,41 +39102,41 @@ const InstancingFillRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$c = {};
+const renderers$e = {};
 const defaultColorize = new Float32Array([1.0, 1.0, 1.0, 1.0]);
 
 InstancingFillRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$8(scene);
-    let renderer = renderers$c[hash];
+    const hash = getHash$a(scene);
+    let renderer = renderers$e[hash];
     if (!renderer) {
         renderer = new InstancingFillRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$c[hash] = renderer;
+        renderers$e[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$8(scene) {
+function getHash$a(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingFillRenderer.prototype.getValid = function () {
-    return this._hash === getHash$8(this._scene);
+    return this._hash === getHash$a(this._scene);
 };
 
 InstancingFillRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$d.removeItem(this.id);
+        ids$f.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$c[this._hash];
+        delete renderers$e[this._hash];
         stats.memory.programs--;
     }
 };
@@ -37567,11 +39309,11 @@ InstancingFillRenderer.prototype._bindProgram = function (frameCtx, layer) {
  * @private
  */
 const InstancingEdgesShaderSource = function (layer) {
-    this.vertex = buildVertex$e(layer);
-    this.fragment = buildFragment$e(layer);
+    this.vertex = buildVertex$g(layer);
+    this.fragment = buildFragment$g(layer);
 };
 
-function buildVertex$e(layer) {
+function buildVertex$g(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -37628,7 +39370,7 @@ function buildVertex$e(layer) {
 }
 
 
-function buildFragment$e(layer) {
+function buildFragment$g(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -37666,13 +39408,13 @@ function buildFragment$e(layer) {
     return src;
 }
 
-const ids$e = new Map({});
+const ids$g = new Map({});
 
 /**
  * @private
  */
 const InstancingEdgesRenderer = function (hash, layer) {
-    this.id = ids$e.addItem({});
+    this.id = ids$g.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -37680,40 +39422,40 @@ const InstancingEdgesRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$d = {};
+const renderers$f = {};
 
 InstancingEdgesRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$9(scene);
-    let renderer = renderers$d[hash];
+    const hash = getHash$b(scene);
+    let renderer = renderers$f[hash];
     if (!renderer) {
         renderer = new InstancingEdgesRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$d[hash] = renderer;
+        renderers$f[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$9(scene) {
+function getHash$b(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingEdgesRenderer.prototype.getValid = function () {
-    return this._hash === getHash$9(this._scene);
+    return this._hash === getHash$b(this._scene);
 };
 
 InstancingEdgesRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$e.removeItem(this.id);
+        ids$g.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$d[this._hash];
+        delete renderers$f[this._hash];
         stats.memory.programs--;
     }
 };
@@ -37742,29 +39484,24 @@ InstancingEdgesRenderer.prototype.drawLayer = function (frameCtx, layer, renderP
         this._bindProgram(frameCtx, layer);
     }
 
+    var material;
     if (renderPass === RENDER_PASSES.XRAYED) {
-        const material = scene.xrayMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
-
+        material = scene.xrayMaterial._state;
     } else if (renderPass === RENDER_PASSES.HIGHLIGHTED) {
-        const material = scene.highlightMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
-
+        material = scene.highlightMaterial._state;
     } else if (renderPass === RENDER_PASSES.SELECTED) {
-        const material = scene.selectedMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
-
+        material = scene.selectedMaterial._state;
     } else {
-        const material = scene.edgeMaterial._state;
-        const edgeColor = material.edgeColor;
-        const edgeAlpha = material.edgeAlpha;
-        gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+        material = scene.edgeMaterial._state;
+    }
+
+    const edgeColor = material.edgeColor;
+    const edgeAlpha = material.edgeAlpha;
+    gl.uniform4f(this._uColor, edgeColor[0], edgeColor[1], edgeColor[2], edgeAlpha);
+
+    if (frameCtx.lineWidth !== material.edgeWidth) {
+        gl.lineWidth(material.edgeWidth);
+        frameCtx.lineWidth = material.edgeWidth;
     }
 
     gl.uniform1i(this._uRenderPass, renderPass);
@@ -37891,11 +39628,11 @@ InstancingEdgesRenderer.prototype._bindProgram = function (frameCtx, layer) {
  * @private
  */
 const InstancingPickMeshShaderSource = function (layer) {
-    this.vertex = buildVertex$f(layer);
-    this.fragment = buildFragment$f(layer);
+    this.vertex = buildVertex$h(layer);
+    this.fragment = buildFragment$h(layer);
 };
 
-function buildVertex$f(layer) {
+function buildVertex$h(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -37947,7 +39684,7 @@ function buildVertex$f(layer) {
     return src;
 }
 
-function buildFragment$f(layer) {
+function buildFragment$h(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -37982,13 +39719,13 @@ function buildFragment$f(layer) {
     return src;
 }
 
-const ids$f = new Map({});
+const ids$h = new Map({});
 
 /**
  * @private
  */
 const InstancingPickMeshRenderer = function (hash, layer) {
-    this.id = ids$f.addItem({});
+    this.id = ids$h.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -37996,40 +39733,40 @@ const InstancingPickMeshRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$e = {};
+const renderers$g = {};
 
 InstancingPickMeshRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$a(scene);
-    let renderer = renderers$e[hash];
+    const hash = getHash$c(scene);
+    let renderer = renderers$g[hash];
     if (!renderer) {
         renderer = new InstancingPickMeshRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$e[hash] = renderer;
+        renderers$g[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$a(scene) {
+function getHash$c(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingPickMeshRenderer.prototype.getValid = function () {
-    return this._hash === getHash$a(this._scene);
+    return this._hash === getHash$c(this._scene);
 };
 
 InstancingPickMeshRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$f.removeItem(this.id);
+        ids$h.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$e[this._hash];
+        delete renderers$g[this._hash];
         stats.memory.programs--;
     }
 };
@@ -38193,11 +39930,11 @@ InstancingPickMeshRenderer.prototype._bindProgram = function (frameCtx, layer) {
  * @private
  */
 const InstancingPickDepthShaderSource = function (layer) {
-    this.vertex = buildVertex$g(layer);
-    this.fragment = buildFragment$g(layer);
+    this.vertex = buildVertex$i(layer);
+    this.fragment = buildFragment$i(layer);
 };
 
-function buildVertex$g(layer) {
+function buildVertex$i(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38237,7 +39974,7 @@ function buildVertex$g(layer) {
     return src;
 }
 
-function buildFragment$g(layer) {
+function buildFragment$i(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38282,13 +40019,13 @@ function buildFragment$g(layer) {
     return src;
 }
 
-const ids$g = new Map({});
+const ids$i = new Map({});
 
 /**
  * @private
  */
 const InstancingPickDepthRenderer = function (hash, layer) {
-    this.id = ids$g.addItem({});
+    this.id = ids$i.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -38296,40 +40033,40 @@ const InstancingPickDepthRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$f = {};
+const renderers$h = {};
 
 InstancingPickDepthRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$b(scene);
-    let renderer = renderers$f[hash];
+    const hash = getHash$d(scene);
+    let renderer = renderers$h[hash];
     if (!renderer) {
         renderer = new InstancingPickDepthRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$f[hash] = renderer;
+        renderers$h[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$b(scene) {
+function getHash$d(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingPickDepthRenderer.prototype.getValid = function () {
-    return this._hash === getHash$b(this._scene);
+    return this._hash === getHash$d(this._scene);
 };
 
 InstancingPickDepthRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$g.removeItem(this.id);
+        ids$i.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$f[this._hash];
+        delete renderers$h[this._hash];
         stats.memory.programs--;
     }
 };
@@ -38492,11 +40229,11 @@ InstancingPickDepthRenderer.prototype._bindProgram = function (frameCtx, layer) 
  * @private
  */
 const InstancingPickNormalsShaderSource = function (layer) {
-    this.vertex = buildVertex$h(layer);
-    this.fragment = buildFragment$h(layer);
+    this.vertex = buildVertex$j(layer);
+    this.fragment = buildFragment$j(layer);
 };
 
-function buildVertex$h(layer) {
+function buildVertex$j(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38549,7 +40286,7 @@ function buildVertex$h(layer) {
     return src;
 }
 
-function buildFragment$h(layer) {
+function buildFragment$j(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38584,13 +40321,13 @@ function buildFragment$h(layer) {
     return src;
 }
 
-const ids$h = new Map({});
+const ids$j = new Map({});
 
 /**
  * @private
  */
 const InstancingPickNormalsRenderer = function (hash, layer) {
-    this.id = ids$h.addItem({});
+    this.id = ids$j.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -38598,40 +40335,40 @@ const InstancingPickNormalsRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$g = {};
+const renderers$i = {};
 
 InstancingPickNormalsRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$c(scene);
-    let renderer = renderers$g[hash];
+    const hash = getHash$e(scene);
+    let renderer = renderers$i[hash];
     if (!renderer) {
         renderer = new InstancingPickNormalsRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$g[hash] = renderer;
+        renderers$i[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$c(scene) {
+function getHash$e(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingPickNormalsRenderer.prototype.getValid = function () {
-    return this._hash === getHash$c(this._scene);
+    return this._hash === getHash$e(this._scene);
 };
 
 InstancingPickNormalsRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$h.removeItem(this.id);
+        ids$j.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$g[this._hash];
+        delete renderers$i[this._hash];
         stats.memory.programs--;
     }
 };
@@ -38807,11 +40544,11 @@ InstancingPickNormalsRenderer.prototype._bindProgram = function (frameCtx) {
  * @private
  */
 const InstancingOcclusionShaderSource = function (layer) {
-    this.vertex = buildVertex$i(layer);
-    this.fragment = buildFragment$i(layer);
+    this.vertex = buildVertex$k(layer);
+    this.fragment = buildFragment$k(layer);
 };
 
-function buildVertex$i(layer) {
+function buildVertex$k(layer) {
     var scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38820,7 +40557,9 @@ function buildVertex$i(layer) {
     src.push("attribute vec3 position;");
     src.push("attribute vec4 color;");
     src.push("attribute vec4 flags;");
-    src.push("attribute vec4 flags2;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
     src.push("attribute vec4 modelMatrixCol0;"); // Modeling matrix
     src.push("attribute vec4 modelMatrixCol1;");
     src.push("attribute vec4 modelMatrixCol2;");
@@ -38851,7 +40590,7 @@ function buildVertex$i(layer) {
     return src;
 }
 
-function buildFragment$i(layer) {
+function buildFragment$k(layer) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     const clipping = sectionPlanesState.sectionPlanes.length > 0;
@@ -38886,13 +40625,13 @@ function buildFragment$i(layer) {
     return src;
 }
 
-const ids$i = new Map({});
+const ids$k = new Map({});
 
 /**
  * @private
  */
 const InstancingOcclusionRenderer = function (hash, layer) {
-    this.id = ids$i.addItem({});
+    this.id = ids$k.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
     this._useCount = 0;
@@ -38900,40 +40639,40 @@ const InstancingOcclusionRenderer = function (hash, layer) {
     this._allocate(layer);
 };
 
-const renderers$h = {};
+const renderers$j = {};
 
 InstancingOcclusionRenderer.get = function (layer) {
     const scene = layer.model.scene;
-    const hash = getHash$d(scene);
-    let renderer = renderers$h[hash];
+    const hash = getHash$f(scene);
+    let renderer = renderers$j[hash];
     if (!renderer) {
         renderer = new InstancingOcclusionRenderer(hash, layer);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
         }
-        renderers$h[hash] = renderer;
+        renderers$j[hash] = renderer;
         stats.memory.programs++;
     }
     renderer._useCount++;
     return renderer;
 };
 
-function getHash$d(scene) {
+function getHash$f(scene) {
     return [scene.canvas.canvas.id, "", scene._sectionPlanesState.getHash()].join(";")
 }
 
 InstancingOcclusionRenderer.prototype.getValid = function () {
-    return this._hash === getHash$d(this._scene);
+    return this._hash === getHash$f(this._scene);
 };
 
 InstancingOcclusionRenderer.prototype.put = function () {
     if (--this._useCount === 0) {
-        ids$i.removeItem(this.id);
+        ids$k.removeItem(this.id);
         if (this._program) {
             this._program.destroy();
         }
-        delete renderers$h[this._hash];
+        delete renderers$j[this._hash];
         stats.memory.programs--;
     }
 };
@@ -39090,6 +40829,609 @@ InstancingOcclusionRenderer.prototype._bindProgram = function (frameCtx, layer) 
     }
 };
 
+/**
+ * @author xeolabs / https://github.com/xeolabs
+ */
+
+/**
+ * @private
+ */
+const InstancingDepthShaderSource = function (layer) {
+    this.vertex = buildVertex$l(layer);
+    this.fragment = buildFragment$l(layer);
+};
+
+function buildVertex$l(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const clipping = sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+    src.push("// Instancing geometry depth drawing vertex shader");
+    src.push("attribute vec3 position;");
+    src.push("attribute vec4 color;");
+    src.push("attribute vec4 flags;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
+    src.push("attribute vec4 modelMatrixCol0;");
+    src.push("attribute vec4 modelMatrixCol1;");
+    src.push("attribute vec4 modelMatrixCol2;");
+    src.push("uniform mat4 viewMatrix;");
+    src.push("uniform mat4 projMatrix;");
+    src.push("uniform mat4 positionsDecodeMatrix;");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+    }
+    src.push("varying vec4 vViewPosition;");
+    src.push("void main(void) {");
+    src.push("bool visible      = (float(flags.x) > 0.0);");
+    src.push("bool xrayed       = (float(flags.y) > 0.0);");
+    src.push("bool transparent  = ((float(color.a) / 255.0) < 1.0);");
+    src.push(`if (!visible || transparent || xrayed) {`);
+    src.push("   gl_Position = vec4(0.0, 0.0, 0.0, 0.0);"); // Cull vertex
+    src.push("} else {");
+    src.push("  vec4 worldPosition = positionsDecodeMatrix * vec4(position, 1.0); ");
+    src.push("  worldPosition = vec4(dot(worldPosition, modelMatrixCol0), dot(worldPosition, modelMatrixCol1), dot(worldPosition, modelMatrixCol2), 1.0);");
+    src.push("  vec4 viewPosition  = viewMatrix * worldPosition; ");
+
+    if (clipping) {
+        src.push("vWorldPosition = worldPosition;");
+        src.push("vFlags2 = flags2;");
+    }
+    src.push("  vViewPosition = viewPosition;");
+    src.push("  gl_Position = projMatrix * viewPosition;");
+    src.push("}");
+    src.push("}");
+    return src;
+}
+
+function buildFragment$l(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    let i;
+    let len;
+    const clipping = sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+    src.push("// Instancing geometry depth drawing fragment shader");
+    src.push("precision highp float;");
+    src.push("precision highp int;");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+        for (i = 0, len = sectionPlanesState.sectionPlanes.length; i < len; i++) {
+            src.push("uniform bool sectionPlaneActive" + i + ";");
+            src.push("uniform vec3 sectionPlanePos" + i + ";");
+            src.push("uniform vec3 sectionPlaneDir" + i + ";");
+        }
+    }
+    src.push("varying vec4 vViewPosition;");
+
+    src.push("const float   packUpScale = 256. / 255.;");
+    src.push("const float   unpackDownscale = 255. / 256.;");
+    src.push("const vec3    packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+    src.push("const vec4    unpackFactors = unpackDownscale / vec4( packFactors, 1. );");
+    src.push("const float   shiftRight8 = 1.0 / 256.;");
+
+    src.push("vec4 packDepthToRGBA( const in float v ) {");
+    src.push("    vec4 r = vec4( fract( v * packFactors ), v );");
+    src.push("    r.yzw -= r.xyz * shiftRight8;");
+    src.push("    return r * packUpScale;");
+    src.push("}");
+
+    src.push("void main(void) {");
+    if (clipping) {
+        src.push("  bool clippable = (float(vFlags2.x) > 0.0);");
+        src.push("  if (clippable) {");
+        src.push("  float dist = 0.0;");
+        for (i = 0, len = sectionPlanesState.sectionPlanes.length; i < len; i++) {
+            src.push("if (sectionPlaneActive" + i + ") {");
+            src.push("   dist += clamp(dot(-sectionPlaneDir" + i + ".xyz, vWorldPosition.xyz - sectionPlanePos" + i + ".xyz), 0.0, 1000.0);");
+            src.push("}");
+        }
+        src.push("if (dist > 0.0) { discard; }");
+        src.push("}");
+    }
+    src.push("    gl_FragColor = packDepthToRGBA( gl_FragCoord.z); ");
+    src.push("}");
+    return src;
+}
+
+const ids$l = new Map({});
+
+/**
+ * @private
+ */
+const InstancingDepthRenderer = function (hash, layer) {
+    this.id = ids$l.addItem({});
+    this._hash = hash;
+    this._scene = layer.model.scene;
+    this._useCount = 0;
+    this._shaderSource = new InstancingDepthShaderSource(layer);
+    this._allocate(layer);
+};
+
+const renderers$k = {};
+
+InstancingDepthRenderer.get = function (layer) {
+    const scene = layer.model.scene;
+    const hash = getHash$g(scene);
+    let renderer = renderers$k[hash];
+    if (!renderer) {
+        renderer = new InstancingDepthRenderer(hash, layer);
+        if (renderer.errors) {
+            console.log(renderer.errors.join("\n"));
+            return null;
+        }
+        renderers$k[hash] = renderer;
+        stats.memory.programs++;
+    }
+    renderer._useCount++;
+    return renderer;
+};
+
+function getHash$g(scene) {
+    return [scene.canvas.canvas.id, "", "", scene._sectionPlanesState.getHash()].join(";")
+}
+
+InstancingDepthRenderer.prototype.getValid = function () {
+    return this._hash === getHash$g(this._scene);
+};
+
+InstancingDepthRenderer.prototype.put = function () {
+    if (--this._useCount === 0) {
+        ids$l.removeItem(this.id);
+        if (this._program) {
+            this._program.destroy();
+        }
+        delete renderers$k[this._hash];
+        stats.memory.programs--;
+    }
+};
+
+InstancingDepthRenderer.prototype.webglContextRestored = function () {
+    this._program = null;
+};
+
+InstancingDepthRenderer.prototype.drawLayer = function (frameCtx, layer) {
+
+    const model = layer.model;
+    const scene = model.scene;
+    const gl = scene.canvas.gl;
+    const state = layer._state;
+    const instanceExt = this._instanceExt;
+
+    if (!this._program) {
+        this._allocate(layer);
+        if (this.errors) {
+            return;
+        }
+    }
+
+    if (frameCtx.lastProgramId !== this._program.id) {
+        frameCtx.lastProgramId = this._program.id;
+        this._bindProgram(frameCtx, layer);
+    }
+    gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
+    gl.uniformMatrix4fv(this._uViewMatrix, false, model.viewMatrix);
+
+    this._aModelMatrixCol0.bindArrayBuffer(state.modelMatrixCol0Buf);
+    this._aModelMatrixCol1.bindArrayBuffer(state.modelMatrixCol1Buf);
+    this._aModelMatrixCol2.bindArrayBuffer(state.modelMatrixCol2Buf);
+
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol0.location, 1);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol1.location, 1);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol2.location, 1);
+    frameCtx.bindArray += 3;
+
+    this._aPosition.bindArrayBuffer(state.positionsBuf);
+    frameCtx.bindArray++;
+
+    this._aColor.bindArrayBuffer(state.colorsBuf);
+    instanceExt.vertexAttribDivisorANGLE(this._aColor.location, 1);
+    frameCtx.bindArray++;
+
+    this._aFlags.bindArrayBuffer(state.flagsBuf);
+    instanceExt.vertexAttribDivisorANGLE(this._aFlags.location, 1);
+    frameCtx.bindArray++;
+
+    if (this._aFlags2) {
+        this._aFlags2.bindArrayBuffer(state.flags2Buf);
+        instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 1);
+        frameCtx.bindArray++;
+    }
+
+    state.indicesBuf.bind();
+    frameCtx.bindArray++;
+
+    instanceExt.drawElementsInstancedANGLE(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0, state.numInstances);
+
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol0.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol1.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol2.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aColor.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aFlags.location, 0);
+    if (this._aFlags2) { // Won't be in shader when not clipping
+        instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 0);
+    }
+
+    frameCtx.drawElements++;
+};
+
+InstancingDepthRenderer.prototype._allocate = function (layer) {
+    var scene = layer.model.scene;
+    const gl = scene.canvas.gl;
+    const sectionPlanesState = scene._sectionPlanesState;
+
+    this._program = new Program(gl, this._shaderSource);
+
+    if (this._program.errors) {
+        this.errors = this._program.errors;
+        return;
+    }
+
+    this._instanceExt = gl.getExtension("ANGLE_instanced_arrays");
+
+    const program = this._program;
+
+    this._uPositionsDecodeMatrix = program.getLocation("positionsDecodeMatrix");
+    this._uViewMatrix = program.getLocation("viewMatrix");
+    this._uProjMatrix = program.getLocation("projMatrix");
+
+    this._uSectionPlanes = [];
+    const clips = sectionPlanesState.sectionPlanes;
+    for (var i = 0, len = clips.length; i < len; i++) {
+        this._uSectionPlanes.push({
+            active: program.getLocation("sectionPlaneActive" + i),
+            pos: program.getLocation("sectionPlanePos" + i),
+            dir: program.getLocation("sectionPlaneDir" + i)
+        });
+    }
+
+    this._aPosition = program.getAttribute("position");
+    this._aColor = program.getAttribute("color");
+    this._aFlags = program.getAttribute("flags");
+    this._aFlags2 = program.getAttribute("flags2");
+
+    this._aModelMatrixCol0 = program.getAttribute("modelMatrixCol0");
+    this._aModelMatrixCol1 = program.getAttribute("modelMatrixCol1");
+    this._aModelMatrixCol2 = program.getAttribute("modelMatrixCol2");
+};
+
+InstancingDepthRenderer.prototype._bindProgram = function (frameCtx) {
+    const scene = this._scene;
+    const gl = scene.canvas.gl;
+    const program = this._program;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const projectState = scene.camera.project._state;
+    program.bind();
+    frameCtx.useProgram++;
+    const camera = scene.camera;
+    gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
+    if (sectionPlanesState.sectionPlanes.length > 0) {
+        const clips = scene._sectionPlanesState.sectionPlanes;
+        let sectionPlaneUniforms;
+        let uSectionPlaneActive;
+        let sectionPlane;
+        let uSectionPlanePos;
+        let uSectionPlaneDir;
+        for (var i = 0, len = this._uSectionPlanes.length; i < len; i++) {
+            sectionPlaneUniforms = this._uSectionPlanes[i];
+            uSectionPlaneActive = sectionPlaneUniforms.active;
+            sectionPlane = clips[i];
+            if (uSectionPlaneActive) {
+                gl.uniform1i(uSectionPlaneActive, sectionPlane.active);
+            }
+            uSectionPlanePos = sectionPlaneUniforms.pos;
+            if (uSectionPlanePos) {
+                gl.uniform3fv(sectionPlaneUniforms.pos, sectionPlane.pos);
+            }
+            uSectionPlaneDir = sectionPlaneUniforms.dir;
+            if (uSectionPlaneDir) {
+                gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
+            }
+        }
+    }
+};
+
+/**
+ * @author xeolabs / https://github.com/xeolabs
+ */
+
+/**
+ * @private
+ */
+const InstancingNormalsShaderSource = function (layer) {
+    this.vertex = buildVertex$m(layer);
+    this.fragment = buildFragment$m(layer);
+};
+
+function buildVertex$m(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    const clipping = sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+    src.push("// Instancing geometry depth drawing vertex shader");
+    src.push("attribute vec3 position;");
+    src.push("attribute vec3 normal;");
+    src.push("attribute vec4 color;");
+    src.push("attribute vec4 flags;");
+    if (clipping) {
+        src.push("attribute vec4 flags2;");
+    }
+    src.push("attribute vec4 modelMatrixCol0;");
+    src.push("attribute vec4 modelMatrixCol1;");
+    src.push("attribute vec4 modelMatrixCol2;");
+    src.push("uniform mat4 viewMatrix;");
+    src.push("uniform mat4 projMatrix;");
+    src.push("uniform mat4 viewNormalMatrix;");
+    src.push("uniform mat4 positionsDecodeMatrix;");
+    src.push("vec3 octDecode(vec2 oct) {");
+    src.push("    vec3 v = vec3(oct.xy, 1.0 - abs(oct.x) - abs(oct.y));");
+    src.push("    if (v.z < 0.0) {");
+    src.push("        v.xy = (1.0 - abs(v.yx)) * vec2(v.x >= 0.0 ? 1.0 : -1.0, v.y >= 0.0 ? 1.0 : -1.0);");
+    src.push("    }");
+    src.push("    return normalize(v);");
+    src.push("}");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+    }
+    src.push("varying vec3 vViewNormal;");
+    src.push("void main(void) {");
+    src.push("bool visible      = (float(flags.x) > 0.0);");
+    src.push("bool xrayed       = (float(flags.y) > 0.0);");
+    src.push("bool transparent  = ((float(color.a) / 255.0) < 1.0);");
+    src.push(`if (!visible || transparent || xrayed) {`);
+    src.push("   gl_Position = vec4(0.0, 0.0, 0.0, 0.0);"); // Cull vertex
+    src.push("} else {");
+    src.push("  vec4 worldPosition = positionsDecodeMatrix * vec4(position, 1.0); ");
+    src.push("  worldPosition = vec4(dot(worldPosition, modelMatrixCol0), dot(worldPosition, modelMatrixCol1), dot(worldPosition, modelMatrixCol2), 1.0);");
+    src.push("  vec4 viewPosition  = viewMatrix * worldPosition; ");
+    src.push("  vec4 worldNormal    = vec4(octDecode(normal.xy), 0.0); ");
+    src.push("  vec3 viewNormal     = normalize((viewNormalMatrix * worldNormal).xyz);");
+
+    if (clipping) {
+        src.push("vWorldPosition = worldPosition;");
+        src.push("vFlags2 = flags2;");
+    }
+    src.push("  vViewNormal = viewNormal;");
+    src.push("  gl_Position = projMatrix * viewPosition;");
+    src.push("}");
+    src.push("}");
+    return src;
+}
+
+function buildFragment$m(layer) {
+    const scene = layer.model.scene;
+    const sectionPlanesState = scene._sectionPlanesState;
+    let i;
+    let len;
+    const clipping = sectionPlanesState.sectionPlanes.length > 0;
+    const src = [];
+    src.push("// Instancing geometry depth drawing fragment shader");
+    src.push("precision highp float;");
+    src.push("precision highp int;");
+    if (clipping) {
+        src.push("varying vec4 vWorldPosition;");
+        src.push("varying vec4 vFlags2;");
+        for (i = 0, len = sectionPlanesState.sectionPlanes.length; i < len; i++) {
+            src.push("uniform bool sectionPlaneActive" + i + ";");
+            src.push("uniform vec3 sectionPlanePos" + i + ";");
+            src.push("uniform vec3 sectionPlaneDir" + i + ";");
+        }
+    }
+    src.push("varying vec3 vViewNormal;");
+    src.push("vec3 packNormalToRGB( const in vec3 normal ) {");
+    src.push("    return normalize( normal ) * 0.5 + 0.5;");
+    src.push("}");
+    src.push("void main(void) {");
+    if (clipping) {
+        src.push("  bool clippable = (float(vFlags2.x) > 0.0);");
+        src.push("  if (clippable) {");
+        src.push("  float dist = 0.0;");
+        for (i = 0, len = sectionPlanesState.sectionPlanes.length; i < len; i++) {
+            src.push("if (sectionPlaneActive" + i + ") {");
+            src.push("   dist += clamp(dot(-sectionPlaneDir" + i + ".xyz, vWorldPosition.xyz - sectionPlanePos" + i + ".xyz), 0.0, 1000.0);");
+            src.push("}");
+        }
+        src.push("if (dist > 0.0) { discard; }");
+        src.push("}");
+    }
+    src.push("    gl_FragColor = vec4(packNormalToRGB(vViewNormal), 1.0); ");
+    src.push("}");
+    return src;
+}
+
+const ids$m = new Map({});
+
+/**
+ * @private
+ */
+const InstancingNormalsRenderer = function (hash, layer) {
+    this.id = ids$m.addItem({});
+    this._hash = hash;
+    this._scene = layer.model.scene;
+    this._useCount = 0;
+    this._shaderSource = new InstancingNormalsShaderSource(layer);
+    this._allocate(layer);
+};
+
+const renderers$l = {};
+
+InstancingNormalsRenderer.get = function (layer) {
+    const scene = layer.model.scene;
+    const hash = getHash$h(scene);
+    let renderer = renderers$l[hash];
+    if (!renderer) {
+        renderer = new InstancingNormalsRenderer(hash, layer);
+        if (renderer.errors) {
+            console.log(renderer.errors.join("\n"));
+            return null;
+        }
+        renderers$l[hash] = renderer;
+        stats.memory.programs++;
+    }
+    renderer._useCount++;
+    return renderer;
+};
+
+function getHash$h(scene) {
+    return [scene.canvas.canvas.id, "", "", scene._sectionPlanesState.getHash()].join(";")
+}
+
+InstancingNormalsRenderer.prototype.getValid = function () {
+    return this._hash === getHash$h(this._scene);
+};
+
+InstancingNormalsRenderer.prototype.put = function () {
+    if (--this._useCount === 0) {
+        ids$m.removeItem(this.id);
+        if (this._program) {
+            this._program.destroy();
+        }
+        delete renderers$l[this._hash];
+        stats.memory.programs--;
+    }
+};
+
+InstancingNormalsRenderer.prototype.webglContextRestored = function () {
+    this._program = null;
+};
+
+InstancingNormalsRenderer.prototype.drawLayer = function (frameCtx, layer) {
+    const model = layer.model;
+    const scene = model.scene;
+    const gl = scene.canvas.gl;
+    const state = layer._state;
+    const instanceExt = this._instanceExt;
+    if (!this._program) {
+        this._allocate(layer);
+        if (this.errors) {
+            return;
+        }
+    }
+    if (frameCtx.lastProgramId !== this._program.id) {
+        frameCtx.lastProgramId = this._program.id;
+        this._bindProgram(frameCtx, layer);
+    }
+    gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
+    gl.uniformMatrix4fv(this._uViewMatrix, false, model.viewMatrix);
+    gl.uniformMatrix4fv(this._uViewNormalMatrix, false, model.viewNormalMatrix);
+
+    this._aModelMatrixCol0.bindArrayBuffer(state.modelMatrixCol0Buf);
+    this._aModelMatrixCol1.bindArrayBuffer(state.modelMatrixCol1Buf);
+    this._aModelMatrixCol2.bindArrayBuffer(state.modelMatrixCol2Buf);
+
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol0.location, 1);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol1.location, 1);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol2.location, 1);
+
+    this._aPosition.bindArrayBuffer(state.positionsBuf);
+    this._aNormal.bindArrayBuffer(state.normalsBuf);
+    this._aColor.bindArrayBuffer(state.colorsBuf);
+    instanceExt.vertexAttribDivisorANGLE(this._aColor.location, 1);
+
+    this._aFlags.bindArrayBuffer(state.flagsBuf);
+    instanceExt.vertexAttribDivisorANGLE(this._aFlags.location, 1);
+
+    if (this._aFlags2) {
+        this._aFlags2.bindArrayBuffer(state.flags2Buf);
+        instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 1);
+    }
+
+    state.indicesBuf.bind();
+
+    instanceExt.drawElementsInstancedANGLE(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0, state.numInstances);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol0.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol1.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aModelMatrixCol2.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aColor.location, 0);
+    instanceExt.vertexAttribDivisorANGLE(this._aFlags.location, 0);
+
+    if (this._aFlags2) { // Won't be in shader when not clipping
+        instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 0);
+    }
+};
+
+InstancingNormalsRenderer.prototype._allocate = function (layer) {
+    var scene = layer.model.scene;
+    const gl = scene.canvas.gl;
+    const sectionPlanesState = scene._sectionPlanesState;
+
+    this._program = new Program(gl, this._shaderSource);
+
+    if (this._program.errors) {
+        this.errors = this._program.errors;
+        return;
+    }
+
+    this._instanceExt = gl.getExtension("ANGLE_instanced_arrays");
+
+    const program = this._program;
+
+    this._uPositionsDecodeMatrix = program.getLocation("positionsDecodeMatrix");
+    this._uViewMatrix = program.getLocation("viewMatrix");
+    this._uViewNormalMatrix = program.getLocation("viewNormalMatrix");
+    this._uProjMatrix = program.getLocation("projMatrix");
+
+    this._uSectionPlanes = [];
+    const clips = sectionPlanesState.sectionPlanes;
+    for (var i = 0, len = clips.length; i < len; i++) {
+        this._uSectionPlanes.push({
+            active: program.getLocation("sectionPlaneActive" + i),
+            pos: program.getLocation("sectionPlanePos" + i),
+            dir: program.getLocation("sectionPlaneDir" + i)
+        });
+    }
+
+    this._aPosition = program.getAttribute("position");
+    this._aNormal = program.getAttribute("normal");
+    this._aColor = program.getAttribute("color");
+    this._aFlags = program.getAttribute("flags");
+    if (this._aFlags2) {
+        this._aFlags2 = program.getAttribute("flags2");
+    }
+    this._aModelMatrixCol0 = program.getAttribute("modelMatrixCol0");
+    this._aModelMatrixCol1 = program.getAttribute("modelMatrixCol1");
+    this._aModelMatrixCol2 = program.getAttribute("modelMatrixCol2");
+};
+
+InstancingNormalsRenderer.prototype._bindProgram = function (frameCtx) {
+    const scene = this._scene;
+    const gl = scene.canvas.gl;
+    const program = this._program;
+    const sectionPlanesState = scene._sectionPlanesState;
+    program.bind();
+    frameCtx.useProgram++;
+    const camera = scene.camera;
+    gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
+    if (sectionPlanesState.sectionPlanes.length > 0) {
+        const clips = scene._sectionPlanesState.sectionPlanes;
+        let sectionPlaneUniforms;
+        let uSectionPlaneActive;
+        let sectionPlane;
+        let uSectionPlanePos;
+        let uSectionPlaneDir;
+        for (var i = 0, len = this._uSectionPlanes.length; i < len; i++) {
+            sectionPlaneUniforms = this._uSectionPlanes[i];
+            uSectionPlaneActive = sectionPlaneUniforms.active;
+            sectionPlane = clips[i];
+            if (uSectionPlaneActive) {
+                gl.uniform1i(uSectionPlaneActive, sectionPlane.active);
+            }
+            uSectionPlanePos = sectionPlaneUniforms.pos;
+            if (uSectionPlanePos) {
+                gl.uniform3fv(sectionPlaneUniforms.pos, sectionPlane.pos);
+            }
+            uSectionPlaneDir = sectionPlaneUniforms.dir;
+            if (uSectionPlaneDir) {
+                gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
+            }
+        }
+    }
+};
+
 const bigIndicesSupported$3 = WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_element_index_uint"];
 const MAX_VERTS$1 = bigIndicesSupported$3 ? 5000000 : 65530;
 const quantizedPositions = new Uint16Array(MAX_VERTS$1 * 3);
@@ -39142,7 +41484,9 @@ class InstancingLayer {
                 primitive = gl.TRIANGLE_FAN;
                 break;
             default:
-                throw `Unsupported value for 'primitive': '${primitiveName}' - supported values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'. Defaulting to 'triangles'.`;
+                model.error(`Unsupported value for 'primitive': '${primitiveName}' - supported values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'. Defaulting to 'triangles'.`);
+                primitive = gl.TRIANGLES;
+                primitiveName = "triangles";
         }
         var stateCfg = {
             primitiveName: primitiveName,
@@ -39681,6 +42025,32 @@ class InstancingLayer {
         }
     }
 
+    //--  Post effects support -----------------------------------------------------------------------------------------
+
+    drawDepth(frameCtx) {
+        if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
+            return;
+        }
+        if (!this._depthRenderer) {
+            this._depthRenderer = InstancingDepthRenderer.get(this);
+        }
+        if (this._depthRenderer) {
+            this._depthRenderer.drawLayer(frameCtx, this);
+        }
+    }
+
+    drawNormals(frameCtx) {
+        if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
+            return;
+        }
+        if (!this._normalsRenderer) {
+            this._normalsRenderer = InstancingNormalsRenderer.get(this);
+        }
+        if (this._normalsRenderer) {
+            this._normalsRenderer.drawLayer(frameCtx, this);
+        }
+    }
+
     //-- XRAYED--------------------------------------------------------------------------------------------------------
 
     drawXRayedFillOpaque(frameCtx) {
@@ -39843,6 +42213,14 @@ class InstancingLayer {
             this._drawRenderer.put();
             this._drawRenderer = null;
         }
+        if (this._depthRenderer && this._depthRenderer.getValid() === false) {
+            this._depthRenderer.put();
+            this._depthRenderer = null;
+        }
+        if (this._normalsRenderer && this._normalsRenderer.getValid() === false) {
+            this._normalsRenderer.put();
+            this._normalsRenderer = null;
+        }
         if (this._fillRenderer && this._fillRenderer.getValid() === false) {
             this._fillRenderer.put();
             this._fillRenderer = null;
@@ -39870,6 +42248,9 @@ class InstancingLayer {
         if (!this._drawRenderer) {
             this._drawRenderer = InstancingDrawRenderer.get(this);
         }
+
+        // Lazy-get depth and normals renderers, only when needed
+
         if (!this._fillRenderer) {
             this._fillRenderer = InstancingFillRenderer.get(this);
         }
@@ -39894,6 +42275,14 @@ class InstancingLayer {
         if (this._drawRenderer) {
             this._drawRenderer.put();
             this._drawRenderer = null;
+        }
+        if (this._depthRenderer) {
+            this._depthRenderer.put();
+            this._depthRenderer = null;
+        }
+        if (this._normalsRenderer) {
+            this._normalsRenderer.put();
+            this._normalsRenderer = null;
         }
         if (this._fillRenderer) {
             this._fillRenderer.put();
@@ -41327,6 +43716,20 @@ class PerformanceModel extends Component {
         this.scene.canvas.gl.disable(this.scene.canvas.gl.CULL_FACE);
         for (var i = 0, len = this._layers.length; i < len; i++) {
             this._layers[i].drawNormalFillOpaque(frameCtx);
+        }
+    }
+
+    /** @private */
+    drawDepth(frameCtx) { // Dedicated to SAO because it skips transparent objects
+        for (var i = 0, len = this._layers.length; i < len; i++) {
+            this._layers[i].drawDepth(frameCtx);
+        }
+    }
+
+    /** @private */
+    drawNormals(frameCtx) { // Dedicated to SAO because it skips transparent objects
+        for (var i = 0, len = this._layers.length; i < len; i++) {
+            this._layers[i].drawNormals(frameCtx);
         }
     }
 
@@ -54901,6 +57304,7 @@ class Viewer {
      * @param {String} [cfg.units="meters"] The measurement unit type. Accepted values are ````"meters"````, ````"metres"````, , ````"centimeters"````, ````"centimetres"````, ````"millimeters"````,  ````"millimetres"````, ````"yards"````, ````"feet"```` and ````"inches"````.
      * @param {Number} [cfg.scale=1] The number of Real-space units in each World-space coordinate system unit.
      * @param {Number[]} [cfg.origin=[0,0,0]] The Real-space 3D origin, in current measurement units, at which the World-space coordinate origin ````[0,0,0]```` sits.
+     * @param {Boolean} [cfg.saoEnabled=false] Whether to enable Scalable Ambient Obscurance (SAO) effect. See {@link SAO} for more info.
      * @throws {String} Throws an exception when both canvasId or canvasElement are missing or they aren't pointing to a valid HTMLCanvasElement.
      */
     constructor(cfg) {
@@ -54934,7 +57338,8 @@ class Viewer {
             ticksPerOcclusionTest: 20,
             units: cfg.units,
             scale: cfg.scale,
-            origin: cfg.origin
+            origin: cfg.origin,
+            saoEnabled: cfg.saoEnabled
         });
 
         /**
@@ -56317,7 +58722,7 @@ class BIMViewer extends Controller {
             this.fire("queryNotPicked", true);
         });
 
-        this.resetView("reset", () => {
+        this._resetAction.on("reset", () => {
             this.fire("reset", true);
         });
 
