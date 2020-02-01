@@ -321,7 +321,7 @@ class BIMViewer extends Controller {
             this.fire("queryNotPicked", true);
         });
 
-        this.resetView("reset", () => {
+        this._resetAction.on("reset", () => {
             this.fire("reset", true);
         });
 
