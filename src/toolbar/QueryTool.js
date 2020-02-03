@@ -92,7 +92,30 @@ class QueryTool extends Controller {
                     entity = null;
                     return;
                 }
-                this.fire("queryPicked", entity.id);
+                const model = entity.model;
+                if (!model) { // OK to click on entities that don't belong to models - could be a navigation gizmo or helper
+                    return;
+                }
+                const projectId = this.bimViewer.getLoadedProjectId();
+                if (!projectId) {
+                    this.error("Query tool: should be a project loaded - ignoring query-pick");
+                    return;
+                }
+                const modelId = model.id;
+                const objectId = entity.id;
+                this.server.getObjectInfo(projectId, modelId, objectId, (objectInfo) => {
+                    this.fire("queryPicked", {
+                        projectId: projectId,
+                        modelId: modelId,
+                        objectId: objectId,
+                        objectInfo: objectInfo
+                    });
+                }, (errMsg) => {
+                    this.error("Query tool: " + errMsg);
+                    this.fire("queryPicked", {
+                        objectId: objectId
+                    });
+                });
                 entity = null;
             } else {
                 this.fire("queryNotPicked", false);

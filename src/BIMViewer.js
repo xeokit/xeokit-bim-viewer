@@ -535,7 +535,7 @@ class BIMViewer extends Controller {
      */
     getProjectInfo(projectId, done, error) {
         if (!projectId) {
-            this.error("getProjectInfo() - Argument expected: objectId");
+            this.error("getProjectInfo() - Argument expected: projectId");
             return;
         }
         if (!done) {
@@ -545,6 +545,63 @@ class BIMViewer extends Controller {
         this.server.getProject(projectId,
             done, (errorMsg) => {
                 this.error("getProjectInfo() - " + errorMsg);
+                if (error) {
+                    error(errorMsg);
+                }
+            });
+    }
+
+    /**
+     * Gets information on the given object, belonging to the given model, within the given project.
+     *
+     *
+     * ### Example
+     *
+     * ````javascript
+     * myViewer.getObjectProperties(("Duplex", "design", "0wkEuT1wr1kOyafLY4vy3H", (objectInfo) => {
+     *      console.log(JSON.stringify(objectInfo, null, "\t"));
+     * });
+     * ````
+     *
+     * Returns JSON similar to:
+     *
+     * ````json
+     * {
+     *      "projectId": "
+     *      "name": "M_Tall Cabinet-Single Door(2):800 mm:157950",
+     *      "type": "IfcFurniture",
+     *      "uuid": "0wkEuT1wr1kOyafLY4vy3H",
+     *      "parent": "0BTBFw6f90Nfh9rP1dlXrb",
+     *      "id": "0wkEuT1wr1kOyafLY4vy3H"
+     * }
+     * ````
+     *
+     * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
+     * @param {String} modelId ID of a model within the project. Must be the ID of one of the models in the information obtained by {@link BIMViewer#getProjectInfo}.
+     * @param {String} objectId ID of an object in the model.
+     * @param {Function} done Callback invoked on success, into which the object information JSON is passed.
+     * @param {Function} error Callback invoked on failure, into which the error message string is passed.
+     */
+    getObjectInfo(projectId, modelId, objectId, done, error) {
+        if (!projectId) {
+            this.error("getObjectInfo() - Argument expected: projectId");
+            return;
+        }
+        if (!modelId) {
+            this.error("getObjectInfo() - Argument expected: modelId");
+            return;
+        }
+        if (!objectId) {
+            this.error("getObjectInfo() - Argument expected: objectId");
+            return;
+        }
+        if (!done) {
+            this.error("getProjectInfo() - Argument expected: 'done'");
+            return;
+        }
+        this.server.getObjectInfo(projectId, modelId, objectId,
+            done, (errorMsg) => {
+                this.error("getObjectInfo() - " + errorMsg);
                 if (error) {
                     error(errorMsg);
                 }

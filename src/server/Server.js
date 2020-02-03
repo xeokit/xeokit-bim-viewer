@@ -64,7 +64,7 @@ class Server {
     }
 
     /**
-     * Gets properties for an object within a model within a project.
+     * Gets metadata for an object within a model within a project.
      *
      * @param projectId
      * @param modelId
@@ -72,9 +72,8 @@ class Server {
      * @param done
      * @param error
      */
-    getProperties(projectId, modelId, objectId, done, error) {
+    getObjectInfo(projectId, modelId, objectId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/objects/" + objectId + "/properties.json";
-        console.log(url)
         utils.loadJSON(url, done, error);
     }
 
