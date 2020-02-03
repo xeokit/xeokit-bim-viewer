@@ -310,10 +310,7 @@ class BIMViewer extends Controller {
             this.fire("modelUnloaded", modelId);
         });
 
-        this._queryTool.on("queryPicked", (entityId) => {
-            const event = {};
-            event.entity = this.viewer.scene.objects[entityId];
-            event.metaObject = this.viewer.metaScene.metaObjects[entityId];
+        this._queryTool.on("queryPicked", (event) => {
             this.fire("queryPicked", event);
         });
 
