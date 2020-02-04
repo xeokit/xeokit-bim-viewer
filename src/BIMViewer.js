@@ -443,6 +443,10 @@ class BIMViewer extends Controller {
                         this._objectsExplorer.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
                         this._classesExplorer.showNodeInTreeView(objectId);
                         this._storeysExplorer.showNodeInTreeView(objectId);
+                        const openTabId = this.getOpenTab();
+                        if (openTabId !== "objects" && openTabId !== "classes" && openTabId !== "storeys") {
+                            this.openTab("objects");
+                        }
                     },
                     entity: hit.entity
                 };
@@ -1008,6 +1012,45 @@ class BIMViewer extends Controller {
                 tabElement.classList.remove(activeClass)
             }
         }
+    }
+
+    /**
+     * Returns the ID of the currently open viewer tab.
+     *
+     * The available tabs are:
+     *
+     *  * "models" - the Models tab, which lists the models available within the currently loaded project,
+     *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "none" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.
+     */
+    getOpenTab() {
+        function hasClass(element, className) {
+            if (!element) {
+                return false;
+            }
+            return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
+        }
+
+        const activeClass = 'active';
+        let modelsTab = this._explorerElement.querySelector(".xeokit-modelsTab");
+        if (hasClass(modelsTab, activeClass)) {
+            return "models";
+        }
+        let objectsTab = this._explorerElement.querySelector(".xeokit-objectsTab");
+        if (hasClass(objectsTab, activeClass)) {
+            return "objects";
+        }
+        let classesTab = this._explorerElement.querySelector(".xeokit-classesTab");
+        if (hasClass(classesTab, activeClass)) {
+            return "classes";
+        }
+        let storeysTab = this._explorerElement.querySelector(".xeokit-storeysTab");
+        if (hasClass(storeysTab, activeClass)) {
+            return "storeys";
+        }
+        return "none";
     }
 
     /**
