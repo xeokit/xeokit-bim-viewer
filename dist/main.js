@@ -22982,6 +22982,8 @@ class OcclusionTester {
     }
 }
 
+const tempVec2 = math.vec2();
+
 /**
  * SAO implementation inspired from previous SAO work in THREE.js by ludobaka / ludobaka.github.io and bhouston
  * @private
@@ -23073,7 +23075,7 @@ class SAOOcclusionRenderer {
                 uniform float       uBias;
                 uniform float       uKernelRadius;
                 uniform float       uMinResolution;
-                uniform vec2        uSize;
+                uniform vec2        uViewport;
                 uniform float       uRandomSeed;
 
                 float pow2( const in float x ) { return x*x; }
@@ -23161,7 +23163,7 @@ class SAOOcclusionRenderer {
                 	vec3 centerViewNormal = getViewNormal( centerViewPosition, vUV );
 
                 	float angle = rand( vUV + uRandomSeed ) * PI2;
-                	vec2 radius = vec2( uKernelRadius * INV_NUM_SAMPLES ) / uSize;
+                	vec2 radius = vec2( uKernelRadius * INV_NUM_SAMPLES ) / uViewport;
                 	vec2 radiusStep = radius;
 
                 	float occlusionSum = 0.0;
@@ -23234,7 +23236,7 @@ class SAOOcclusionRenderer {
         this._uBias = this._program.getLocation("uBias");
         this._uKernelRadius = this._program.getLocation("uKernelRadius");
         this._uMinResolution = this._program.getLocation("uMinResolution");
-        this._uSize = this._program.getLocation("uSize");
+        this._uViewport = this._program.getLocation("uViewport");
         this._uRandomSeed = this._program.getLocation("uRandomSeed");
 
         this._aPosition = this._program.getAttribute("aPosition");
@@ -23276,8 +23278,10 @@ class SAOOcclusionRenderer {
         const projectionMatrix = projectState.matrix;
         const inverseProjectionMatrix = this._getInverseProjectMat();
         const randomSeed = Math.random();
-        const size = new Float32Array([canvasWidth, canvasHeight]);
         const perspective = (scene.camera.projection === "perspective");
+
+        tempVec2[0] = canvasWidth;
+        tempVec2[1] = canvasHeight;
 
         gl.getExtension("OES_standard_derivatives");
 
@@ -23303,7 +23307,7 @@ class SAOOcclusionRenderer {
         gl.uniform1f(this._uBias, sao.bias);
         gl.uniform1f(this._uKernelRadius, sao.kernelRadius);
         gl.uniform1f(this._uMinResolution, sao.minResolution);
-        gl.uniform2fv(this._uSize, size);
+        gl.uniform2fv(this._uViewport, tempVec2);
         gl.uniform1f(this._uRandomSeed, randomSeed);
 
         program.bindTexture(this._uDepthTexture, depthTexture, 0);
@@ -23701,7 +23705,6 @@ const Renderer = function (scene, options) {
     const saoDepthBuffer = new RenderBuffer(canvas, gl);
     const occlusionBuffer1 = new RenderBuffer(canvas, gl);
     const occlusionBuffer2 = new RenderBuffer(canvas, gl);
-    const colorBuffer = new RenderBuffer(canvas, gl);
 
     const pickBuffer = new RenderBuffer(canvas, gl);
     const readPixelBuffer = new RenderBuffer(canvas, gl);
@@ -23737,7 +23740,6 @@ const Renderer = function (scene, options) {
         saoDepthBuffer.webglContextRestored(gl);
         occlusionBuffer1.webglContextRestored(gl);
         occlusionBuffer2.webglContextRestored(gl);
-        colorBuffer.webglContextRestored(gl);
 
         saoOcclusionRenderer.init();
         saoBlurRenderer.init();
@@ -23921,22 +23923,9 @@ const Renderer = function (scene, options) {
                 saoBlurRenderer.render(saoDepthBuffer.getTexture(), occlusionBuffer2.getTexture(), 1);
                 occlusionBuffer1.unbind();
             }
-
-            // Render color buffer
-
-            colorBuffer.bind();
-            colorBuffer.clear();
-            drawColor(params);
-            colorBuffer.unbind();
-
-            // Blend color buffer with occlusion buffer 1
-
-            saoBlendRenderer.render(colorBuffer.getTexture(), occlusionBuffer1.getTexture());
-
-        } else {
-
-            drawColor(params);
         }
+
+        drawColor(params);
     };
 
     const drawDepth = (function () {
@@ -24046,6 +24035,9 @@ const Renderer = function (scene, options) {
             gl.depthMask(true);
             gl.lineWidth(1);
             frameCtx.lineWidth = 1;
+
+            const sao = scene.sao;
+            frameCtx.occlusionTexture = (sao.enabled && sao.supported) ? occlusionBuffer1.getTexture() : null;
 
             let i;
             let len;
@@ -24716,7 +24708,6 @@ const Renderer = function (scene, options) {
         saoDepthBuffer.destroy();
         occlusionBuffer1.destroy();
         occlusionBuffer2.destroy();
-        colorBuffer.destroy();
 
         saoOcclusionRenderer.destroy();
         saoBlurRenderer.destroy();
@@ -26421,7 +26412,7 @@ class Perspective extends Component {
         this._state = new RenderState({
             matrix: math.mat4(),
             near : 0.1,
-            far: 10000.0
+            far: 2000.0
         });
 
         this._dirty = false;
@@ -26573,11 +26564,11 @@ class Perspective extends Component {
      * Fires a "far" event on change.
      *
      * @property far
-     * @default 10000.0
+     * @default 2000.0
      * @type {Number}
      */
     set far(value) {
-        const far = (value !== undefined && value !== null) ? value : 10000.0;
+        const far = (value !== undefined && value !== null) ? value : 2000.0;
         if (this._state.far === far) {
             return;
         }
@@ -26659,7 +26650,7 @@ class Ortho extends Component {
         this._state = new RenderState({
             matrix: math.mat4(),
             near : 0.1,
-            far: 10000.0
+            far: 2000.0
         });
 
         this.scale = cfg.scale;
@@ -26791,12 +26782,12 @@ class Ortho extends Component {
      *
      * Fires a "far" event on change.
      *
-     * Default value is ````10000.0````.
+     * Default value is ````2000.0````.
      *
      * @param {Number} value New far ortho plane position.
      */
     set far(value) {
-        const far = (value !== undefined && value !== null) ? value : 10000.0;
+        const far = (value !== undefined && value !== null) ? value : 2000.0;
         if (this._state.far === far) {
             return;
         }
@@ -29145,30 +29136,84 @@ class Metrics extends Component {
 /**
  * @desc Configures Scalable Ambient Obscurance (SAO) for a {@link Scene}.
  *
+ *  <a href="https://xeokit.github.io/xeokit-sdk/examples/#postEffects_SAO_OTCConferenceCenter"><img src="http://xeokit.io/img/docs/SAO/saoEnabledDisabled.gif"></a>
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#postEeffects_SAO_OTCConferenceCenter)]
+ *
  * ## Overview
  *
- * * This component is found on {@link Scene#sao}.
- * * This effect approximates Ambient Occlusion in realtime. It darkens creases, cavities and surfaces
- * that are close to each other, which tend to occlude ambient light and appear darker.
- * * For deeper technical information on SAO, see the paper [Scalable Ambient Obscurance](https://research.nvidia.com/sites/default/files/pubs/2012-06_Scalable-Ambient-Obscurance/McGuire12SAO.pdf).
+ * SAO approximates [Ambient Occlusion](https://en.wikipedia.org/wiki/Ambient_occlusion) in realtime. It darkens creases, cavities and surfaces
+ * that are close to each other, which tend to be occluded from ambient light and appear darker.
  *
- * <br>
+ * The animated GIF above shows the effect as we repeatedly enable and disable SAO. When SAO is enabled, we can see darkening
+ * in regions such as the corners, and the crevices between stairs. This increases the amount of detail we can see when ambient
+ * light is high, or when objects have uniform colors across their surfaces. Run the example to experiment with the various
+ * SAO configurations.
  *
- * Scene without SAO:
+ * xeokit's implementation of SAO is based on the paper [Scalable Ambient Obscurance](https://research.nvidia.com/sites/default/files/pubs/2012-06_Scalable-Ambient-Obscurance/McGuire12SAO.pdf).
  *
- *  <img src="http://xeokit.io/img/docs/SAO/saoDisabled.png">
+ * ## Usage
  *
- * Scene with SAO:
+ * In the example below, we'll start by logging a warning message to the console if SAO is not supported by the
+ * system. Then we'll configure SAO, position the camera, and configure the near and far perspective and orthographic
+ * clipping planes. Finally, we'll use {@link XKTLoaderPlugin} to load the OTC Conference Center model.
  *
- *  <img src="http://xeokit.io/img/docs/SAO/saoEnabledNoBlur.png">
+ * ````javascript
+ * import {Viewer} from "../src/viewer/Viewer.js";
+ * import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
  *
- * Scene with SAO and blur:
+ * const viewer = new Viewer({
+ *     canvasId: "myCanvas",
+ *     transparent: true
+ * });
  *
- * <img src="http://xeokit.io/img/docs/SAO/saoEnabledDefaults.png">
+ * const sao = viewer.scene.sao;
  *
- * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#postEffects_SAO_OTCConferenceCenter)]
+ * if (!sao.supported) {
+ *     sao.warn("SAO is not supported on this system - ignoring SAO configs")
+ * }
  *
-
+ * sao.enabled = true; // Enable SAO - only works if supported (see above)
+ * sao.intensity = 0.25;
+ * sao.bias = 0.5;
+ * sao.scale = 1000.0;
+ * sao.minResolution = 0.0;
+ * sao.kernelRadius = 100;
+ * sao.blendCutoff = 0.2;
+ *
+ * const camera = viewer.scene.camera;
+ *
+ * camera.eye = [3.69, 5.83, -23.98];
+ * camera.look = [84.31, -29.88, -116.21];
+ * camera.up = [0.18, 0.96, -0.21];
+ *
+ * camera.perspective.near = 0.1;
+ * camera.perspective.far = 5000.0;
+ *
+ * camera.ortho.near = 0.1;
+ * camera.ortho.far = 5000.0;
+ * camera.projection = "perspective";
+ *
+ * const xktLoader = new XKTLoaderPlugin(viewer);
+ *
+ * const model = xktLoader.load({
+ *     id: "myModel",
+ *     src: "./models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
+ *     metaModelSrc: "./metaModels/OTCConferenceCenter/metaModel.json",
+ *     edges: true
+ * });
+ * ````
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#postEeffects_SAO_OTCConferenceCenter)]
+ *
+ * ## Efficiency
+ *
+ * SAO can incur some rendering overhead, especially on objects that are viewed close to the camera. For this reason,
+ * it's recommended to use a low value for {@link SAO#kernelRadius}.  A low radius will sample pixels that are close
+ * to the source pixel, which will allow the GPU to efficiently cache those pixels. When {@link Camera#projection} is "perspective",
+ * objects near to the viewpoint will use larger radii than farther pixels. Therefore, computing  SAO for close objects
+ * is more expensive than for objects far away, that occupy fewer pixels on the canvas.
+ *
  */
 class SAO extends Component {
 
@@ -29178,6 +29223,8 @@ class SAO extends Component {
         super(owner, cfg);
 
         this._supported = WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_standard_derivatives"]; // For computing normals in SAO fragment shader
+        this._interactiveActive = true;
+        this._interactiveCountDown = 0;
 
         this.enabled = cfg.enabled;
         this.interactive = cfg.interactive;
@@ -29188,9 +29235,8 @@ class SAO extends Component {
         this.scale = cfg.scale;
         this.minResolution = cfg.minResolution;
         this.blur = cfg.blur;
-        this.blurRadius = cfg.blurRadius;
-        this.blurStdDev = cfg.blurStdDev;
-        this.blurDepthCutoff = cfg.blurDepthCutoff;
+        this.blendCutoff = cfg.blendCutoff;
+        this.blendFactor = cfg.blendFactor;
     }
 
     /**
@@ -29239,7 +29285,7 @@ class SAO extends Component {
     /**
      * Sets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
      *
-     * When this is ````false````, SAO will only be applied when the Camera is at rest.
+     * When this is ````false````, SAO will only be applied after the Camera has rested for longer than the duration specified by {@link  SAO#interactiveDelay}.
      *
      * Default value is ````true````.
      *
@@ -29251,13 +29297,12 @@ class SAO extends Component {
             return;
         }
         this._interactive = value;
-        //this.glRedraw();
     }
 
     /**
      * Gets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
      *
-     * When this is ````false````, SAO will only be applied when the Camera is at rest.
+     * When this is ````false````, SAO will only be applied after the Camera has rested for longer than the duration specified by {@link  SAO#interactiveDelay}.
      *
      * Default value is ````true````.
      *
@@ -29284,10 +29329,7 @@ class SAO extends Component {
             return;
         }
         this._interactiveDelay = value;
-
-        /////////////////////////////////
-        // TODO: implement time delay
-        /////////////////////////////////
+        this._interactiveCountDown = this._interactiveDelay;
 
         //this.glRedraw();
     }
@@ -29304,7 +29346,15 @@ class SAO extends Component {
     get interactiveDelay() {
         return this._interactiveDelay;
     }
-    
+
+    /**
+     * @private
+     * @returns {boolean|*}
+     */
+    get active() {
+        return this._active;
+    }
+
     /**
      * Sets the maximum area that SAO takes into account when checking for possible occlusion.
      *
@@ -29475,6 +29525,84 @@ class SAO extends Component {
      */
     get blur() {
         return this._blur;
+    }
+
+    /**
+     * Sets the SAO blend cutoff.
+     *
+     * Default value is ````0.2````.
+     *
+     * Normally you don't need to alter this.
+     *
+     * @type {Number}
+     * @private
+     */
+    set blendCutoff(value) {
+        if (value === undefined || value === null) {
+            value = 0.2;
+        }
+        if (this._blendCutoff === value) {
+            return;
+        }
+        this._blendCutoff = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the SAO blend cutoff.
+     *
+     * Default value is ````0.2````.
+     *
+     * Normally you don't need to alter this.
+     *
+     * @type {Number}
+     * @private
+     */
+    get blendCutoff() {
+        return this._blendCutoff;
+    }
+
+    /**
+     * Sets the SAO blend factor.
+     *
+     * Default value is ````1.0````.
+     *
+     * Normally you don't need to alter this.
+     *
+     * @type {Number}
+     * @private
+     */
+    set blendFactor(value) {
+        if (value === undefined || value === null) {
+            value = 1.0;
+        }
+        if (this._blendFactor === value) {
+            return;
+        }
+        this._blendFactor = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets the SAO blend scale.
+     *
+     * Default value is ````1.0````.
+     *
+     * Normally you don't need to alter this.
+     *
+     * @type {Number}
+     * @private
+     */
+    get blendFactor() {
+        return this._blendFactor;
+    }
+
+    /**
+     * Destroys this component.
+     */
+    destroy() {
+        this.interactive = false; // Unbinds Scene and Camera events
+        super.destroy();
     }
 }
 
@@ -33432,7 +33560,9 @@ function CubeTextureCanvas(viewer, cfg = {}) {
  * the Camera to look at the entire Scene along the corresponding axis. Clicking on an edge or a corner looks at
  * the entire Scene along a diagonal.
  * * The NavCube can be configured to either jump or fly the Camera to each new position. We can configure how tightly the
- * NavCube fits the Scene to view, and when flying, we can configure how fast it flies. See below for a usage example.
+ * NavCube fits the Scene to view, and when flying, we can configure how fast it flies. We can also configure whether the
+ * NavCube fits all objects to view, or just the currently visible objects. See below for a usage example.
+ * * Clicking the NavCube also sets {@link CameraControl#pivotPos} to the center of the fitted objects.
  *
  * ## Usage
  *
@@ -35139,6 +35269,21 @@ function buildFragment$5(layer) {
     src.push("// Batched geometry drawing fragment shader");
     src.push("precision mediump float;");
     src.push("precision mediump int;");
+
+    src.push("uniform bool      uSAOEnabled;");
+    src.push("uniform sampler2D uOcclusionTexture;");
+    src.push("uniform vec4      uSAOParams;");
+
+    src.push("const float       packUpscale = 256. / 255.;");
+    src.push("const float       unpackDownScale = 255. / 256.;");
+
+    src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+    src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
+
+    src.push("float unpackRGBAToDepth( const in vec4 v ) {");
+    src.push("    return dot( v, unPackFactors );");
+    src.push("}");
+
     if (clipping) {
         src.push("varying vec4 vWorldPosition;");
         src.push("varying vec4 vFlags2;");
@@ -35162,12 +35307,27 @@ function buildFragment$5(layer) {
         src.push("  if (dist > 0.0) { discard; }");
         src.push("}");
     }
-    src.push("gl_FragColor = vColor;");
+
+    // Doing SAO blend in the main solid fill draw shader just so that edge lines can be drawn over the top
+    // Would be more efficient to defer this, then render lines later, using same depth buffer for Z-reject
+
+    src.push("  if (uSAOEnabled) {");
+    src.push("      float viewportWidth     = uSAOParams[0];");
+    src.push("      float viewportHeight    = uSAOParams[1];");
+    src.push("      float blendCutoff       = uSAOParams[2];");
+    src.push("      float blendFactor       = uSAOParams[3];");
+    src.push("      vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
+    src.push("      float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
+    src.push("      gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
+    src.push("  } else {");
+    src.push("      gl_FragColor = vColor;");
+    src.push("  }");
     src.push("}");
     return src;
 }
 
 const ids$5 = new Map({});
+const tempVec4$1 = math.vec4();
 
 /**
  * @private
@@ -35229,6 +35389,7 @@ BatchingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPass
     const scene = model.scene;
     const gl = scene.canvas.gl;
     const state = layer._state;
+
     if (!this._program) {
         this._allocate(layer);
     }
@@ -35327,6 +35488,9 @@ BatchingDrawRenderer.prototype._allocate = function (layer) {
     this._aColor = program.getAttribute("color");
     this._aFlags = program.getAttribute("flags");
     this._aFlags2 = program.getAttribute("flags2");
+    this._uSAOEnabled = program.getLocation("uSAOEnabled");
+    this._uOcclusionTexture = "uOcclusionTexture";
+    this._uOcclusionParams = program.getLocation("uSAOParams");
 };
 
 BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
@@ -35383,6 +35547,20 @@ BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
                 gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
             }
         }
+    }
+    const sao = scene.sao;
+    const saoEnabled = sao.enabled && sao.supported;
+    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+    if (saoEnabled) {
+        const canvasBoundary = scene.canvas.boundary;
+        const canvasWidth = canvasBoundary[2];
+        const canvasHeight = canvasBoundary[3];
+        tempVec4$1[0] = canvasWidth;
+        tempVec4$1[1] = canvasHeight;
+        tempVec4$1[2] = sao.blendCutoff;
+        tempVec4$1[3] = sao.blendFactor;
+        this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
+        gl.uniform4fv(this._uOcclusionParams, tempVec4$1);
     }
 };
 
@@ -38660,7 +38838,7 @@ function buildVertex$e(layer) {
         src.push("reflectedColor += lambertian * (lightColor" + i + ".rgb * lightColor" + i + ".a);");
     }
 
-    src.push("vColor =  vec4(reflectedColor * ((lightAmbient.rgb * lightAmbient.a) + vec3(float(color.r) / 255.0, float(color.g) / 255.0, float(color.b) / 255.0)), float(color.a) / 255.0);");
+    src.push("vColor = vec4(reflectedColor * ((lightAmbient.rgb * lightAmbient.a) + vec3(float(color.r) / 255.0, float(color.g) / 255.0, float(color.b) / 255.0)), float(color.a) / 255.0);");
 
     if (clipping) {
         src.push("vWorldPosition = worldPosition;");
@@ -38682,6 +38860,21 @@ function buildFragment$e(layer) {
     src.push("// Instancing geometry drawing fragment shader");
     src.push("precision mediump float;");
     src.push("precision mediump int;");
+
+    src.push("uniform bool      uSAOEnabled;");
+    src.push("uniform sampler2D uOcclusionTexture;");
+    src.push("uniform vec4      uSAOParams;");
+
+    src.push("const float       packUpscale = 256. / 255.;");
+    src.push("const float       unpackDownScale = 255. / 256.;");
+
+    src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+    src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
+
+    src.push("float unpackRGBAToDepth( const in vec4 v ) {");
+    src.push("    return dot( v, unPackFactors );");
+    src.push("}");
+
     if (clipping) {
         src.push("varying vec4 vWorldPosition;");
         src.push("varying vec4 vFlags2;");
@@ -38705,12 +38898,27 @@ function buildFragment$e(layer) {
         src.push("if (dist > 0.0) { discard; }");
         src.push("}");
     }
-    src.push("gl_FragColor = vColor;");
+
+    // Doing SAO blend in the main solid fill draw shader just so that edge lines can be drawn over the top
+    // Would be more efficient to defer this, then render lines later, using same depth buffer for Z-reject
+
+    src.push("  if (uSAOEnabled) {");
+    src.push("      float viewportWidth     = uSAOParams[0];");
+    src.push("      float viewportHeight    = uSAOParams[1];");
+    src.push("      float blendCutoff       = uSAOParams[2];");
+    src.push("      float blendFactor       = uSAOParams[3];");
+    src.push("      vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
+    src.push("      float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
+    src.push("      gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
+    src.push("  } else {");
+    src.push("      gl_FragColor = vColor;");
+    src.push("  }");
     src.push("}");
     return src;
 }
 
 const ids$e = new Map({});
+const tempVec4$2 = math.vec4();
 
 /**
  * @private
@@ -38830,7 +39038,6 @@ InstancingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPa
         instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 1);
         frameCtx.bindArray++;
     }
-
     state.indicesBuf.bind();
     frameCtx.bindArray++;
 
@@ -38911,7 +39118,7 @@ InstancingDrawRenderer.prototype._allocate = function (layer) {
 
     this._uSectionPlanes = [];
     const clips = sectionPlanesState.sectionPlanes;
-    for (var i = 0, len = clips.length; i < len; i++) {
+    for (let i = 0, len = clips.length; i < len; i++) {
         this._uSectionPlanes.push({
             active: program.getLocation("sectionPlaneActive" + i),
             pos: program.getLocation("sectionPlanePos" + i),
@@ -38932,6 +39139,10 @@ InstancingDrawRenderer.prototype._allocate = function (layer) {
     this._aModelNormalMatrixCol0 = program.getAttribute("modelNormalMatrixCol0");
     this._aModelNormalMatrixCol1 = program.getAttribute("modelNormalMatrixCol1");
     this._aModelNormalMatrixCol2 = program.getAttribute("modelNormalMatrixCol2");
+
+    this._uSAOEnabled = program.getLocation("uSAOEnabled");
+    this._uOcclusionTexture = "uOcclusionTexture";
+    this._uOcclusionParams = program.getLocation("uSAOParams");
 };
 
 InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
@@ -38941,11 +39152,11 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
     const lightsState = scene._lightsState;
     const sectionPlanesState = scene._sectionPlanesState;
     const lights = lightsState.lights;
+
     let light;
     program.bind();
     frameCtx.useProgram++;
     const camera = scene.camera;
-    const cameraState = camera._state;
     gl.uniformMatrix4fv(this._uProjMatrix, false, camera._project._state.matrix);
     for (let i = 0, len = lights.length; i < len; i++) {
         light = lights[i];
@@ -38989,6 +39200,20 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
                 gl.uniform3fv(sectionPlaneUniforms.dir, sectionPlane.dir);
             }
         }
+    }
+    const sao = scene.sao;
+    const saoEnabled = sao.enabled && sao.supported;
+    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+    if (saoEnabled) {
+        const canvasBoundary = scene.canvas.boundary;
+        const canvasWidth = canvasBoundary[2];
+        const canvasHeight = canvasBoundary[3];
+        tempVec4$2[0] = canvasWidth;
+        tempVec4$2[1] = canvasHeight;
+        tempVec4$2[2] = sao.blendCutoff;
+        tempVec4$2[3] = sao.blendFactor;
+        this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
+        gl.uniform4fv(this._uOcclusionParams, tempVec4$2);
     }
 };
 
@@ -52286,6 +52511,7 @@ class ModelTreeView {
         this._rootNodes = [];
         this._objectNodes = {};
         this._rootName = cfg.rootName;
+        this._sortNodes = cfg.sortNodes;
 
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -52445,6 +52671,9 @@ class ModelTreeView {
             default:
                 this._createContainmentNodes();
         }
+        if (this._sortNodes) {
+            this._doSortNodes();
+        }
         this._synchNodesToEntities();
         this._createTrees();
         this.expandToDepth(this._autoExpandDepth);
@@ -52462,6 +52691,7 @@ class ModelTreeView {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
                 title: this._rootName || ((metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType),
+                type: metaObjectType,
                 parent: null,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -52479,6 +52709,7 @@ class ModelTreeView {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
                 title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                type: metaObjectType,
                 parent: buildingNode,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -52499,6 +52730,7 @@ class ModelTreeView {
                         nodeId: typeNodeNodeId,
                         objectId: typeNodeObjectId,
                         title: metaObjectType,
+                        type: metaObjectType,
                         parent: storeyNode,
                         numEntities: 0,
                         numVisibleEntities: 0,
@@ -52513,6 +52745,7 @@ class ModelTreeView {
                     nodeId: this._objectToNodeID(metaObject.id),
                     objectId: metaObject.id,
                     title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                    type: metaObjectType,
                     parent: typeNode,
                     numEntities: 0,
                     numVisibleEntities: 0,
@@ -52543,6 +52776,7 @@ class ModelTreeView {
                 nodeId: this._objectToNodeID(metaObject.id),
                 objectId: metaObject.id,
                 title: this._rootName || ((metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType),
+                type: metaObjectType,
                 parent: null,
                 numEntities: 0,
                 numVisibleEntities: 0,
@@ -52565,6 +52799,7 @@ class ModelTreeView {
                             nodeId: this._objectToNodeID(metaObjectType),
                             objectId: metaObjectType,
                             title: metaObjectType,
+                            type: metaObjectType,
                             parent: buildingNode,
                             numEntities: 0,
                             numVisibleEntities: 0,
@@ -52579,6 +52814,7 @@ class ModelTreeView {
                         nodeId: this._objectToNodeID(metaObject.id),
                         objectId: metaObject.id,
                         title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
+                        type: metaObjectType,
                         parent: typeNode,
                         numEntities: 0,
                         numVisibleEntities: 0,
@@ -52600,11 +52836,13 @@ class ModelTreeView {
     }
 
     _createContainmentNodes(metaObject = this._rootMetaObject, parent) {
-        const metaObjectName = metaObject.name || metaObject.type;
+        const metaObjectType = metaObject.type;
+        const metaObjectName = metaObject.name || metaObjectType;
         const node = {
             nodeId: this._objectToNodeID(metaObject.id),
             objectId: metaObject.id,
             title: (!parent) ? (this._rootName || metaObjectName) : (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
+            type: metaObjectType,
             parent: parent,
             numEntities: 0,
             numVisibleEntities: 0,
@@ -52624,6 +52862,75 @@ class ModelTreeView {
                 this._createContainmentNodes(childMetaObject, node);
             }
         }
+    }
+
+    _doSortNodes() {
+        for (let i = 0, len = this._rootNodes.length; i < len; i++) {
+            const rootNode = this._rootNodes[i];
+            this._sortChildren(rootNode);
+        }
+    }
+
+    _sortChildren(node) {
+        const children = node.children;
+        if (!children || children.length === 0) {
+            return;
+        }
+        if (this._hierarchy === "storeys" && node.type === "IfcBuilding") {
+            // Assumes that children of an IfcBuilding will always be IfcBuildingStoreys
+            children.sort(this._getSpatialSortFunc());
+        } else {
+            children.sort(this._alphaSortFunc);
+        }
+        for (let i = 0, len = children.length; i < len; i++) {
+            const node = children[i];
+            this._sortChildren(node);
+        }
+    }
+
+    _getSpatialSortFunc() { // Creates cached sort func with Viewer in scope
+        const viewer = this._treeViewPlugin.viewer;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        const metaScene = viewer.metaScene;
+        return this._spatialSortFunc || (this._spatialSortFunc = (node1, node2) => {
+            if (!node1.center || !node2.center) {
+                // Sorting on center more robust when objects could overlap storeys
+                if (!node1.center) {
+                    node1.center = math.getAABB3Center(scene.getAABB(metaScene.getObjectIDsInSubtree(node1.objectId)));
+                }
+                if (!node2.center) {
+                    node2.center = math.getAABB3Center(scene.getAABB(metaScene.getObjectIDsInSubtree(node2.objectId)));
+                }
+            }
+            let idx = 0;
+            if (camera.xUp) {
+                idx = 0;
+            } else if (camera.yUp) {
+                idx = 1;
+            } else {
+                idx = 2;
+            }
+            if (node1.center[idx] > node2.center[idx]) {
+                return -1;
+            }
+            if (node1.center[idx] < node2.center[idx]) {
+                return 1;
+            }
+            return 0;
+        });
+    }
+
+    _alphaSortFunc(node1, node2) {
+        const title1 = node1.title.toUpperCase();
+        const title2 = node2.title.toUpperCase();
+        if (title1 < title2) {
+            return -1;
+        }
+        if (title1 > title2) {
+            return 1;
+        }
+        return 0;
     }
 
     _synchNodesToEntities() {
@@ -52873,6 +53180,7 @@ class ModelTreeView {
  * * Each tree node has a checkbox to control the visibility of its object.
  * * Has three hierarchy modes: "containment", "types" and "storeys".
  * * Automatically contains all models (that have metadata) that are currently in the {@link Scene}.
+ * * Sorts tree nodes by default - spatially, from top-to-bottom for ````IfcBuildingStorey```` nodes, and alphanumerically for other nodes.
  * * Allows custom CSS styling.
  * * Use {@link ContextMenu} to create a context menu for the tree nodes.
  *
@@ -53017,6 +53325,30 @@ class ModelTreeView {
  * });
  * ````
  *
+ * ## Sorting nodes
+ *
+ * TreeViewPlugin sorts its tree nodes by default. For a "storeys" hierarchy, it orders ````IfcBuildingStorey```` nodes
+ * spatially, with the node for the highest story at the top, down to the lowest at the bottom. This assumes that the
+ * 3D World-space boundaries of the ````IfcBuildingStory```` elements are actually spatially sortable, which may not be the case
+ * in all IFC models. Some models may have ````IfcBuildingStory```` elements that contain objects that span multiple storeys,
+ * which would defeat this sorting.
+ *
+ * For all the hierarchy types ("containment", "classes" and "storeys"), TreeViewPlugin sorts the other node types
+ * alphanumerically on their titles.
+ *
+ * If for some reason you need to prevent sorting, create your TreeViewPlugin with the option disabled, like so:
+ *
+ * ````javascript
+ * const treeView = new TreeViewPlugin(viewer, {
+ *      containerElement: document.getElementById("myTreeViewContainer"),
+ *      hierarchy: "stories",
+ *      sortNodes: false // <<------ Disable node sorting
+ * });
+ * ````
+ *
+ * Note that node sorting is only done for each model at the time that it is added to the TreeViewPlugin, and will not
+ * update dynamically if we later transform the {@link Entity}s corresponding to the nodes.
+ *
  * ## Context menu
  *
  * TreeViewPlugin fires a "contextmenu" event whenever we right-click on a tree node.
@@ -53120,6 +53452,9 @@ class TreeViewPlugin extends Plugin {
      * @param {Boolean} [cfg.autoAddModels=true] When ````true```` (default), will automatically add each model as it's created. Set this ````false```` if you want to manually add models using {@link TreeViewPlugin#addModel} instead.
      * @param {Number} [cfg.autoExpandDepth] Optional depth to which to initially expand the tree.
      * @param {String} [cfg.hierarchy="containment"] How to organize the tree nodes: "containment", "storeys" or "types". See the class documentation for details.
+     * @param {Boolean} [cfg.sortNodes=true] When true, will sort the children of each node. For a "storeys" hierarchy, the
+     * ````IfcBuildingStorey```` nodes will be ordered spatially, from the highest storey down to the lowest, on the
+     * vertical World axis. For all hierarchy types, other node types will be ordered in the ascending alphanumeric order of their titles.
      */
     constructor(viewer, cfg = {}) {
 
@@ -53135,6 +53470,7 @@ class TreeViewPlugin extends Plugin {
         this._modelTreeViews = {};
         this._autoAddModels = (cfg.autoAddModels !== false);
         this._autoExpandDepth = (cfg.autoExpandDepth || 0);
+        this._sortNodes = (cfg.sortNodes !== false);
 
         if (this._autoAddModels) {
             const modelIds = Object.keys(this.viewer.scene.models);
@@ -53224,6 +53560,7 @@ class TreeViewPlugin extends Plugin {
             containerElement: this._containerElement,
             autoExpandDepth: this._autoExpandDepth,
             hierarchy: this._hierarchy,
+            sortNodes: this._sortNodes,
             rootName: options.rootName
         });
         model.on("destroyed", () => {
@@ -54947,6 +55284,10 @@ class CameraControl extends Component {
                 return pivoting;
             };
 
+            this.setPivotPos = function (worldPos) {
+                pivotPoint.set(worldPos);
+            };
+
             this.getPivotPos = function () {
                 return pivotPoint;
             };
@@ -55087,7 +55428,7 @@ class CameraControl extends Component {
      * @param {Number[]} worldPos The new World-space 3D pivot position.
      */
     set pivotPos(worldPos) {
-        this._pivoter.startPivot(worldPos);
+        this._pivoter.setPivotPos(worldPos);
     }
 
     /**
@@ -58733,10 +59074,7 @@ class BIMViewer extends Controller {
             this.fire("modelUnloaded", modelId);
         });
 
-        this._queryTool.on("queryPicked", (entityId) => {
-            const event = {};
-            event.entity = this.viewer.scene.objects[entityId];
-            event.metaObject = this.viewer.metaScene.metaObjects[entityId];
+        this._queryTool.on("queryPicked", (event) => {
             this.fire("queryPicked", event);
         });
 
@@ -58869,6 +59207,10 @@ class BIMViewer extends Controller {
                         this._objectsExplorer.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
                         this._classesExplorer.showNodeInTreeView(objectId);
                         this._storeysExplorer.showNodeInTreeView(objectId);
+                        const openTabId = this.getOpenTab();
+                        if (openTabId !== "objects" && openTabId !== "classes" && openTabId !== "storeys") {
+                            this.openTab("objects");
+                        }
                     },
                     entity: hit.entity
                 };
@@ -59434,6 +59776,45 @@ class BIMViewer extends Controller {
                 tabElement.classList.remove(activeClass);
             }
         }
+    }
+
+    /**
+     * Returns the ID of the currently open viewer tab.
+     *
+     * The available tabs are:
+     *
+     *  * "models" - the Models tab, which lists the models available within the currently loaded project,
+     *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "none" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.
+     */
+    getOpenTab() {
+        function hasClass(element, className) {
+            if (!element) {
+                return false;
+            }
+            return (" " + element.className + " ").indexOf(" " + className + " ") > -1;
+        }
+
+        const activeClass = 'active';
+        let modelsTab = this._explorerElement.querySelector(".xeokit-modelsTab");
+        if (hasClass(modelsTab, activeClass)) {
+            return "models";
+        }
+        let objectsTab = this._explorerElement.querySelector(".xeokit-objectsTab");
+        if (hasClass(objectsTab, activeClass)) {
+            return "objects";
+        }
+        let classesTab = this._explorerElement.querySelector(".xeokit-classesTab");
+        if (hasClass(classesTab, activeClass)) {
+            return "classes";
+        }
+        let storeysTab = this._explorerElement.querySelector(".xeokit-storeysTab");
+        if (hasClass(storeysTab, activeClass)) {
+            return "storeys";
+        }
+        return "none";
     }
 
     /**
