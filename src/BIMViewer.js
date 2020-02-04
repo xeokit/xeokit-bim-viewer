@@ -142,7 +142,7 @@ function initTabs(containerElement) {
 class BIMViewer extends Controller {
 
     /**
-     * Constructs a ViewerUI.
+     * Constructs a BIMViewer.
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      */
@@ -199,7 +199,7 @@ class BIMViewer extends Controller {
         super(null, cfg, server, viewer);
 
         /**
-         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIM viewer.
+         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
          * @type {Viewer}
          */
@@ -693,7 +693,7 @@ class BIMViewer extends Controller {
      *
      * Does nothing if the model is not currently loaded.
      *
-     * @param modelId
+     * @param {String} modelId ID of the model to unload.
      */
     unLoadModel(modelId) {
         if (!modelId) {
@@ -809,7 +809,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * flies the camera to fit the given object in view.
+     * Flies the camera to fit the given object in view.
      *
      * @param {String} objectId ID of the object
      * @param {Function} done Callback invoked on completion
@@ -882,7 +882,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * X-ray the object with the given ID.
+     * X-rays the object with the given ID.
      *
      * @param {String} objectId ID of object to x-ray.
      */
@@ -947,6 +947,9 @@ class BIMViewer extends Controller {
 
     /**
      * Selects all objects currently in the viewer, except for those with the given IDs.
+     *
+     * This causes the objects to glow with the selection color.
+     *
      * @param {String[]} objectIds IDs of objects to not select.
      */
     selectAllObjectsExceptFor(objectIds) {
@@ -955,6 +958,8 @@ class BIMViewer extends Controller {
 
     /**
      * De-selects all objects currently in the viewer.
+     *
+     * This removes the selection color from the objects.
      */
     deselectAllObjects() {
         this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
@@ -1161,6 +1166,9 @@ class BIMViewer extends Controller {
 
     /**
      * Resets the view.
+     *
+     * This resets object appearances (visibility, selection, highlight and X-ray), sets camera to
+     * default position, and removes section planes.
      */
     resetView() {
         this._resetAction.reset();
