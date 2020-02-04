@@ -101,7 +101,7 @@
       <div>
         
         
-        <div data-ice="description"><p>Constructs a ViewerUI.</p>
+        <div data-ice="description"><p>Constructs a BIMViewer.</p>
 </div>
       </div>
     </td>
@@ -137,7 +137,7 @@
       <div>
         
         
-        <div data-ice="description"><p>The xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html">Viewer</a> at the core of this BIM viewer.</p>
+        <div data-ice="description"><p>The xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html">Viewer</a> at the core of this BIMViewer.</p>
 </div>
       </div>
     </td>
@@ -231,7 +231,7 @@
       <div>
         
         
-        <div data-ice="description"><p>flies the camera to fit the given object in view.</p>
+        <div data-ice="description"><p>Flies the camera to fit the given object in view.</p>
 </div>
       </div>
     </td>
@@ -950,7 +950,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-unLoadModel">unLoadModel</a></span></span><span class="code" data-ice="signature">(modelId: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-unLoadModel">unLoadModel</a></span></span><span class="code" data-ice="signature">(modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
         </p>
       </div>
       <div>
@@ -1159,7 +1159,7 @@
       <div>
         
         
-        <div data-ice="description"><p>X-ray the object with the given ID.</p>
+        <div data-ice="description"><p>X-rays the object with the given ID.</p>
 </div>
       </div>
     </td>
@@ -1197,7 +1197,7 @@
   
   
   
-  <div data-ice="description"><p>Constructs a ViewerUI.</p>
+  <div data-ice="description"><p>Constructs a BIMViewer.</p>
 </div>
 
   
@@ -1268,7 +1268,7 @@
   
   
   
-  <div data-ice="description"><p>The xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html">Viewer</a> at the core of this BIM viewer.</p>
+  <div data-ice="description"><p>The xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html">Viewer</a> at the core of this BIMViewer.</p>
 </div>
 
   
@@ -1308,7 +1308,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber959">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber964">source</a></span></span>
     </span>
   </h3>
 
@@ -1316,6 +1316,7 @@
   
   
   <div data-ice="description"><p>De-selects all objects currently in the viewer.</p>
+<p>This removes the selection color from the objects.</p>
 </div>
 
   
@@ -1352,7 +1353,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1200">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1208">source</a></span></span>
     </span>
   </h3>
 
@@ -1403,7 +1404,7 @@
   
   
   
-  <div data-ice="description"><p>flies the camera to fit the given object in view.</p>
+  <div data-ice="description"><p>Flies the camera to fit the given object in view.</p>
 </div>
 
   
@@ -1681,7 +1682,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1023">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1028">source</a></span></span>
     </span>
   </h3>
 
@@ -2148,7 +2149,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1154">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1159">source</a></span></span>
     </span>
   </h3>
 
@@ -2400,7 +2401,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber975">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber980">source</a></span></span>
     </span>
   </h3>
 
@@ -2468,7 +2469,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1165">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1173">source</a></span></span>
     </span>
   </h3>
 
@@ -2476,6 +2477,8 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
   
   
   <div data-ice="description"><p>Resets the view.</p>
+<p>This resets object appearances (visibility, selection, highlight and X-ray), sets camera to
+default position, and removes section planes.</p>
 </div>
 
   
@@ -2512,7 +2515,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1128">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1133">source</a></span></span>
     </span>
   </h3>
 
@@ -2725,7 +2728,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber952">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber955">source</a></span></span>
     </span>
   </h3>
 
@@ -2733,6 +2736,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
   
   <div data-ice="description"><p>Selects all objects currently in the viewer, except for those with the given IDs.</p>
+<p>This causes the objects to glow with the selection color.</p>
 </div>
 
   
@@ -2847,7 +2851,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1176">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1184">source</a></span></span>
     </span>
   </h3>
 
@@ -3135,7 +3139,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     
     
     
-    <span class="code" data-ice="name">unLoadModel</span><span class="code" data-ice="signature">(modelId: <span>*</span>)</span>
+    <span class="code" data-ice="name">unLoadModel</span><span class="code" data-ice="signature">(modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
     <span class="right-info">
       
       
@@ -3162,9 +3166,10 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">modelId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the model to unload.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -3490,7 +3495,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
   
   
-  <div data-ice="description"><p>X-ray the object with the given ID.</p>
+  <div data-ice="description"><p>X-rays the object with the given ID.</p>
 </div>
 
   

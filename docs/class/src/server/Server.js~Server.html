@@ -36,13 +36,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Server} from &apos;<span><a href="file/src/server/Server.js.html#lineNumber6">@xeokit/xeokit-viewer/src/server/Server.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Server} from &apos;<span><a href="file/src/server/Server.js.html#lineNumber10">@xeokit/xeokit-viewer/src/server/Server.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/server/Server.js.html#lineNumber6">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/server/Server.js.html#lineNumber10">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -62,7 +62,9 @@
 
   
   
-  <div class="description" data-ice="description"><p>Default server client which loads content via HTTP from the file system.</p>
+  <div class="description" data-ice="description"><p>Default server client which loads content for a <span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span> via HTTP from the file system.</p>
+<p>A BIMViewer is instantiated with an instance of this class.</p>
+<p>To load content from an alternative source, instantiate BIMViewer with your own custom implementation of this class.</p>
 </div>
   
 
@@ -101,7 +103,8 @@
       <div>
         
         
-        
+        <div data-ice="description"><p>Constructs a Server.</p>
+</div>
       </div>
     </td>
     <td>
@@ -131,7 +134,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getGeometry">getGeometry</a></span></span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getGeometry">getGeometry</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
@@ -160,13 +163,13 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getIssues">getIssues</a></span></span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getIssues">getIssues</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Gets issues for a model within a project.</p>
+        <div data-ice="description"><p>Gets existing issues for a model within a project.</p>
 </div>
       </div>
     </td>
@@ -189,7 +192,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getMetadata">getMetadata</a></span></span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getMetadata">getMetadata</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
@@ -218,7 +221,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getObjectInfo">getObjectInfo</a></span></span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, objectId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getObjectInfo">getObjectInfo</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
@@ -247,7 +250,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getProject">getProject</a></span></span><span class="code" data-ice="signature">(projectId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getProject">getProject</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
@@ -276,13 +279,13 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getProjects">getProjects</a></span></span><span class="code" data-ice="signature">(done: <span>*</span>, error: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/server/Server.js~Server.html#instance-method-getProjects">getProjects</a></span></span><span class="code" data-ice="signature">(done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Gets in formation on all avaialable projects.</p>
+        <div data-ice="description"><p>Gets information on all available projects.</p>
 </div>
       </div>
     </td>
@@ -313,14 +316,15 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber13">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber18">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Constructs a Server.</p>
+</div>
 
   
 
@@ -335,8 +339,15 @@
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">cfg</td>
       <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>@param.cfg.dataDir Base directory for content.</p>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Server configuration.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">cfg.dataDir</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Base directory for content.</p>
 </td>
     </tr>
 </tbody>
@@ -373,11 +384,11 @@
     
     
     
-    <span class="code" data-ice="name">getGeometry</span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getGeometry</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber61">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber66">source</a></span></span>
     </span>
   </h3>
 
@@ -399,27 +410,31 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">projectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the project.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">modelId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the model.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -451,18 +466,18 @@
     
     
     
-    <span class="code" data-ice="name">getIssues</span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getIssues</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber88">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber93">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Gets issues for a model within a project.</p>
+  <div data-ice="description"><p>Gets existing issues for a model within a project.</p>
 </div>
 
   
@@ -477,27 +492,31 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">projectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the project.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">modelId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the model.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -529,11 +548,11 @@
     
     
     
-    <span class="code" data-ice="name">getMetadata</span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getMetadata</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber48">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber53">source</a></span></span>
     </span>
   </h3>
 
@@ -555,27 +574,31 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">projectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the project.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">modelId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the model.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -607,11 +630,11 @@
     
     
     
-    <span class="code" data-ice="name">getObjectInfo</span><span class="code" data-ice="signature">(projectId: <span>*</span>, modelId: <span>*</span>, objectId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getObjectInfo</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber75">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber80">source</a></span></span>
     </span>
   </h3>
 
@@ -633,33 +656,38 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">projectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the project.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">modelId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the model.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">objectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the object.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -691,11 +719,11 @@
     
     
     
-    <span class="code" data-ice="name">getProject</span><span class="code" data-ice="signature">(projectId: <span>*</span>, done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getProject</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber35">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber40">source</a></span></span>
     </span>
   </h3>
 
@@ -717,21 +745,24 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">projectId</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>ID of the project.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -763,18 +794,18 @@
     
     
     
-    <span class="code" data-ice="name">getProjects</span><span class="code" data-ice="signature">(done: <span>*</span>, error: <span>*</span>)</span>
+    <span class="code" data-ice="name">getProjects</span><span class="code" data-ice="signature">(done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/server/Server.js.html#lineNumber28">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Gets in formation on all avaialable projects.</p>
+  <div data-ice="description"><p>Gets information on all available projects.</p>
 </div>
 
   
@@ -789,15 +820,17 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">done</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which the JSON result is returned.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">error</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Callback through which an error message is returned on error.</p>
+</td>
     </tr>
 </tbody>
   </table>
