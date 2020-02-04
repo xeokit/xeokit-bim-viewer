@@ -40,7 +40,7 @@ const ObjectContextMenuItems = [
             title: "Show in tree",
             callback: function (context) {
                 const objectId = context.entity.id;
-                context.showNodeInTreeViews(objectId);
+                context.showObjectInExplorers(objectId);
             }
         }
     ],

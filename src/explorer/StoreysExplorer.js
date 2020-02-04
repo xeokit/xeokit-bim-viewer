@@ -95,6 +95,10 @@ class StoreysExplorer extends Controller {
         this._treeView.showNode(objectId);
     }
 
+    unShowNodeInTreeView() {
+        this._treeView.unShowNode();
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
