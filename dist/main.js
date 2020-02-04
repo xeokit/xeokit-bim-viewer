@@ -53112,7 +53112,6 @@ class ModelTreeView {
             return;
         }
         const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
-        spanElement.scrollIntoView({block: "center"});
         const background = spanElement.style.background;
         spanElement.style.background = background;
         this._shownNodeId = null;
@@ -53616,11 +53615,16 @@ class TreeViewPlugin extends Plugin {
     }
 
     /**
-     * Shows the tree view node that represents the given object {@link Entity}.
+     * Highlights the tree view node that represents the given object {@link Entity}.
+     *
+     * This causes the tree view to collapse, then expand to reveal the node, then highlight the node.
+     *
+     * If a node is previously highlighted, de-highlights that node and collapses the tree first.
      *
      * @param {String} objectId ID of the {@link Entity}.
      */
     showNode(objectId) {
+        this.unShowNode();
         const metaObject = this.viewer.metaScene.metaObjects[objectId];
         if (!metaObject) {
             this.error("MetaObject not found: " + objectId);
@@ -53640,6 +53644,8 @@ class TreeViewPlugin extends Plugin {
      * De-highlights the node previously shown with {@link TreeViewPlugin#showNode}.
      *
      * Does nothing if no node is currently shown.
+     *
+     * If the node is currently scrolled into view, keeps the node in view.
      */
     unShowNode() {
         for (let modelId in this._modelTreeViews) {
