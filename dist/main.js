@@ -52512,6 +52512,7 @@ class ModelTreeView {
         this._objectNodes = {};
         this._rootName = cfg.rootName;
         this._sortNodes = cfg.sortNodes;
+        this._shownNodeId = null;
 
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -53065,6 +53066,9 @@ class ModelTreeView {
     }
 
     showNode(objectId) {
+        if (this._shownNodeId) {
+            this.unShowNode();
+        }
         const nodeId = this._objectToNodeID(objectId);
         const groupElementId = "a-" + nodeId;
         const groupElement = document.getElementById(groupElementId);
@@ -53092,13 +53096,26 @@ class ModelTreeView {
         }
         const nodeElement = document.getElementById(nodeId);
         const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
-        //spanElement.scrollIntoView();
         spanElement.scrollIntoView({block: "center"});
         const background = spanElement.style.background;
         spanElement.style.background = "yellow";
-        setTimeout(function () {
-            spanElement.style.background = background;
-        }, 1500);
+        this._shownNodeId = nodeId;
+    }
+
+    unShowNode() {
+        if (!this._shownNodeId) {
+            return;
+        }
+        const nodeElement = document.getElementById(this._shownNodeId);
+        if (!nodeElement) {
+            this._shownNodeId = null;
+            return;
+        }
+        const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
+        spanElement.scrollIntoView({block: "center"});
+        const background = spanElement.style.background;
+        spanElement.style.background = background;
+        this._shownNodeId = null;
     }
 
     _expandGroupElement(groupElement) {
@@ -53617,6 +53634,20 @@ class TreeViewPlugin extends Plugin {
             return;
         }
         modelTreeView.showNode(objectId);
+    }
+
+    /**
+     * De-highlights the node previously shown with {@link TreeViewPlugin#showNode}.
+     *
+     * Does nothing if no node is currently shown.
+     */
+    unShowNode() {
+        for (let modelId in this._modelTreeViews) {
+            if (this._modelTreeViews.hasOwnProperty(modelId)) {
+                const modelTreeView = this._modelTreeViews[modelId];
+                modelTreeView.unShowNode();
+            }
+        }
     }
 
     /**
@@ -54291,6 +54322,10 @@ class ObjectsExplorer extends Controller {
         this._treeView.showNode(objectId);
     }
 
+    unShowNodeInTreeView() {
+        this._treeView.unShowNode();
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
@@ -54393,6 +54428,10 @@ class ClassesExplorer extends Controller {
         this._treeView.showNode(objectId);
     }
 
+    unShowNodeInTreeView() {
+        this._treeView.unShowNode();
+    }
+
     destroy() {
         super.destroy();
         this._treeView.destroy();
@@ -54492,6 +54531,10 @@ class StoreysExplorer extends Controller {
     showNodeInTreeView(objectId) {
         this._treeView.collapse();
         this._treeView.showNode(objectId);
+    }
+
+    unShowNodeInTreeView() {
+        this._treeView.unShowNode();
     }
 
     destroy() {
@@ -58607,7 +58650,7 @@ const ObjectContextMenuItems = [
             title: "Show in tree",
             callback: function (context) {
                 const objectId = context.entity.id;
-                context.showNodeInTreeViews(objectId);
+                context.showObjectInExplorers(objectId);
             }
         }
     ],
@@ -59203,10 +59246,8 @@ class BIMViewer extends Controller {
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
-                    showNodeInTreeViews: (objectId) => {
-                        this._objectsExplorer.showNodeInTreeView(objectId); // TODO: Show node only in currently visible tree
-                        this._classesExplorer.showNodeInTreeView(objectId);
-                        this._storeysExplorer.showNodeInTreeView(objectId);
+                    showObjectInExplorers: (objectId) => {
+                        this.showObjectInExplorers(objectId);
                         const openTabId = this.getOpenTab();
                         if (openTabId !== "objects" && openTabId !== "classes" && openTabId !== "storeys") {
                             this.openTab("objects");
@@ -59477,40 +59518,37 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Show the given object in the Objects tab.
-     * @param {String} objectId ID of the object
-     */
-    showObjectInObjectsTab(objectId) {
-        if (!objectId) {
-            this.error("showObjectInObjectsTab() - Argument expected: objectId");
-            return;
-        }
-        this._objectsExplorer.showNodeInTreeView(objectId);
-    }
-
-    /**
-     * Show the given object in the Classes tab.
-     * @param {String} objectId ID of the object
-     */
-    showObjectInClassesTab(objectId) {
-        if (!objectId) {
-            this.error("showObjectInClassesTab() - Argument expected: objectId");
-            return;
-        }
-        this._classesExplorer.showNodeInTreeView(objectId);
-
-    }
-
-    /**
+     * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
+     *
+     * This scrolls the object's node into view, then highlights it.
+     *
+     * De-highlights whatever node is currently highlighted in each of those tabs.
+     *
+     * The node will be de-highlighted if the subtree containing it is then collapsed.
      *
      * @param {String} objectId ID of the object
      */
-    showObjectInStoreysTab(objectId) {
+    showObjectInExplorers(objectId) {
         if (!objectId) {
-            this.error("showObjectInStoreysTab() - Argument expected: objectId");
+            this.error("showObjectInExplorers() - Argument expected: objectId");
             return;
         }
+        this._objectsExplorer.showNodeInTreeView(objectId);
+        this._classesExplorer.showNodeInTreeView(objectId);
         this._storeysExplorer.showNodeInTreeView(objectId);
+    }
+
+    /**
+     * De-highlights the object previously highlighted with {@link BIMViewer#showObjectInExplorers}.
+     *
+     * This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.
+     *
+     * For each tab, does nothing if no node is currently highlighted.
+     */
+    unShowObjectInExplorers() {
+        this._objectsExplorer.unShowNodeInTreeView();
+        this._classesExplorer.unShowNodeInTreeView();
+        this._storeysExplorer.unShowNodeInTreeView();
     }
 
     /**
