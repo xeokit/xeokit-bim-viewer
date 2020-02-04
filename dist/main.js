@@ -53780,7 +53780,6 @@ const TreeViewContextMenuItems = [
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.visibleObjectIds, false);
                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                scene.setObjectsSelected(scene.selectedObjectIds, false);
                 scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                 context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                     if (treeViewNode.objectId) {
@@ -53821,7 +53820,6 @@ const TreeViewContextMenuItems = [
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.objectIds, true);
                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                scene.setObjectsSelected(scene.selectedObjectIds, false);
                 context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                     if (treeViewNode.objectId) {
                         const entity = scene.objects[treeViewNode.objectId];
@@ -53838,7 +53836,6 @@ const TreeViewContextMenuItems = [
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.objectIds, true);
                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                scene.setObjectsSelected(scene.selectedObjectIds, false);
             }
         }
     ],
@@ -58705,6 +58702,7 @@ const ObjectContextMenuItems = [
             callback: function (context) {
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
             }
         }
     ],
@@ -58794,6 +58792,7 @@ const CanvasContextMenuItems = [
             callback: function (context) {
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
             }
         }
     ],
