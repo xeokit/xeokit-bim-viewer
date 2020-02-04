@@ -336,6 +336,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getobjectinfo",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getObjectInfo",
+    "src/BIMViewer.js~BIMViewer#getObjectInfo",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#getopentab",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getOpenTab",
+    "src/BIMViewer.js~BIMViewer#getOpenTab",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getprojectinfo",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getProjectInfo",
     "src/BIMViewer.js~BIMViewer#getProjectInfo",
@@ -450,27 +462,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#showobjectinclassestab",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInClassesTab",
-    "src/BIMViewer.js~BIMViewer#showObjectInClassesTab",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#showobjectinobjectstab",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInObjectsTab",
-    "src/BIMViewer.js~BIMViewer#showObjectInObjectsTab",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#showobjectinstoreystab",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInStoreysTab",
-    "src/BIMViewer.js~BIMViewer#showObjectInStoreysTab",
+    "src/bimviewer.js~bimviewer#showobjectinexplorers",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInExplorers",
+    "src/BIMViewer.js~BIMViewer#showObjectInExplorers",
     "method"
   ],
   [
     "src/bimviewer.js~bimviewer#unloadmodel",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-unLoadModel",
     "src/BIMViewer.js~BIMViewer#unLoadModel",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#unshowobjectinexplorers",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-unShowObjectInExplorers",
+    "src/BIMViewer.js~BIMViewer#unShowObjectInExplorers",
     "method"
   ],
   [
@@ -531,12 +537,6 @@ window.esdocSearchIndex = [
     "src/ifcobjectdefaults/ifcobjectdefaults.js",
     "file/src/IFCObjectDefaults/IFCObjectDefaults.js.html",
     "src/IFCObjectDefaults/IFCObjectDefaults.js",
-    "file"
-  ],
-  [
-    "src/viewerui.js",
-    "file/src/ViewerUI.js.html",
-    "src/ViewerUI.js",
     "file"
   ],
   [
@@ -612,6 +612,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/server/server.js~server#getobjectinfo",
+    "class/src/server/Server.js~Server.html#instance-method-getObjectInfo",
+    "src/server/Server.js~Server#getObjectInfo",
+    "method"
+  ],
+  [
     "src/server/server.js~server#getproject",
     "class/src/server/Server.js~Server.html#instance-method-getProject",
     "src/server/Server.js~Server#getProject",
@@ -621,12 +627,6 @@ window.esdocSearchIndex = [
     "src/server/server.js~server#getprojects",
     "class/src/server/Server.js~Server.html#instance-method-getProjects",
     "src/server/Server.js~Server#getProjects",
-    "method"
-  ],
-  [
-    "src/server/server.js~server#getproperties",
-    "class/src/server/Server.js~Server.html#instance-method-getProperties",
-    "src/server/Server.js~Server#getProperties",
     "method"
   ],
   [

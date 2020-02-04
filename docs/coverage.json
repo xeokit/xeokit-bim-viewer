@@ -1,11 +1,11 @@
 {
-  "coverage": "34.93%",
-  "expectCount": 229,
+  "coverage": "34.63%",
+  "expectCount": 231,
   "actualCount": 80,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 60,
-      "actualCount": 37,
+      "expectCount": 61,
+      "actualCount": 38,
       "undocumentLines": [
         27,
         69,
@@ -25,11 +25,11 @@
         277,
         283,
         289,
+        363,
         366,
-        369,
-        418,
-        420,
-        427
+        415,
+        417,
+        424
       ]
     },
     "src/BusyModal.js": {
@@ -67,13 +67,6 @@
       "actualCount": 1,
       "undocumentLines": []
     },
-    "src/ViewerUI.js": {
-      "expectCount": 2,
-      "actualCount": 1,
-      "undocumentLines": [
-        8
-      ]
-    },
     "src/contextMenuItems/CanvasContextMenuItems.js": {
       "expectCount": 1,
       "actualCount": 1,
@@ -90,7 +83,7 @@
       "undocumentLines": []
     },
     "src/explorer/ClassesExplorer.js": {
-      "expectCount": 13,
+      "expectCount": 14,
       "actualCount": 1,
       "undocumentLines": [
         9,
@@ -104,7 +97,8 @@
         71,
         82,
         94,
-        99
+        99,
+        103
       ]
     },
     "src/explorer/ModelsExplorer.js": {
@@ -135,7 +129,7 @@
       ]
     },
     "src/explorer/ObjectsExplorer.js": {
-      "expectCount": 13,
+      "expectCount": 14,
       "actualCount": 1,
       "undocumentLines": [
         9,
@@ -149,11 +143,12 @@
         71,
         82,
         94,
-        99
+        99,
+        103
       ]
     },
     "src/explorer/StoreysExplorer.js": {
-      "expectCount": 13,
+      "expectCount": 14,
       "actualCount": 1,
       "undocumentLines": [
         9,
@@ -167,7 +162,8 @@
         69,
         81,
         93,
-        98
+        98,
+        102
       ]
     },
     "src/server/Server.js": {
@@ -247,10 +243,10 @@
         10,
         21,
         61,
-        73,
-        82,
-        86,
-        97
+        81,
+        90,
+        94,
+        105
       ]
     },
     "src/toolbar/SectionTool.js": {

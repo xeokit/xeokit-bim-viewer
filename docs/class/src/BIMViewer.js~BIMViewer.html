@@ -53,7 +53,7 @@
   
   
   <div class="flat-list" data-ice="extendsChain"><h4>Extends:</h4><div><span>src/Controller.js~Controller</span> &#x2192; BIMViewer</div></div>
-  <div class="flat-list" data-ice="directSubclass"><h4>Direct Subclass:</h4><div><span>src/ViewerUI.js~ViewerUI</span></div></div>
+  
   
   
   
@@ -290,6 +290,64 @@
         
         
         <div data-ice="description"><p>Returns the ID of the currently loaded project, if any.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-getObjectInfo">getObjectInfo</a></span></span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Gets information on the given object, belonging to the given model, within the given project.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-getOpenTab">getOpenTab</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns the ID of the currently open viewer tab.</p>
 </div>
       </div>
     </td>
@@ -863,71 +921,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInClassesTab">showObjectInClassesTab</a></span></span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInExplorers">showObjectInExplorers</a></span></span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Show the given object in the Classes tab.</p>
+        <div data-ice="description"><p>Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.</p>
 </div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInObjectsTab">showObjectInObjectsTab</a></span></span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        <div data-ice="description"><p>Show the given object in the Objects tab.</p>
-</div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInStoreysTab">showObjectInStoreysTab</a></span></span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
       </div>
     </td>
     <td>
@@ -956,6 +957,35 @@
         
         
         <div data-ice="description"><p>Unloads a model from the viewer.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-unShowObjectInExplorers">unShowObjectInExplorers</a></span></span><span class="code" data-ice="signature">()</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>De-highlights the object previously highlighted with <span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInExplorers">BIMViewer#showObjectInExplorers</a></span>.</p>
 </div>
       </div>
     </td>
@@ -1278,7 +1308,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber906">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber959">source</a></span></span>
     </span>
   </h3>
 
@@ -1322,7 +1352,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1108">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1200">source</a></span></span>
     </span>
   </h3>
 
@@ -1366,7 +1396,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber764">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber817">source</a></span></span>
     </span>
   </h3>
 
@@ -1434,7 +1464,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber631">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber687">source</a></span></span>
     </span>
   </h3>
 
@@ -1491,7 +1521,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber595">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber651">source</a></span></span>
     </span>
   </h3>
 
@@ -1537,6 +1567,173 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getObjectInfo">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">getObjectInfo</span><span class="code" data-ice="signature">(projectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, modelId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, done: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>, error: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span>)</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber584">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Gets information on the given object, belonging to the given model, within the given project.</p>
+<h3 id="example">Example</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getObjectProperties((&quot;Duplex&quot;, &quot;design&quot;, &quot;0wkEuT1wr1kOyafLY4vy3H&quot;, (objectInfo) =&gt; {
+     console.log(JSON.stringify(objectInfo, null, &quot;\t&quot;));
+});</code>
+</code></pre>
+<p>Returns JSON similar to:</p>
+<pre><code class="lang-json"><code class="source-code prettyprint">{
+     &quot;projectId&quot;: &quot;
+     &quot;name&quot;: &quot;M_Tall Cabinet-Single Door(2):800 mm:157950&quot;,
+     &quot;type&quot;: &quot;IfcFurniture&quot;,
+     &quot;uuid&quot;: &quot;0wkEuT1wr1kOyafLY4vy3H&quot;,
+     &quot;parent&quot;: &quot;0BTBFw6f90Nfh9rP1dlXrb&quot;,
+     &quot;id&quot;: &quot;0wkEuT1wr1kOyafLY4vy3H&quot;
+}</code>
+</code></pre>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">projectId</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>ID of the project to get information on. Must be the ID of one of the projects in the information obtained by <span>BIMViewer#getProjects</span>.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">modelId</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>ID of a model within the project. Must be the ID of one of the models in the information obtained by <span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-getProjectInfo">BIMViewer#getProjectInfo</a></span>.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">objectId</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>ID of an object in the model.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">done</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Callback invoked on success, into which the object information JSON is passed.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">error</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Callback invoked on failure, into which the error message string is passed.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getOpenTab">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">getOpenTab</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1023">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns the ID of the currently open viewer tab.</p>
+<p>The available tabs are:</p>
+<ul>
+<li>&quot;models&quot; - the Models tab, which lists the models available within the currently loaded project,</li>
+<li>&quot;objects&quot; - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,</li>
+<li>&quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and</li>
+<li>&quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within <code>IfcBuildingStoreys</code>, sub-grouped by their IFC types.</li>
+<li>&quot;none&quot; - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.</li>
+</ul>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-getProjectInfo">
     <span class="access" data-ice="access">public</span>
     
@@ -1548,7 +1745,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber536">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber535">source</a></span></span>
     </span>
   </h3>
 
@@ -1634,7 +1831,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber497">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber496">source</a></span></span>
     </span>
   </h3>
 
@@ -1724,7 +1921,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber743">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber796">source</a></span></span>
     </span>
   </h3>
 
@@ -1768,7 +1965,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber751">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber804">source</a></span></span>
     </span>
   </h3>
 
@@ -1829,7 +2026,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber733">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber786">source</a></span></span>
     </span>
   </h3>
 
@@ -1890,7 +2087,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber806">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber859">source</a></span></span>
     </span>
   </h3>
 
@@ -1951,7 +2148,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1062">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1154">source</a></span></span>
     </span>
   </h3>
 
@@ -2051,7 +2248,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber608">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber664">source</a></span></span>
     </span>
   </h3>
 
@@ -2127,7 +2324,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber563">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber619">source</a></span></span>
     </span>
   </h3>
 
@@ -2203,7 +2400,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber922">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber975">source</a></span></span>
     </span>
   </h3>
 
@@ -2271,7 +2468,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1073">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1165">source</a></span></span>
     </span>
   </h3>
 
@@ -2315,7 +2512,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1036">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1128">source</a></span></span>
     </span>
   </h3>
 
@@ -2484,7 +2681,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber891">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber944">source</a></span></span>
     </span>
   </h3>
 
@@ -2528,7 +2725,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber899">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber952">source</a></span></span>
     </span>
   </h3>
 
@@ -2589,7 +2786,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber875">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber928">source</a></span></span>
     </span>
   </h3>
 
@@ -2650,7 +2847,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1084">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1176">source</a></span></span>
     </span>
   </h3>
 
@@ -2712,7 +2909,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber714">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber767">source</a></span></span>
     </span>
   </h3>
 
@@ -2756,7 +2953,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber722">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber775">source</a></span></span>
     </span>
   </h3>
 
@@ -2817,7 +3014,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber698">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber751">source</a></span></span>
     </span>
   </h3>
 
@@ -2867,147 +3064,29 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-showObjectInClassesTab">
+  <h3 data-ice="anchor" id="instance-method-showObjectInExplorers">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">showObjectInClassesTab</span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
+    <span class="code" data-ice="name">showObjectInExplorers</span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber673">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber724">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Show the given object in the Classes tab.</p>
+  <div data-ice="description"><p>Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.</p>
+<p>This scrolls the object&apos;s node into view, then highlights it.</p>
+<p>De-highlights whatever node is currently highlighted in each of those tabs.</p>
+<p>The node will be de-highlighted if the subtree containing it is then collapsed.</p>
 </div>
-
-  
-
-  <div data-ice="properties"><div data-ice="properties">
-  <h4 data-ice="title">Params:</h4>
-  <table class="params">
-    <thead>
-    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-    
-    <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">objectId</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>ID of the object</p>
-</td>
-    </tr>
-</tbody>
-  </table>
-</div>
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-showObjectInObjectsTab">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">showObjectInObjectsTab</span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber661">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  <div data-ice="description"><p>Show the given object in the Objects tab.</p>
-</div>
-
-  
-
-  <div data-ice="properties"><div data-ice="properties">
-  <h4 data-ice="title">Params:</h4>
-  <table class="params">
-    <thead>
-    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-    
-    <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">objectId</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>ID of the object</p>
-</td>
-    </tr>
-</tbody>
-  </table>
-</div>
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-showObjectInStoreysTab">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">showObjectInStoreysTab</span><span class="code" data-ice="signature">(objectId: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>)</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber686">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
 
   
 
@@ -3060,7 +3139,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber642">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber698">source</a></span></span>
     </span>
   </h3>
 
@@ -3110,6 +3189,52 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-unShowObjectInExplorers">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">unShowObjectInExplorers</span><span class="code" data-ice="signature">()</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber741">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>De-highlights the object previously highlighted with <span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectInExplorers">BIMViewer#showObjectInExplorers</a></span>.</p>
+<p>This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.</p>
+<p>For each tab, does nothing if no node is currently highlighted.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-unloadAllModels">
     <span class="access" data-ice="access">public</span>
     
@@ -3121,7 +3246,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber653">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber709">source</a></span></span>
     </span>
   </h3>
 
@@ -3165,7 +3290,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber584">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber640">source</a></span></span>
     </span>
   </h3>
 
@@ -3209,7 +3334,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber852">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber905">source</a></span></span>
     </span>
   </h3>
 
@@ -3253,7 +3378,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber860">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber913">source</a></span></span>
     </span>
   </h3>
 
@@ -3314,7 +3439,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber867">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber920">source</a></span></span>
     </span>
   </h3>
 
@@ -3358,7 +3483,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber836">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber889">source</a></span></span>
     </span>
   </h3>
 
