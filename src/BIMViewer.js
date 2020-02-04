@@ -1030,7 +1030,7 @@ class BIMViewer extends Controller {
             if (!element) {
                 return false;
             }
-            return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
+            return (" " + element.className + " ").indexOf(" " + className + " ") > -1;
         }
 
         const activeClass = 'active';
