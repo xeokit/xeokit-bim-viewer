@@ -450,24 +450,29 @@ const utils = {
 };
 
 /**
- * Default server client which loads content via HTTP from the file system.
+ * Default server client which loads content for a {@link BIMViewer} via HTTP from the file system.
+ *
+ * A BIMViewer is instantiated with an instance of this class.
+ *
+ * To load content from an alternative source, instantiate BIMViewer with your own custom implementation of this class.
  */
 class Server {
 
     /**
+     * Constructs a Server.
      *
-     * @param cfg
-     * @param.cfg.dataDir Base directory for content.
+     * @param {*} [cfg] Server configuration.
+     * @param {String} [cfg.dataDir] Base directory for content.
      */
     constructor(cfg = {}) {
         this._dataDir = cfg.dataDir || "";
     }
 
     /**
-     * Gets in formation on all avaialable projects.
+     * Gets information on all available projects.
      *
-     * @param done
-     * @param error
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getProjects(done, error) {
         const url = this._dataDir + "/projects/index.json";
@@ -477,9 +482,9 @@ class Server {
     /**
      * Gets information for a project.
      *
-     * @param projectId
-     * @param done
-     * @param error
+     * @param {String} projectId ID of the project.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getProject(projectId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/index.json";
@@ -489,10 +494,10 @@ class Server {
     /**
      * Gets metadata for a model within a project.
      *
-     * @param projectId
-     * @param modelId
-     * @param done
-     * @param error
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getMetadata(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/metadata.json";
@@ -502,10 +507,10 @@ class Server {
     /**
      * Gets geometry for a model within a project.
      *
-     * @param projectId
-     * @param modelId
-     * @param done
-     * @param error
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getGeometry(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/geometry.xkt";
@@ -515,11 +520,11 @@ class Server {
     /**
      * Gets metadata for an object within a model within a project.
      *
-     * @param projectId
-     * @param modelId
-     * @param objectId
-     * @param done
-     * @param error
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {String} objectId ID of the object.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getObjectInfo(projectId, modelId, objectId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/objects/" + objectId + "/properties.json";
@@ -527,12 +532,12 @@ class Server {
     }
 
     /**
-     * Gets issues for a model within a project.
+     * Gets existing issues for a model within a project.
      *
-     * @param projectId
-     * @param modelId
-     * @param done
-     * @param error
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
      */
     getIssues(projectId, modelId, done, error) {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/issues.json";
@@ -21425,8 +21430,8 @@ class Canvas extends Component {
 
         this.contextAttr.stencil = false;
         this.contextAttr.antialias = true;
-        this.contextAttr.premultipliedAlpha = this.contextAttr.premultipliedAlpha !== false;
-        this.contextAttr.antialias = this.contextAttr.antialias !== false;
+        this.contextAttr.premultipliedAlpha = (!!this.contextAttr.premultipliedAlpha);  // False by default: https://github.com/xeokit/xeokit-sdk/issues/251
+        this.contextAttr.antialias = (this.contextAttr.antialias !== false);
 
         // If the canvas uses css styles to specify the sizes make sure the basic
         // width and height attributes match or the WebGL context will use 300 x 150
@@ -30106,7 +30111,8 @@ class Scene extends Component {
             backgroundColor: cfg.backgroundColor,
             webgl2: cfg.webgl2 !== false,
             contextAttr: cfg.contextAttr || {},
-            clearColorAmbient: cfg.clearColorAmbient
+            clearColorAmbient: cfg.clearColorAmbient,
+            premultipliedAlpha: cfg.premultipliedAlpha
         });
 
         this.canvas.on("boundary", () => {
@@ -52512,7 +52518,9 @@ class ModelTreeView {
         this._objectNodes = {};
         this._rootName = cfg.rootName;
         this._sortNodes = cfg.sortNodes;
-        this._shownNodeId = null;
+
+        this._shownNodeSpan = null;
+        this._shownNodeLastBackgroundStyle = null;
 
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -53066,7 +53074,7 @@ class ModelTreeView {
     }
 
     showNode(objectId) {
-        if (this._shownNodeId) {
+        if (this._shownNodeSpan) {
             this.unShowNode();
         }
         const nodeId = this._objectToNodeID(objectId);
@@ -53097,7 +53105,7 @@ class ModelTreeView {
         const nodeElement = document.getElementById(nodeId);
         const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
         spanElement.scrollIntoView({block: "center"});
-        const background = spanElement.style.background;
+        this._shownNodeLastBackgroundStyle = spanElement.style.background;
         spanElement.style.background = "yellow";
         this._shownNodeId = nodeId;
     }
@@ -53112,8 +53120,7 @@ class ModelTreeView {
             return;
         }
         const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
-        const background = spanElement.style.background;
-        spanElement.style.background = background;
+        spanElement.style.background = this._shownNodeLastBackgroundStyle;
         this._shownNodeId = null;
     }
 
@@ -58955,7 +58962,7 @@ function initTabs(containerElement) {
 class BIMViewer extends Controller {
 
     /**
-     * Constructs a ViewerUI.
+     * Constructs a BIMViewer.
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      */
@@ -59012,7 +59019,7 @@ class BIMViewer extends Controller {
         super(null, cfg, server, viewer);
 
         /**
-         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIM viewer.
+         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
          * @type {Viewer}
          */
@@ -59506,7 +59513,7 @@ class BIMViewer extends Controller {
      *
      * Does nothing if the model is not currently loaded.
      *
-     * @param modelId
+     * @param {String} modelId ID of the model to unload.
      */
     unLoadModel(modelId) {
         if (!modelId) {
@@ -59622,7 +59629,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * flies the camera to fit the given object in view.
+     * Flies the camera to fit the given object in view.
      *
      * @param {String} objectId ID of the object
      * @param {Function} done Callback invoked on completion
@@ -59695,7 +59702,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * X-ray the object with the given ID.
+     * X-rays the object with the given ID.
      *
      * @param {String} objectId ID of object to x-ray.
      */
@@ -59760,6 +59767,9 @@ class BIMViewer extends Controller {
 
     /**
      * Selects all objects currently in the viewer, except for those with the given IDs.
+     *
+     * This causes the objects to glow with the selection color.
+     *
      * @param {String[]} objectIds IDs of objects to not select.
      */
     selectAllObjectsExceptFor(objectIds) {
@@ -59768,6 +59778,8 @@ class BIMViewer extends Controller {
 
     /**
      * De-selects all objects currently in the viewer.
+     *
+     * This removes the selection color from the objects.
      */
     deselectAllObjects() {
         this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
@@ -59974,6 +59986,9 @@ class BIMViewer extends Controller {
 
     /**
      * Resets the view.
+     *
+     * This resets object appearances (visibility, selection, highlight and X-ray), sets camera to
+     * default position, and removes section planes.
      */
     resetView() {
         this._resetAction.reset();
