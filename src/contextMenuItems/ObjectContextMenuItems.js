@@ -82,6 +82,7 @@ const ObjectContextMenuItems = [
             callback: function (context) {
                 const scene = context.viewer.scene;
                 scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsXRayed(scene.xrayedObjectIds, false);
             }
         }
     ],
