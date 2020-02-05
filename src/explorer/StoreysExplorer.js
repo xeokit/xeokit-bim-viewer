@@ -56,6 +56,30 @@ class StoreysExplorer extends Controller {
             };
         });
 
+        // Left-clicking on a tree node isolates that object in the 3D view
+
+        this._treeView.on("nodeTitleClicked", (e) => {
+            const scene = this.viewer.scene;
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsXRayed(objectIds, false);
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds),
+                duration: 0.5
+            }, () => {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
+            });
+        });
+
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
             if (!modelInfo) {

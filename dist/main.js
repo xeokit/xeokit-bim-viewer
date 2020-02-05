@@ -52518,9 +52518,9 @@ class ModelTreeView {
         this._objectNodes = {};
         this._rootName = cfg.rootName;
         this._sortNodes = cfg.sortNodes;
+        this._pruneEmptyNodes = cfg.pruneEmptyNodes;
 
-        this._shownNodeSpan = null;
-        this._shownNodeLastBackgroundStyle = null;
+        this._showListItemElementId;
 
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -52695,10 +52695,20 @@ class ModelTreeView {
         typeNodes) {
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name;
+        const children = metaObject.children;
+        const objectId = metaObject.id;
+        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
+            const viewer = this._treeViewPlugin.viewer;
+            const scene = viewer.scene;
+            const entity = scene.objects[objectId];
+            if (!entity) {
+                return;
+            }
+        }
         if (metaObjectType === "IfcBuilding") {
             buildingNode = {
-                nodeId: this._objectToNodeID(metaObject.id),
-                objectId: metaObject.id,
+                nodeId: this._objectToNodeID(objectId),
+                objectId: objectId,
                 title: this._rootName || ((metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType),
                 type: metaObjectType,
                 parent: null,
@@ -52715,8 +52725,8 @@ class ModelTreeView {
                 return;
             }
             storeyNode = {
-                nodeId: this._objectToNodeID(metaObject.id),
-                objectId: metaObject.id,
+                nodeId: this._objectToNodeID(objectId),
+                objectId: objectId,
                 title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                 type: metaObjectType,
                 parent: buildingNode,
@@ -52751,8 +52761,8 @@ class ModelTreeView {
                     typeNodes[metaObjectType] = typeNode;
                 }
                 const node = {
-                    nodeId: this._objectToNodeID(metaObject.id),
-                    objectId: metaObject.id,
+                    nodeId: this._objectToNodeID(objectId),
+                    objectId: objectId,
                     title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                     type: metaObjectType,
                     parent: typeNode,
@@ -52765,7 +52775,6 @@ class ModelTreeView {
                 this._objectNodes[node.objectId] = node;
             }
         }
-        const children = metaObject.children;
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 const childMetaObject = children[i];
@@ -52780,10 +52789,20 @@ class ModelTreeView {
         typeNodes) {
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name;
+        const children = metaObject.children;
+        const objectId = metaObject.id;
+        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
+            const viewer = this._treeViewPlugin.viewer;
+            const scene = viewer.scene;
+            const entity = scene.objects[objectId];
+            if (!entity) {
+                return;
+            }
+        }
         if (metaObjectType === "IfcBuilding") {
             buildingNode = {
-                nodeId: this._objectToNodeID(metaObject.id),
-                objectId: metaObject.id,
+                nodeId: this._objectToNodeID(objectId),
+                objectId: objectId,
                 title: this._rootName || ((metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType),
                 type: metaObjectType,
                 parent: null,
@@ -52798,10 +52817,8 @@ class ModelTreeView {
         } else {
             if (buildingNode) {
                 const objects = this._viewer.scene.objects;
-                const object = objects[metaObject.id];
+                const object = objects[objectId];
                 if (object) {
-                    const metaObjectType = metaObject.type;
-                    const metaObjectName = metaObject.name;
                     var typeNode = typeNodes[metaObjectType];
                     if (!typeNode) {
                         typeNode = {
@@ -52820,8 +52837,8 @@ class ModelTreeView {
                         typeNodes[metaObjectType] = typeNode;
                     }
                     const node = {
-                        nodeId: this._objectToNodeID(metaObject.id),
-                        objectId: metaObject.id,
+                        nodeId: this._objectToNodeID(objectId),
+                        objectId: objectId,
                         title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                         type: metaObjectType,
                         parent: typeNode,
@@ -52835,7 +52852,6 @@ class ModelTreeView {
                 }
             }
         }
-        const children = metaObject.children;
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 const childMetaObject = children[i];
@@ -52847,10 +52863,20 @@ class ModelTreeView {
     _createContainmentNodes(metaObject = this._rootMetaObject, parent) {
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name || metaObjectType;
+        const children = metaObject.children;
+        const objectId = metaObject.id;
+        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
+            const viewer = this._treeViewPlugin.viewer;
+            const scene = viewer.scene;
+            const entity = scene.objects[objectId];
+            if (!entity) {
+                return;
+            }
+        }
         const node = {
-            nodeId: this._objectToNodeID(metaObject.id),
-            objectId: metaObject.id,
-            title: (!parent) ? (this._rootName || metaObjectName) : (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObject.type,
+            nodeId: this._objectToNodeID(objectId),
+            objectId: objectId,
+            title: (!parent) ? (this._rootName || metaObjectName) : (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
             type: metaObjectType,
             parent: parent,
             numEntities: 0,
@@ -52864,7 +52890,7 @@ class ModelTreeView {
             this._rootNodes.push(node);
         }
         this._objectNodes[node.objectId] = node;
-        const children = metaObject.children;
+
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 const childMetaObject = children[i];
@@ -52931,7 +52957,7 @@ class ModelTreeView {
     }
 
     _alphaSortFunc(node1, node2) {
-        const title1 = node1.title.toUpperCase();
+        const title1 = node1.title.toUpperCase(); // FIXME: Should be case sensitive?
         const title2 = node2.title.toUpperCase();
         if (title1 < title2) {
             return -1;
@@ -53028,11 +53054,17 @@ class ModelTreeView {
         const span = document.createElement('span');
         span.textContent = node.title;
         nodeElement.appendChild(span);
-        span.addEventListener('click', () =>{
-            //alert("clicked");
-        });
         span.oncontextmenu = (e) => {
             this._treeViewPlugin.fire("contextmenu", {
+                event: e,
+                viewer: this._viewer,
+                treeViewPlugin: this._treeViewPlugin,
+                treeViewNode: node
+            });
+            e.preventDefault();
+        };
+        span.onclick = (e) => {
+            this._treeViewPlugin.fire("nodeTitleClicked", {
                 event: e,
                 viewer: this._viewer,
                 treeViewPlugin: this._treeViewPlugin,
@@ -53074,10 +53106,14 @@ class ModelTreeView {
     }
 
     showNode(objectId) {
-        if (this._shownNodeSpan) {
+        if (this._showListItemElementId) {
             this.unShowNode();
         }
-        const nodeId = this._objectToNodeID(objectId);
+        const node = this._objectNodes[objectId];
+        if (!node) {
+            return; // Node may not exist for the given object if (this._pruneEmptyNodes == true)
+        }
+        const nodeId = node.nodeId;
         const groupElementId = "a-" + nodeId;
         const groupElement = document.getElementById(groupElementId);
         if (groupElement) {
@@ -53086,7 +53122,6 @@ class ModelTreeView {
             return;
         }
         const path = [];
-        const node = this._objectNodes[objectId];
         path.unshift(node);
         let parent = node.parent;
         while (parent) {
@@ -53102,26 +53137,24 @@ class ModelTreeView {
                 this._expandGroupElement(groupElement);
             }
         }
-        const nodeElement = document.getElementById(nodeId);
-        const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
-        spanElement.scrollIntoView({block: "center"});
-        this._shownNodeLastBackgroundStyle = spanElement.style.background;
-        spanElement.style.background = "yellow";
-        this._shownNodeId = nodeId;
+        const listItemElementId = 'node-' + nodeId;
+        const listItemElement = document.getElementById(listItemElementId);
+        listItemElement.scrollIntoView({block: "center"});
+        listItemElement.classList.add("highlighted-node");
+        this._showListItemElementId = listItemElementId;
     }
 
     unShowNode() {
-        if (!this._shownNodeId) {
+        if (!this._showListItemElementId) {
             return;
         }
-        const nodeElement = document.getElementById(this._shownNodeId);
-        if (!nodeElement) {
-            this._shownNodeId = null;
+        const listItemElement = document.getElementById(this._showListItemElementId);
+        if (!listItemElement) {
+            this._showListItemElementId = null;
             return;
         }
-        const spanElement = nodeElement.parentElement.getElementsByTagName('span')[0];
-        spanElement.style.background = this._shownNodeLastBackgroundStyle;
-        this._shownNodeId = null;
+        listItemElement.classList.remove("highlighted-node");
+        this._showListItemElementId = null;
     }
 
     _expandGroupElement(groupElement) {
@@ -53303,7 +53336,9 @@ class ModelTreeView {
  *
  * ## Showing a Node by ID
  *
- * We can show a given node using its ID. This causes the TreeViewPlugin to expand and scroll the node into view.
+ * We can show a given node using its ID. This causes the TreeViewPlugin to collapse, then expand and scroll the node into view, then highlight the node.
+ *
+ * See the documentation for the {@link TreeViewPlugin#showNode} method for more information, including how to define a custom highlighted appearance for the node using CSS.
  *
  * Let's make the TreeViewPlugin show the node corresponding to whatever object {@link Entity} that we pick:
  *
@@ -53314,7 +53349,9 @@ class ModelTreeView {
  * });
  * ````
  *
- * Note that only works if the picked {@link Entity} is an object that belongs to a model that's represented in the TreeViewPlugin.
+ * This will de-highlight any node that was previously shown by this method.
+ *
+ * Note that this method only works if the picked {@link Entity} is an object that belongs to a model that's represented in the TreeViewPlugin.
  *
  * ## Customizing Appearance
  *
@@ -53348,7 +53385,7 @@ class ModelTreeView {
  * });
  * ````
  *
- * ## Sorting nodes
+ * ## Sorting Nodes
  *
  * TreeViewPlugin sorts its tree nodes by default. For a "storeys" hierarchy, it orders ````IfcBuildingStorey```` nodes
  * spatially, with the node for the highest story at the top, down to the lowest at the bottom. This assumes that the
@@ -53372,7 +53409,26 @@ class ModelTreeView {
  * Note that node sorting is only done for each model at the time that it is added to the TreeViewPlugin, and will not
  * update dynamically if we later transform the {@link Entity}s corresponding to the nodes.
  *
- * ## Context menu
+ * ## Pruning empty nodes
+ *
+ * Sometimes a model contains subtrees of objects that don't have any geometry. These are models whose
+ * {@link MetaModel} contains trees of {@link MetaObject}s that don't have any {@link Entity}s in the {@link Scene}.
+ *
+ * For these models, the tree view would contain nodes that don't do anything in the Scene when we interact with them,
+ * which is undesirable.
+ *
+ * By default, TreeViewPlugin will not create nodes for those objects. However, we can override that behaviour if we want
+ * to have nodes for those objects (perhaps for debugging the model):
+ *
+ * ````javascript
+ * const treeView = new TreeViewPlugin(viewer, {
+ *      containerElement: document.getElementById("myTreeViewContainer"),
+ *      hierarchy: "stories",
+ *      pruneEmptyNodes: false // <<------ Create nodes for object subtrees without geometry
+ * });
+ * ````
+ *
+ * ## Context Menu
  *
  * TreeViewPlugin fires a "contextmenu" event whenever we right-click on a tree node.
  *
@@ -53462,6 +53518,57 @@ class ModelTreeView {
  * });
  * ````
  *
+ * ## Clicking Node Titles
+ *
+ * TreeViewPlugin fires a "nodeTitleClicked" event whenever we left-click on a tree node.
+ *
+ * Like the "contextmenu" event, this event contains:
+ *
+ * * ````event```` - the original [click](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event) [MouseEvent](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent)
+ * * ````viewer```` - the {@link Viewer}
+ * * ````treeViewPlugin```` - the TreeViewPlugin
+ * * ````treeViewNode```` - the {@link TreeViewNode} representing the tree node
+ *<br><br>
+ *
+ * Let's register a callback to isolate and fit-to-view the {@link Entity}(s) represented by the node. This callback is
+ * going to X-ray all the other Entitys, fly the camera to fit the Entity(s) for the clicked node, then hide the other Entitys.
+ *
+ * [[Run an example](https://xeokit.github.io/xeokit-sdk/examples/#ContextMenu_Canvas_TreeViewPlugin_Custom)]
+ *
+ * ````javascript
+ * treeView.on("nodeTitleClicked", (e) => {
+ *     const scene = viewer.scene;
+ *     const objectIds = [];
+ *     e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+ *         if (treeViewNode.objectId) {
+ *             objectIds.push(treeViewNode.objectId);
+ *         }
+ *     });
+ *     scene.setObjectsXRayed(scene.objectIds, true);
+ *     scene.setObjectsVisible(scene.objectIds, true);
+ *     scene.setObjectsXRayed(objectIds, false);
+ *     viewer.cameraFlight.flyTo({
+ *         aabb: scene.getAABB(objectIds),
+ *         duration: 0.5
+ *     }, () => {
+ *         setTimeout(function () {
+ *             scene.setObjectsVisible(scene.xrayedObjectIds, false);
+ *             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+ *         }, 500);
+ *     });
+ * });
+ * ````
+ *
+ * To make the cursor change to a pointer when we hover over the node titles, and also to make the titles change to blue, we'll also define this CSS for the ````<span>```` elements
+ * that represent the titles of our TreeViewPlugin nodes:
+ *
+ * ````css
+ * #treeViewContainer ul li span:hover {
+ *      color: blue;
+ *      cursor: pointer;
+ * }
+ * ````
+ *
  * @class TreeViewPlugin
  */
 class TreeViewPlugin extends Plugin {
@@ -53478,6 +53585,7 @@ class TreeViewPlugin extends Plugin {
      * @param {Boolean} [cfg.sortNodes=true] When true, will sort the children of each node. For a "storeys" hierarchy, the
      * ````IfcBuildingStorey```` nodes will be ordered spatially, from the highest storey down to the lowest, on the
      * vertical World axis. For all hierarchy types, other node types will be ordered in the ascending alphanumeric order of their titles.
+     * @param {Boolean} [cfg.pruneEmptyNodes=true] When true, will not contain nodes that don't have content in the {@link Scene}. These are nodes whose {@link MetaObject}s don't have {@link Entity}s.
      */
     constructor(viewer, cfg = {}) {
 
@@ -53494,6 +53602,7 @@ class TreeViewPlugin extends Plugin {
         this._autoAddModels = (cfg.autoAddModels !== false);
         this._autoExpandDepth = (cfg.autoExpandDepth || 0);
         this._sortNodes = (cfg.sortNodes !== false);
+        this._pruneEmptyNodes = (cfg.pruneEmptyNodes !== false);
 
         if (this._autoAddModels) {
             const modelIds = Object.keys(this.viewer.scene.models);
@@ -53584,6 +53693,7 @@ class TreeViewPlugin extends Plugin {
             autoExpandDepth: this._autoExpandDepth,
             hierarchy: this._hierarchy,
             sortNodes: this._sortNodes,
+            pruneEmptyNodes: this._pruneEmptyNodes,
             rootName: options.rootName
         });
         model.on("destroyed", () => {
@@ -53627,6 +53737,13 @@ class TreeViewPlugin extends Plugin {
      * This causes the tree view to collapse, then expand to reveal the node, then highlight the node.
      *
      * If a node is previously highlighted, de-highlights that node and collapses the tree first.
+     *
+     * Note that if the TreeViewPlugin was configured with ````pruneEmptyNodes: true```` (default configuration), then the
+     * node won't exist in the tree if it has no Entitys in the {@link Scene}. in that case, nothing will happen.
+     *
+     * Within the DOM, the node is represented by an ````<li>```` element. This method will add a ````.highlighted-node```` class to
+     * the element to make it appear highlighted, removing that class when de-highlighting it again. See the CSS rules
+     * in the TreeViewPlugin examples for an example of that class.
      *
      * @param {String} objectId ID of the {@link Entity}.
      */
@@ -54292,6 +54409,30 @@ class ObjectsExplorer extends Controller {
             };
         });
 
+        // Left-clicking on a tree node isolates that object in the 3D view
+
+        this._treeView.on("nodeTitleClicked", (e) => {
+            const scene = this.viewer.scene;
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsXRayed(objectIds, false);
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds),
+                duration: 0.5
+            }, () => {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
+            });
+        });
+
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
@@ -54398,6 +54539,30 @@ class ClassesExplorer extends Controller {
             };
         });
 
+        // Left-clicking on a tree node isolates that object in the 3D view
+
+        this._treeView.on("nodeTitleClicked", (e) => {
+            const scene = this.viewer.scene;
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsXRayed(objectIds, false);
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds),
+                duration: 0.5
+            }, () => {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
+            });
+        });
+
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
             if (this.viewer.metaScene.metaModels[modelId]) {
                 const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
@@ -54502,6 +54667,30 @@ class StoreysExplorer extends Controller {
                 treeViewPlugin: e.treeViewPlugin,
                 treeViewNode: e.treeViewNode
             };
+        });
+
+        // Left-clicking on a tree node isolates that object in the 3D view
+
+        this._treeView.on("nodeTitleClicked", (e) => {
+            const scene = this.viewer.scene;
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsXRayed(objectIds, false);
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds),
+                duration: 0.5
+            }, () => {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
+            });
         });
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
