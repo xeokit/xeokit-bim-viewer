@@ -6356,6 +6356,7 @@ class ResetAction extends Controller {
             const modelId = modelIds[i];
             this._restoreModelMemento(modelId);
         }
+        this.bimViewer.unShowObjectInExplorers();
         this.fire("reset", true);
         this._resetCamera();
     }
