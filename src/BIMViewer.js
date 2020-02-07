@@ -400,6 +400,20 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.panToPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = true;
+
+        // Scalable Ambient Obscurance (SAO) defaults
+
+        scene.camera.perspective.near = 0.05;
+        scene.camera.perspective.far = 3000.0;
+        scene.camera.ortho.near = 0.05;
+        scene.camera.ortho.far = 3000.0;
+
+        const sao = scene.sao;
+        sao.enabled = false;
+        sao.bias = 0.5;
+        sao.intensity = 0.5;
+        sao.scale = 1200.0;
+        sao.kernelRadius = 100;
     }
 
     _initCanvasContextMenus() {
@@ -442,6 +456,20 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets a batch of configurations.
+     *
+     * @param {*} configs Map of key-value configuration pairs.
+     */
+    setConfigs(configs) {
+        for (let name in configs) {
+            if (configs.hasOwnProperty(name)) {
+                const value = configs[name];
+                this.setConfig(name, value);
+            }
+        }
+    }
+
+    /**
      * Sets a configuration.
      *
      * TODO: Document available options
@@ -450,21 +478,52 @@ class BIMViewer extends Controller {
      * @param {String} value String representation of configuration value.
      */
     setConfig(name, value) {
-        switch (name) {
-            case "saoEnabled":
-                switch (value) {
-                    case "true":
-                        this.viewer.scene.sao.enabled = true;
-                        break;
-                    case "false":
-                        this.viewer.scene.sao.enabled = false;
-                        break;
-                    default:
-                        this.error("setConfig() - unsupported value for 'saoEnabled' - accepted values are 'true' and 'false'");
-                }
-                break;
-            default:
-                this.error("setConfig() - unsupported configuration name: '" + name + "'");
+
+        try {
+            switch (name) {
+
+                case "cameraNear":
+                    const near = parseFloat(value);
+                    this.viewer.scene.camera.perspective.near = near;
+                    this.viewer.scene.camera.ortho.near = near;
+                    break;
+
+                case "cameraFar":
+                    const far = parseFloat(value);
+                    this.viewer.scene.camera.perspective.far = far;
+                    this.viewer.scene.camera.ortho.far = far;
+                    break;
+
+                case "saoEnabled":
+                    this.viewer.scene.sao.enabled = (value === "true");
+                    break;
+
+                case "saoBias":
+                    this.viewer.scene.sao.bias = parseFloat(value);
+                    break;
+
+                case "saoIntensity":
+                    this.viewer.scene.sao.intensity = parseFloat(value);
+                    break;
+
+                case "saoScale":
+                    this.viewer.scene.sao.scale = parseFloat(value);
+                    break;
+
+                case "saoKernelRadius":
+                    this.viewer.scene.sao.kernelRadius = parseFloat(value);
+                    break;
+
+                case "saoBlur":
+                    this.viewer.scene.sao.blur = (value === "true");
+                    break;
+
+                default:
+                    this.error("setConfig() - unsupported configuration: '" + name + "'");
+            }
+
+        } catch (e) {
+            this.error("setConfig() - failed to configure '" + name + "': " + e);
         }
     }
 

@@ -44,6 +44,10 @@ class ModelsExplorer extends Controller {
     loadProject(projectId, done, error) {
         this.server.getProject(projectId, (projectInfo) => {
             this.unloadProject();
+            const configs = projectInfo.configs;
+            if (configs) {
+                this.bimViewer.setConfigs(configs);
+            }
             this._projectId = projectId;
             var html = "";
             const modelsInfo = projectInfo.models || [];
