@@ -744,10 +744,23 @@
         // Request params contain static params, such as the project to load
 
         const requestParams = getRequestParams();
+
         const projectId = requestParams.projectId;
 
         if (!projectId) {
             return;
+        }
+
+        const configs = requestParams.configs;
+        if (configs) {
+            const configNameVals = configs.split(",");
+            for (let i = 0, len = configNameVals.length; i < len; i++) {
+                const configNameValStr = configNameVals[i];
+                const configNameVal = configNameValStr.split(":");
+                const configName = configNameVal[0];
+                const configVal = configNameVal[1];
+                bimViewer.setConfig(configName, configVal);
+            }
         }
 
         bimViewer.loadProject(projectId, () => {
