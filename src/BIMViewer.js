@@ -19,10 +19,9 @@ import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLi
 import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
 import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
 import {ThreeDMode} from "./toolbar/ThreeDMode.js";
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
-import {ObjectContextMenuItems} from "./contextMenuItems/ObjectContextMenuItems.js";
-import {CanvasContextMenuItems} from "./contextMenuItems/CanvasContextMenuItems.js";
+import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 
 const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
@@ -164,15 +163,10 @@ class BIMViewer extends Controller {
             throw "Config expected: navCubeCanvasElement";
         }
 
-        if (!cfg.sectionPlanesOverviewCanvasElement) {
-            throw "Config expected: sectionPlanesOverviewCanvasElement";
-        }
-
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
-        const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
 
         explorerElement.oncontextmenu = (e) => {
@@ -184,10 +178,6 @@ class BIMViewer extends Controller {
         };
 
         navCubeCanvasElement.oncontextmenu = (e) => {
-            e.preventDefault();
-        };
-
-        sectionPlanesOverviewCanvasElement.oncontextmenu = (e) => {
             e.preventDefault();
         };
 
@@ -282,7 +272,6 @@ class BIMViewer extends Controller {
 
         this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-section"),
-            sectionPlanesOverviewCanvasElement: sectionPlanesOverviewCanvasElement,
             active: false
         });
 
@@ -410,20 +399,13 @@ class BIMViewer extends Controller {
 
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.panToPointer = true;
+        this.viewer.cameraControl.doublePickFlyTo = true;
     }
 
     _initCanvasContextMenus() {
 
-        this._canvasContextMenu = new ContextMenu({
-            context: {
-                viewer: this.viewer
-            },
-            items: CanvasContextMenuItems
-        });
-
-        this._objectContextMenu = new ContextMenu({
-            items: ObjectContextMenuItems
-        });
+        this._canvasContextMenu = new CanvasContextMenu();
+        this._objectContextMenu = new ObjectContextMenu();
 
         this.viewer.cameraControl.on("rightClick", (e) => {
 
@@ -435,7 +417,6 @@ class BIMViewer extends Controller {
 
             if (hit && hit.entity.isObject) {
                 this._canvasContextMenu.hide();
-                this._objectContextMenu.show(event.pageX, event.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
@@ -448,13 +429,14 @@ class BIMViewer extends Controller {
                     },
                     entity: hit.entity
                 };
+                this._objectContextMenu.show(event.pageX, event.pageY);
             } else {
                 this._objectContextMenu.hide();
-                this._canvasContextMenu.show(event.pageX, event.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
+                this._canvasContextMenu.show(event.pageX, event.pageY);
             }
         });
     }

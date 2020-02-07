@@ -407,11 +407,15 @@
 
         .xeokit-objectsTab ul li span {
             display: inline-block;
+            width: calc(100% - 50px);
+            padding-left: 2px;
         }
 
         .xeokit-objectsTab ul li span:hover {
-            color: #477dca;
+            color: #ffffff;
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            padding-left: 2px;
         }
 
         .xeokit-objectsTab .top-right {
@@ -468,11 +472,15 @@
 
         .xeokit-storeysTab ul li span {
             display: inline-block;
+            width: calc(100% - 50px);
+            padding-left: 2px;
         }
 
         .xeokit-storeysTab ul li span:hover {
-            color: #477dca;
+            color: white;
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            padding-left: 2px;
         }
 
         .xeokit-storeysTab .top-right {
@@ -529,11 +537,15 @@
 
         .xeokit-classesTab ul li span {
             display: inline-block;
+            width: calc(100% - 50px);
+            padding-left: 2px;
         }
 
         .xeokit-classesTab ul li span:hover {
-            color: #477dca;
+            color: white;
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            padding-left: 2px;
         }
 
         .xeokit-classesTab .top-right {
@@ -568,15 +580,13 @@
             border: 1px solid black;
             border-radius: 6px;
             padding: 0;
-            line-height: 1.2em;
+            width: 200px;
         }
 
         .xeokit-context-menu ul {
             list-style: none;
             margin-left: 0;
             padding: 0;
-            margin-top: 5px;
-            margin-bottom: 5px;
         }
 
         .xeokit-context-menu ul li {
@@ -586,18 +596,34 @@
             padding-top: 4px;
             padding-bottom: 4px;
             color: black;
-            /*border-bottom: 1px solid gray;*/
+            border-bottom: 1px solid gray;
             background: rgba(255, 255, 255, 0.46);
             cursor: pointer;
+            width: calc(100% - 30px);
         }
 
         .xeokit-context-menu ul li:hover {
             background: black;
-            color: rgba(255, 255, 255, 0.46);
+            color: white;
+            font-weight: bold;
         }
 
         .xeokit-context-menu ul li span {
             display: inline-block;
+        }
+
+        .xeokit-context-menu .disabled {
+            display: inline-block;
+            color: gray;
+            cursor: default;
+            font-weight: normal;
+        }
+
+        .xeokit-context-menu .disabled:hover {
+            color: gray;
+            cursor: default;
+            background: #eeeeee;
+            font-weight: normal;
         }
 
         /* Busy modal dialog */
@@ -675,7 +701,6 @@
     </div>
 </div>
 <canvas id="myNavCubeCanvas"></canvas>
-<canvas id="mySectionPlanesOverviewCanvas"></canvas>
 </body>
 
 <link rel="stylesheet" href="./lib/backdrop.css"/>
@@ -696,8 +721,7 @@
             canvasElement: document.getElementById("myCanvas"), // WebGL canvas
             explorerElement: document.getElementById("myExplorer"), // Left panel
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
-            navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
-            sectionPlanesOverviewCanvasElement: document.getElementById("mySectionPlanesOverviewCanvas")
+            navCubeCanvasElement: document.getElementById("myNavCubeCanvas")
         });
 
         tippy('[data-tippy-content]'); // Init tooltips

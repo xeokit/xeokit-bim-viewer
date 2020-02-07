@@ -12,16 +12,12 @@ class SectionTool extends Controller {
             throw "Missing config: buttonElement";
         }
 
-        if (!cfg.sectionPlanesOverviewCanvasElement) {
-            throw "Missing config: sectionPlanesOverviewCanvasElement";
-        }
-
         const buttonElement = cfg.buttonElement;
-        const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
-            overviewCanvas: sectionPlanesOverviewCanvasElement
         });
+
+        this._sectionPlanesPlugin.setOverviewVisible(false);
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
@@ -40,7 +36,6 @@ class SectionTool extends Controller {
         });
 
         this.on("active", (active) => {
-            this._sectionPlanesPlugin.setOverviewVisible(active);
             if (!active) {
                 this._sectionPlanesPlugin.hideControl();
             }

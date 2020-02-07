@@ -1,7 +1,6 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
-import {TreeViewContextMenuItems} from "../contextMenuItems/TreeViewContextMenuItems.js";
+import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
 
 /** @private */
 class ClassesExplorer extends Controller {
@@ -43,17 +42,15 @@ class ClassesExplorer extends Controller {
             autoAddModels: false
         });
 
-        this._treeViewContextMenu = new ContextMenu({
-            items: TreeViewContextMenuItems
-        });
+        this._treeViewContextMenu = new TreeViewContextMenu();
 
         this._treeView.on("contextmenu", (e) => {
-            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
                 treeViewNode: e.treeViewNode
             };
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
 
         // Left-clicking on a tree node isolates that object in the 3D view
@@ -69,6 +66,7 @@ class ClassesExplorer extends Controller {
             scene.setObjectsXRayed(scene.objectIds, true);
             scene.setObjectsVisible(scene.objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
             this.viewer.cameraFlight.flyTo({
                 aabb: scene.getAABB(objectIds),
                 duration: 0.5

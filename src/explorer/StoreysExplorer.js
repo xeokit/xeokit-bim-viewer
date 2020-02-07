@@ -1,7 +1,6 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
-import {TreeViewContextMenuItems} from "../contextMenuItems/TreeViewContextMenuItems.js";
+import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -40,34 +39,34 @@ class StoreysExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: storeysElement,
             autoAddModels: false,
-            hierarchy: "storeys"
+            hierarchy: "storeys",
+            autoExpandDepth: 1
         });
 
-        this._treeViewContextMenu = new ContextMenu({
-            items: TreeViewContextMenuItems
-        });
+        this._treeViewContextMenu = new TreeViewContextMenu();
 
         this._treeView.on("contextmenu", (e) => {
-            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
                 treeViewNode: e.treeViewNode
             };
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
 
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
             const scene = this.viewer.scene;
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
             const objectIds = [];
             e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
                 if (treeViewNode.objectId) {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
-            scene.setObjectsXRayed(scene.objectIds, true);
-            scene.setObjectsVisible(scene.objectIds, true);
             scene.setObjectsXRayed(objectIds, false);
             this.viewer.cameraFlight.flyTo({
                 aabb: scene.getAABB(objectIds),
