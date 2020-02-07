@@ -1,11 +1,11 @@
 {
-  "coverage": "34.46%",
-  "expectCount": 235,
-  "actualCount": 81,
+  "coverage": "34.74%",
+  "expectCount": 236,
+  "actualCount": 82,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 62,
-      "actualCount": 39,
+      "expectCount": 63,
+      "actualCount": 40,
       "undocumentLines": [
         26,
         68,
@@ -27,9 +27,9 @@
         278,
         352,
         355,
-        405,
-        407,
-        408
+        419,
+        421,
+        422
       ]
     },
     "src/BusyModal.js": {
@@ -122,16 +122,16 @@
         40,
         41,
         44,
-        87,
-        108,
+        91,
         112,
-        182,
-        206,
-        215,
+        116,
+        186,
+        210,
         219,
         223,
         227,
-        231
+        231,
+        235
       ]
     },
     "src/explorer/ObjectsExplorer.js": {

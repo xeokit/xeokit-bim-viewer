@@ -444,6 +444,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setconfigs",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs",
+    "src/BIMViewer.js~BIMViewer#setConfigs",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setcontrolsenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setControlsEnabled",
     "src/BIMViewer.js~BIMViewer#setControlsEnabled",
