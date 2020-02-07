@@ -59655,6 +59655,33 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets a configuration.
+     *
+     * TODO: Document available options
+     *
+     * @param {String} name Configuration name.
+     * @param {String} value String representation of configuration value.
+     */
+    setConfig(name, value) {
+        switch (name) {
+            case "saoEnabled":
+                switch (value) {
+                    case "true":
+                        this.viewer.scene.sao.enabled = true;
+                        break;
+                    case "false":
+                        this.viewer.scene.sao.enabled = false;
+                        break;
+                    default:
+                        this.error("setConfig() - unsupported value for 'saoEnabled' - accepted values are 'true' and 'false'");
+                }
+                break;
+            default:
+                this.error("setConfig() - unsupported configuration name: '" + name + "'");
+        }
+    }
+
+    /**
      * Gets information on all available projects.
      *
      * ### Example
