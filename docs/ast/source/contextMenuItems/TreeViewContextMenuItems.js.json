@@ -12785,10 +12785,10 @@
                               }
                             },
                             "extra": {
-                              "rawValue": "Reset X-ray",
-                              "raw": "\"Reset X-ray\""
+                              "rawValue": "X-Ray None",
+                              "raw": "\"X-Ray None\""
                             },
-                            "value": "Reset X-ray"
+                            "value": "X-Ray None"
                           }
                         },
                         {
@@ -15038,10 +15038,10 @@
                               }
                             },
                             "extra": {
-                              "rawValue": "Reset Selection",
-                              "raw": "\"Reset Selection\""
+                              "rawValue": "Select None",
+                              "raw": "\"Select None\""
                             },
-                            "value": "Reset Selection"
+                            "value": "Select None"
                           }
                         },
                         {
@@ -28164,10 +28164,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "Reset X-ray",
-                                "raw": "\"Reset X-ray\""
+                                "rawValue": "X-Ray None",
+                                "raw": "\"X-Ray None\""
                               },
-                              "value": "Reset X-ray"
+                              "value": "X-Ray None"
                             }
                           },
                           {
@@ -30417,10 +30417,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "Reset Selection",
-                                "raw": "\"Reset Selection\""
+                                "rawValue": "Select None",
+                                "raw": "\"Select None\""
                               },
-                              "value": "Reset Selection"
+                              "value": "Select None"
                             }
                           },
                           {
@@ -56792,7 +56792,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Reset X-ray",
+      "value": "X-Ray None",
       "start": 7089,
       "end": 7102,
       "loc": {
@@ -61455,7 +61455,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Reset Selection",
+      "value": "Select None",
       "start": 8367,
       "end": 8384,
       "loc": {

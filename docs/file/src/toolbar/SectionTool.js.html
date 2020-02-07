@@ -50,16 +50,12 @@ class SectionTool extends Controller {
             throw &quot;Missing config: buttonElement&quot;;
         }
 
-        if (!cfg.sectionPlanesOverviewCanvasElement) {
-            throw &quot;Missing config: sectionPlanesOverviewCanvasElement&quot;;
-        }
-
         const buttonElement = cfg.buttonElement;
-        const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
-            overviewCanvas: sectionPlanesOverviewCanvasElement
         });
+
+        this._sectionPlanesPlugin.setOverviewVisible(false);
 
         this.on(&quot;enabled&quot;, (enabled) =&gt; {
             if (!enabled) {
@@ -78,7 +74,6 @@ class SectionTool extends Controller {
         });
 
         this.on(&quot;active&quot;, (active) =&gt; {
-            this._sectionPlanesPlugin.setOverviewVisible(active);
             if (!active) {
                 this._sectionPlanesPlugin.hideControl();
             }

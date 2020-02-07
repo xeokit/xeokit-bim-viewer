@@ -8279,10 +8279,10 @@
                               }
                             },
                             "extra": {
-                              "rawValue": "Reset X-ray",
-                              "raw": "\"Reset X-ray\""
+                              "rawValue": "X-Ray None",
+                              "raw": "\"X-Ray None\""
                             },
-                            "value": "Reset X-ray"
+                            "value": "X-Ray None"
                           }
                         },
                         {
@@ -17945,10 +17945,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "Reset X-ray",
-                                "raw": "\"Reset X-ray\""
+                                "rawValue": "X-Ray None",
+                                "raw": "\"X-Ray None\""
                               },
-                              "value": "Reset X-ray"
+                              "value": "X-Ray None"
                             }
                           },
                           {
@@ -35983,7 +35983,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Reset X-ray",
+      "value": "X-Ray None",
       "start": 4409,
       "end": 4422,
       "loc": {

@@ -38,8 +38,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/explorer/StoreysExplorer.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {TreeViewPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js&quot;;
-import {ContextMenu} from &quot;@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js&quot;;
-import {TreeViewContextMenuItems} from &quot;../contextMenuItems/TreeViewContextMenuItems.js&quot;;
+import {TreeViewContextMenu} from &quot;../contextMenus/TreeViewContextMenu.js&quot;;
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -78,20 +77,44 @@ class StoreysExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: storeysElement,
             autoAddModels: false,
-            hierarchy: &quot;storeys&quot;
+            hierarchy: &quot;storeys&quot;,
+            autoExpandDepth: 1
         });
 
-        this._treeViewContextMenu = new ContextMenu({
-            items: TreeViewContextMenuItems
-        });
+        this._treeViewContextMenu = new TreeViewContextMenu();
 
         this._treeView.on(&quot;contextmenu&quot;, (e) =&gt; {
-            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
                 treeViewNode: e.treeViewNode
             };
+            this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
+        });
+
+        // Left-clicking on a tree node isolates that object in the 3D view
+
+        this._treeView.on(&quot;nodeTitleClicked&quot;, (e) =&gt; {
+            const scene = this.viewer.scene;
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) =&gt; {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            scene.setObjectsXRayed(objectIds, false);
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds),
+                duration: 0.5
+            }, () =&gt; {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
+            });
         });
 
         this._onModelLoaded = this.viewer.scene.on(&quot;modelLoaded&quot;, (modelId) =&gt;{

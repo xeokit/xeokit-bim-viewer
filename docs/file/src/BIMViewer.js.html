@@ -57,10 +57,9 @@ import {AmbientLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/Ambi
 import {DirLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js&quot;;
 import {BCFViewpointsPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js&quot;;
 import {ThreeDMode} from &quot;./toolbar/ThreeDMode.js&quot;;
-import {ContextMenu} from &quot;@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js&quot;;
-import {ObjectContextMenuItems} from &quot;./contextMenuItems/ObjectContextMenuItems.js&quot;;
-import {CanvasContextMenuItems} from &quot;./contextMenuItems/CanvasContextMenuItems.js&quot;;
+import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
 import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 
 const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;
     &lt;div class=&quot;xeokit-tab xeokit-modelsTab&quot;&gt;
@@ -202,15 +201,10 @@ class BIMViewer extends Controller {
             throw &quot;Config expected: navCubeCanvasElement&quot;;
         }
 
-        if (!cfg.sectionPlanesOverviewCanvasElement) {
-            throw &quot;Config expected: sectionPlanesOverviewCanvasElement&quot;;
-        }
-
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
-        const sectionPlanesOverviewCanvasElement = cfg.sectionPlanesOverviewCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
 
         explorerElement.oncontextmenu = (e) =&gt; {
@@ -222,10 +216,6 @@ class BIMViewer extends Controller {
         };
 
         navCubeCanvasElement.oncontextmenu = (e) =&gt; {
-            e.preventDefault();
-        };
-
-        sectionPlanesOverviewCanvasElement.oncontextmenu = (e) =&gt; {
             e.preventDefault();
         };
 
@@ -320,7 +310,6 @@ class BIMViewer extends Controller {
 
         this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(&quot;.xeokit-section&quot;),
-            sectionPlanesOverviewCanvasElement: sectionPlanesOverviewCanvasElement,
             active: false
         });
 
@@ -448,20 +437,13 @@ class BIMViewer extends Controller {
 
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.panToPointer = true;
+        this.viewer.cameraControl.doublePickFlyTo = true;
     }
 
     _initCanvasContextMenus() {
 
-        this._canvasContextMenu = new ContextMenu({
-            context: {
-                viewer: this.viewer
-            },
-            items: CanvasContextMenuItems
-        });
-
-        this._objectContextMenu = new ContextMenu({
-            items: ObjectContextMenuItems
-        });
+        this._canvasContextMenu = new CanvasContextMenu();
+        this._objectContextMenu = new ObjectContextMenu();
 
         this.viewer.cameraControl.on(&quot;rightClick&quot;, (e) =&gt; {
 
@@ -473,7 +455,6 @@ class BIMViewer extends Controller {
 
             if (hit &amp;&amp; hit.entity.isObject) {
                 this._canvasContextMenu.hide();
-                this._objectContextMenu.show(event.pageX, event.pageY);
                 this._objectContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this,
@@ -486,15 +467,43 @@ class BIMViewer extends Controller {
                     },
                     entity: hit.entity
                 };
+                this._objectContextMenu.show(event.pageX, event.pageY);
             } else {
                 this._objectContextMenu.hide();
-                this._canvasContextMenu.show(event.pageX, event.pageY);
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
+                this._canvasContextMenu.show(event.pageX, event.pageY);
             }
         });
+    }
+
+    /**
+     * Sets a configuration.
+     *
+     * TODO: Document available options
+     *
+     * @param {String} name Configuration name.
+     * @param {String} value String representation of configuration value.
+     */
+    setConfig(name, value) {
+        switch (name) {
+            case &quot;saoEnabled&quot;:
+                switch (value) {
+                    case &quot;true&quot;:
+                        this.viewer.scene.sao.enabled = true;
+                        break;
+                    case &quot;false&quot;:
+                        this.viewer.scene.sao.enabled = false;
+                        break;
+                    default:
+                        this.error(&quot;setConfig() - unsupported value for &apos;saoEnabled&apos; - accepted values are &apos;true&apos; and &apos;false&apos;&quot;);
+                }
+                break;
+            default:
+                this.error(&quot;setConfig() - unsupported configuration name: &apos;&quot; + name + &quot;&apos;&quot;);
+        }
     }
 
     /**

@@ -438,6 +438,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setconfig",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfig",
+    "src/BIMViewer.js~BIMViewer#setConfig",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setcontrolsenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setControlsEnabled",
     "src/BIMViewer.js~BIMViewer#setControlsEnabled",
@@ -540,21 +546,21 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/contextmenuitems/canvascontextmenuitems.js",
-    "file/src/contextMenuItems/CanvasContextMenuItems.js.html",
-    "src/contextMenuItems/CanvasContextMenuItems.js",
+    "src/contextmenus/canvascontextmenu.js",
+    "file/src/contextMenus/CanvasContextMenu.js.html",
+    "src/contextMenus/CanvasContextMenu.js",
     "file"
   ],
   [
-    "src/contextmenuitems/objectcontextmenuitems.js",
-    "file/src/contextMenuItems/ObjectContextMenuItems.js.html",
-    "src/contextMenuItems/ObjectContextMenuItems.js",
+    "src/contextmenus/objectcontextmenu.js",
+    "file/src/contextMenus/ObjectContextMenu.js.html",
+    "src/contextMenus/ObjectContextMenu.js",
     "file"
   ],
   [
-    "src/contextmenuitems/treeviewcontextmenuitems.js",
-    "file/src/contextMenuItems/TreeViewContextMenuItems.js.html",
-    "src/contextMenuItems/TreeViewContextMenuItems.js",
+    "src/contextmenus/treeviewcontextmenu.js",
+    "file/src/contextMenus/TreeViewContextMenu.js.html",
+    "src/contextMenus/TreeViewContextMenu.js",
     "file"
   ],
   [
