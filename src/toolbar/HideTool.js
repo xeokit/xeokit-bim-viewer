@@ -30,8 +30,10 @@ class HideTool extends Controller {
         this.on("active", (active) => {
             if (active) {
                 buttonElement.classList.add("active");
+                this.viewer.cameraControl.doublePickFlyTo = false;
             } else {
                 buttonElement.classList.remove("active");
+                this.viewer.cameraControl.doublePickFlyTo = true;
             }
         });
 
