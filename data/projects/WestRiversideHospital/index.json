@@ -3,25 +3,70 @@
   "name": "West Riverside Hospital",
   "models": [
     {
+      "id": "architectural",
+      "name": "Hospital Architecture",
+      "edges": true,
+      "useSAO": true
+    },
+    {
       "id": "structure",
       "name": "Hospital Structure",
       "default": true
     },
     {
       "id": "electrical",
-      "name": "Hospital Electrical"
+      "name": "Hospital Electrical",
+      "edges": true,
+      "useSAO": false
     },
     {
       "id": "sprinklers",
-      "name": "Hospital Sprinklers"
+      "name": "Hospital Sprinklers",
+      "edges": true,
+      "useSAO": false
     },
     {
       "id": "plumbing",
-      "name": "Hospital Plumbing"
+      "name": "Hospital Plumbing",
+      "edges": true,
+      "useSAO": false
     },
     {
       "id": "fireAlarms",
-      "name": "Hospital Fire Alarms"
+      "name": "Hospital Fire Alarms",
+      "edges": true,
+      "useSAO": false
+    },
+    {
+      "id": "mechanical",
+      "name": "Hospital Mechanical",
+      "edges": true,
+      "useSAO": false
     }
-  ]
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [0.9, 0.9, 1.0],
+    "cameraNear": 0.05,
+    "cameraFar": 3000.0,
+    "saoEnabled": true,
+    "saoBias": 0.5,
+    "saoIntensity": 0.7,
+    "saoScale": 1200.0,
+    "saoKernelRadius": 100,
+    "saoBlur": true,
+    "useColors": "model"
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "structure",
+      "electrical",
+      "plumbing"
+    ]
+  },
+  "viewerState": {
+    "viewCubeEnabled": true,
+    "threeDEnabled": true,
+    "tabOpen": "storeys",
+    "XselectedStorey": "2SWZMQPyD9pfT9q87pgXa1"
+  }
 }
