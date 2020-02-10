@@ -50,6 +50,7 @@ xeokit-viewer is an open source BIM viewer for the Web, built on the [xeokit SDK
 | [Holter Tower](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
 | [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
 | [Schependomlaan](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan_selectedStorey) |
 | [Duplex](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
 | [Duplex and Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=ManyModels)| [Duplex](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274), [Conference Center](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
 
