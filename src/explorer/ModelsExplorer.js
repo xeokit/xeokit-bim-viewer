@@ -34,7 +34,7 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            // objectDefaults: IFCObjectDefaults
+            objectDefaults: IFCObjectDefaults
         });
 
         this._modelsInfo = {};
