@@ -134,6 +134,7 @@ class ModelsExplorer extends Controller {
         const viewerState = projectInfo.viewerState;
         if (!viewerState) {
             done();
+            return;
         }
         if (viewerState.tabOpen) {
             this.bimViewer.openTab(viewerState.tabOpen);
