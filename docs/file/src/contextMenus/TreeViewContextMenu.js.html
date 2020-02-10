@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/contextMenus/TreeViewContextMenu.js | xeokit-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/contextMenus/TreeViewContextMenu.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {ContextMenu} from &quot;@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js&quot;;
+
+/**
+ * @private
+ */
+class TreeViewContextMenu extends ContextMenu {
+    constructor(cfg = {}) {
+        super({
+            context: cfg.context,
+            items: [
+                [
+                    {
+                        title: &quot;View Fit&quot;,
+                        doAction: function (context) {
+                            const viewer = context.viewer;
+                            const scene = viewer.scene;
+                            const objectIds = [];
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    objectIds.push(treeViewNode.objectId);
+                                }
+                            });
+                            scene.setObjectsVisible(objectIds, true);
+                            scene.setObjectsHighlighted(objectIds, true);
+                            const aabb = scene.getAABB(objectIds);
+                            viewer.cameraFlight.flyTo({
+                                aabb: aabb,
+                                duration: 0.5
+                            }, () =&gt; {
+                                setTimeout(function () {
+                                    scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                                }, 500);
+                            });
+                            viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+                        }
+                    },
+                    {
+                        title: &quot;View Fit All&quot;,
+                        doAction: function (context) {
+                            const viewer = context.viewer;
+                            const scene = viewer.scene;
+                            const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                            viewer.cameraFlight.flyTo({
+                                aabb: sceneAABB,
+                                duration: 0.5
+                            });
+                            viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
+                        }
+                    }
+                ],
+                [
+                    {
+                        title: &quot;Hide&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.visible = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Hide Others&quot;,
+                        doAction: function (context) {
+                            const scene = context.viewer.scene;
+                            scene.setObjectsVisible(scene.visibleObjectIds, false);
+                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.visible = true;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Hide All&quot;,
+                        getEnabled: function (context) {
+                            return (context.viewer.scene.visibleObjectIds.length &gt; 0);
+                        },
+                        doAction: function (context) {
+                            context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+                        }
+                    }
+                ],
+                [
+                    {
+                        title: &quot;Show&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.visible = true;
+                                        entity.xrayed = false;
+                                        entity.selected = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Show Others&quot;,
+                        doAction: function (context) {
+                            const scene = context.viewer.scene;
+                            scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.visible = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Show All&quot;,
+                        getEnabled: function (context) {
+                            const scene = context.viewer.scene;
+                            return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
+                        },
+                        doAction: function (context) {
+                            const scene = context.viewer.scene;
+                            scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                        }
+                    }
+                ],
+                [
+                    {
+                        title: &quot;X-Ray&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.xrayed = true;
+                                        entity.visible = true;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Undo X-Ray&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.xrayed = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;X-Ray Others&quot;,
+                        doAction: function (context) {
+                            const scene = context.viewer.scene;
+                            scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.xrayed = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;X-Ray All&quot;,
+                        doAction: function (context) {
+                            const scene = context.viewer.scene;
+                            scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsXRayed(scene.objectIds, true);
+                        }
+                    },
+                    {
+                        title: &quot;X-Ray None&quot;,
+                        getEnabled: function (context) {
+                            return (context.viewer.scene.numXRayedObjects &gt; 0);
+                        },
+                        doAction: function (context) {
+                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                        }
+                    }
+                ],
+                [
+                    {
+                        title: &quot;Select&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.selected = true;
+                                        entity.visible = true;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Undo Select&quot;,
+                        doAction: function (context) {
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    const entity = context.viewer.scene.objects[treeViewNode.objectId];
+                                    if (entity) {
+                                        entity.selected = false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        title: &quot;Select None&quot;,
+                        getEnabled: function (context) {
+                            return (context.viewer.scene.numSelectedObjects &gt; 0);
+                        },
+                        doAction: function (context) {
+                            context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
+                        }
+                    }
+                ]
+            ]
+        })
+    }
+}
+
+export {TreeViewContextMenu};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

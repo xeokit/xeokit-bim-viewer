@@ -324,6 +324,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#get3denabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-get3DEnabled",
+    "src/BIMViewer.js~BIMViewer#get3DEnabled",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getloadedmodelids",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getLoadedModelIds",
     "src/BIMViewer.js~BIMViewer#getLoadedModelIds",
@@ -435,6 +441,24 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#selectobject",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectObject",
     "src/BIMViewer.js~BIMViewer#selectObject",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#selectstorey",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectStorey",
+    "src/BIMViewer.js~BIMViewer#selectStorey",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#set3denabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-set3DEnabled",
+    "src/BIMViewer.js~BIMViewer#set3DEnabled",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setbackgroundcolor",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setBackgroundColor",
+    "src/BIMViewer.js~BIMViewer#setBackgroundColor",
     "method"
   ],
   [

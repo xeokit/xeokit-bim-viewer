@@ -1,11 +1,11 @@
 {
-  "coverage": "34.74%",
-  "expectCount": 236,
-  "actualCount": 82,
+  "coverage": "33.72%",
+  "expectCount": 255,
+  "actualCount": 86,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 63,
-      "actualCount": 40,
+      "expectCount": 67,
+      "actualCount": 44,
       "undocumentLines": [
         26,
         68,
@@ -27,9 +27,9 @@
         278,
         352,
         355,
-        419,
-        421,
-        422
+        420,
+        422,
+        423
       ]
     },
     "src/BusyModal.js": {
@@ -108,7 +108,7 @@
       ]
     },
     "src/explorer/ModelsExplorer.js": {
-      "expectCount": 23,
+      "expectCount": 32,
       "actualCount": 2,
       "undocumentLines": [
         6,
@@ -118,20 +118,29 @@
         29,
         30,
         36,
-        39,
         40,
         41,
-        44,
-        91,
-        112,
-        116,
-        186,
-        210,
-        219,
-        223,
-        227,
-        231,
-        235
+        42,
+        45,
+        59,
+        69,
+        95,
+        102,
+        113,
+        122,
+        133,
+        150,
+        159,
+        164,
+        185,
+        189,
+        260,
+        284,
+        293,
+        297,
+        301,
+        305,
+        309
       ]
     },
     "src/explorer/ObjectsExplorer.js": {
@@ -154,7 +163,7 @@
       ]
     },
     "src/explorer/StoreysExplorer.js": {
-      "expectCount": 14,
+      "expectCount": 15,
       "actualCount": 1,
       "undocumentLines": [
         8,
@@ -164,12 +173,13 @@
         31,
         39,
         46,
-        82,
-        92,
-        104,
-        116,
-        121,
-        125
+        64,
+        74,
+        86,
+        98,
+        103,
+        144,
+        174
       ]
     },
     "src/server/Server.js": {
@@ -281,11 +291,16 @@
       ]
     },
     "src/toolbar/ThreeDMode.js": {
-      "expectCount": 3,
+      "expectCount": 8,
       "actualCount": 1,
       "undocumentLines": [
         4,
-        9
+        9,
+        17,
+        19,
+        41,
+        71,
+        113
       ]
     }
   }
