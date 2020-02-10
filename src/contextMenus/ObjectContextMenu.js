@@ -96,6 +96,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -107,16 +108,9 @@ class ObjectContextMenu extends ContextMenu {
                             return (!context.entity.xrayed);
                         },
                         doAction: function (context) {
-                            context.entity.xrayed = true;
-                        }
-                    },
-                    {
-                        title: "Undo X-Ray",
-                        getEnabled: function (context) {
-                            return context.entity.xrayed;
-                        },
-                        doAction: function (context) {
-                            context.entity.xrayed = false;
+                            const entity = context.entity;
+                            entity.xrayed = true;
+                            entity.pickable = false;
                         }
                     },
                     {
@@ -131,11 +125,13 @@ class ObjectContextMenu extends ContextMenu {
                             }
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             metaObject.withMetaObjectsInSubtree((metaObject) => {
                                 const entity = scene.objects[metaObject.id];
                                 if (entity) {
                                     entity.xrayed = false;
+                                    entity.pickable = true;
                                 }
                             });
                         }
@@ -149,6 +145,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                         }
                     },
@@ -158,7 +155,10 @@ class ObjectContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
@@ -170,6 +170,7 @@ class ObjectContextMenu extends ContextMenu {
                         },
                         doAction: function (context) {
                             context.entity.selected = true;
+
                         }
                     },
                     {

@@ -58,6 +58,7 @@ class CanvasContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
                     {
@@ -66,7 +67,9 @@ class CanvasContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const xrayedObjectIds = context.viewer.scene.xrayedObjectIds;
+                            context.viewer.scene.setObjectsPickable(xrayedObjectIds, true);
+                            context.viewer.scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],

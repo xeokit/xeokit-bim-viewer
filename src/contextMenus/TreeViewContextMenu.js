@@ -68,6 +68,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
@@ -99,6 +100,9 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.visible = true;
+                                        if (entity.xrayed) {
+                                            entity.pickable = true;
+                                        }
                                         entity.xrayed = false;
                                         entity.selected = false;
                                     }
@@ -111,6 +115,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                                 if (treeViewNode.objectId) {
@@ -131,6 +136,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -145,6 +151,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     if (entity) {
                                         entity.xrayed = true;
                                         entity.visible = true;
+                                        entity.pickable = false;
                                     }
                                 }
                             });
@@ -158,6 +165,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -168,6 +176,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
@@ -175,6 +184,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -186,6 +196,7 @@ class TreeViewContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
                     {
@@ -194,7 +205,10 @@ class TreeViewContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
