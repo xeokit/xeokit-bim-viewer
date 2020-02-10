@@ -226,7 +226,7 @@ class ModelsExplorer extends Controller {
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
                             this._unloadModelsButtonElement.classList.remove("disabled");
-                            if (this._numModelsLoaded === 1) { // Jump camera when only one model
+                            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
                                 });
@@ -236,17 +236,12 @@ class ModelsExplorer extends Controller {
                                 if (done) {
                                     done();
                                 }
-                            } else { // Fly camera when multiple models
-                                this.viewer.cameraFlight.flyTo({
-                                    aabb: aabb
-                                }, () => {
-                                    this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-                                    this.fire("modelLoaded", modelId);
-                                    this.bimViewer._busyModal.hide();
-                                    if (done) {
-                                        done();
-                                    }
-                                });
+                            } else {
+                                this.fire("modelLoaded", modelId);
+                                this.bimViewer._busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
                             }
                         });
                     },
