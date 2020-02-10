@@ -39,7 +39,8 @@ class ObjectsExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: objectsElement,
             hierarchy: "containment",
-            autoAddModels: false
+            autoAddModels: false,
+            pruneEmptyNodes: true
         });
 
         this._treeViewContextMenu = new TreeViewContextMenu();

@@ -49,7 +49,8 @@ class StoreysExplorer extends Controller {
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
-                treeViewNode: e.treeViewNode
+                treeViewNode: e.treeViewNode,
+                pruneEmptyNodes: true
             };
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
