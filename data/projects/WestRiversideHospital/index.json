@@ -6,7 +6,7 @@
       "id": "architectural",
       "name": "Hospital Architecture",
       "edges": true,
-      "useSAO": true
+      "saoEnabled": true
     },
     {
       "id": "structure",
@@ -17,31 +17,31 @@
       "id": "electrical",
       "name": "Hospital Electrical",
       "edges": true,
-      "useSAO": false
+      "saoEnabled": false
     },
     {
       "id": "sprinklers",
       "name": "Hospital Sprinklers",
       "edges": true,
-      "useSAO": false
+      "saoEnabled": false
     },
     {
       "id": "plumbing",
       "name": "Hospital Plumbing",
       "edges": true,
-      "useSAO": false
+      "saoEnabled": false
     },
     {
       "id": "fireAlarms",
       "name": "Hospital Fire Alarms",
       "edges": true,
-      "useSAO": false
+      "saoEnabled": false
     },
     {
       "id": "mechanical",
       "name": "Hospital Mechanical",
       "edges": true,
-      "useSAO": false
+      "saoEnabled": false
     }
   ],
   "viewerConfigs": {
@@ -53,20 +53,17 @@
     "saoIntensity": 0.7,
     "saoScale": 1200.0,
     "saoKernelRadius": 100,
-    "saoBlur": true,
-    "useColors": "model"
+    "saoBlur": true
   },
   "viewerContent": {
     "modelsLoaded": [
       "structure",
-      "electrical",
-      "plumbing"
+      "architectural"
     ]
   },
   "viewerState": {
     "viewCubeEnabled": true,
     "threeDEnabled": true,
-    "tabOpen": "storeys",
-    "XselectedStorey": "2SWZMQPyD9pfT9q87pgXa1"
+    "tabOpen": "storeys"
   }
 }

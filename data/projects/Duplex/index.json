@@ -8,7 +8,7 @@
       "default": true
     }
   ],
-  "configs": {
+  "viewerConfigs": {
     "cameraNear": "0.05",
     "cameraFar": "3000.0",
     "saoEnabled": "true",

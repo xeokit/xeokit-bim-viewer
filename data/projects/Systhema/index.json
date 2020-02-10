@@ -8,7 +8,7 @@
       "default": true
     }
   ],
-  "configs": {
+  "viewerConfigs": {
     "cameraNear": "0.05",
     "cameraFar": "3000.0",
     "saoEnabled": "true",
@@ -16,5 +16,16 @@
     "saoIntensity": "0.5",
     "saoScale": "1200.0",
     "saoKernelRadius": "100"
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "model1"
+    ]
+  },
+  "viewerState": {
+    "viewCubeEnabled": true,
+    "threeDEnabled": false,
+    "tabOpen": "storeys",
+    "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1"
   }
 }
