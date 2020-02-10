@@ -31,6 +31,11 @@ class ThreeDMode extends Controller {
             });
             event.preventDefault();
         });
+
+        this.bimViewer.on("reset", () => {
+            this.setActive(true, () => { // Animated
+            });
+        });
     }
 
     setActive(active, done) {
