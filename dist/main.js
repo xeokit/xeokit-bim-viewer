@@ -12569,6 +12569,18 @@ class Node extends Component {
         return this._receivesShadow;
     }
 
+    /**
+     * Gets if this Node can have Scalable Ambient Obscurance (SAO) applied to it.
+     *
+     * SAO is configured by {@link SAO}.
+     *
+     * @type {Boolean}
+     * @abstract
+     */
+    get saoEnabled() {
+        return false; // TODO: Support SAO on Nodes
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     // Node members
     //------------------------------------------------------------------------------------------------------------------
@@ -18687,6 +18699,18 @@ class Mesh extends Component {
     }
 
     /**
+     * Gets if this Mesh can have Scalable Ambient Obscurance (SAO) applied to it.
+     *
+     * SAO is configured by {@link SAO}.
+     *
+     * @type {Boolean}
+     * @abstract
+     */
+    get saoEnabled() {
+        return false; // TODO: Support SAO on Meshes
+    }
+
+    /**
      * Sets the RGB colorize color for this Mesh.
      *
      * Multiplies by rendered fragment colors.
@@ -21427,12 +21451,8 @@ class Canvas extends Component {
         this.contextAttr = cfg.contextAttr || {};
         this.contextAttr.alpha = this.transparent;
 
-        if (this.contextAttr.preserveDrawingBuffer === undefined || this.contextAttr.preserveDrawingBuffer === null) {
-            this.contextAttr.preserveDrawingBuffer = true;
-        }
-
+        this.contextAttr.preserveDrawingBuffer = !!this.contextAttr.preserveDrawingBuffer;
         this.contextAttr.stencil = false;
-        this.contextAttr.antialias = true;
         this.contextAttr.premultipliedAlpha = (!!this.contextAttr.premultipliedAlpha);  // False by default: https://github.com/xeokit/xeokit-sdk/issues/251
         this.contextAttr.antialias = (this.contextAttr.antialias !== false);
 
@@ -23893,7 +23913,8 @@ const Renderer = function (scene, options) {
 
         const sao = scene.sao;
 
-        if (sao.enabled && sao.supported) {
+        if (sao.possible) {
+
 
             // Render depth buffer
 
@@ -23925,7 +23946,7 @@ const Renderer = function (scene, options) {
                 saoBlurRenderer.render(saoDepthBuffer.getTexture(), occlusionBuffer2.getTexture(), 1);
                 occlusionBuffer1.unbind();
             }
-        }
+            }
 
         drawColor(params);
     };
@@ -24036,8 +24057,7 @@ const Renderer = function (scene, options) {
             gl.lineWidth(1);
             frameCtx.lineWidth = 1;
 
-            const sao = scene.sao;
-            frameCtx.occlusionTexture = (sao.enabled && sao.supported) ? occlusionBuffer1.getTexture() : null;
+            frameCtx.occlusionTexture = scene.sao.possible ? occlusionBuffer1.getTexture() : null;
 
             let i;
             let len;
@@ -29146,10 +29166,23 @@ class Metrics extends Component {
  *
  * xeokit's implementation of SAO is based on the paper [Scalable Ambient Obscurance](https://research.nvidia.com/sites/default/files/pubs/2012-06_Scalable-Ambient-Obscurance/McGuire12SAO.pdf).
  *
+ * ## Caveats
+ *
+ * Currently, SAO only works with perspective and orthographic projections. Therefore, to use SAO, make sure {@link Camera#projection} is
+ * either "perspective" or "ortho".
+ *
+ * {@link SAO#scale} and {@link SAO#intensity} must be tuned to the distance
+ * between {@link Perspective#near} and {@link Perspective#far}, or the distance
+ * between {@link Ortho#near} and {@link Ortho#far}, depending on which of those two projections the {@link Camera} is currently
+ * using. Use the [live example](https://xeokit.github.io/xeokit-sdk/examples/#postEeffects_SAO_OTCConferenceCenter) to get a
+ * feel for that.
+ *
  * ## Usage
  *
  * In the example below, we'll start by logging a warning message to the console if SAO is not supported by the
- * system. Then we'll configure SAO, position the camera, and configure the near and far perspective and orthographic
+ * system.
+ *
+ *Then we'll enable and configure SAO, position the camera, and configure the near and far perspective and orthographic
  * clipping planes. Finally, we'll use {@link XKTLoaderPlugin} to load the OTC Conference Center model.
  *
  * ````javascript
@@ -29182,10 +29215,10 @@ class Metrics extends Component {
  * camera.up = [0.18, 0.96, -0.21];
  *
  * camera.perspective.near = 0.1;
- * camera.perspective.far = 5000.0;
+ * camera.perspective.far = 2000.0;
  *
  * camera.ortho.near = 0.1;
- * camera.ortho.far = 5000.0;
+ * camera.ortho.far = 2000.0;
  * camera.projection = "perspective";
  *
  * const xktLoader = new XKTLoaderPlugin(viewer);
@@ -29208,6 +29241,51 @@ class Metrics extends Component {
  * objects near to the viewpoint will use larger radii than farther pixels. Therefore, computing  SAO for close objects
  * is more expensive than for objects far away, that occupy fewer pixels on the canvas.
  *
+ * ## Selectively enabling for models
+ *
+ * When loading multiple models into a Scene, we sometimes only want SAO on the models that are actually going to
+ * show it, such as the architecture or structure, and not show SAO on models that won't show it well, such as the
+ * electrical wiring, or plumbing.
+ *
+ * To illustrate, lets load some of the models for the West Riverside Hospital. We'll enable SAO on the structure model,
+ * but disable it on the electrical and plumbing.
+ *
+ * This will only apply SAO to those models if {@link SAO#supported} and {@link SAO#enabled} are both true.
+ *
+ * Note, by the way, how we load the models in sequence. Since XKTLoaderPlugin uses scratch memory as part of its loading
+ * process, this allows the plugin to reuse that same memory across multiple loads, instead of having to create multiple
+ * pools of scratch memory.
+ *
+ * ````javascript
+ * const structure = xktLoader.load({
+ *      id: "structure",
+ *      src: "./models/xkt/WestRiverSideHospital/structure.xkt",
+ *      metaModelSrc: "./metaModels/WestRiverSideHospital/structure.json",
+ *      edges: true,
+ *      saoEnabled: true
+ *  });
+ *
+ *  structure.on("loaded", () => {
+ *
+ *      const electrical = xktLoader.load({
+ *          id: "electrical",
+ *          src: "./models/xkt/WestRiverSideHospital/electrical.xkt",
+ *          metaModelSrc: "./metaModels/WestRiverSideHospital/electrical.json",
+ *          edges: true
+ *      });
+ *
+ *      electrical.on("loaded", () => {
+ *
+ *          const plumbing = xktLoader.load({
+ *              id: "plumbing",
+ *              src: "./models/xkt/WestRiverSideHospital/plumbing.xkt",
+ *              metaModelSrc: "./metaModels/WestRiverSideHospital/plumbing.json",
+ *                  edges: true
+ *              });
+ *          });
+ *      });
+ * });
+ * ````
  */
 class SAO extends Component {
 
@@ -29274,6 +29352,29 @@ class SAO extends Component {
      */
     get enabled() {
         return this._enabled;
+    }
+
+    /**
+     * Returns true if SAO is currently possible, where it is supported, enabled, and the current scene state is compatible.
+     * Called internally by renderer logic.
+     * @private
+     * @returns {boolean}
+     */
+    get possible() {
+        if (!this._supported) {
+            return false;
+        }
+        if (!this._enabled) {
+            return false;
+        }
+        const projection = this.scene.camera.projection;
+        if (projection === "customProjection") {
+            return false;
+        }
+        if (projection === "frustum") {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -35053,6 +35154,18 @@ class PerformanceNode {
         return false;
     }
 
+    /**
+     * Gets if Scalable Ambient Obscurance (SAO) will apply to this PerformanceNode.
+     *
+     * SAO is configured by the Scene's {@link SAO} component.
+     *
+     * @type {Boolean}
+     * @abstract
+     */
+    get saoEnabled() {
+        return this.model.saoEnabled;
+    }
+
     _finalize() {
         const scene = this.model.scene;
         if (this._isObject) {
@@ -35469,6 +35582,11 @@ BatchingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPass
         this._aFlags2.bindArrayBuffer(state.flags2Buf);
         frameCtx.bindArray++;
     }
+
+    const sao = scene.sao;
+    const saoEnabled = (sao.possible && model.saoEnabled);
+    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+
     state.indicesBuf.bind();
     frameCtx.bindArray++;
     gl.drawElements(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0);
@@ -35599,8 +35717,7 @@ BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
         }
     }
     const sao = scene.sao;
-    const saoEnabled = sao.enabled && sao.supported;
-    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+    const saoEnabled = sao.possible;
     if (saoEnabled) {
         const viewportWidth = gl.drawingBufferWidth;
         const viewportHeight = gl.drawingBufferHeight;
@@ -39104,6 +39221,10 @@ InstancingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPa
         instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 0);
     }
 
+    const sao = scene.sao;
+    const saoEnabled = (sao.possible && model.saoEnabled);
+    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+
     frameCtx.drawElements++;
 };
 
@@ -39251,8 +39372,7 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
         }
     }
     const sao = scene.sao;
-    const saoEnabled = sao.enabled && sao.supported;
-    gl.uniform1i(this._uSAOEnabled, saoEnabled);
+    const saoEnabled = sao.possible;
     if (saoEnabled) {
         const viewportWidth = gl.drawingBufferWidth;
         const viewportHeight = gl.drawingBufferHeight;
@@ -42824,6 +42944,7 @@ class PerformanceModel extends Component {
      * @param {Boolean} [cfg.edges=false] Indicates if the PerformanceModel's edges are initially emphasized.
      * @param {Number[]} [cfg.colorize=[1.0,1.0,1.0]] PerformanceModel's initial RGB colorize color, multiplies by the rendered fragment colors.
      * @param {Number} [cfg.opacity=1.0] PerformanceModel's initial opacity factor, multiplies by the rendered fragment alpha.
+     * @param {Boolean} [cfg.saoEnabled=true] Indicates if Scalable Ambient Obscurance (SAO) will apply to this PerformanceModel. SAO is configured by the Scene's {@link SAO} component.
      * @param {Boolean} [cfg.preCompressed=false] When this is ````true````, ````positions```` are assumed to be
      * quantized and in World-space, and ````normals```` are also assumed to be oct-encoded and in World-space. When ````true````, {@link PerformanceModel#createMesh}
      * will ignore ````matrix````, ````position````, ````scale```` and ````rotation```` parameters.
@@ -42928,6 +43049,8 @@ class PerformanceModel extends Component {
 
         this._opacity = 1.0;
         this._colorize = [1, 1, 1];
+
+        this._saoEnabled = (cfg.saoEnabled !== false);
 
         this._isModel = cfg.isModel;
         if (this._isModel) {
@@ -43859,6 +43982,18 @@ class PerformanceModel extends Component {
      */
     get receivesShadow() { // TODO
         return false;
+    }
+
+    /**
+     * Gets if Scalable Ambient Obscurance (SAO) will apply to this PerformanceModel.
+     *
+     * SAO is configured by the Scene's {@link SAO} component.
+     *
+     * @type {Boolean}
+     * @abstract
+     */
+    get saoEnabled() {
+        return this._saoEnabled;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -51801,8 +51936,9 @@ class XKTLoaderPlugin extends Plugin {
      * @param {Number[]} [params.rotation=[0,0,0]] The model's World-space rotation, as Euler angles given in degrees, for each of the X, Y and Z axis.
      * @param {Number[]} [params.matrix=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]] The model's world transform matrix. Overrides the position, scale and rotation parameters.
      * @param {Boolean} [params.edges=false] Indicates if the model's edges are initially emphasized.
-     * @returns {Entity} Entity representing the model, which will have {@link Entity#isModel} set ````true```` and will be registered by {@link Entity#id} in {@link Scene#models}.
+     * @param {Boolean} [params.saoEnabled=true] Indicates if Scalable Ambient Obscurance (SAO) will apply to the model. SAO is configured by the Scene's {@link SAO} component.
      * @param {Boolean} [params.excludeUnclassifiedObjects=false] When loading metadata and this is ````true````, will only load {@link Entity}s that have {@link MetaObject}s (that are not excluded). This is useful when we don't want Entitys in the Scene that are not represented within IFC navigation components, such as {@link StructureTreeViewPlugin}.
+     * @returns {Entity} Entity representing the model, which will have {@link Entity#isModel} set ````true```` and will be registered by {@link Entity#id} in {@link Scene#models}.
      */
     load(params = {}) {
 
@@ -52254,36 +52390,6 @@ class XKTLoaderPlugin extends Plugin {
     }
 }
 
-/**
- * @desc Default initial properties for {@link Entity}s loaded from models accompanied by metadata.
- *
- * When loading a model, a loader plugins such as {@link GLTFLoaderPlugin} and {@link BIMServerLoaderPlugin} create
- * a tree of {@link Entity}s that represent the model. These loaders can optionally load metadata, to create
- * a {@link MetaModel} corresponding to the root {@link Entity}, with a {@link MetaObject} corresponding to each
- * object {@link Entity} within the tree.
- *
- * @private
- * @type {{String:Object}}
- */
-const IFCObjectDefaults$1 = {
-    IfcSpace: { // IfcSpace elements should be visible and pickable
-        visible: true,
-        pickable: true,
-        opacity: 0.2
-    },
-    IfcWindow: { // Some IFC models have opaque IfcWindow elements(!)
-        pickable: true,
-        opacity: 0.5
-    },
-    IfcOpeningElement: { // These tend to obscure windows
-        visible: false
-    },
-    IfcPlate: { // These tend to be windows(!)
-        colorize: [0.8470588235, 0.427450980392, 0, 0.5],
-        opacity: 0.5
-    }
-};
-
 const tempVec3$3 = math.vec3();
 
 /** @private */
@@ -52315,8 +52421,9 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            objectDefaults: IFCObjectDefaults$1
+            // objectDefaults: IFCObjectDefaults
         });
+
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._projectId = null;
@@ -52325,48 +52432,120 @@ class ModelsExplorer extends Controller {
     loadProject(projectId, done, error) {
         this.server.getProject(projectId, (projectInfo) => {
             this.unloadProject();
-            const configs = projectInfo.configs;
-            if (configs) {
-                this.bimViewer.setConfigs(configs);
-            }
             this._projectId = projectId;
-            var html = "";
-            const modelsInfo = projectInfo.models || [];
             this._modelsInfo = {};
-            for (let i = 0, len = modelsInfo.length; i < len; i++) {
-                const modelInfo = modelsInfo[i];
-                this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div class='xeokit-form-check'>";
-                html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
-                html += "</div>";
-            }
-            this._modelsElement.innerHTML = html;
-            for (let i = 0, len = modelsInfo.length; i < len; i++) {
-                const modelInfo = modelsInfo[i];
-                const modelId = modelInfo.id;
-                const checkBox = document.getElementById("" + modelId);
-                checkBox.addEventListener("click", () => {
-                    if (checkBox.checked) {
-                        this.loadModel(modelId);
-                    } else {
-                        this.unloadModel(modelInfo.id);
-                    }
-                });
-                if (modelInfo.default) {
-                    checkBox.checked = true;
-                    this.loadModel(modelId, done, error); // TODO: buffer and load at end
-                } else {
-                    if (done) {
-                        done();
-                    }
-                }
-            }
+            this._parseProject(projectInfo, done);
         }, (errMsg) => {
             this.error(errMsg);
             if (error) {
                 error(errMsg);
             }
         });
+    }
+
+    _parseProject(projectInfo, done) {
+        this._buildModelsMenu(projectInfo);
+        this._parseViewerConfigs(projectInfo);
+        this._parseViewerContent(projectInfo, () => {
+            this._parseViewerState(projectInfo, () => {
+                done();
+            });
+        });
+    }
+
+    _buildModelsMenu(projectInfo) {
+        var html = "";
+        const modelsInfo = projectInfo.models || [];
+        this._modelsInfo = {};
+        for (let i = 0, len = modelsInfo.length; i < len; i++) {
+            const modelInfo = modelsInfo[i];
+            this._modelsInfo[modelInfo.id] = modelInfo;
+            html += "<div class='xeokit-form-check'>";
+            html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
+            html += "</div>";
+        }
+        this._modelsElement.innerHTML = html;
+        for (let i = 0, len = modelsInfo.length; i < len; i++) {
+            const modelInfo = modelsInfo[i];
+            const modelId = modelInfo.id;
+            const checkBox = document.getElementById("" + modelId);
+            checkBox.addEventListener("click", () => {
+                if (checkBox.checked) {
+                    this.loadModel(modelId);
+                } else {
+                    this.unloadModel(modelInfo.id);
+                }
+            });
+        }
+    }
+
+    _parseViewerConfigs(projectInfo) {
+        const viewerConfigs = projectInfo.viewerConfigs;
+        if (viewerConfigs) {
+            this.bimViewer.setConfigs(viewerConfigs);
+        }
+    }
+
+    _parseViewerContent(projectInfo, done) {
+        const viewerContent = projectInfo.viewerContent;
+        if (!viewerContent) {
+            done();
+            return;
+        }
+        this._parseModelsLoaded(viewerContent, () => {
+            done();
+        });
+    }
+
+    _parseModelsLoaded(viewerContent, done) {
+        const modelsLoaded = viewerContent.modelsLoaded;
+        if (!modelsLoaded || (modelsLoaded.length === 0)) {
+            done();
+            return;
+        }
+        this._loadNextModel(modelsLoaded.slice(0), done);
+    }
+
+    _loadNextModel(modelsLoaded, done) {
+        if (modelsLoaded.length === 0) {
+            done();
+            return;
+        }
+        const modelId = modelsLoaded.pop();
+        this.loadModel(modelId, () => {
+            this._loadNextModel(modelsLoaded, done);
+        });
+    }
+
+    _parseViewerState(projectInfo, done) {
+        const viewerState = projectInfo.viewerState;
+        if (!viewerState) {
+            done();
+            return;
+        }
+        if (viewerState.tabOpen) {
+            this.bimViewer.openTab(viewerState.tabOpen);
+        }
+
+        this._parseSelectedStorey(viewerState, () => {
+            this._parseThreeDMode(viewerState, () => {
+                done();
+            });
+        });
+    }
+
+    _parseSelectedStorey(viewerState, done) {
+        if (viewerState.selectedStorey) {
+            this.bimViewer.selectStorey(viewerState.selectedStorey);
+            done();
+        } else {
+            done();
+        }
+    }
+
+    _parseThreeDMode(viewerState, done) {
+        const activateThreeDMode = (viewerState.threeDEnabled !== false);
+        this.bimViewer.set3DEnabled(activateThreeDMode, done = null);
     }
 
     unloadProject() {
@@ -52418,13 +52597,14 @@ class ModelsExplorer extends Controller {
                             metaModelData: json,
                             xkt: arraybuffer,
                             excludeUnclassifiedObjects: true,
-                            edges: true,
                             position: modelInfo.position,
                             scale: modelInfo.scale,
                             rotation: modelInfo.rotation,
-                            matrix: modelInfo.matrix
+                            matrix: modelInfo.matrix,
+                            edges: (modelInfo.edges !== false)
                         });
                         model.on("loaded", () => {
+                            document.getElementById("" + modelId).checked = true;
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
@@ -54814,25 +54994,7 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
-            const scene = this.viewer.scene;
-            scene.setObjectsSelected(scene.selectedObjectIds, false);
-            scene.setObjectsXRayed(scene.objectIds, true);
-            scene.setObjectsVisible(scene.objectIds, true);
-            const objectIds = [];
-            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
-                if (treeViewNode.objectId) {
-                    objectIds.push(treeViewNode.objectId);
-                }
-            });
-            scene.setObjectsXRayed(objectIds, false);
-            this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
-                duration: 0.5
-            }, () => {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+            this.selectStorey(e.treeViewNode.objectId, () => {// Animated
             });
         });
 
@@ -54877,6 +55039,73 @@ class StoreysExplorer extends Controller {
 
     unShowNodeInTreeView() {
         this._treeView.unShowNode();
+    }
+
+    // selectStorey(storeyObjectId, done) {
+    //     const metaScene = this.viewer.metaScene;
+    //     const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+    //     if (!storeyMetaObject) {
+    //         this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
+    //         return;
+    //     }
+    //     if (storeyMetaObject.type !== "IfcBuildingStorey") {
+    //         this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+    //         return;
+    //     }
+    //     const scene = this.viewer.scene;
+    //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
+    //     scene.setObjectsSelected(scene.selectedObjectIds, false);
+    //     if (done) {
+    //         scene.setObjectsVisible(scene.objectIds, true);
+    //         scene.setObjectsXRayed(scene.objectIds, true);
+    //         scene.setObjectsXRayed(objectIds, false);
+    //         this.viewer.cameraFlight.flyTo({
+    //             aabb: scene.getAABB(objectIds)
+    //         }, () => {
+    //             setTimeout(function () {
+    //                 scene.setObjectsVisible(scene.xrayedObjectIds, false);
+    //                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+    //             }, 500);
+    //             done();
+    //         });
+    //     } else {
+    //         scene.setObjectsVisible(scene.objectIds, false);
+    //         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+    //         scene.setObjectsVisible(objectIds, true);
+    //         this.viewer.cameraFlight.jumpTo({
+    //             aabb: scene.getAABB(objectIds)
+    //         });
+    //     }
+    // }
+
+    selectStorey(storeyObjectId, done) {
+        const metaScene = this.viewer.metaScene;
+        const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+        if (!storeyMetaObject) {
+            this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
+            return;
+        }
+        if (storeyMetaObject.type !== "IfcBuildingStorey") {
+            this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            return;
+        }
+        const scene = this.viewer.scene;
+        const objectIds = storeyMetaObject.getObjectIDsInSubtree();
+        scene.setObjectsVisible(scene.visibleObjectIds, false);
+        scene.setObjectsSelected(scene.selectedObjectIds, false);
+        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+        scene.setObjectsVisible(objectIds, true);
+        if (done) {
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds)
+            }, () => {
+                done();
+            });
+        } else {
+            this.viewer.cameraFlight.jumpTo({
+                aabb: scene.getAABB(objectIds)
+            });
+        }
     }
 
     destroy() {
@@ -58850,105 +59079,147 @@ class ThreeDMode extends Controller {
             throw "Missing config: buttonElement";
         }
 
-        const buttonElement = cfg.buttonElement;
+        this._buttonElement = cfg.buttonElement;
+
+        this._active = false;
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
-                buttonElement.classList.add("disabled");
+                this._buttonElement.classList.add("disabled");
             } else {
-                buttonElement.classList.remove("disabled");
+                this._buttonElement.classList.remove("disabled");
             }
         });
 
-        this.on("active", (active) => {
-            if (active) {
-                buttonElement.classList.add("active");
-            } else {
-                buttonElement.classList.remove("active");
-            }
-        });
-
-        this.on("active", (active) => {
-
-            if (active) {
-
-                const viewer = this.viewer;
-                const scene = viewer.scene;
-                const aabb = scene.getAABB(scene.visibleObjectIds);
-                const diag = math.getAABB3Diag(aabb);
-                const center = math.getAABB3Center(aabb, tempVec3a$3);
-                const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
-                const camera = scene.camera;
-                const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
-                const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
-                viewer.cameraControl.pivotPos = center;
-                viewer.cameraControl.planView = false;
-
-                viewer.cameraFlight.flyTo({
-                    look: center,
-                    eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
-                    up: up,
-                    orthoScale: diag * 1.3,
-                    projection: "perspective",
-                    duration: 1
-                });
-
-                this.bimViewer._navCubeMode.setActive(true);
-
-            } else {
-
-                this.bimViewer._sectionTool.setActive(false);
-                this.bimViewer._sectionTool.clear();
-
-                const viewer = this.viewer;
-                const scene = viewer.scene;
-                const camera = scene.camera;
-                const aabb = scene.getAABB(scene.visibleObjectIds);
-                const look2 = math.getAABB3Center(aabb);
-                const diag = math.getAABB3Diag(aabb);
-                const fitFOV = 45; // fitFOV;
-                const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
-                const orthoScale2 = diag * 1.3;
-                const eye2 = tempVec3a$3;
-
-                eye2[0] = look2[0] + (camera.worldUp[0] * sca);
-                eye2[1] = look2[1] + (camera.worldUp[1] * sca);
-                eye2[2] = look2[2] + (camera.worldUp[2] * sca);
-
-                const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
-
-                viewer.cameraFlight.flyTo({
-                    projection: "ortho",
-                    eye: eye2,
-                    look: look2,
-                    up: up2,
-                    orthoScale: orthoScale2
-                }, () =>{
-                    this.bimViewer._navCubeMode.setActive(false);
-                });
-            }
-
-            this.viewer.cameraControl.planView = !active;
-            this.bimViewer._firstPersonMode.setEnabled(active);
-           // this.bimViewer._ortho.setEnabled(active);
-            this.bimViewer._sectionTool.setEnabled(active);
-
-            if (!active) {
-                this.bimViewer._sectionTool.setActive(false);
-                //this.bimViewer._firstPersonMode.setActive(false);
-            }
-
-        });
-
-        buttonElement.addEventListener("click", (event) => {
-            this.setActive(!this.getActive());
+        this._buttonElement.addEventListener("click", (event) => {
+            this.setActive(!this.getActive(), () => { // Animated
+            });
             event.preventDefault();
         });
 
-
         this.bimViewer.on("reset", () => {
-            this.setActive(true);
+            this.setActive(true, () => { // Animated
+            });
         });
+    }
+
+    setActive(active, done) {
+        if (this._active === active) {
+            return;
+        }
+        this._active = active;
+        if (active) {
+            this._buttonElement.classList.add("active");
+            if (done) {
+                this._enterThreeDMode(() => {
+                    this.fire("active", this._active);
+                    done();
+                });
+            } else {
+                this._enterThreeDMode();
+                this.fire("active", this._active);
+            }
+        } else {
+            this._buttonElement.classList.remove("active");
+            if (done) {
+                this._exitThreeDMode(() => {
+                    this.fire("active", this._active);
+                    done();
+                });
+            } else {
+                this._exitThreeDMode();
+                this.fire("active", this._active);
+            }
+        }
+    }
+
+    _enterThreeDMode(done) {
+
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        const diag = math.getAABB3Diag(aabb);
+        const center = math.getAABB3Center(aabb, tempVec3a$3);
+        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
+        const camera = scene.camera;
+        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
+        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
+
+        viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
+
+        this.bimViewer._navCubeMode.setActive(true);
+        this.viewer.cameraControl.planView = false;
+        this.bimViewer._firstPersonMode.setEnabled(true);
+        this.bimViewer._sectionTool.setEnabled(true);
+
+        if (done) {
+            viewer.cameraFlight.flyTo({
+                look: center,
+                eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
+                up: up,
+                orthoScale: diag * 1.3,
+                projection: "perspective",
+                duration: 1
+            }, () => {
+                done();
+            });
+        } else {
+            viewer.cameraFlight.jumpTo({
+                look: center,
+                eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
+                up: up,
+                orthoScale: diag * 1.3,
+                projection: "perspective"
+            });
+        }
+    }
+
+    _exitThreeDMode(done) {
+
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        const look2 = math.getAABB3Center(aabb);
+        const diag = math.getAABB3Diag(aabb);
+        const fitFOV = 45; // fitFOV;
+        const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
+        const orthoScale2 = diag * 1.3;
+        const eye2 = tempVec3a$3;
+
+        eye2[0] = look2[0] + (camera.worldUp[0] * sca);
+        eye2[1] = look2[1] + (camera.worldUp[1] * sca);
+        eye2[2] = look2[2] + (camera.worldUp[2] * sca);
+
+        const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
+
+        this.bimViewer._sectionTool.setActive(false);
+        this.bimViewer._sectionTool.clear();
+        this.viewer.cameraControl.planView = true;
+        this.bimViewer._firstPersonMode.setEnabled(false);
+        this.bimViewer._sectionTool.setEnabled(false);
+
+        if (done) {
+            viewer.cameraFlight.flyTo({
+                projection: "ortho",
+                eye: eye2,
+                look: look2,
+                up: up2,
+                orthoScale: orthoScale2
+            }, () => {
+                this.bimViewer._navCubeMode.setActive(false);
+            });
+        } else {
+            viewer.cameraFlight.jumpTo({
+                projection: "ortho",
+                eye: eye2,
+                look: look2,
+                up: up2,
+                orthoScale: orthoScale2
+            });
+            this.bimViewer._navCubeMode.setActive(false);
+        }
     }
 }
 
@@ -59576,6 +59847,7 @@ class BIMViewer extends Controller {
         scene.xrayMaterial.fill = true;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
+        scene.xrayMaterial.edges = true;
         scene.xrayMaterial.edgeAlpha = 0.3;
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
@@ -59673,31 +59945,40 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Sets a batch of configurations.
+     * Sets a batch of viewer configurations.
      *
-     * @param {*} configs Map of key-value configuration pairs.
+     * @param {*} viewerConfigs Map of key-value configuration pairs.
      */
-    setConfigs(configs) {
-        for (let name in configs) {
-            if (configs.hasOwnProperty(name)) {
-                const value = configs[name];
+    setConfigs(viewerConfigs) {
+        for (let name in viewerConfigs) {
+            if (viewerConfigs.hasOwnProperty(name)) {
+                const value = viewerConfigs[name];
                 this.setConfig(name, value);
             }
         }
     }
 
     /**
-     * Sets a configuration.
+     * Sets a viewer configuration.
      *
      * TODO: Document available options
      *
      * @param {String} name Configuration name.
-     * @param {String} value String representation of configuration value.
+     * @param {String|Number|Boolean} value Configuration value.
      */
     setConfig(name, value) {
 
+        function parseBool(value) {
+            return ((value === true) || (value === "true"));
+        }
+
         try {
             switch (name) {
+
+                case "backgroundColor":
+                    const rgbColor = value;
+                    this.setBackgroundColor(rgbColor);
+                    break;
 
                 case "cameraNear":
                     const near = parseFloat(value);
@@ -59712,7 +59993,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoEnabled":
-                    this.viewer.scene.sao.enabled = (value === "true");
+                    this.viewer.scene.sao.enabled = parseBool(value);
                     break;
 
                 case "saoBias":
@@ -59732,7 +60013,19 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoBlur":
-                    this.viewer.scene.sao.blur = (value === "true");
+                    this.viewer.scene.sao.blur = parseBool(value);
+                    break;
+
+                case "viewFitFOV":
+                    this.viewer.cameraFlight.fitFOV = parseFloat(value);
+                    break;
+
+                case "viewFitDuration":
+                    this.viewer.cameraFlight.duration = parseFloat(value);
+                    break;
+
+                case "perspectiveFOV":
+                    this.viewer.camera.perspective.fov = parseFloat(value);
                     break;
 
                 default:
@@ -59996,6 +60289,15 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets the viewer's background color.
+     *
+     * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.
+     */
+    setBackgroundColor(rgbColor) {
+        this.viewer.scene.canvas.canvas.style.background = "rgba(" + (rgbColor[0] * 255) + "," + (rgbColor[1] * 255) + "," + (rgbColor[2] * 255) + ", 1.0)";
+    }
+
+    /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
      *
      * This scrolls the object's node into view, then highlights it.
@@ -60123,8 +60425,7 @@ class BIMViewer extends Controller {
         scene.setObjectsHighlighted(objectIds, true);
         const aabb = scene.getAABB(objectIds);
         viewer.cameraFlight.flyTo({
-            aabb: aabb,
-            duration: 0.5
+            aabb: aabb
         }, () => {
             if (done) {
                 done();
@@ -60336,6 +60637,51 @@ class BIMViewer extends Controller {
             return "storeys";
         }
         return "none";
+    }
+
+    /**
+     * Switches the viewer between 2D and 3D viewing modes.
+     *
+     * @param {Boolean} enabled Set true to switch into 3D mode, else false to switch into 2D mode.
+     * @param {Function} done Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant.
+     */
+    set3DEnabled(enabled, done) {
+        if (enabled) {
+            this._threeDMode.setActive(true, done);
+        } else {
+            this._threeDMode.setActive(false, done);
+        }
+    }
+
+    /**
+     * Gets whether the viewer is in 3D or 2D viewing mode.
+     *
+     * @returns {boolean} True when in 3D mode, else false.
+     */
+    get3DEnabled() {
+        return this._threeDMode.getActive();
+    }
+
+    /**
+     * Transitions the viewer into an isolated view of the given building storey.
+     *
+     * Does nothing and logs an error if no object of the given ID is in the viewer, or if the object is not an ````IfcBuildingStorey````.
+     *
+     * @param {String} storeyObjectId ID of an ````IfcBuildingStorey```` object.
+     * @param {Function} [done] Optional callback to invoke on completion. When provided, the transition will be animated, with the camera flying into position. Otherwise, the transition will be instant, with the camera jumping into position.
+     */
+    selectStorey(storeyObjectId, done) {
+        const metaScene = this.viewer.metaScene;
+        const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+        if (!storeyMetaObject) {
+            this.error("selectStorey() - Object is not found: '" + storeyObjectId + "'");
+            return;
+        }
+        if (storeyMetaObject.type !== "IfcBuildingStorey") {
+            this.error("selectStorey() - Object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            return;
+        }
+        this._storeysExplorer.selectStorey(storeyObjectId, done);
     }
 
     /**
