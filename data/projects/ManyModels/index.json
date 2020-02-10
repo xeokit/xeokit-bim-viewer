@@ -5,14 +5,25 @@
     {
       "id": "Schependomlaan",
       "name": "Schependomlaan",
-      "position": [-100,0,0],
-      "default": true
+      "position": [
+        -100,
+        0,
+        0
+      ]
     },
     {
       "id": "OTCConferenceCenter",
       "name": "OTC Conference Center",
-      "position": [100,0,0],
-      "default": false
+      "position": [
+        100,
+        0,
+        0
+      ]
     }
-  ]
+  ],
+  "viewerContent": {
+    "modelsLoaded": [
+      "Schependomlaan"
+    ]
+  }
 }

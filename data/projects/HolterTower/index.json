@@ -4,8 +4,12 @@
   "models": [
     {
       "id": "design",
-      "name": "Holter Tower",
-      "default": true
+      "name": "Holter Tower"
     }
-  ]
+  ],
+  "viewerContent": {
+    "modelsLoaded": [
+      "design"
+    ]
+  }
 }

@@ -4,8 +4,7 @@
   "models": [
     {
       "id": "model1",
-      "name": "Systhema Model",
-      "default": true
+      "name": "Systhema Model"
     }
   ],
   "viewerConfigs": {

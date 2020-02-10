@@ -4,8 +4,7 @@
   "models": [
     {
       "id": "design",
-      "name": "Duplex Design",
-      "default": true
+      "name": "Duplex Design"
     }
   ],
   "viewerConfigs": {
@@ -16,5 +15,10 @@
     "saoIntensity": "0.5",
     "saoScale": "1200.0",
     "saoKernelRadius": "100"
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "design"
+    ]
   }
 }
