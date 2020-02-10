@@ -724,6 +724,17 @@
             navCubeCanvasElement: document.getElementById("myNavCubeCanvas")
         });
 
+        bimViewer.setConfigs({
+            backgroundColor: [0.9, 0.9, 1.0],
+            cameraNear: 0.05,
+            cameraFar: 3000.0,
+            saoEnabled: false,
+            viewFitDuration: 0.5,
+            viewFitFOV: 45,
+            perspectiveFOV: 55,
+            objectColorSource: "model" // "model" or "viewer"
+        });
+
         tippy('[data-tippy-content]'); // Init tooltips
 
         window.bimViewer = bimViewer;  // Just for debugging
