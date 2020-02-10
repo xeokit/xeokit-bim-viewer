@@ -714,7 +714,7 @@
     window.onload = function () {
 
         const server = new Server({
-            dataDir: "./data/"
+            dataDir: "./data"
         });
 
         const bimViewer = new BIMViewer(server, {
@@ -751,9 +751,9 @@
             return;
         }
 
-        const configs = requestParams.configs;
-        if (configs) {
-            const configNameVals = configs.split(",");
+        const viewerConfigs = requestParams.configs;
+        if (viewerConfigs) {
+            const configNameVals = viewerConfigs.split(",");
             for (let i = 0, len = configNameVals.length; i < len; i++) {
                 const configNameValStr = configNameVals[i];
                 const configNameVal = configNameValStr.split(":");
@@ -832,7 +832,7 @@
                         });
                         break;
 
-                    case "openTab":
+                    case "tabOpen":
                         const tabId = params.tabId;
                         if (!tabId) {
                             console.error("Param expected for `openTab` action: 'tabId'");
