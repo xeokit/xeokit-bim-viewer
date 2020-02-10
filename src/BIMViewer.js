@@ -558,6 +558,14 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * TODO
+     * @param name
+     */
+    getConfig(name) {
+        throw "BIMViewer#getConfig() not implemented yet"
+    }
+
+    /**
      * Gets information on all available projects.
      *
      * ### Example
