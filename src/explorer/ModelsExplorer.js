@@ -34,8 +34,9 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            objectDefaults: IFCObjectDefaults
+            // objectDefaults: IFCObjectDefaults
         });
+
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
         this._projectId = null;
@@ -44,48 +45,119 @@ class ModelsExplorer extends Controller {
     loadProject(projectId, done, error) {
         this.server.getProject(projectId, (projectInfo) => {
             this.unloadProject();
-            const configs = projectInfo.configs;
-            if (configs) {
-                this.bimViewer.setConfigs(configs);
-            }
             this._projectId = projectId;
-            var html = "";
-            const modelsInfo = projectInfo.models || [];
             this._modelsInfo = {};
-            for (let i = 0, len = modelsInfo.length; i < len; i++) {
-                const modelInfo = modelsInfo[i];
-                this._modelsInfo[modelInfo.id] = modelInfo;
-                html += "<div class='xeokit-form-check'>";
-                html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
-                html += "</div>";
-            }
-            this._modelsElement.innerHTML = html;
-            for (let i = 0, len = modelsInfo.length; i < len; i++) {
-                const modelInfo = modelsInfo[i];
-                const modelId = modelInfo.id;
-                const checkBox = document.getElementById("" + modelId);
-                checkBox.addEventListener("click", () => {
-                    if (checkBox.checked) {
-                        this.loadModel(modelId);
-                    } else {
-                        this.unloadModel(modelInfo.id);
-                    }
-                });
-                if (modelInfo.default) {
-                    checkBox.checked = true;
-                    this.loadModel(modelId, done, error); // TODO: buffer and load at end
-                } else {
-                    if (done) {
-                        done();
-                    }
-                }
-            }
+            this._parseProject(projectInfo, done);
         }, (errMsg) => {
             this.error(errMsg);
             if (error) {
                 error(errMsg);
             }
         });
+    }
+
+    _parseProject(projectInfo, done) {
+        this._buildModelsMenu(projectInfo);
+        this._parseViewerConfigs(projectInfo);
+        this._parseViewerContent(projectInfo, () => {
+            this._parseViewerState(projectInfo, () => {
+                done();
+            });
+        });
+    }
+
+    _buildModelsMenu(projectInfo) {
+        var html = "";
+        const modelsInfo = projectInfo.models || [];
+        this._modelsInfo = {};
+        for (let i = 0, len = modelsInfo.length; i < len; i++) {
+            const modelInfo = modelsInfo[i];
+            this._modelsInfo[modelInfo.id] = modelInfo;
+            html += "<div class='xeokit-form-check'>";
+            html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
+            html += "</div>";
+        }
+        this._modelsElement.innerHTML = html;
+        for (let i = 0, len = modelsInfo.length; i < len; i++) {
+            const modelInfo = modelsInfo[i];
+            const modelId = modelInfo.id;
+            const checkBox = document.getElementById("" + modelId);
+            checkBox.addEventListener("click", () => {
+                if (checkBox.checked) {
+                    this.loadModel(modelId);
+                } else {
+                    this.unloadModel(modelInfo.id);
+                }
+            });
+        }
+    }
+
+    _parseViewerConfigs(projectInfo) {
+        const viewerConfigs = projectInfo.viewerConfigs;
+        if (viewerConfigs) {
+            this.bimViewer.setConfigs(viewerConfigs);
+        }
+    }
+
+    _parseViewerContent(projectInfo, done) {
+        const viewerContent = projectInfo.viewerContent;
+        if (!viewerContent) {
+            done();
+            return;
+        }
+        this._parseModelsLoaded(viewerContent, () => {
+            done();
+        });
+    }
+
+    _parseModelsLoaded(viewerContent, done) {
+        const modelsLoaded = viewerContent.modelsLoaded;
+        if (!modelsLoaded || (modelsLoaded.length === 0)) {
+            done();
+            return;
+        }
+        this._loadNextModel(modelsLoaded.slice(0), done);
+    }
+
+    _loadNextModel(modelsLoaded, done) {
+        if (modelsLoaded.length === 0) {
+            done();
+            return;
+        }
+        const modelId = modelsLoaded.pop();
+        this.loadModel(modelId, () => {
+            this._loadNextModel(modelsLoaded, done);
+        });
+    }
+
+    _parseViewerState(projectInfo, done) {
+        const viewerState = projectInfo.viewerState;
+        if (!viewerState) {
+            done();
+        }
+        if (viewerState.tabOpen) {
+            this.bimViewer.openTab(viewerState.tabOpen);
+        }
+
+        this._parseSelectedStorey(viewerState, () => {
+            this._parseThreeDMode(viewerState, () => {
+                done();
+            });
+        });
+    }
+
+    _parseSelectedStorey(viewerState, done) {
+        if (viewerState.selectedStorey) {
+            this.bimViewer.selectStorey(viewerState.selectedStorey);
+            done();
+        } else {
+            done();
+        }
+    }
+
+    _parseThreeDMode(viewerState, done) {
+        const activateThreeDMode = (viewerState.threeDEnabled !== false);
+        this.bimViewer.set3DEnabled(activateThreeDMode, done = null);
     }
 
     unloadProject() {
@@ -137,13 +209,14 @@ class ModelsExplorer extends Controller {
                             metaModelData: json,
                             xkt: arraybuffer,
                             excludeUnclassifiedObjects: true,
-                            edges: true,
                             position: modelInfo.position,
                             scale: modelInfo.scale,
                             rotation: modelInfo.rotation,
-                            matrix: modelInfo.matrix
+                            matrix: modelInfo.matrix,
+                            edges: (modelInfo.edges !== false)
                         });
                         model.on("loaded", () => {
+                            document.getElementById("" + modelId).checked = true;
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;

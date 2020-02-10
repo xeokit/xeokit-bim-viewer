@@ -359,6 +359,7 @@ class BIMViewer extends Controller {
         scene.xrayMaterial.fill = true;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
+        scene.xrayMaterial.edges = true;
         scene.xrayMaterial.edgeAlpha = 0.3;
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
@@ -456,31 +457,40 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Sets a batch of configurations.
+     * Sets a batch of viewer configurations.
      *
-     * @param {*} configs Map of key-value configuration pairs.
+     * @param {*} viewerConfigs Map of key-value configuration pairs.
      */
-    setConfigs(configs) {
-        for (let name in configs) {
-            if (configs.hasOwnProperty(name)) {
-                const value = configs[name];
+    setConfigs(viewerConfigs) {
+        for (let name in viewerConfigs) {
+            if (viewerConfigs.hasOwnProperty(name)) {
+                const value = viewerConfigs[name];
                 this.setConfig(name, value);
             }
         }
     }
 
     /**
-     * Sets a configuration.
+     * Sets a viewer configuration.
      *
      * TODO: Document available options
      *
      * @param {String} name Configuration name.
-     * @param {String} value String representation of configuration value.
+     * @param {String|Number|Boolean} value Configuration value.
      */
     setConfig(name, value) {
 
+        function parseBool(value) {
+            return ((value === true) || (value === "true"));
+        }
+
         try {
             switch (name) {
+
+                case "backgroundColor":
+                    const rgbColor = value;
+                    this.setBackgroundColor(rgbColor);
+                    break;
 
                 case "cameraNear":
                     const near = parseFloat(value);
@@ -495,7 +505,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoEnabled":
-                    this.viewer.scene.sao.enabled = (value === "true");
+                    this.viewer.scene.sao.enabled = parseBool(value);
                     break;
 
                 case "saoBias":
@@ -515,7 +525,19 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoBlur":
-                    this.viewer.scene.sao.blur = (value === "true");
+                    this.viewer.scene.sao.blur = parseBool(value);
+                    break;
+
+                case "viewFitFOV":
+                    this.viewer.cameraFlight.fitFOV = parseFloat(value);
+                    break;
+
+                case "viewFitDuration":
+                    this.viewer.cameraFlight.duration = parseFloat(value);
+                    break;
+
+                case "perspectiveFOV":
+                    this.viewer.camera.perspective.fov = parseFloat(value);
                     break;
 
                 default:
@@ -779,6 +801,15 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets the viewer's background color.
+     *
+     * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.
+     */
+    setBackgroundColor(rgbColor) {
+        this.viewer.scene.canvas.canvas.style.background = "rgba(" + (rgbColor[0] * 255) + "," + (rgbColor[1] * 255) + "," + (rgbColor[2] * 255) + ", 1.0)";
+    }
+
+    /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
      *
      * This scrolls the object's node into view, then highlights it.
@@ -906,8 +937,7 @@ class BIMViewer extends Controller {
         scene.setObjectsHighlighted(objectIds, true);
         const aabb = scene.getAABB(objectIds);
         viewer.cameraFlight.flyTo({
-            aabb: aabb,
-            duration: 0.5
+            aabb: aabb
         }, () => {
             if (done) {
                 done();
@@ -1119,6 +1149,51 @@ class BIMViewer extends Controller {
             return "storeys";
         }
         return "none";
+    }
+
+    /**
+     * Switches the viewer between 2D and 3D viewing modes.
+     *
+     * @param {Boolean} enabled Set true to switch into 3D mode, else false to switch into 2D mode.
+     * @param {Function} done Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant.
+     */
+    set3DEnabled(enabled, done) {
+        if (enabled) {
+            this._threeDMode.setActive(true, done);
+        } else {
+            this._threeDMode.setActive(false, done);
+        }
+    }
+
+    /**
+     * Gets whether the viewer is in 3D or 2D viewing mode.
+     *
+     * @returns {boolean} True when in 3D mode, else false.
+     */
+    get3DEnabled() {
+        return this._threeDMode.getActive();
+    }
+
+    /**
+     * Transitions the viewer into an isolated view of the given building storey.
+     *
+     * Does nothing and logs an error if no object of the given ID is in the viewer, or if the object is not an ````IfcBuildingStorey````.
+     *
+     * @param {String} storeyObjectId ID of an ````IfcBuildingStorey```` object.
+     * @param {Function} [done] Optional callback to invoke on completion. When provided, the transition will be animated, with the camera flying into position. Otherwise, the transition will be instant, with the camera jumping into position.
+     */
+    selectStorey(storeyObjectId, done) {
+        const metaScene = this.viewer.metaScene;
+        const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+        if (!storeyMetaObject) {
+            this.error("selectStorey() - Object is not found: '" + storeyObjectId + "'");
+            return;
+        }
+        if (storeyMetaObject.type !== "IfcBuildingStorey") {
+            this.error("selectStorey() - Object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            return;
+        }
+        this._storeysExplorer.selectStorey(storeyObjectId, done);
     }
 
     /**

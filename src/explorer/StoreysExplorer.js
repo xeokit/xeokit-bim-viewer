@@ -57,25 +57,7 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
-            const scene = this.viewer.scene;
-            scene.setObjectsSelected(scene.selectedObjectIds, false);
-            scene.setObjectsXRayed(scene.objectIds, true);
-            scene.setObjectsVisible(scene.objectIds, true);
-            const objectIds = [];
-            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
-                if (treeViewNode.objectId) {
-                    objectIds.push(treeViewNode.objectId);
-                }
-            });
-            scene.setObjectsXRayed(objectIds, false);
-            this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
-                duration: 0.5
-            }, () => {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+            this.selectStorey(e.treeViewNode.objectId, () => {// Animated
             });
         });
 
@@ -120,6 +102,73 @@ class StoreysExplorer extends Controller {
 
     unShowNodeInTreeView() {
         this._treeView.unShowNode();
+    }
+
+    // selectStorey(storeyObjectId, done) {
+    //     const metaScene = this.viewer.metaScene;
+    //     const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+    //     if (!storeyMetaObject) {
+    //         this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
+    //         return;
+    //     }
+    //     if (storeyMetaObject.type !== "IfcBuildingStorey") {
+    //         this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+    //         return;
+    //     }
+    //     const scene = this.viewer.scene;
+    //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
+    //     scene.setObjectsSelected(scene.selectedObjectIds, false);
+    //     if (done) {
+    //         scene.setObjectsVisible(scene.objectIds, true);
+    //         scene.setObjectsXRayed(scene.objectIds, true);
+    //         scene.setObjectsXRayed(objectIds, false);
+    //         this.viewer.cameraFlight.flyTo({
+    //             aabb: scene.getAABB(objectIds)
+    //         }, () => {
+    //             setTimeout(function () {
+    //                 scene.setObjectsVisible(scene.xrayedObjectIds, false);
+    //                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+    //             }, 500);
+    //             done();
+    //         });
+    //     } else {
+    //         scene.setObjectsVisible(scene.objectIds, false);
+    //         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+    //         scene.setObjectsVisible(objectIds, true);
+    //         this.viewer.cameraFlight.jumpTo({
+    //             aabb: scene.getAABB(objectIds)
+    //         });
+    //     }
+    // }
+
+    selectStorey(storeyObjectId, done) {
+        const metaScene = this.viewer.metaScene;
+        const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
+        if (!storeyMetaObject) {
+            this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
+            return;
+        }
+        if (storeyMetaObject.type !== "IfcBuildingStorey") {
+            this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            return;
+        }
+        const scene = this.viewer.scene;
+        const objectIds = storeyMetaObject.getObjectIDsInSubtree();
+        scene.setObjectsVisible(scene.visibleObjectIds, false);
+        scene.setObjectsSelected(scene.selectedObjectIds, false);
+        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+        scene.setObjectsVisible(objectIds, true);
+        if (done) {
+            this.viewer.cameraFlight.flyTo({
+                aabb: scene.getAABB(objectIds)
+            }, () => {
+                done();
+            });
+        } else {
+            this.viewer.cameraFlight.jumpTo({
+                aabb: scene.getAABB(objectIds)
+            });
+        }
     }
 
     destroy() {
