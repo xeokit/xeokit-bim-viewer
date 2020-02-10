@@ -9,7 +9,7 @@
  * @private
  * @type {{String:Object}}
  */
-const IFCObjectDefaults = {
+const ModelIFCObjectColors = {
     IfcSpace: { // IfcSpace elements should be visible and pickable
         visible: true,
         pickable: true,
@@ -28,4 +28,4 @@ const IFCObjectDefaults = {
     }
 };
 
-export {IFCObjectDefaults};
+export {ModelIFCObjectColors};

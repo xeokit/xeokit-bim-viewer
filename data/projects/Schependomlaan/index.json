@@ -18,7 +18,8 @@
     "saoBlur": true,
     "viewFitDuration": 0.5,
     "viewFitFOV": 45,
-    "perspectiveFOV": 55
+    "perspectiveFOV": 55,
+    "objectColorSource": "viewer"
   },
   "viewerContent": {
     "modelsLoaded": [

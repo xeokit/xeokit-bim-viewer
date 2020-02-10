@@ -540,6 +540,14 @@ class BIMViewer extends Controller {
                     this.viewer.camera.perspective.fov = parseFloat(value);
                     break;
 
+                case "excludeUnclassifiedObjects":
+                    // TODO: wire this up somewhere
+                    break;
+
+                case "objectColorSource":
+                    this.setObjectColorSource(value);
+                    break;
+
                 default:
                     this.error("setConfig() - unsupported configuration: '" + name + "'");
             }
@@ -808,6 +816,44 @@ class BIMViewer extends Controller {
     setBackgroundColor(rgbColor) {
         this.viewer.scene.canvas.canvas.style.background = "rgba(" + (rgbColor[0] * 255) + "," + (rgbColor[1] * 255) + "," + (rgbColor[2] * 255) + ", 1.0)";
     }
+
+    /**
+     * Sets where the colors for model objects will be loaded from.
+     *
+     * Options are:
+     *
+     * * "model" - (default) load colors from models, and
+     * * "viewer" - load colors from the viewer's inbuilt table of colors for IFC types.
+     *
+     * This is "model" by default.
+     *
+     * @param {String} source Where colors will be loaded from - "model" or "viewer".
+     */
+    setObjectColorSource(source) {
+        switch (source) {
+            case "model":
+                break;
+            case "viewer":
+                break;
+            default:
+                source = "model";
+                this.error("setObjectColorSource() - Unsupported value - accepted values are 'model' and 'viewer' - defaulting to 'model'");
+                return;
+        }
+        this._objectColorSource = source;
+    }
+
+    /**
+     * Gets where the colors for model objects will be loaded from.
+     *
+     * This is "model" by default.
+     *
+     * @return {String} Where colors will be loaded from - "model" to get colors from the model, or "viewer" to get them from the viewer's built-in table of colors for IFC types.
+     */
+    getObjectColorSource() {
+        return this._objectColorSource || "model";
+    }
+
 
     /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.

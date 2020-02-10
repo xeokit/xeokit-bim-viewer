@@ -1,7 +1,8 @@
 import {Controller} from "../Controller.js";
 import {XKTLoaderPlugin} from "@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-import {IFCObjectDefaults} from "../IFCObjectDefaults/IFCObjectDefaults.js";
+import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js";
+import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
 
 const tempVec3 = math.vec3();
 
@@ -34,7 +35,7 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            objectDefaults: IFCObjectDefaults
+            objectDefaults: ModelIFCObjectColors
         });
 
         this._modelsInfo = {};
@@ -205,10 +206,13 @@ class ModelsExplorer extends Controller {
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
                     (arraybuffer) => {
+                        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+                        const objectDefaults = (objectColorSource === "model") ? ModelIFCObjectColors : ViewerIFCObjectColors;
                         const model = this._xktLoader.load({
                             id: modelId,
                             metaModelData: json,
                             xkt: arraybuffer,
+                            objectDefaults: objectDefaults,
                             excludeUnclassifiedObjects: true,
                             position: modelInfo.position,
                             scale: modelInfo.scale,
