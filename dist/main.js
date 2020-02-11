@@ -55250,7 +55250,14 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
-            this.selectStorey(e.treeViewNode.objectId, () => {// Animated
+            const scene = this.viewer.scene;
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            this._selectObjects(objectIds, () => {
             });
         });
 
@@ -55337,8 +55344,16 @@ class StoreysExplorer extends Controller {
             this.error("selectStorey() - object is not found: '" + storeyObjectId + "'");
             return;
         }
-        const scene = this.viewer.scene;
+        if (storeyMetaObject.type !== "IfcBuildingStorey") {
+            this.error("selectStorey() - object is not found: '" + storeyObjectId + "'");
+            return;
+        }
         const objectIds = storeyMetaObject.getObjectIDsInSubtree();
+        this._selectObjects(objectIds, done);
+    }
+
+    _selectObjects(objectIds, done) {
+        const scene = this.viewer.scene;
         scene.setObjectsVisible(scene.visibleObjectIds, false);
         scene.setObjectsSelected(scene.selectedObjectIds, false);
         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
