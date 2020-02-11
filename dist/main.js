@@ -52390,6 +52390,231 @@ class XKTLoaderPlugin extends Plugin {
     }
 }
 
+/**
+ * @desc Default initial properties for {@link Entity}s loaded from models accompanied by metadata.
+ *
+ * When loading a model, a loader plugins such as {@link GLTFLoaderPlugin} and {@link BIMServerLoaderPlugin} create
+ * a tree of {@link Entity}s that represent the model. These loaders can optionally load metadata, to create
+ * a {@link MetaModel} corresponding to the root {@link Entity}, with a {@link MetaObject} corresponding to each
+ * object {@link Entity} within the tree.
+ *
+ * @private
+ * @type {{String:Object}}
+ */
+const ModelIFCObjectColors = {
+    IfcSpace: { // IfcSpace elements should be visible and pickable
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { // Some IFC models have opaque IfcWindow elements(!)
+        pickable: true,
+        opacity: 0.5
+    },
+    IfcOpeningElement: { // These tend to obscure windows
+        visible: false
+    },
+    IfcPlate: { // These tend to be windows(!)
+        colorize: [0.8470588235, 0.427450980392, 0, 0.5],
+        opacity: 0.5
+    }
+};
+
+/**
+ * @desc Default initial properties for {@link Entity}s loaded from models accompanied by metadata.
+ *
+ * When loading a model, a loader plugins such as {@link GLTFLoaderPlugin} and {@link BIMServerLoaderPlugin} create
+ * a tree of {@link Entity}s that represent the model. These loaders can optionally load metadata, to create
+ * a {@link MetaModel} corresponding to the root {@link Entity}, with a {@link MetaObject} corresponding to each
+ * object {@link Entity} within the tree.
+ *
+ * @type {{String:Object}}
+ */
+const ViewerIFCObjectColors = {
+
+    // Priority 0
+
+    IfcRoof: {
+        colorize: [0.837255, 0.203922, 0.270588],
+        priority: 0
+    },
+    IfcSlab: {
+        colorize: [0.637255, 0.603922, 0.670588],
+        priority: 0
+    },
+    IfcWall: {
+        colorize: [0.537255, 0.337255, 0.237255],
+        priority: 0
+    },
+    IfcWallStandardCase: {
+        colorize: [0.537255, 0.337255, 0.237255],
+        priority: 0
+    },
+    IfcCovering: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 0
+    },
+
+    // Priority 1
+
+    IfcDoor: {
+        colorize: [0.637255, 0.603922, 0.670588],
+        priority: 1
+    },
+
+    // Priority 2
+
+    IfcStair: {
+        colorize: [0.637255, 0.603922, 0.670588],
+        priority: 2
+    },
+    IfcStairFlight: {
+        colorize: [0.637255, 0.603922, 0.670588],
+        priority: 2
+    },
+    IfcProxy: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 2
+    },
+    IfcRamp: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 2
+    },
+
+    // Priority 3
+
+    IfcColumn: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 3
+    },
+    IfcBeam: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 3
+    },
+    IfcCurtainWall: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 3
+    },
+    IfcPlate: {
+        colorize: [0.8470588235, 0.427450980392, 0, 0.5],
+        opacity: 0.5,
+        priority: 3
+    },
+    IfcTransportElement: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 3
+    },
+    IfcFooting: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 3
+    },
+
+    // Priority 4
+
+    IfcRailing: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 4
+    },
+    IfcFurnishingElement: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 4
+    },
+    IfcFurniture: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 4
+    },
+    IfcSystemFurnitureElement: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 4
+    },
+
+    // Priority 5
+
+    IfcFlowSegment: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 5
+    },
+    IfcFlowitting: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 5
+    },
+    IfcFlowTerminal: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        priority: 5
+    },
+    IfcFlowController: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 5
+    },
+    IfcFlowFitting: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 5
+    },
+    IfcDuctSegment: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 5
+    },
+    IfcDistributionFlowElement: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 5
+    },
+    IfcDuctFitting: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 5
+    },
+    IfcLightFixture: {
+        colorize: [0.8470588235, 0.8470588235, 0.870588],
+        priority: 5
+    },
+
+    // Priority 6
+
+    IfcAirTerminal: {
+        colorize: [0.8470588235, 0.427450980392, 0],
+        priority: 6
+    },
+
+    IfcOpeningElement: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        pickable: false,
+        visible: false,
+        priority: 6
+    },
+    IfcSpace: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        pickable: false,
+        visible: false,
+        opacity: 0.5,
+        priority: 6
+    },
+
+    IfcWindow: {
+        colorize: [0.137255, 0.403922, 0.870588],
+        pickable: true,
+        opacity: 0.4,
+        priority: 6 // FIXME: transparent objects need to be last in order to avoid strange wireframe effect
+    },
+
+    //
+
+    IfcBuildingElementProxy: {
+        colorize: [0.5, 0.5, 0.5]
+    },
+
+    IfcSite: {
+        colorize: [0.137255, 0.403922, 0.870588]
+    },
+
+    IfcMember: {
+        colorize: [0.8470588235, 0.427450980392, 0]
+    },
+
+    DEFAULT: {
+        colorize: [0.5, 0.5, 0.5],
+        priority: 10
+    }
+};
+
 const tempVec3$3 = math.vec3();
 
 /** @private */
@@ -52421,7 +52646,7 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            // objectDefaults: IFCObjectDefaults
+            objectDefaults: ModelIFCObjectColors
         });
 
         this._modelsInfo = {};
@@ -52592,10 +52817,13 @@ class ModelsExplorer extends Controller {
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
                     (arraybuffer) => {
+                        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+                        const objectDefaults = (objectColorSource === "model") ? ModelIFCObjectColors : ViewerIFCObjectColors;
                         const model = this._xktLoader.load({
                             id: modelId,
                             metaModelData: json,
                             xkt: arraybuffer,
+                            objectDefaults: objectDefaults,
                             excludeUnclassifiedObjects: true,
                             position: modelInfo.position,
                             scale: modelInfo.scale,
@@ -52609,7 +52837,7 @@ class ModelsExplorer extends Controller {
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
                             this._unloadModelsButtonElement.classList.remove("disabled");
-                            if (this._numModelsLoaded === 1) { // Jump camera when only one model
+                            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
                                 });
@@ -52619,17 +52847,12 @@ class ModelsExplorer extends Controller {
                                 if (done) {
                                     done();
                                 }
-                            } else { // Fly camera when multiple models
-                                this.viewer.cameraFlight.flyTo({
-                                    aabb: aabb
-                                }, () => {
-                                    this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
-                                    this.fire("modelLoaded", modelId);
-                                    this.bimViewer._busyModal.hide();
-                                    if (done) {
-                                        done();
-                                    }
-                                });
+                            } else {
+                                this.fire("modelLoaded", modelId);
+                                this.bimViewer._busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
                             }
                         });
                     },
@@ -54508,6 +54731,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
@@ -54539,6 +54763,9 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.visible = true;
+                                        if (entity.xrayed) {
+                                            entity.pickable = true;
+                                        }
                                         entity.xrayed = false;
                                         entity.selected = false;
                                     }
@@ -54551,6 +54778,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                                 if (treeViewNode.objectId) {
@@ -54571,6 +54799,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -54585,6 +54814,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     if (entity) {
                                         entity.xrayed = true;
                                         entity.visible = true;
+                                        entity.pickable = false;
                                     }
                                 }
                             });
@@ -54598,6 +54828,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -54608,6 +54839,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
@@ -54615,6 +54847,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -54626,6 +54859,7 @@ class TreeViewContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
                     {
@@ -54634,7 +54868,10 @@ class TreeViewContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
@@ -54718,7 +54955,8 @@ class ObjectsExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: objectsElement,
             hierarchy: "containment",
-            autoAddModels: false
+            autoAddModels: false,
+            pruneEmptyNodes: true
         });
 
         this._treeViewContextMenu = new TreeViewContextMenu();
@@ -54847,7 +55085,8 @@ class ClassesExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: classesElement,
             hierarchy: "types",
-            autoAddModels: false
+            autoAddModels: false,
+            pruneEmptyNodes: true
         });
 
         this._treeViewContextMenu = new TreeViewContextMenu();
@@ -54939,6 +55178,8 @@ class ClassesExplorer extends Controller {
     }
 }
 
+const tempVec3$4 = math.vec3();
+
 /** @private */
 class StoreysExplorer extends Controller {
 
@@ -54986,7 +55227,8 @@ class StoreysExplorer extends Controller {
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
-                treeViewNode: e.treeViewNode
+                treeViewNode: e.treeViewNode,
+                pruneEmptyNodes: true
             };
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
@@ -55095,15 +55337,17 @@ class StoreysExplorer extends Controller {
         scene.setObjectsSelected(scene.selectedObjectIds, false);
         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
         scene.setObjectsVisible(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$4);
         if (done) {
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             }, () => {
                 done();
             });
         } else {
             this.viewer.cameraFlight.jumpTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             });
         }
     }
@@ -55117,7 +55361,7 @@ class StoreysExplorer extends Controller {
     }
 }
 
-const tempVec3$4 = math.vec3();
+const tempVec3$5 = math.vec3();
 const newLook = math.vec3();
 const newEye = math.vec3();
 const newUp = math.vec3();
@@ -55379,7 +55623,7 @@ class CameraFlightAnimation extends Component {
 
             this._look2 = poi || aabbCenter;
 
-            const eyeLookVec = math.subVec3(this._eye1, this._look1, tempVec3$4);
+            const eyeLookVec = math.subVec3(this._eye1, this._look1, tempVec3$5);
             const eyeLookVecNorm = math.normalizeVec3(eyeLookVec);
             const diag = poi ? math.getAABB3DiagPoint(aabb, poi) : math.getAABB3Diag(aabb);
             const fitFOV = params.fitFOV || this._fitFOV;
@@ -55539,12 +55783,12 @@ class CameraFlightAnimation extends Component {
                 dist = Math.abs((diag) / Math.tan((params.fitFOV || this._fitFOV) * math.DEGTORAD));
 
             } else {
-                dist = math.lenVec3(math.subVec3(camera.eye, camera.look, tempVec3$4));
+                dist = math.lenVec3(math.subVec3(camera.eye, camera.look, tempVec3$5));
             }
 
             math.mulVec3Scalar(newLookEyeVec, dist);
 
-            camera.eye = math.addVec3(newLook, newLookEyeVec, tempVec3$4);
+            camera.eye = math.addVec3(newLook, newLookEyeVec, tempVec3$5);
             camera.look = newLook;
 
             this.scene.camera.ortho.scale = diag * 1.1;
@@ -58570,7 +58814,7 @@ class Viewer {
     }
 }
 
-const tempVec3$5 = math.vec3();
+const tempVec3$6 = math.vec3();
 
 /**
  * {@link Viewer} plugin that saves and loads BCF viewpoints as JSON objects.
@@ -58942,8 +59186,8 @@ class BCFViewpointsPlugin extends Plugin {
         if (bcfViewpoint.clipping_planes) {
             bcfViewpoint.clipping_planes.forEach(function (e) {
                 new SectionPlane(scene, {
-                    pos: xyzObjectToArray(e.location, tempVec3$5),
-                    dir: xyzObjectToArray(e.direction, tempVec3$5)
+                    pos: xyzObjectToArray(e.location, tempVec3$6),
+                    dir: xyzObjectToArray(e.direction, tempVec3$6)
                 });
             });
         }
@@ -58991,17 +59235,17 @@ class BCFViewpointsPlugin extends Plugin {
             let projection;
 
             if (bcfViewpoint.perspective_camera) {
-                eye = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_view_point, tempVec3$5);
-                look = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_direction, tempVec3$5);
-                up = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_up_vector, tempVec3$5);
+                eye = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_view_point, tempVec3$6);
+                look = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_direction, tempVec3$6);
+                up = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_up_vector, tempVec3$6);
 
                 camera.perspective.fov = bcfViewpoint.perspective_camera.field_of_view;
 
                 projection = "perspective";
             } else {
-                eye = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_view_point, tempVec3$5);
-                look = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_direction, tempVec3$5);
-                up = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_up_vector, tempVec3$5);
+                eye = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_view_point, tempVec3$6);
+                look = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_direction, tempVec3$6);
+                up = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_up_vector, tempVec3$6);
 
                 camera.ortho.scale = bcfViewpoint.orthogonal_camera.field_of_view;
 
@@ -59022,9 +59266,9 @@ class BCFViewpointsPlugin extends Plugin {
                     origin: eye,
                     direction: look
                 });
-                look = (hit ? hit.worldPos : math.addVec3(eye, look, tempVec3$5));
+                look = (hit ? hit.worldPos : math.addVec3(eye, look, tempVec3$6));
             } else {
-                look = math.addVec3(eye, look, tempVec3$5);
+                look = math.addVec3(eye, look, tempVec3$6);
             }
 
             if (immediate) {
@@ -59318,6 +59562,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -59329,16 +59574,9 @@ class ObjectContextMenu extends ContextMenu {
                             return (!context.entity.xrayed);
                         },
                         doAction: function (context) {
-                            context.entity.xrayed = true;
-                        }
-                    },
-                    {
-                        title: "Undo X-Ray",
-                        getEnabled: function (context) {
-                            return context.entity.xrayed;
-                        },
-                        doAction: function (context) {
-                            context.entity.xrayed = false;
+                            const entity = context.entity;
+                            entity.xrayed = true;
+                            entity.pickable = false;
                         }
                     },
                     {
@@ -59353,11 +59591,13 @@ class ObjectContextMenu extends ContextMenu {
                             }
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             metaObject.withMetaObjectsInSubtree((metaObject) => {
                                 const entity = scene.objects[metaObject.id];
                                 if (entity) {
                                     entity.xrayed = false;
+                                    entity.pickable = true;
                                 }
                             });
                         }
@@ -59371,6 +59611,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                         }
                     },
@@ -59380,7 +59621,10 @@ class ObjectContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
@@ -59392,6 +59636,7 @@ class ObjectContextMenu extends ContextMenu {
                         },
                         doAction: function (context) {
                             context.entity.selected = true;
+
                         }
                     },
                     {
@@ -59475,6 +59720,7 @@ class CanvasContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
                     {
@@ -59483,7 +59729,9 @@ class CanvasContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects > 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const xrayedObjectIds = context.viewer.scene.xrayedObjectIds;
+                            context.viewer.scene.setObjectsPickable(xrayedObjectIds, true);
+                            context.viewer.scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
@@ -60028,6 +60276,14 @@ class BIMViewer extends Controller {
                     this.viewer.camera.perspective.fov = parseFloat(value);
                     break;
 
+                case "excludeUnclassifiedObjects":
+                    // TODO: wire this up somewhere
+                    break;
+
+                case "objectColorSource":
+                    this.setObjectColorSource(value);
+                    break;
+
                 default:
                     this.error("setConfig() - unsupported configuration: '" + name + "'");
             }
@@ -60035,6 +60291,14 @@ class BIMViewer extends Controller {
         } catch (e) {
             this.error("setConfig() - failed to configure '" + name + "': " + e);
         }
+    }
+
+    /**
+     * TODO
+     * @param name
+     */
+    getConfig(name) {
+        throw "BIMViewer#getConfig() not implemented yet"
     }
 
     /**
@@ -60296,6 +60560,44 @@ class BIMViewer extends Controller {
     setBackgroundColor(rgbColor) {
         this.viewer.scene.canvas.canvas.style.background = "rgba(" + (rgbColor[0] * 255) + "," + (rgbColor[1] * 255) + "," + (rgbColor[2] * 255) + ", 1.0)";
     }
+
+    /**
+     * Sets where the colors for model objects will be loaded from.
+     *
+     * Options are:
+     *
+     * * "model" - (default) load colors from models, and
+     * * "viewer" - load colors from the viewer's inbuilt table of colors for IFC types.
+     *
+     * This is "model" by default.
+     *
+     * @param {String} source Where colors will be loaded from - "model" or "viewer".
+     */
+    setObjectColorSource(source) {
+        switch (source) {
+            case "model":
+                break;
+            case "viewer":
+                break;
+            default:
+                source = "model";
+                this.error("setObjectColorSource() - Unsupported value - accepted values are 'model' and 'viewer' - defaulting to 'model'");
+                return;
+        }
+        this._objectColorSource = source;
+    }
+
+    /**
+     * Gets where the colors for model objects will be loaded from.
+     *
+     * This is "model" by default.
+     *
+     * @return {String} Where colors will be loaded from - "model" to get colors from the model, or "viewer" to get them from the viewer's built-in table of colors for IFC types.
+     */
+    getObjectColorSource() {
+        return this._objectColorSource || "model";
+    }
+
 
     /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
