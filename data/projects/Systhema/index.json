@@ -22,9 +22,6 @@
     ]
   },
   "viewerState": {
-    "viewCubeEnabled": true,
-    "threeDEnabled": false,
-    "tabOpen": "storeys",
-    "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1"
+    "tabOpen": "storeys"
   }
 }
