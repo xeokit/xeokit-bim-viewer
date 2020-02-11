@@ -776,10 +776,14 @@
 
         bimViewer.loadProject(projectId, () => {
 
+                const modelId = requestParams.modelId;
+                if (modelId) {
+                    bimViewer.loadModel(modelId);
+                }
+
                 const tab = requestParams.tab;
                 if (tab) {
                     bimViewer.openTab(tab);
-                    return;
                 }
 
                 // Hash params contain transient params, such as the object to focus on

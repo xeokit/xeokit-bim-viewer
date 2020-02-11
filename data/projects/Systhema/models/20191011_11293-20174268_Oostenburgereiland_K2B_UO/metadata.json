@@ -1,0 +1,1386 @@
+{
+  "id": "20174268",
+  "projectId": "06sgG1ElbAaAavzbjXfeaN",
+  "metaObjects": [
+    {
+      "id": "06sgG1ElbAaAavzbjXfeaN",
+      "name": "20174268",
+      "type": "IfcProject",
+      "parent": null
+    },
+    {
+      "id": "06sgG1ElbAaAavzbjXfeaL",
+      "name": "Default",
+      "type": "IfcSite",
+      "parent": "06sgG1ElbAaAavzbjXfeaN"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbjXfeaM",
+      "name": "Amsterdam, Oostenburgereiland blok K2B",
+      "type": "IfcBuilding",
+      "parent": "06sgG1ElbAaAavzbjXfeaL"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkULT14",
+      "name": "00 begane grond",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "04hqx76lrDxhw2O7u15c_b",
+      "name": "NLRS_GdV_GM_orientatiekubus:00_GdV_kubus:1279197",
+      "type": "IfcBuildingElementProxy",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPP$",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1288170",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPad",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1288370",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPbJ",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1288390",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPbD",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1288408",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPrM",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1289411",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPob",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1289520",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rPmm",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1289637",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rP_$",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1289770",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "3BkFNAfoz43AoHWdkniDkC",
+      "name": "Basic Wall:22_GdV_kalkzandsteen d=120:1347862",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "3BkFNAfoz43AoHWdkniDaU",
+      "name": "Basic Wall:22_GdV_kalkzandsteen d=120:1348484",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "3BkFNAfoz43AoHWdkniDuj",
+      "name": "Basic Wall:22_GdV_kalkzandsteen d=120:1348791",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0_2wSjrUrDPxU7OOFB0fx1",
+      "name": "Basic Wall:22_GdV_kalkzandsteen d=120:1382684",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7Xq",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388401",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK6Rk",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1389035",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK6Rf",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1389036",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoHAW",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1399769",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoHAY",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1399771",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoHAa",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 375x800:1399773",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoHPR",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 700x500:1400610",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIas",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1400911",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIXv",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1401088",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIWw",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 700x500:1401155",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIg7",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1401854",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIrM",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1401903",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIp1",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 500x500:1402296",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIyq",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x800:1402445",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIy4",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x800:1402493",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoI$M",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x800:1402543",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIvo",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x800:1402635",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoIxl",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x500:1402774",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoI6j",
+      "name": "Floor:13_GdV_beton ihwg h=250 liftputvloer:1403092",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoI1I",
+      "name": "Floor:23_GdV_kanaalplaatvloer geisoleerd h=200:1403179",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoI3d",
+      "name": "Floor:23_GdV_kanaalplaatvloer geisoleerd h=200:1403294",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoI2s",
+      "name": "Floor:23_GdV_kanaalplaatvloer geisoleerd h=200:1403343",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "2zBR1raBf7VfVGkcRD$NUj",
+      "name": "Floor:23_GdV_kanaalplaatvloer geisoleerd h=200:1403343:2",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "38TFdtl3rDKeVzifcmoILd",
+      "name": "Floor:23_GdV_Vloeruitvulstroken bgg:1403934",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "2JoK5V6K9Ec9qYOXuEExWu",
+      "name": "Floor:23_GdV_Vloeruitvulstroken bgg:1403934:2",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "2f6iZqjoX0pfOesYi$$poO",
+      "name": "Floor:23_GdV_Vloeruitvulstroken bgg:1403934:3",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "1Vr_a3HXf9tBMYr0$9qF09",
+      "name": "Floor:23_GdV_Vloeruitvulstroken bgg:1403934:4",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_r2Y",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 600x500:1408534",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_r3$",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x500:1408587",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_r7W",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 300x500 balkverbreding:1408852",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_r5N",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 300x500 balkverbreding:1408995",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_wxo",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 350x500:1409094",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0J46rvkP9BTxcVBg8q_wun",
+      "name": "16_GdV_betonbalk_ihwg:betonbalk 450x500:1409157",
+      "type": "IfcFooting",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "0BPjALZpT3Auzet53CoK3E",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkULT14"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUMFw6",
+      "name": "01 eerste verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOSX",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1291956",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOpM",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1293635",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOpG",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1293637",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOpI",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1293639",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOpS",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1293641",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOpQ",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1293647",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOp4",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1293649",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rOp6",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1293651",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMtI_",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1297025",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMtKn",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1297166",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMtLu",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1297223",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdonn",
+      "name": "Floor:23_GdV_isokorf:1304587",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdooy",
+      "name": "Floor:23_GdV_isokorf:1304774",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdorz",
+      "name": "Floor:23_GdV_isokorf:1304839",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdorg",
+      "name": "Floor:23_GdV_isokorf:1304848",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7hJ",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1387990",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1P96",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425155",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_dk",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545005",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_br",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545142",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "0zm5NeuHvCKhPWqZnLveSW",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUMFw6"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUN$dd",
+      "name": "02 tweede verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0XUy6afLj6jvJtIs_5rV0D",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1294744",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMtFR",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1297892",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMtFI",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1297901",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_Z",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1298844",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_X",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1298846",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_V",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1298848",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_T",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1298850",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_N",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1298856",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_L",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1298858",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMs_J",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1298860",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdoFb",
+      "name": "28_GdV_staal_UNP_balk:UNP280:1304479",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdor5",
+      "name": "Floor:23_GdV_isokorf:1304895",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdoqo",
+      "name": "Floor:23_GdV_isokorf:1304904",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdoqX",
+      "name": "Floor:23_GdV_isokorf:1304923",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdoqU",
+      "name": "Floor:23_GdV_isokorf:1304932",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7cw",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388223",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1PAr",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425392",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_vc",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545381",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_vj",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545390",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "25239bZ7j08O_mXa4JfTdN",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUN$dd"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjUu",
+      "name": "03 derde verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsn$",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1299008",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsng",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299029",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsnX",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299038",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsnO",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299047",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspO",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299175",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspM",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299177",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspK",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299179",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspI",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299181",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspC",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299187",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMspA",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299189",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsp8",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299191",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdoq2",
+      "name": "Floor:23_GdV_isokorf:1304952",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdotx",
+      "name": "Floor:23_GdV_isokorf:1304961",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdotk",
+      "name": "Floor:23_GdV_isokorf:1304980",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdotd",
+      "name": "Floor:23_GdV_isokorf:1304989",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7dS",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388249",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1UrQ",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425439",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_$b",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545510",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_$i",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545519",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "3rBLr_9trEL921PLG6IKO5",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjUu"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjJ3",
+      "name": "04 vierde verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseY",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299485",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseW",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299487",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseU",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299489",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseS",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299491",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseM",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299497",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseK",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299499",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMseI",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299501",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMslW",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1299935",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMslF",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299952",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsl6",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299961",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdotB",
+      "name": "Floor:23_GdV_isokorf:1305009",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdot0",
+      "name": "Floor:23_GdV_isokorf:1305018",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdost",
+      "name": "Floor:23_GdV_isokorf:1305037",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdosi",
+      "name": "Floor:23_GdV_isokorf:1305046",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "3jgw0hOqP0sOOBj7y14GAq",
+      "name": "28_GdV_staal_UNP_balk:UNP280:1381753",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7dO",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388253",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1UqJ",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425494",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2__t",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545588",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2___",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545597",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "1t_4HptEr0BxT_rrrlx5wF",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjJ3"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjHQ",
+      "name": "05 vijfde verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssj",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299346",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssh",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299348",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssf",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299350",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssd",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299352",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssX",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299358",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssV",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299360",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMssT",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299362",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsiB",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1299764",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsjs",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299785",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsjj",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299794",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsja",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1299803",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdosG",
+      "name": "Floor:23_GdV_isokorf:1305066",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdos9",
+      "name": "Floor:23_GdV_isokorf:1305075",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdovy",
+      "name": "Floor:23_GdV_isokorf:1305094",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdovr",
+      "name": "Floor:23_GdV_isokorf:1305103",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7da",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388257",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1Ut0",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425541",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_zt",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545652",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_z_",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545661",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "1$xsYGQij6$h$nu8rQK5qD",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjHQ"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjMl",
+      "name": "06 zesde verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsgN",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299624",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsgL",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299626",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsgJ",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1299628",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsgH",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1299630",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsgB",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299636",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsg9",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299638",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsg7",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1299640",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsXK",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1300075",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsX3",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1300092",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsYw",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1300101",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdovP",
+      "name": "Floor:23_GdV_isokorf:1305123",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdovM",
+      "name": "Floor:23_GdV_isokorf:1305132",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdov5",
+      "name": "Floor:23_GdV_isokorf:1305151",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "2$FPTZA3j9nPRoA8kNdouo",
+      "name": "Floor:23_GdV_isokorf:1305160",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "3jgw0hOqP0sOOBj7y14G9R",
+      "name": "28_GdV_staal_UNP_balk:UNP280:1381782",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7dW",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388261",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1Utz",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425592",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_p3",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545728",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_pA",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545737",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "13gJghVdX16vx9Q0rtxG9m",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjMl"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjAC",
+      "name": "07 zevende verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbe",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1300311",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbc",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1300313",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsba",
+      "name": "Basic Wall:22_GdV_betonwand ihwg d=250:1300315",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbY",
+      "name": "Basic Wall:21_GdV_betonwand ihwg d=250:1300317",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbS",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1300323",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbQ",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1300325",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsbO",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1300327",
+      "type": "IfcWall",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsGU",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1301025",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsJ3",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1301244",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "0tegbjkmzDnvuoDujLMsK4",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1301307",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "1FGoN1Zx16P8X7c8AWK7di",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=150:1388265",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "21VTfQmELCM8rV3R2QDAcI",
+      "name": "28_GdV_staal_koker_warm gewalst_kolom:stalen kolom K100.100.10:1395969",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "21VTfQmELCM8rV3R2QDAf8",
+      "name": "28_GdV_staal_koker_warm gewalst_kolom:stalen kolom K100.100.10:1396443",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "21VTfQmELCM8rV3R2QDBH4",
+      "name": "28_GdV_staal_koker_warm gewalst_kolom:stalen kolom K100.100.10:1396951",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "3HrI2qx41A2h9UFvqL4mPn",
+      "name": "Floor:23_GdV_breedplaatvloer h=220:1421108",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "3DSWhS3Ef0muoKPPLE1Use",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1425645",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_oE",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545805",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "1L2ZvYjjT4Cwfqt6rJ2_oL",
+      "name": "Floor:23_GdV_breedplaatvloer h=250:1545814",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "1y$0rGkEzFkfeJ_ujQF_aO",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjAC"
+    },
+    {
+      "id": "06sgG1ElbAaAavzbkUIjFx",
+      "name": "08 achtste dakvloer",
+      "type": "IfcBuildingStorey",
+      "parent": "06sgG1ElbAaAavzbjXfeaM"
+    },
+    {
+      "id": "0xOFGWGJbEPx6X5aGCeNnW",
+      "name": "Floor:23_GdV_breedplaatvloer h=280:1319607",
+      "type": "IfcRoof",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "1gC0QnC_D05RaxzZzIo8u_",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1372151",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "1gC0QnC_D05RaxzZzIo8um",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1372153",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "1gC0QnC_D05RaxzZzIo8uo",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=200:1372155",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "1gC0QnC_D05RaxzZzIo8uq",
+      "name": "Basic Wall:28_GdV_betonwand prefab d=100:1372157",
+      "type": "IfcWallStandardCase",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "1gC0QnC_D05RaxzZzIo94O",
+      "name": "Floor:27_GdV_prefab beton dakplaat:1372369",
+      "type": "IfcSlab",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF6VS",
+      "name": "Staal_Kokerprofielen_Ligger:stalen ligger K200.100.10:1472920",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF6KK",
+      "name": "Staal_Kokerprofielen_Ligger:stalen ligger K200.100.10:1473360",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF62H",
+      "name": "Stripstaal_liggend_ITX:28_staalplaat 10x300:1474261",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9vK",
+      "name": "Stripstaal_liggend_ITX:28_staalplaat 10x300:1474576",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9yP",
+      "name": "Stripstaal_liggend_ITX:28_staalplaat 10x300:1474909",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9nf",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475117",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9g0",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475780",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9gQ",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475806",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9ge",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475820",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9jI",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475862",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9jW",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475876",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9ik",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1475946",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "3X2ZxjcyfFQfAp8boMF9NH",
+      "name": "Stripstaal_staand_ITX:28_staalplaat 15x450:1477525",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLE",
+      "name": "Staal_Kokerprofielen_Ligger:stalen ligger K200.100.10:1478571",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPL8",
+      "name": "Staal_Kokerprofielen_Ligger:stalen ligger K200.100.10:1478573",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLA",
+      "name": "Stripstaal_liggend_ITX:28_staalplaat 10x300:1478575",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLK",
+      "name": "Stripstaal_liggend_ITX:28_staalplaat 10x300:1478577",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLM",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1478579",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLG",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1478581",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLI",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1478583",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLS",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1478585",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjPLU",
+      "name": "Staal_Kokerprofielen_Kolom:baluster K70.70.5:1478587",
+      "type": "IfcColumn",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjOkH",
+      "name": "Stripstaal_staand_ITX:28_staalplaat 15x450:1479028",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjOal",
+      "name": "Stripstaal_staand_ITX:28_staalplaat 15x450:1479626",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0eOCNg2LDDNPxgiJlwjOvh",
+      "name": "Stripstaal_staand_ITX:28_staalplaat 15x450:1479822",
+      "type": "IfcBeam",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    },
+    {
+      "id": "0YgtIrOBP2ygTy9XhDe7O9",
+      "name": "",
+      "type": "IfcGrid",
+      "parent": "06sgG1ElbAaAavzbkUIjFx"
+    }
+  ]
+}

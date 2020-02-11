@@ -1,0 +1,306 @@
+{
+  "id": "Testing flatt.io",
+  "projectId": "3xWZtA1TGADRmDZEh_Q9Cv",
+  "metaObjects": [
+    {
+      "id": "3xWZtA1TGADRmDZEh_Q9Cv",
+      "name": "Testing flatt.io",
+      "type": "IfcProject",
+      "parent": null
+    },
+    {
+      "id": "3mROnO4_7VbAI2oRYB55vS",
+      "name": "Root.bv",
+      "type": "IfcSite",
+      "parent": "3xWZtA1TGADRmDZEh_Q9Cv"
+    },
+    {
+      "id": "3eRLNFyN5Tyis25RcQn7ED",
+      "name": "Flatt. vakantiewoning",
+      "type": "IfcBuilding",
+      "parent": "3mROnO4_7VbAI2oRYB55vS"
+    },
+    {
+      "id": "0QG7CM2obN9ZEulyTVFXZm",
+      "name": "00 begane grond",
+      "type": "IfcBuildingStorey",
+      "parent": "3eRLNFyN5Tyis25RcQn7ED"
+    },
+    {
+      "id": "0hzFNMwgPCBO181KPtYFq1",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0rJP45_XTAXPPfKUkoO82e",
+      "name": "Merk-x",
+      "type": "IfcWindow",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "09oFeY5xD84QjILxCB0xam",
+      "name": "Terrasdeuren",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0Ux3A2Ka14tPKcLfxAvuad",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0niDlsIWj2ChUcb8pTtlSE",
+      "name": "Merk-x",
+      "type": "IfcWindow",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3aCoLPwe14AOAhSbS4f6F3",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "2KPO3pSLL4ShIzndhIcsT7",
+      "name": "Merk-x",
+      "type": "IfcWindow",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0HIfGKtFr1W85Y6q10iams",
+      "name": "Merk-x",
+      "type": "IfcWindow",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0J5R8nQPj1ZBdPkRzCTwZw",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1l_rYEmor0Qfi0GG0Gqjon",
+      "name": "Merk-x",
+      "type": "IfcWindow",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3PA0epOwLBzBo_1TFvlUjz",
+      "name": "Voorkeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1OwIBQNKPBwP51hYW$P$z3",
+      "name": "Toegangsdeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1HX$_kbR1AKxF1CmKGciQa",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0K2ThoCGPDw8BO61KMyJPF",
+      "name": "Toegangsdeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1q2SMqPur65A0DbcQ7rKt3",
+      "name": "Toegangsdeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "35isJ7ZbfCMPcBeaKfPbhV",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0zew$1PN946uNvMeuR0unA",
+      "name": "Toegangsdeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0DSapoOpX0yA_hBtshJdxb",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0GVHv3rDXBewxnxizHODe9",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1zsKhirn1FnwVGfXbQpQHM",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0Z1agmnnr7N8Ifw7iC5aMP",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0_j1v64X5FeOIcrx3WGyYH",
+      "name": "isolatie",
+      "type": "IfcCovering",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "16JWmMgPD6XfhPYyUKBmmk",
+      "name": "isolatie",
+      "type": "IfcCovering",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0xtMj9XwvBjvPzzyvlFeQ0",
+      "name": "isolatie",
+      "type": "IfcCovering",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0BQ$aeD_nC_fGnlVpT243h",
+      "name": "isolatie",
+      "type": "IfcCovering",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0$tG5HEOb4PeGBEvI2it5$",
+      "name": "metwelwerk",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1ZgUsyGw16qRqHnf_kX1uP",
+      "name": "metwelwerk",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0ZqQDQ$ET1VOfA0qLgY8vL",
+      "name": "metwelwerk",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0VFEGB$sXDf9ymQw$tKN0X",
+      "name": "metwelwerk",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1Rk1Bxs3b0MfHTyvbz1HDz",
+      "name": "Leeg",
+      "type": "IfcColumn",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0bhFWDH81E38wVHXkqT03g",
+      "name": "Leeg",
+      "type": "IfcColumn",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "09s5yu83v53RpozKToQ$0_",
+      "name": "kalkzandsteen",
+      "type": "IfcWall",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3se7mvVz1CdfESVjyz3tVn",
+      "name": "Toegangsdeur",
+      "type": "IfcDoor",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0Suasjf8H7IBdFSItPu_KS",
+      "name": "Leeg",
+      "type": "IfcColumn",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "2kj3p602r8MgLr9ocS99Pp",
+      "name": "Leeg",
+      "type": "IfcColumn",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3e7c6kkbf7Dh7ca4gcmcvK",
+      "name": "Leeg",
+      "type": "IfcColumn",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1YiMjdM8LDmwaehbOQ1ma8",
+      "name": "09",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "1jTT8vV0j5yenpf8tFnkgh",
+      "name": "Ketel",
+      "type": "IfcEnergyConversionDevice",
+      "parent": "1YiMjdM8LDmwaehbOQ1ma8"
+    },
+    {
+      "id": "1YG2z3nAX6YBwQdGeRY5zw",
+      "name": "07",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3USSM6jMPAnuX$GKgyZ$gf",
+      "name": "Toilet",
+      "type": "IfcFlowTerminal",
+      "parent": "1YG2z3nAX6YBwQdGeRY5zw"
+    },
+    {
+      "id": "2AM70yWg50AxMcCPbhr3gt",
+      "name": "06",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "11e3kkDn11oujK_3MMmDCF",
+      "name": "04",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3p7n2M7br1VB8xfoDPn4mz",
+      "name": "02",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "3_gGbJ1L17UP8z1VVIOPak",
+      "name": "03",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "0Si$CN6hDBY9Iak3Cpm2zo",
+      "name": "01 ",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    },
+    {
+      "id": "25HpkbwqzA3x6xkM9nFlh2",
+      "name": "I",
+      "type": "IfcSpace",
+      "parent": "0QG7CM2obN9ZEulyTVFXZm"
+    }
+  ]
+}

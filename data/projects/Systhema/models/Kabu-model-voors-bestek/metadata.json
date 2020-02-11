@@ -1,0 +1,504 @@
+{
+  "id": "<projectnummer>",
+  "projectId": "3ejdUCf69BRg$5Zeo2MfCZ",
+  "metaObjects": [
+    {
+      "id": "3ejdUCf69BRg$5Zeo2MfCZ",
+      "name": "<projectnummer>",
+      "type": "IfcProject",
+      "parent": null
+    },
+    {
+      "id": "3ejdUCf69BRg$5Zeo2MfCX",
+      "name": "Default",
+      "type": "IfcSite",
+      "parent": "3ejdUCf69BRg$5Zeo2MfCZ"
+    },
+    {
+      "id": "3ejdUCf69BRg$5Zeo2MfCY",
+      "name": "<RVB-gebouwnummer>",
+      "type": "IfcBuilding",
+      "parent": "3ejdUCf69BRg$5Zeo2MfCX"
+    },
+    {
+      "id": "2_L9rzI6zCDPi4ySm6WopJ",
+      "name": "00 begane grond",
+      "type": "IfcBuildingStorey",
+      "parent": "3ejdUCf69BRg$5Zeo2MfCY"
+    },
+    {
+      "id": "2QBQwyqxb8Df7IAoYKDaj1",
+      "name": "NLRS_00_GM_FB_controle_object_GEN:uitroepteken:4525942",
+      "type": "IfcBuildingElementProxy",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "1BO9ljOyHEhAENZ7RinKXw",
+      "name": "NLRS_00_SI_FB_referentie_kubus_GEN:referentie_kubus:5165185",
+      "type": "IfcSite",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM4n",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5305524",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM4p",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5305526",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM5N",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5305554",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM5M",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5305555",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM5H",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5305556",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM5G",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5305557",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM5$",
+      "name": "Floor:NLRS_23_FL_isolateivloer_200+132mm_GEN-RR:5305594",
+      "type": "IfcSlab",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM2U",
+      "name": "Floor:NLRS_43_FL_zandcementdekvloer_zwevend_55+25mm_GEN-RR:5305627",
+      "type": "IfcCovering",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMgP",
+      "name": "NLRS_31_WIN_UN_hout_kozijn_deur-SH_GEN-RR:merk X:5308188",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMgO",
+      "name": "NLRS_31_GM_WB_sparingmaker_detail_zij-SH_GEN-RR:Type 1:5308189",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMgR",
+      "name": "NLRS_31_GM_WB_sparingmaker_detail_boven-SH_GEN-RR:Type 1:5308190",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMgQ",
+      "name": "NLRS_31_GM_WB_sparingmaker_detail_onder-SH_GEN-RR:Type 1:5308191",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMgb",
+      "name": "NLRS_31_GM_WB_sparingmaker_detail_zij-SH_GEN-RR:Type 1:5308192",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm1fK",
+      "name": "NLRS_31_GM_UN_vulling_deur-compleet-SH_GEN-RR:201_30_deur_dicht_Draai_Links:5345233",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm1fN",
+      "name": "NLRS_31_DO_UN_draairichting_buitenkozijnen_compleet-SH_GEN:buitenkozijnen:5345234",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm1fM",
+      "name": "NLRS_31_DO_UN_deurblad_dicht-SH_GEN-RR:201_31_deur_dicht:5345235",
+      "type": "IfcDoor",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5E$",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5359162",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5FU",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5359195",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3Lx1ddpYv9R9Xy9$OoTMHX",
+      "name": "Wall Foundation:NLRS_16_SFO_funderingsbalk_bi350/bu250/hg350_GEN:5371595",
+      "type": "IfcFooting",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3Lx1ddpYv9R9Xy9$OoTMH_",
+      "name": "Wall Foundation:NLRS_16_SFO_funderingsbalk_bi350/bu250/hg350_GEN:5371604",
+      "type": "IfcFooting",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3Lx1ddpYv9R9Xy9$OoTMHp",
+      "name": "Wall Foundation:NLRS_16_SFO_funderingsbalk_bi350/bu250/hg350_GEN:5371609",
+      "type": "IfcFooting",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3Lx1ddpYv9R9Xy9$OoTMH8",
+      "name": "Wall Foundation:NLRS_16_SFO_funderingsbalk_bi350/bu250/hg350_GEN:5371618",
+      "type": "IfcFooting",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmMEJ",
+      "name": "A.0.06",
+      "type": "IfcSpace",
+      "parent": "2_L9rzI6zCDPi4ySm6WopJ"
+    },
+    {
+      "id": "2_L9rzI6zCDPi4ySm6Wo9i",
+      "name": "01 eerste verdieping",
+      "type": "IfcBuildingStorey",
+      "parent": "3ejdUCf69BRg$5Zeo2MfCY"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDmM1a",
+      "name": "Floor:NLRS_23_FL_kanaalplaatvloer_260mm_GEN-RR:5305825",
+      "type": "IfcSlab",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2lq",
+      "name": "Sloped Glazing:NLRS_27_RO_dakplaat_GEN-RR:5357169",
+      "type": "IfcRoof",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2lp",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357174",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2lz",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357176",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2l$",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357178",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2lv",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357180",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2lx",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357182",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2i5",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357184",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2lq"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2i1",
+      "name": "Sloped Glazing:NLRS_27_RO_dakplaat_GEN-RR:5357188",
+      "type": "IfcRoof",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2iE",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357195",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2i8",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357197",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2iA",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357199",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2iK",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357201",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2iM",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357203",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2hN",
+      "name": "NLRS_27_CWP_UN_nrls_00_cp_isolatiepaneel_spiegel_GEN:220mm:5357394",
+      "type": "IfcRoof",
+      "parent": "3TJYKrlIPEiOryF7DDm2i1"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2hT",
+      "name": "Sloped Glazing:NLRS_27_RO_dakpannen_GEN-RR:5357400",
+      "type": "IfcRoof",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2fL",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357520",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Mn",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357620",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5M$",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357626",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5N5",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357632",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5N3",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357638",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5N9",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357644",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5NN",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357650",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5NT",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357656",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5NR",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357662",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5NX",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357668",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Nl",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357674",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Nr",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357680",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hT"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm2hk",
+      "name": "Sloped Glazing:NLRS_27_RO_dakpannen_GEN-RR:5357419",
+      "type": "IfcRoof",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Mc",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357603",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Np",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357686",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Nv",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357692",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5K7",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357698",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5KD",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357704",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5KB",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357710",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5KH",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357716",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5KV",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357722",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Kb",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357728",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5KZ",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357734",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Kf",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357740",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Kt",
+      "name": "NLRS_00_CWM_UN_rectangular_mullion_GEN:NLRS_RR_47_dakpan + tengel:5357746",
+      "type": "IfcMember",
+      "parent": "3TJYKrlIPEiOryF7DDm2hk"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5LE",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5357771",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5L9",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5357772",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5L8",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5357773",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5LB",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5357774",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5Hf",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5358060",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5VE",
+      "name": "Basic Wall:NLRS_21_WA_wa_spouwmuur_100-40-120mm_GEN:5358155",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T4",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358273",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T7",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358274",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T6",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358275",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T1",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358276",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T0",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358277",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    },
+    {
+      "id": "3TJYKrlIPEiOryF7DDm5T3",
+      "name": "Basic Wall:NLRS_22_WA_wa_kalkzandsteen_100mm_GEN:5358278",
+      "type": "IfcWallStandardCase",
+      "parent": "2_L9rzI6zCDPi4ySm6Wo9i"
+    }
+  ]
+}
