@@ -1,6 +1,9 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
+const tempVec3 = math.vec3();
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -159,15 +162,17 @@ class StoreysExplorer extends Controller {
         scene.setObjectsSelected(scene.selectedObjectIds, false);
         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
         scene.setObjectsVisible(objectIds, true);
+        const aabb = scene.getAABB(objectIds);
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
         if (done) {
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             }, () => {
                 done();
             });
         } else {
             this.viewer.cameraFlight.jumpTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             });
         }
     }
