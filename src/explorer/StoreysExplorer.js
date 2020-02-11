@@ -115,10 +115,6 @@ class StoreysExplorer extends Controller {
     //         this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
     //         return;
     //     }
-    //     if (storeyMetaObject.type !== "IfcBuildingStorey") {
-    //         this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
-    //         return;
-    //     }
     //     const scene = this.viewer.scene;
     //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
     //     scene.setObjectsSelected(scene.selectedObjectIds, false);
@@ -149,11 +145,7 @@ class StoreysExplorer extends Controller {
         const metaScene = this.viewer.metaScene;
         const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
         if (!storeyMetaObject) {
-            this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
-            return;
-        }
-        if (storeyMetaObject.type !== "IfcBuildingStorey") {
-            this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            this.error("selectStorey() - object is not found: '" + storeyObjectId + "'");
             return;
         }
         const scene = this.viewer.scene;
