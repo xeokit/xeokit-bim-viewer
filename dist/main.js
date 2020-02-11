@@ -52737,9 +52737,13 @@ class ModelsExplorer extends Controller {
             return;
         }
         const modelId = modelsLoaded.pop();
-        this.loadModel(modelId, () => {
+        this.loadModel(modelId,
+            () => { // Done
             this._loadNextModel(modelsLoaded, done);
-        });
+            },
+            () => { // Error - recover and attempt to load next model
+                this._loadNextModel(modelsLoaded, done);
+            });
     }
 
     _parseViewerState(projectInfo, done) {
@@ -52770,7 +52774,7 @@ class ModelsExplorer extends Controller {
 
     _parseThreeDMode(viewerState, done) {
         const activateThreeDMode = (viewerState.threeDEnabled !== false);
-        this.bimViewer.set3DEnabled(activateThreeDMode, done = null);
+        this.bimViewer.set3DEnabled(activateThreeDMode, done);
     }
 
     unloadProject() {
@@ -52800,15 +52804,19 @@ class ModelsExplorer extends Controller {
 
     loadModel(modelId, done, error) {
         if (!this._projectId) {
+            const errMsg = "No project currently loaded";
+            this.error(errMsg);
             if (error) {
-                error("No project currently loaded");
+                error(errMsg);
             }
             return;
         }
         const modelInfo = this._modelsInfo[modelId];
         if (!modelInfo) {
+            const errMsg = "Model not in currently loaded project";
+            this.error(errMsg);
             if (error) {
-                error("Model not in currently loaded project");
+                error(errMsg);
             }
             return;
         }
@@ -52857,13 +52865,19 @@ class ModelsExplorer extends Controller {
                         });
                     },
                     (errMsg) => {
-                        this.error(errMsg);
                         this.bimViewer._busyModal.hide();
+                        this.error(errMsg);
+                        if (error) {
+                            error(errMsg);
+                        }
                     });
             },
             (errMsg) => {
-                this.error(errMsg);
                 this.bimViewer._busyModal.hide();
+                this.error(errMsg);
+                if (error) {
+                    error(errMsg);
+                }
             });
     }
 
@@ -55288,10 +55302,6 @@ class StoreysExplorer extends Controller {
     //     const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
     //     if (!storeyMetaObject) {
     //         this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
-    //         return;
-    //     }
-    //     if (storeyMetaObject.type !== "IfcBuildingStorey") {
-    //         this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
     //         return;
     //     }
     //     const scene = this.viewer.scene;
@@ -59345,6 +59355,9 @@ class ThreeDMode extends Controller {
 
     setActive(active, done) {
         if (this._active === active) {
+            if (done) {
+                done();
+            }
             return;
         }
         this._active = active;
