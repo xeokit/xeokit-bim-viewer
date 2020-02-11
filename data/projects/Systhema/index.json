@@ -3,8 +3,33 @@
   "name": "Systhema",
   "models": [
     {
-      "id": "model1",
-      "name": "Systhema Model"
+      "id": "170133_Asvest_20200131",
+      "name": "170133_Asvest_20200131"
+    },
+    {
+      "id": "2013022_IAA_BWK_R2019-BLOK_recht_2020-01-30",
+      "name": "2013022_IAA_BWK_R2019-BLOK_recht_2020-01-30"
+    },
+    {
+      "id": "2013022_IAA_BWK_R2019-BLOK_recht_2020-02-06",
+      "name": "2013022_IAA_BWK_R2019-BLOK_recht_2020-02-06",
+      "saoEnabled": true
+    },
+    {
+      "id": "20191011_11293-20174268_Oostenburgereiland_K2B_UO",
+      "name": "20191011_11293-20174268_Oostenburgereiland_K2B_UO"
+    },
+    {
+      "id": "Campus_Vianen_LOD300_2017_Architecture",
+      "name": "Campus_Vianen_LOD300_2017_Architecture"
+    },
+    {
+      "id": "Kabu-model-voors-bestek",
+      "name": "Kabu-model-voors-bestek"
+    },
+    {
+      "id": "vakantiewoning_original",
+      "name": "vakantiewoning_original"
     }
   ],
   "viewerConfigs": {
