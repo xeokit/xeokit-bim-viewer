@@ -356,7 +356,7 @@ class BIMViewer extends Controller {
 
         const scene = this.viewer.scene;
 
-        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fill = false;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
         scene.xrayMaterial.edges = true;
