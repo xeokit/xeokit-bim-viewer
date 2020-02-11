@@ -55324,11 +55324,7 @@ class StoreysExplorer extends Controller {
         const metaScene = this.viewer.metaScene;
         const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
         if (!storeyMetaObject) {
-            this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
-            return;
-        }
-        if (storeyMetaObject.type !== "IfcBuildingStorey") {
-            this.error("flyToStorey() - object is not an IfcBuildingStorey: '" + storeyObjectId + "'");
+            this.error("selectStorey() - object is not found: '" + storeyObjectId + "'");
             return;
         }
         const scene = this.viewer.scene;
@@ -60092,7 +60088,7 @@ class BIMViewer extends Controller {
 
         const scene = this.viewer.scene;
 
-        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fill = false;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
         scene.xrayMaterial.edges = true;
