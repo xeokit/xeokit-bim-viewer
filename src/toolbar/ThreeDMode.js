@@ -40,6 +40,9 @@ class ThreeDMode extends Controller {
 
     setActive(active, done) {
         if (this._active === active) {
+            if (done) {
+                done();
+            }
             return;
         }
         this._active = active;

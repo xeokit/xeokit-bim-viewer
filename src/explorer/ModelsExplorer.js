@@ -163,7 +163,7 @@ class ModelsExplorer extends Controller {
 
     _parseThreeDMode(viewerState, done) {
         const activateThreeDMode = (viewerState.threeDEnabled !== false);
-        this.bimViewer.set3DEnabled(activateThreeDMode, done = null);
+        this.bimViewer.set3DEnabled(activateThreeDMode, done);
     }
 
     unloadProject() {
