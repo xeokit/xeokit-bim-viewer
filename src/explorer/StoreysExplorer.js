@@ -61,7 +61,6 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
-            const scene = this.viewer.scene;
             const objectIds = [];
             e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
                 if (treeViewNode.objectId) {
@@ -179,7 +178,9 @@ class StoreysExplorer extends Controller {
         scene.setObjectsPickable(objectIds, true);
 
         const aabb = scene.getAABB(objectIds);
+
         this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
         if (done) {
             this.viewer.cameraFlight.flyTo({
                 aabb: aabb

@@ -1,6 +1,9 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+
+const tempVec3 = math.vec3();
 
 /** @private */
 class ObjectsExplorer extends Controller {
@@ -74,8 +77,12 @@ class ObjectsExplorer extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsPickable(objectIds, true);
 
+            const aabb = scene.getAABB(objectIds);
+
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
+                aabb: aabb,
                 duration: 0.5
             }, () => {
                 // setTimeout(function () {
