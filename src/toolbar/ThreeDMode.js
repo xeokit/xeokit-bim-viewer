@@ -136,6 +136,7 @@ class ThreeDMode extends Controller {
         this.bimViewer._sectionTool.clear();
         this.viewer.cameraControl.planView = true;
         this.bimViewer._firstPersonMode.setEnabled(false);
+        this.bimViewer._firstPersonMode.setActive(false);
         this.bimViewer._sectionTool.setEnabled(false);
 
         if (done) {
