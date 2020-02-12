@@ -54924,6 +54924,8 @@ class TreeViewContextMenu extends ContextMenu {
     }
 }
 
+const tempVec3$4 = math.vec3();
+
 /** @private */
 class ObjectsExplorer extends Controller {
 
@@ -54996,8 +54998,12 @@ class ObjectsExplorer extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsPickable(objectIds, true);
 
+            const aabb = scene.getAABB(objectIds);
+
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$4);
+
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
+                aabb: aabb,
                 duration: 0.5
             }, () => {
                 // setTimeout(function () {
@@ -55059,6 +55065,8 @@ class ObjectsExplorer extends Controller {
         this.viewer.scene.off(this._onModelUnloaded);
     }
 }
+
+const tempVec3$5 = math.vec3();
 
 /** @private */
 class ClassesExplorer extends Controller {
@@ -55132,8 +55140,12 @@ class ClassesExplorer extends Controller {
             scene.setObjectsVisible(objectIds, true);
             scene.setObjectsPickable(objectIds, true);
 
+            const aabb = scene.getAABB(objectIds);
+
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$5);
+
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
+                aabb: aabb,
                 duration: 0.5
             }, () => {
                 // setTimeout(function () {
@@ -55196,7 +55208,7 @@ class ClassesExplorer extends Controller {
     }
 }
 
-const tempVec3$4 = math.vec3();
+const tempVec3$6 = math.vec3();
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -55254,7 +55266,6 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on("nodeTitleClicked", (e) => {
-            const scene = this.viewer.scene;
             const objectIds = [];
             e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
                 if (treeViewNode.objectId) {
@@ -55372,7 +55383,9 @@ class StoreysExplorer extends Controller {
         scene.setObjectsPickable(objectIds, true);
 
         const aabb = scene.getAABB(objectIds);
-        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$4);
+
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$6);
+
         if (done) {
             this.viewer.cameraFlight.flyTo({
                 aabb: aabb
@@ -55400,7 +55413,7 @@ class StoreysExplorer extends Controller {
     }
 }
 
-const tempVec3$5 = math.vec3();
+const tempVec3$7 = math.vec3();
 const newLook = math.vec3();
 const newEye = math.vec3();
 const newUp = math.vec3();
@@ -55662,7 +55675,7 @@ class CameraFlightAnimation extends Component {
 
             this._look2 = poi || aabbCenter;
 
-            const eyeLookVec = math.subVec3(this._eye1, this._look1, tempVec3$5);
+            const eyeLookVec = math.subVec3(this._eye1, this._look1, tempVec3$7);
             const eyeLookVecNorm = math.normalizeVec3(eyeLookVec);
             const diag = poi ? math.getAABB3DiagPoint(aabb, poi) : math.getAABB3Diag(aabb);
             const fitFOV = params.fitFOV || this._fitFOV;
@@ -55822,12 +55835,12 @@ class CameraFlightAnimation extends Component {
                 dist = Math.abs((diag) / Math.tan((params.fitFOV || this._fitFOV) * math.DEGTORAD));
 
             } else {
-                dist = math.lenVec3(math.subVec3(camera.eye, camera.look, tempVec3$5));
+                dist = math.lenVec3(math.subVec3(camera.eye, camera.look, tempVec3$7));
             }
 
             math.mulVec3Scalar(newLookEyeVec, dist);
 
-            camera.eye = math.addVec3(newLook, newLookEyeVec, tempVec3$5);
+            camera.eye = math.addVec3(newLook, newLookEyeVec, tempVec3$7);
             camera.look = newLook;
 
             this.scene.camera.ortho.scale = diag * 1.1;
@@ -58853,7 +58866,7 @@ class Viewer {
     }
 }
 
-const tempVec3$6 = math.vec3();
+const tempVec3$8 = math.vec3();
 
 /**
  * {@link Viewer} plugin that saves and loads BCF viewpoints as JSON objects.
@@ -59225,8 +59238,8 @@ class BCFViewpointsPlugin extends Plugin {
         if (bcfViewpoint.clipping_planes) {
             bcfViewpoint.clipping_planes.forEach(function (e) {
                 new SectionPlane(scene, {
-                    pos: xyzObjectToArray(e.location, tempVec3$6),
-                    dir: xyzObjectToArray(e.direction, tempVec3$6)
+                    pos: xyzObjectToArray(e.location, tempVec3$8),
+                    dir: xyzObjectToArray(e.direction, tempVec3$8)
                 });
             });
         }
@@ -59274,17 +59287,17 @@ class BCFViewpointsPlugin extends Plugin {
             let projection;
 
             if (bcfViewpoint.perspective_camera) {
-                eye = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_view_point, tempVec3$6);
-                look = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_direction, tempVec3$6);
-                up = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_up_vector, tempVec3$6);
+                eye = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_view_point, tempVec3$8);
+                look = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_direction, tempVec3$8);
+                up = xyzObjectToArray(bcfViewpoint.perspective_camera.camera_up_vector, tempVec3$8);
 
                 camera.perspective.fov = bcfViewpoint.perspective_camera.field_of_view;
 
                 projection = "perspective";
             } else {
-                eye = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_view_point, tempVec3$6);
-                look = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_direction, tempVec3$6);
-                up = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_up_vector, tempVec3$6);
+                eye = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_view_point, tempVec3$8);
+                look = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_direction, tempVec3$8);
+                up = xyzObjectToArray(bcfViewpoint.orthogonal_camera.camera_up_vector, tempVec3$8);
 
                 camera.ortho.scale = bcfViewpoint.orthogonal_camera.field_of_view;
 
@@ -59305,9 +59318,9 @@ class BCFViewpointsPlugin extends Plugin {
                     origin: eye,
                     direction: look
                 });
-                look = (hit ? hit.worldPos : math.addVec3(eye, look, tempVec3$6));
+                look = (hit ? hit.worldPos : math.addVec3(eye, look, tempVec3$8));
             } else {
-                look = math.addVec3(eye, look, tempVec3$6);
+                look = math.addVec3(eye, look, tempVec3$8);
             }
 
             if (immediate) {
