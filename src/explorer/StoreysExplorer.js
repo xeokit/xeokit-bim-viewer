@@ -168,31 +168,40 @@ class StoreysExplorer extends Controller {
         // scene.setObjectsSelected(scene.selectedObjectIds, false);
         // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
 
-        scene.setObjectsXRayed(scene.objectIds, true);
-        scene.setObjectsVisible(scene.objectIds, true);
-        scene.setObjectsPickable(scene.objectIds, false);
-        scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-        scene.setObjectsXRayed(objectIds, false);
-        scene.setObjectsVisible(objectIds, true);
-        scene.setObjectsPickable(objectIds, true);
 
         const aabb = scene.getAABB(objectIds);
 
         this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
 
         if (done) {
+
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsPickable(scene.objectIds, false);
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
             this.viewer.cameraFlight.flyTo({
                 aabb: aabb
             }, () => {
                 setTimeout(function () {
-                   //scene.xrayMaterial.edgeAlpha = 0.2;
                     scene.setObjectsVisible(scene.xrayedObjectIds, false);
                     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                 }, 500);
                 done();
             });
         } else {
+
+            scene.setObjectsVisible(scene.objectIds, false);
+            scene.setObjectsPickable(scene.xrayedObjectIds, true);
+            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsVisible(objectIds, true);
+
             this.viewer.cameraFlight.jumpTo({
                 aabb: aabb
             });
