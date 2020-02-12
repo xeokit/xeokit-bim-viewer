@@ -30134,6 +30134,7 @@ class Scene extends Component {
          */
         this._modelIds = null;
         this._objectIds = null;
+        this._objectValues = [];
         this._visibleObjectIds = null;
         this._xrayedObjectIds = null;
         this._highlightedObjectIds = null;
@@ -30607,12 +30608,14 @@ class Scene extends Component {
         this.objects[entity.id] = entity;
         this._numObjects++;
         this._objectIds = null; // Lazy regenerate
+        this._objectValues = null;
     }
 
     _deregisterObject(entity) {
         delete this.objects[entity.id];
         this._numObjects--;
         this._objectIds = null; // Lazy regenerate
+        this._objectValues = null;
     }
 
     _objectVisibilityUpdated(entity, notify = true) {
@@ -30624,6 +30627,7 @@ class Scene extends Component {
             this._numVisibleObjects--;
         }
         this._visibleObjectIds = null; // Lazy regenerate
+        this._visibleObjectValues = null;
         if (notify) {
             this.fire("objectVisibility", entity, true);
         }
@@ -30638,6 +30642,7 @@ class Scene extends Component {
             this._numXRayedObjects--;
         }
         this._xrayedObjectIds = null; // Lazy regenerate
+        this._xrayedObjectValues = null;
     }
 
     _objectHighlightedUpdated(entity) {
@@ -30649,6 +30654,7 @@ class Scene extends Component {
             this._numHighlightedObjects--;
         }
         this._highlightedObjectIds = null; // Lazy regenerate
+        this._highlightedObjectValues = null;
     }
 
     _objectSelectedUpdated(entity) {
@@ -30660,6 +30666,7 @@ class Scene extends Component {
             this._numSelectedObjects--;
         }
         this._selectedObjectIds = null; // Lazy regenerate
+        this._selectedObjectValues = null;
     }
 
     _webglContextLost() {
@@ -30825,8 +30832,16 @@ class Scene extends Component {
     get objectIds() {
         if (!this._objectIds) {
             this._objectIds = Object.keys(this.objects);
+            this._objectVals = Object.values(this.objects);
         }
         return this._objectIds;
+    }
+
+    get objectList() {
+        if (!this._objectVals) {
+            this._objectVals = Object.values(this.objects);
+        }
+        return this._objectVals;
     }
 
     /**
@@ -30850,6 +30865,13 @@ class Scene extends Component {
         return this._visibleObjectIds;
     }
 
+    get visibleObjectList() {
+        if (!this._visibleObjectVals) {
+            this._visibleObjectVals = Object.values(this.visibleObjects);
+        }
+        return this._visibleObjectVals;
+    }
+
     /**
      * Gets the number of {@link Entity}s in {@link Scene#xrayedObjects}.
      *
@@ -30869,6 +30891,13 @@ class Scene extends Component {
             this._xrayedObjectIds = Object.keys(this.xrayedObjects);
         }
         return this._xrayedObjectIds;
+    }
+
+    get xrayedObjectList() {
+        if (!this._xrayedObjectVals) {
+            this._xrayedObjectVals = Object.values(this.xrayedObjects);
+        }
+        return this._xrayedObjectVals;
     }
 
     /**
@@ -30892,6 +30921,13 @@ class Scene extends Component {
         return this._highlightedObjectIds;
     }
 
+    get highlightedObjectList() {
+        if (!this._highlightedObjectVals) {
+            this._highlightedObjectVals = Object.values(this.highlightedObjects);
+        }
+        return this._highlightedObjectVals;
+    }
+
     /**
      * Gets the number of {@link Entity}s in {@link Scene#selectedObjects}.
      *
@@ -30913,6 +30949,14 @@ class Scene extends Component {
         return this._selectedObjectIds;
     }
 
+    get selectedObjectList() {
+        if (!this._selectedObjectVals) {
+            this._selectedObjectVals = Object.values(this.selectedObjects);
+        }
+        return this._selectedObjectVals;
+    }
+
+    
     /**
      * Sets the number of "ticks" that happen between each render or this Scene.
      *
@@ -31772,6 +31816,18 @@ class Scene extends Component {
     }
 
     _withEntities(ids, entities, callback) {
+        if (ids === this._objectIds) {
+            return this._withEntityList(this.objectList, callback);
+        }
+        if (ids === this._visibleObjectIds) {
+            return this._withEntityList(this.visibleObjectList, callback);
+        }
+        if (ids === this._xrayedObjectIds) {
+            return this._withEntityList(this.xrayedObjectList, callback);
+        }
+        if (ids === this._selectedObjectIds) {
+            return this._withEntityList(this.selectedObjectList, callback);
+        }
         if (utils.isString(ids)) {
             ids = [ids];
         }
@@ -31783,6 +31839,15 @@ class Scene extends Component {
                 changed = callback(entity) || changed;
             }
             //   this.warn("Entity not found: '" + id + "'");
+        }
+        return changed;
+    }
+
+    _withEntityList(entityList, callback) {
+        let changed = false;
+        for (let i = 0, len = entityList.length; i < len; i++) {
+            let entity = entityList[i];
+            changed = callback(entity) || changed;
         }
         return changed;
     }
@@ -60259,6 +60324,7 @@ class BIMViewer extends Controller {
     }
 
     _initConfigs() {
+        this._configs = {};
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
