@@ -52888,8 +52888,6 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const scene = this.viewer.scene;
-        const aabb = scene.getAABB(scene.visibleObjectIds);
         document.getElementById("" + modelId).checked = false;
         this._numModelsLoaded--;
         if (this._numModelsLoaded > 0) {
@@ -52897,12 +52895,6 @@ class ModelsExplorer extends Controller {
         } else {
             this._unloadModelsButtonElement.classList.add("disabled");
         }
-        this.viewer.cameraFlight.flyTo({
-            aabb: aabb
-        }, () => {
-            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$3);
-            this.fire("modelUnloaded", modelId);
-        });
     }
 
     unloadAllModels() {
@@ -54994,18 +54986,24 @@ class ObjectsExplorer extends Controller {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
+
             scene.setObjectsXRayed(scene.objectIds, true);
             scene.setObjectsVisible(scene.objectIds, true);
-            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsPickable(scene.objectIds, false);
             scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
             this.viewer.cameraFlight.flyTo({
                 aabb: scene.getAABB(objectIds),
                 duration: 0.5
             }, () => {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+                // setTimeout(function () {
+                //     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                //     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                // }, 500);
             });
         });
 
@@ -55124,18 +55122,24 @@ class ClassesExplorer extends Controller {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
+
             scene.setObjectsXRayed(scene.objectIds, true);
             scene.setObjectsVisible(scene.objectIds, true);
-            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsPickable(scene.objectIds, false);
             scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
             this.viewer.cameraFlight.flyTo({
                 aabb: scene.getAABB(objectIds),
                 duration: 0.5
             }, () => {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+                // setTimeout(function () {
+                //     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                //     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                // }, 500);
             });
         });
 
@@ -55354,16 +55358,30 @@ class StoreysExplorer extends Controller {
 
     _selectObjects(objectIds, done) {
         const scene = this.viewer.scene;
-        scene.setObjectsVisible(scene.visibleObjectIds, false);
+        // scene.setObjectsVisible(scene.visibleObjectIds, false);
+        // scene.setObjectsSelected(scene.selectedObjectIds, false);
+        // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+        scene.setObjectsXRayed(scene.objectIds, true);
+        scene.setObjectsVisible(scene.objectIds, true);
+        scene.setObjectsPickable(scene.objectIds, false);
         scene.setObjectsSelected(scene.selectedObjectIds, false);
-        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+        scene.setObjectsXRayed(objectIds, false);
         scene.setObjectsVisible(objectIds, true);
+        scene.setObjectsPickable(objectIds, true);
+
         const aabb = scene.getAABB(objectIds);
         this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$4);
         if (done) {
             this.viewer.cameraFlight.flyTo({
                 aabb: aabb
             }, () => {
+                setTimeout(function () {
+                   //scene.xrayMaterial.edgeAlpha = 0.2;
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
                 done();
             });
         } else {
@@ -59957,6 +59975,7 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
+        this._initConfigs();
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
@@ -60216,6 +60235,18 @@ class BIMViewer extends Controller {
         });
     }
 
+    _initConfigs() {
+        this.setConfigs({
+            "cameraNear": "0.05",
+            "cameraFar": "3000.0",
+            "saoEnabled": "true",
+            "saoBias": "0.5",
+            "saoIntensity": "0.5",
+            "saoScale": "1200.0",
+            "saoKernelRadius": "100",
+            "xrayContext": true
+        });
+    }
     /**
      * Sets a batch of viewer configurations.
      *
@@ -60236,7 +60267,7 @@ class BIMViewer extends Controller {
      * TODO: Document available options
      *
      * @param {String} name Configuration name.
-     * @param {String|Number|Boolean} value Configuration value.
+     * @param {*} value Configuration value.
      */
     setConfig(name, value) {
 
@@ -60250,18 +60281,21 @@ class BIMViewer extends Controller {
                 case "backgroundColor":
                     const rgbColor = value;
                     this.setBackgroundColor(rgbColor);
+                    this._configs[name] = rgbColor;
                     break;
 
                 case "cameraNear":
                     const near = parseFloat(value);
                     this.viewer.scene.camera.perspective.near = near;
                     this.viewer.scene.camera.ortho.near = near;
+                    this._configs[name] = near;
                     break;
 
                 case "cameraFar":
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
                     this.viewer.scene.camera.ortho.far = far;
+                    this._configs[name] = far;
                     break;
 
                 case "saoEnabled":
@@ -60277,35 +60311,40 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoScale":
-                    this.viewer.scene.sao.scale = parseFloat(value);
+                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);
                     break;
 
                 case "saoKernelRadius":
-                    this.viewer.scene.sao.kernelRadius = parseFloat(value);
+                    this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);
                     break;
 
                 case "saoBlur":
-                    this.viewer.scene.sao.blur = parseBool(value);
+                    this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);
                     break;
 
                 case "viewFitFOV":
-                    this.viewer.cameraFlight.fitFOV = parseFloat(value);
+                    this.viewer.cameraFlight.fitFOV = this._configs[name] = parseFloat(value);
                     break;
 
                 case "viewFitDuration":
-                    this.viewer.cameraFlight.duration = parseFloat(value);
+                    this.viewer.cameraFlight.duration = this._configs[name] = parseFloat(value);
                     break;
 
                 case "perspectiveFOV":
-                    this.viewer.camera.perspective.fov = parseFloat(value);
+                    this.viewer.camera.perspective.fov = this._configs[name] = parseFloat(value);
                     break;
 
                 case "excludeUnclassifiedObjects":
-                    // TODO: wire this up somewhere
+                    this._configs[name] = parseBool(value);
                     break;
 
                 case "objectColorSource":
                     this.setObjectColorSource(value);
+                    this._configs[name] = value;
+                    break;
+
+                case "xrayContext":
+                    this._configs[name] = value;
                     break;
 
                 default:
@@ -60318,11 +60357,13 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * TODO
-     * @param name
+     * Gets a viewer configuration that was set with {@link BIMViewer#setConfig}.
+     *
+     * @param {String} name Configuration name.
+     * @ereturns {*} Configuration value.
      */
     getConfig(name) {
-        throw "BIMViewer#getConfig() not implemented yet"
+        return this._configs[name];
     }
 
     /**
