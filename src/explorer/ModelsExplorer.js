@@ -277,8 +277,6 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const scene = this.viewer.scene;
-        const aabb = scene.getAABB(scene.visibleObjectIds);
         document.getElementById("" + modelId).checked = false;
         this._numModelsLoaded--;
         if (this._numModelsLoaded > 0) {
@@ -286,12 +284,6 @@ class ModelsExplorer extends Controller {
         } else {
             this._unloadModelsButtonElement.classList.add("disabled");
         }
-        this.viewer.cameraFlight.flyTo({
-            aabb: aabb
-        }, () => {
-            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-            this.fire("modelUnloaded", modelId);
-        });
     }
 
     unloadAllModels() {
