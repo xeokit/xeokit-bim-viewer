@@ -64,18 +64,24 @@ class ClassesExplorer extends Controller {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
+
             scene.setObjectsXRayed(scene.objectIds, true);
             scene.setObjectsVisible(scene.objectIds, true);
-            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsPickable(scene.objectIds, false);
             scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
             this.viewer.cameraFlight.flyTo({
                 aabb: scene.getAABB(objectIds),
                 duration: 0.5
             }, () => {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+                // setTimeout(function () {
+                //     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                //     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                // }, 500);
             });
         });
 
