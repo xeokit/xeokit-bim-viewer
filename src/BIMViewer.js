@@ -729,8 +729,8 @@ class BIMViewer extends Controller {
             return;
         }
         this.server.getObjectInfo(projectId, modelId, objectId,
-            done, (errorMsg) => {
-                this.error("getObjectInfo() - " + errorMsg);
+            done,
+            (errorMsg) => {
                 if (error) {
                     error(errorMsg);
                 }

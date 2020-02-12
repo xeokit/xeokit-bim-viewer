@@ -103,19 +103,20 @@ class QueryTool extends Controller {
                 }
                 const modelId = model.id;
                 const objectId = entity.id;
-                this.server.getObjectInfo(projectId, modelId, objectId, (objectInfo) => {
-                    this.fire("queryPicked", {
-                        projectId: projectId,
-                        modelId: modelId,
-                        objectId: objectId,
-                        objectInfo: objectInfo
-                    });
-                }, (errMsg) => {
-                    this.error("Query tool: " + errMsg);
-                    this.fire("queryPicked", {
-                        objectId: objectId
-                    });
-                });
+                const metaObject = viewer.metaScene.metaObjects[objectId];
+                if (!metaObject) {
+                    return;
+                }
+                const objectName = metaObject.name;
+                const objectType = metaObject.type;
+                const objectQueryResult = {
+                    projectId: projectId,
+                    modelId: modelId,
+                    objectId: objectId,
+                    objectName: objectName,
+                    objectType: objectType
+                };
+                this.fire("queryPicked", objectQueryResult);
                 entity = null;
             } else {
                 this.fire("queryNotPicked", false);

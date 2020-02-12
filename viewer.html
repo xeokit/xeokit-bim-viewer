@@ -740,16 +740,7 @@
         window.bimViewer = bimViewer;  // Just for debugging
 
         bimViewer.on("queryPicked", (event) => {
-            bimViewer.getObjectInfo(
-                event.projectId,
-                event.modelId,
-                event.objectId,
-                (json) => {
-                    console.log(JSON.stringify(json, null, "\t"));
-                },
-                (errMsg) => {
-                    console.error("queryPicked error: " + errMsg);
-                });
+            console.log(JSON.stringify(event, null, "\t"));
         });
 
         // Request params contain static params, such as the project to load
