@@ -197,6 +197,7 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
+        this._initConfigs();
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
@@ -456,6 +457,19 @@ class BIMViewer extends Controller {
         });
     }
 
+    _initConfigs() {
+        this._configs = {};
+        this.setConfigs({
+            "cameraNear": "0.05",
+            "cameraFar": "3000.0",
+            "saoEnabled": "true",
+            "saoBias": "0.5",
+            "saoIntensity": "0.5",
+            "saoScale": "1200.0",
+            "saoKernelRadius": "100",
+            "xrayContext": true
+        });
+    }
     /**
      * Sets a batch of viewer configurations.
      *
@@ -476,7 +490,7 @@ class BIMViewer extends Controller {
      * TODO: Document available options
      *
      * @param {String} name Configuration name.
-     * @param {String|Number|Boolean} value Configuration value.
+     * @param {*} value Configuration value.
      */
     setConfig(name, value) {
 
@@ -490,18 +504,21 @@ class BIMViewer extends Controller {
                 case "backgroundColor":
                     const rgbColor = value;
                     this.setBackgroundColor(rgbColor);
+                    this._configs[name] = rgbColor;
                     break;
 
                 case "cameraNear":
                     const near = parseFloat(value);
                     this.viewer.scene.camera.perspective.near = near;
                     this.viewer.scene.camera.ortho.near = near;
+                    this._configs[name] = near;
                     break;
 
                 case "cameraFar":
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
                     this.viewer.scene.camera.ortho.far = far;
+                    this._configs[name] = far;
                     break;
 
                 case "saoEnabled":
@@ -517,35 +534,40 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoScale":
-                    this.viewer.scene.sao.scale = parseFloat(value);
+                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);
                     break;
 
                 case "saoKernelRadius":
-                    this.viewer.scene.sao.kernelRadius = parseFloat(value);
+                    this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);
                     break;
 
                 case "saoBlur":
-                    this.viewer.scene.sao.blur = parseBool(value);
+                    this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);
                     break;
 
                 case "viewFitFOV":
-                    this.viewer.cameraFlight.fitFOV = parseFloat(value);
+                    this.viewer.cameraFlight.fitFOV = this._configs[name] = parseFloat(value);
                     break;
 
                 case "viewFitDuration":
-                    this.viewer.cameraFlight.duration = parseFloat(value);
+                    this.viewer.cameraFlight.duration = this._configs[name] = parseFloat(value);
                     break;
 
                 case "perspectiveFOV":
-                    this.viewer.camera.perspective.fov = parseFloat(value);
+                    this.viewer.camera.perspective.fov = this._configs[name] = parseFloat(value);
                     break;
 
                 case "excludeUnclassifiedObjects":
-                    // TODO: wire this up somewhere
+                    this._configs[name] = parseBool(value);
                     break;
 
                 case "objectColorSource":
                     this.setObjectColorSource(value);
+                    this._configs[name] = value;
+                    break;
+
+                case "xrayContext":
+                    this._configs[name] = value;
                     break;
 
                 default:
@@ -558,11 +580,13 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * TODO
-     * @param name
+     * Gets a viewer configuration that was set with {@link BIMViewer#setConfig}.
+     *
+     * @param {String} name Configuration name.
+     * @ereturns {*} Configuration value.
      */
     getConfig(name) {
-        throw "BIMViewer#getConfig() not implemented yet"
+        return this._configs[name];
     }
 
     /**
