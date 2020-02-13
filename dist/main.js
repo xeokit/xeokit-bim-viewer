@@ -60456,7 +60456,8 @@ class BIMViewer extends Controller {
             "saoIntensity": "0.5",
             "saoScale": "1200.0",
             "saoKernelRadius": "100",
-            "xrayContext": true
+            "xrayContext": true,
+            "backgroundColor": [1.0, 1.0, 1.0]
         });
     }
     /**
