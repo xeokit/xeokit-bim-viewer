@@ -53023,7 +53023,8 @@ class ModelsExplorer extends Controller {
                             scale: modelInfo.scale,
                             rotation: modelInfo.rotation,
                             matrix: modelInfo.matrix,
-                            edges: (modelInfo.edges !== false)
+                            edges: (modelInfo.edges !== false),
+                            saoEnabled: modelInfo.saoEnabled
                         });
                         model.on("loaded", () => {
                             document.getElementById("" + modelId).checked = true;
