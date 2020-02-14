@@ -53167,7 +53167,7 @@ class ModelTreeView {
         this._containerElement.oncontextmenu = (e) => {
             e.preventDefault();
         };
-        
+
         this._onObjectVisibility = this._viewer.scene.on("objectVisibility", (entity) => {
             if (this._muteSceneEvents) {
                 return;
@@ -53308,6 +53308,9 @@ class ModelTreeView {
         }
         this._rootNodes = [];
         this._objectNodes = {};
+        if (this._pruneEmptyNodes) {
+            this._findEmptyNodes();
+        }
         switch (this._hierarchy) {
             case "storeys":
                 this._createStoreysNodes();
@@ -53330,23 +53333,38 @@ class ModelTreeView {
         this.expandToDepth(this._autoExpandDepth);
     }
 
+    _findEmptyNodes(metaObject = this._rootMetaObject, countEntities = 0) {
+        const viewer = this._treeViewPlugin.viewer;
+        const scene = viewer.scene;
+        const children = metaObject.children;
+        const objectId = metaObject.id;
+        const entity = scene.objects[objectId];
+        metaObject._countEntities = 0;
+        if (entity) {
+            metaObject._countEntities++;
+        }
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const childMetaObject = children[i];
+                childMetaObject._countEntities = this._findEmptyNodes(childMetaObject);
+                metaObject._countEntities += childMetaObject._countEntities;
+            }
+        }
+        return metaObject._countEntities;
+    }
+
     _createStoreysNodes(
         metaObject = this._rootMetaObject,
         buildingNode,
         storeyNode,
         typeNodes) {
+        if (this._pruneEmptyNodes && (metaObject._countEntities === 0)) {
+            return;
+        }
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name;
         const children = metaObject.children;
         const objectId = metaObject.id;
-        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
-            const viewer = this._treeViewPlugin.viewer;
-            const scene = viewer.scene;
-            const entity = scene.objects[objectId];
-            if (!entity) {
-                return;
-            }
-        }
         if (metaObjectType === "IfcBuilding") {
             buildingNode = {
                 nodeId: this._objectToNodeID(objectId),
@@ -53382,39 +53400,43 @@ class ModelTreeView {
             typeNodes = {};
         } else {
             if (storeyNode) {
-                typeNodes = typeNodes || {};
-                var typeNode = typeNodes[metaObjectType];
-                if (!typeNode) {
-                    const typeNodeObjectId = storeyNode.objectId + "." + metaObjectType;
-                    const typeNodeNodeId = this._objectToNodeID(typeNodeObjectId);
-                    typeNode = {
-                        nodeId: typeNodeNodeId,
-                        objectId: typeNodeObjectId,
-                        title: metaObjectType,
+                const objects = this._viewer.scene.objects;
+                const object = objects[objectId];
+                if (object) {
+                    typeNodes = typeNodes || {};
+                    let typeNode = typeNodes[metaObjectType];
+                    if (!typeNode) {
+                        const typeNodeObjectId = storeyNode.objectId + "." + metaObjectType;
+                        const typeNodeNodeId = this._objectToNodeID(typeNodeObjectId);
+                        typeNode = {
+                            nodeId: typeNodeNodeId,
+                            objectId: typeNodeObjectId,
+                            title: metaObjectType,
+                            type: metaObjectType,
+                            parent: storeyNode,
+                            numEntities: 0,
+                            numVisibleEntities: 0,
+                            checked: false,
+                            children: []
+                        };
+                        storeyNode.children.push(typeNode);
+                        this._objectNodes[typeNodeObjectId] = typeNode;
+                        typeNodes[metaObjectType] = typeNode;
+                    }
+                    const node = {
+                        nodeId: this._objectToNodeID(objectId),
+                        objectId: objectId,
+                        title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
                         type: metaObjectType,
-                        parent: storeyNode,
+                        parent: typeNode,
                         numEntities: 0,
                         numVisibleEntities: 0,
                         checked: false,
                         children: []
                     };
-                    storeyNode.children.push(typeNode);
-                    this._objectNodes[typeNodeObjectId] = typeNode;
-                    typeNodes[metaObjectType] = typeNode;
+                    typeNode.children.push(node);
+                    this._objectNodes[node.objectId] = node;
                 }
-                const node = {
-                    nodeId: this._objectToNodeID(objectId),
-                    objectId: objectId,
-                    title: (metaObjectName && metaObjectName !== "" && metaObjectName !== "Default") ? metaObjectName : metaObjectType,
-                    type: metaObjectType,
-                    parent: typeNode,
-                    numEntities: 0,
-                    numVisibleEntities: 0,
-                    checked: false,
-                    children: []
-                };
-                typeNode.children.push(node);
-                this._objectNodes[node.objectId] = node;
             }
         }
         if (children) {
@@ -53429,18 +53451,13 @@ class ModelTreeView {
         metaObject = this._rootMetaObject,
         buildingNode,
         typeNodes) {
+        if (this._pruneEmptyNodes && (metaObject._countEntities === 0)) {
+            return;
+        }
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name;
         const children = metaObject.children;
         const objectId = metaObject.id;
-        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
-            const viewer = this._treeViewPlugin.viewer;
-            const scene = viewer.scene;
-            const entity = scene.objects[objectId];
-            if (!entity) {
-                return;
-            }
-        }
         if (metaObjectType === "IfcBuilding") {
             buildingNode = {
                 nodeId: this._objectToNodeID(objectId),
@@ -53503,18 +53520,13 @@ class ModelTreeView {
     }
 
     _createContainmentNodes(metaObject = this._rootMetaObject, parent) {
+        if (this._pruneEmptyNodes && (metaObject._countEntities === 0)) {
+            return;
+        }
         const metaObjectType = metaObject.type;
         const metaObjectName = metaObject.name || metaObjectType;
         const children = metaObject.children;
         const objectId = metaObject.id;
-        if (this._pruneEmptyNodes && (!children || children.length === 0)) {
-            const viewer = this._treeViewPlugin.viewer;
-            const scene = viewer.scene;
-            const entity = scene.objects[objectId];
-            if (!entity) {
-                return;
-            }
-        }
         const node = {
             nodeId: this._objectToNodeID(objectId),
             objectId: objectId,
@@ -60127,6 +60139,36 @@ function initTabs(containerElement) {
 
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
+ *
+ * ## Configuration
+ *
+ * BIMViewer may be configured programmatically using its {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs} methods.
+ *
+ * Configs may be set individually, or in a batch.
+ *
+ * Values can be given as their types, or as strings.
+ *
+ * ````javascript
+ * myBimViewer.setConfig("saoEnabled", true);
+ *
+ * myBIMViewer.setConfigs({
+ *     "saoEnabled":        "false",
+ *     "saoBias":           "0.5",
+ *     "saoIntensity":      "0.5",
+ *     "backgroundColor":   [1.0, 1.0, 1.0]
+ * });
+ * ````
+ *
+ * The available configurations are:
+ *
+ * | Property     | Type      | Range      | Default Value | Description |
+ * |:------------:|:---------:|:----------:|:-------------:|:-----------:|
+ * | "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
+ * | "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
+ * | "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
+
+ * TODO
+ *
  */
 class BIMViewer extends Controller {
 
@@ -60452,7 +60494,7 @@ class BIMViewer extends Controller {
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
-            "saoEnabled": "true",
+            "saoEnabled": "false",
             "saoBias": "0.5",
             "saoIntensity": "0.5",
             "saoScale": "1200.0",
