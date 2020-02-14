@@ -137,6 +137,36 @@ function initTabs(containerElement) {
 
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
+ *
+ * ## Configuration
+ *
+ * BIMViewer may be configured programmatically using its {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs} methods.
+ *
+ * Configs may be set individually, or in a batch.
+ *
+ * Values can be given as their types, or as strings.
+ *
+ * ````javascript
+ * myBimViewer.setConfig("saoEnabled", true);
+ *
+ * myBIMViewer.setConfigs({
+ *     "saoEnabled":        "false",
+ *     "saoBias":           "0.5",
+ *     "saoIntensity":      "0.5",
+ *     "backgroundColor":   [1.0, 1.0, 1.0]
+ * });
+ * ````
+ *
+ * The available configurations are:
+ *
+ * | Property     | Type      | Range      | Default Value | Description |
+ * |:------------:|:---------:|:----------:|:-------------:|:-----------:|
+ * | "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
+ * | "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
+ * | "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
+
+ * TODO
+ *
  */
 class BIMViewer extends Controller {
 
@@ -462,7 +492,7 @@ class BIMViewer extends Controller {
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
-            "saoEnabled": "true",
+            "saoEnabled": "false",
             "saoBias": "0.5",
             "saoIntensity": "0.5",
             "saoScale": "1200.0",
