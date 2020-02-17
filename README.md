@@ -69,7 +69,7 @@ In the example below, we'll create a [````BIMViewer````](https://xeokit.github.i
 
 We'll configure the ````Server```` to load the data from the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory.
  
-We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: a ````<canvas>```` for the 3D canvas, a ````<div>```` to contain the explorer panel, a ````<div>```` to contain the toolbar, and a ````<canvas>```` for the NavCube. 
+We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: a ````<canvas>```` for the 3D canvas, a ````<div>```` to contain the explorer panel, a ````<div>```` to contain the toolbar, and a ````<canvas>```` for the NavCube. Configuring the ````BIMViewer```` with separate places to locate its various elements allows more flexible integration into your web page.
   
 ````javascript
 const server = new Server({
@@ -99,8 +99,6 @@ In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/
 ````
  
 See [````app/css/style.css````](https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css) for how we've styled these elements.
- 
-Allowing the ````BIMViewer```` to be configured with different places in which to locate its various elements allows more flexible integration into your web page or application.
  
 ## Configuring the Viewer
  
