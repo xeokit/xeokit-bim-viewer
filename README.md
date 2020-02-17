@@ -98,7 +98,7 @@ In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/
  <canvas id="myNavCubeCanvas"></canvas>
 ````
  
-See ````app/css/style.css```` for how we've styled these elements.
+See [````app/css/style.css````](https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css) for how we've styled these elements.
  
 Allowing the ````BIMViewer```` to be configured with different places in which to locate its various elements allows more flexible integration into your web page or application.
  
