@@ -18926,10 +18926,14 @@ class Mesh extends Component {
             }
             if (state.edges) {
                 const edgeMaterial = this._edgeMaterial._state;
-                if (edgeMaterial.alpha < 1.0) {
-                    renderFlags.normalEdgesTransparent = true;
-                } else {
-                    renderFlags.normalEdgesOpaque = true;
+                if (this.numEdgesLayerPortions > 0) {
+                    if (edgeMaterial.edges) {
+                        if (edgeMaterial.alpha < 1.0) {
+                            renderFlags.normalEdgesTransparent = true;
+                        } else {
+                            renderFlags.normalEdgesOpaque = true;
+                        }
+                    }
                 }
             }
             if (state.selected) {
@@ -28740,6 +28744,7 @@ class EdgeMaterial extends Material {
 
         this._state = new RenderState({
             type: "EdgeMaterial",
+            edges: null,
             edgeColor: null,
             edgeAlpha: null,
             edgeWidth: null
@@ -28763,8 +28768,36 @@ class EdgeMaterial extends Material {
             this.edgeAlpha = cfg.edgeAlpha;
             this.edgeWidth = cfg.edgeWidth;
         }
+        this.edges = (cfg.edges !== false);
     }
 
+
+    /**
+     * Sets if edges are visible.
+     *
+     * Default is ````true````.
+     *
+     * @type {Boolean}
+     */
+    set edges(value) {
+        value = value !== false;
+        if (this._state.edges === value) {
+            return;
+        }
+        this._state.edges = value;
+        this.glRedraw();
+    }
+
+    /**
+     * Gets if edges are visible.
+     *
+     * Default is ````true````.
+     *
+     * @type {Boolean}
+     */
+    get edges() {
+        return this._state.edges;
+    }
 
     /**
      * Sets RGB edge color.
@@ -34895,7 +34928,10 @@ class PerformanceNode {
     }
 
     /**
-     * Sets if this PerformanceNode's edges are enhanced.
+     * Sets if this PerformanceNode is selected.
+     *
+     * When both {@link PerformanceNode#isObject} and {@link PerformanceNode#selected} are ````true```` the PerformanceNode will be
+     * registered by {@link PerformanceNode#id} in {@link Scene#selectedObjects}.
      *
      * @type {Boolean}
      */
@@ -44060,10 +44096,12 @@ class PerformanceModel extends Component {
 
         if (this.numEdgesLayerPortions > 0) {
             const edgeMaterial = this.scene.edgeMaterial._state;
-            if (edgeMaterial.alpha < 1.0) {
-                renderFlags.normalEdgesTransparent = true;
-            } else {
-                renderFlags.normalEdgesOpaque = true;
+            if (edgeMaterial.edges) {
+                if (edgeMaterial.alpha < 1.0) {
+                    renderFlags.normalEdgesTransparent = true;
+                } else {
+                    renderFlags.normalEdgesOpaque = true;
+                }
             }
         }
 
@@ -52588,21 +52626,17 @@ class XKTLoaderPlugin extends Plugin {
  * @type {{String:Object}}
  */
 const ModelIFCObjectColors = {
-    IfcSpace: { // IfcSpace elements should be visible and pickable
-        visible: true,
-        pickable: true,
-        opacity: 0.2
+    IfcSpace: {
+        opacity: 0.3
     },
-    IfcWindow: { // Some IFC models have opaque IfcWindow elements(!)
-        pickable: true,
-        opacity: 0.5
+    IfcWindow: { // Some IFC models have opaque windows
+        opacity: 0.4
     },
     IfcOpeningElement: { // These tend to obscure windows
-        visible: false
+        opacity: 0.3
     },
-    IfcPlate: { // These tend to be windows(!)
-        colorize: [0.8470588235, 0.427450980392, 0, 0.5],
-        opacity: 0.5
+    IfcPlate: { // These sometimes obscure windows
+        opacity: 0.3
     }
 };
 
@@ -52762,21 +52796,17 @@ const ViewerIFCObjectColors = {
 
     IfcOpeningElement: {
         colorize: [0.137255, 0.403922, 0.870588],
-        pickable: false,
-        visible: false,
+        opacity: 0.3,
         priority: 6
     },
     IfcSpace: {
         colorize: [0.137255, 0.403922, 0.870588],
-        pickable: false,
-        visible: false,
         opacity: 0.5,
         priority: 6
     },
 
     IfcWindow: {
         colorize: [0.137255, 0.403922, 0.870588],
-        pickable: true,
         opacity: 0.4,
         priority: 6 // FIXME: transparent objects need to be last in order to avoid strange wireframe effect
     },
@@ -53583,13 +53613,13 @@ class ModelTreeView {
         const camera = scene.camera;
         const metaScene = viewer.metaScene;
         return this._spatialSortFunc || (this._spatialSortFunc = (node1, node2) => {
-            if (!node1.center || !node2.center) {
-                // Sorting on center more robust when objects could overlap storeys
-                if (!node1.center) {
-                    node1.center = math.getAABB3Center(scene.getAABB(metaScene.getObjectIDsInSubtree(node1.objectId)));
+            if (!node1.aabb || !node2.aabb) {
+                // Sorting on lowest point of the AABB is likely more more robust when objects could overlap storeys
+                if (!node1.aabb) {
+                    node1.aabb = scene.getAABB(metaScene.getObjectIDsInSubtree(node1.objectId));
                 }
-                if (!node2.center) {
-                    node2.center = math.getAABB3Center(scene.getAABB(metaScene.getObjectIDsInSubtree(node2.objectId)));
+                if (!node2.aabb) {
+                    node2.aabb = scene.getAABB(metaScene.getObjectIDsInSubtree(node2.objectId));
                 }
             }
             let idx = 0;
@@ -53600,10 +53630,10 @@ class ModelTreeView {
             } else {
                 idx = 2;
             }
-            if (node1.center[idx] > node2.center[idx]) {
+            if (node1.aabb[idx] > node2.aabb[idx]) {
                 return -1;
             }
-            if (node1.center[idx] < node2.center[idx]) {
+            if (node1.aabb[idx] < node2.aabb[idx]) {
                 return 1;
             }
             return 0;
@@ -54043,10 +54073,7 @@ class ModelTreeView {
  * ## Sorting Nodes
  *
  * TreeViewPlugin sorts its tree nodes by default. For a "storeys" hierarchy, it orders ````IfcBuildingStorey```` nodes
- * spatially, with the node for the highest story at the top, down to the lowest at the bottom. This assumes that the
- * 3D World-space boundaries of the ````IfcBuildingStory```` elements are actually spatially sortable, which may not be the case
- * in all IFC models. Some models may have ````IfcBuildingStory```` elements that contain objects that span multiple storeys,
- * which would defeat this sorting.
+ * spatially, with the node for the highest story at the top, down to the lowest at the bottom.
  *
  * For all the hierarchy types ("containment", "classes" and "storeys"), TreeViewPlugin sorts the other node types
  * alphanumerically on their titles.
@@ -54061,7 +54088,7 @@ class ModelTreeView {
  * });
  * ````
  *
- * Note that node sorting is only done for each model at the time that it is added to the TreeViewPlugin, and will not
+ * Note that, for all hierarchy modes, node sorting is only done for each model at the time that it is added to the TreeViewPlugin, and will not
  * update dynamically if we later transform the {@link Entity}s corresponding to the nodes.
  *
  * ## Pruning empty nodes
@@ -58715,17 +58742,29 @@ class MetaScene {
      * Gets the {@link MetaObject#id}s of the {@link MetaObject}s within the given subtree.
      *
      * @param {String} id  ID of the root {@link MetaObject} of the given subtree.
+     * @param {String[]} [includeTypes] Optional list of types to include.
+     * @param {String[]} [excludeTypes] Optional list of types to exclude.
      * @returns {String[]} Array of {@link MetaObject#id}s.
      */
-    getObjectIDsInSubtree(id) {
+    getObjectIDsInSubtree(id, includeTypes, excludeTypes) {
         const list = [];
         const metaObject = this.metaObjects[id];
+        const includeMask = (includeTypes && includeTypes.length > 0) ? arrayToMap(includeTypes) : null;
+        const excludeMask = (excludeTypes && excludeTypes.length > 0) ? arrayToMap(excludeTypes) : null;
 
         function visit(metaObject) {
             if (!metaObject) {
                 return;
             }
-            list.push(metaObject.id);
+            var include = true;
+            if (excludeMask && excludeMask[metaObject.type]) {
+                include = false;
+            } else if (includeMask && (!includeMask[metaObject.type])) {
+                include = false;
+            }
+            if (include) {
+                list.push(metaObject.id);
+            }
             const children = metaObject.children;
             if (children) {
                 for (var i = 0, len = children.length; i < len; i++) {
@@ -58751,6 +58790,14 @@ class MetaScene {
         }
         metaObject.withMetaObjectsInSubtree(callback);
     }
+}
+
+function arrayToMap(array) {
+    const map = {};
+    for (var i = 0, len = array.length; i < len; i++) {
+        map[array[i]] = true;
+    }
+    return map;
 }
 
 /**
@@ -58869,12 +58916,7 @@ class Viewer {
             doublePickFlyTo: true
         });
 
-        /**
-         * {@link Plugin}s that have been installed into this Viewer, mapped to their IDs.
-         * @property plugins
-         * @type {{string:Plugin}}
-         */
-        this.plugins = {};
+        this._plugins = [];
 
         /**
          * Subscriptions to events sent with {@link fire}.
@@ -58945,10 +58987,7 @@ class Viewer {
      * @private
      */
     addPlugin(plugin) {
-        if (this.plugins[plugin.id]) {
-            this.error(`Plugin with this ID already installed: ${plugin.id}`);
-        }
-        this.plugins[plugin.id] = plugin;
+        this._plugins.push(plugin);
     }
 
     /**
@@ -58957,19 +58996,16 @@ class Viewer {
      * @private
      */
     removePlugin(plugin) {
-        const installedPlugin = this.plugins[plugin.id];
-        if (!installedPlugin) {
-            this.error(`Can't remove plugin - no plugin with this ID is installed: ${plugin.id}`);
-            return;
+        for (let i = 0, len = this._plugins.length; i < len; i++) {
+            const p = this._plugins[i];
+            if (p === plugin) {
+                if (p.clear) {
+                    p.clear();
+                }
+                this._plugins.splice(i, 1);
+                return;
+            }
         }
-        if (installedPlugin !== plugin) {
-            this.error(`Can't remove plugin - a different plugin is installed with this ID: ${plugin.id}`);
-            return;
-        }
-        if (installedPlugin.clear) {
-            installedPlugin.clear();
-        }
-        delete this.plugins[plugin.id];
     }
 
     /**
@@ -58979,10 +59015,10 @@ class Viewer {
      * @private
      */
     sendToPlugins(name, value) {
-        const plugins = this.plugins;
-        for (const id in plugins) {
-            if (plugins.hasOwnProperty(id)) {
-                plugins[id].send(name, value);
+        for (let i = 0, len = this._plugins.length; i < len; i++) {
+            const p = this._plugins[i];
+            if (p.send) {
+                p.send(name, value);
             }
         }
     }
@@ -59001,13 +59037,6 @@ class Viewer {
      */
     resetView() {
         this.sendToPlugins("resetView");
-
-        // Clear sectionPlanes at xeokit level
-
-        // TODO
-        // this.show();
-        // this.hide("space");
-        // this.hide("DEFAULT");
     }
 
     /**
@@ -59067,10 +59096,9 @@ class Viewer {
     /** Destroys this Viewer.
      */
     destroy() {
-        for (let id in this.plugins) {
-            if (this.plugins.hasOwnProperty(id)) {
-                this.plugins[id].destroy();
-            }
+        for (let i = 0, len = this._plugins.length; i < len; i++) {
+            const plugin = this._plugins[i];
+            plugin.destroy();
         }
         this.scene.destroy();
     }
@@ -60140,34 +60168,7 @@ function initTabs(containerElement) {
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
  *
- * ## Configuration
- *
- * BIMViewer may be configured programmatically using its {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs} methods.
- *
- * Configs may be set individually, or in a batch.
- *
- * Values can be given as their types, or as strings.
- *
- * ````javascript
- * myBimViewer.setConfig("saoEnabled", true);
- *
- * myBIMViewer.setConfigs({
- *     "saoEnabled":        "false",
- *     "saoBias":           "0.5",
- *     "saoIntensity":      "0.5",
- *     "backgroundColor":   [1.0, 1.0, 1.0]
- * });
- * ````
- *
- * The available configurations are:
- *
- * | Property     | Type      | Range      | Default Value | Description |
- * |:------------:|:---------:|:----------:|:-------------:|:-----------:|
- * | "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
- * | "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
- * | "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
 
- * TODO
  *
  */
 class BIMViewer extends Controller {
@@ -60219,6 +60220,8 @@ class BIMViewer extends Controller {
         });
 
         super(null, cfg, server, viewer);
+
+        this._configs = {};
 
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
@@ -60448,6 +60451,44 @@ class BIMViewer extends Controller {
         sao.intensity = 0.5;
         sao.scale = 1200.0;
         sao.kernelRadius = 100;
+
+        // Only enable SAO and normal edge emphasis while camera is not moving
+
+        const timeoutDuration = 200;
+        var timer = timeoutDuration;
+        var saoEnabled = false;
+
+        const onCameraMatrix = scene.camera.on("matrix", () => {
+            if (this._configs.saoInteractive) {
+                return;
+            }
+            const saoInteractiveDelay = this._configs.saoInteractiveDelay;
+            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);
+            if (saoEnabled) {
+                scene.sao.enabled = false;
+                saoEnabled = false;
+            }
+        });
+
+        const onSceneTick = scene.on("tick", (e) => {
+            if (this._configs.saoInteractive) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+                return;
+            }
+            if (saoEnabled) {
+                return;
+            }
+            timer -= e.deltaTime;
+            if (timer <= 0) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+            }
+        });
     }
 
     _initCanvasContextMenus() {
@@ -60490,7 +60531,6 @@ class BIMViewer extends Controller {
     }
 
     _initConfigs() {
-        this._configs = {};
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
@@ -60500,7 +60540,9 @@ class BIMViewer extends Controller {
             "saoScale": "1200.0",
             "saoKernelRadius": "100",
             "xrayContext": true,
-            "backgroundColor": [1.0, 1.0, 1.0]
+            "backgroundColor": [1.0, 1.0, 1.0],
+            "saoInteractive": true,
+            "saoInteractiveDelay": 200
         });
     }
     /**
@@ -60520,7 +60562,7 @@ class BIMViewer extends Controller {
     /**
      * Sets a viewer configuration.
      *
-     * TODO: Document available options
+     * See class comments for the list of available viewer configurations.
      *
      * @param {String} name Configuration name.
      * @param {*} value Configuration value.
@@ -60555,7 +60597,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoEnabled":
-                    this.viewer.scene.sao.enabled = parseBool(value);
+                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
                     break;
 
                 case "saoBias":
@@ -60603,6 +60645,20 @@ class BIMViewer extends Controller {
                     this._configs[name] = value;
                     break;
 
+                case "saoInteractive":
+                    this._configs["saoInteractive"] = parseBool(value);
+                    break;
+
+                case "saoInteractiveDelay":
+                    var saoInteractiveDelay = parseFloat(value);
+                    if (saoInteractiveDelay < 0) {
+                        this.error("setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero");
+                        saoInteractiveDelay = 0;
+                    }
+                    this._configs["saoInteractiveDelay"] = parseFloat(value);
+                    break;
+
+
                 default:
                     this.error("setConfig() - unsupported configuration: '" + name + "'");
             }
@@ -60613,7 +60669,9 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Gets a viewer configuration that was set with {@link BIMViewer#setConfig}.
+     * Gets the value of a viewer configuration.
+     * 
+     * These are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.
      *
      * @param {String} name Configuration name.
      * @ereturns {*} Configuration value.
@@ -60624,6 +60682,8 @@ class BIMViewer extends Controller {
 
     /**
      * Gets information on all available projects.
+     * 
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProjects}. 
      *
      * ### Example
      *
@@ -60672,6 +60732,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given project.
      *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProject}.
+     * 
      * Use {@link BIMViewer#getProjects} to get information on all available projects.
      *
      * ### Example
@@ -60716,7 +60778,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given object, belonging to the given model, within the given project.
      *
-     *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getObjectInfo}.
+     * 
      * ### Example
      *
      * ````javascript
@@ -60923,11 +60986,9 @@ class BIMViewer extends Controller {
     /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
      *
-     * This scrolls the object's node into view, then highlights it.
+     * Also scrolls the object's node into view within each tree, then highlights it.
      *
-     * De-highlights whatever node is currently highlighted in each of those tabs.
-     *
-     * The node will be de-highlighted if the subtree containing it is then collapsed.
+     * De-highlights whatever node is currently highlighted in each of those trees.
      *
      * @param {String} objectId ID of the object
      */
@@ -60946,7 +61007,7 @@ class BIMViewer extends Controller {
      *
      * This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.
      *
-     * For each tab, does nothing if no node is currently highlighted.
+     * For each tab, does nothing if a node is currently highlighted.
      */
     unShowObjectInExplorers() {
         this._objectsExplorer.unShowNodeInTreeView();
@@ -60956,6 +61017,7 @@ class BIMViewer extends Controller {
 
     /**
      * Shows the object with the given ID.
+
      * @param {String} objectId ID of object to show.
      */
     showObject(objectId) {
@@ -60983,7 +61045,7 @@ class BIMViewer extends Controller {
      * @param {String[]} objectIds IDs of objects to not show.
      */
     showAllObjectsExceptFor(objectIds) {
-        if (!objectId) {
+        if (!objectIds) {
             this.error("showAllObjectsExceptFor() - Argument expected: objectId");
             return;
         }
@@ -60993,7 +61055,7 @@ class BIMViewer extends Controller {
      * Hides the object with the given ID.
      * @param {String} objectId ID of object to hide.
      */
-    hideObject(objectId) {
+    hideObject(objectId) { // TODO
         if (!objectId) {
             this.error("hideObject() - Argument expected: objectId");
             return;
@@ -61003,7 +61065,7 @@ class BIMViewer extends Controller {
     /**
      * Hides all objects currently in the viewer.
      */
-    hideAllObjects() {
+    hideAllObjects() { // TODO
         this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
     }
 
@@ -61011,7 +61073,7 @@ class BIMViewer extends Controller {
      * Hides all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not hide.
      */
-    hideAllObjectsExceptFor(objectIds) {
+    hideAllObjectsExceptFor(objectIds) { // TODO
         if (!objectIds) {
             this.error("hideAllObjectsExceptFor() - Argument expected: objectId");
             return;
@@ -61119,7 +61181,7 @@ class BIMViewer extends Controller {
      * X-rays all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not x-ray.
      */
-    xrayAllObjectsExceptFor(objectIds) {
+    xrayAllObjectsExceptFor(objectIds) { // TODO
 
     }
 
@@ -61161,7 +61223,7 @@ class BIMViewer extends Controller {
      *
      * @param {String[]} objectIds IDs of objects to not select.
      */
-    selectAllObjectsExceptFor(objectIds) {
+    selectAllObjectsExceptFor(objectIds) { // TODO
 
     }
 
