@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -39,7 +40,8 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {XKTLoaderPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js&quot;;
 import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
-import {IFCObjectDefaults} from &quot;../IFCObjectDefaults/IFCObjectDefaults.js&quot;;
+import {ModelIFCObjectColors} from &quot;../IFCObjectDefaults/ModelIFCObjectColors.js&quot;;
+import {ViewerIFCObjectColors} from &quot;../IFCObjectDefaults/ViewerIFCObjectColors.js&quot;;
 
 const tempVec3 = math.vec3();
 
@@ -72,7 +74,7 @@ class ModelsExplorer extends Controller {
         }
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            // objectDefaults: IFCObjectDefaults
+            objectDefaults: ModelIFCObjectColors
         });
 
         this._modelsInfo = {};
@@ -163,9 +165,13 @@ class ModelsExplorer extends Controller {
             return;
         }
         const modelId = modelsLoaded.pop();
-        this.loadModel(modelId, () =&gt; {
+        this.loadModel(modelId,
+            () =&gt; { // Done
             this._loadNextModel(modelsLoaded, done);
-        });
+            },
+            () =&gt; { // Error - recover and attempt to load next model
+                this._loadNextModel(modelsLoaded, done);
+            });
     }
 
     _parseViewerState(projectInfo, done) {
@@ -196,7 +202,7 @@ class ModelsExplorer extends Controller {
 
     _parseThreeDMode(viewerState, done) {
         const activateThreeDMode = (viewerState.threeDEnabled !== false);
-        this.bimViewer.set3DEnabled(activateThreeDMode, done = null);
+        this.bimViewer.set3DEnabled(activateThreeDMode, done);
     }
 
     unloadProject() {
@@ -226,15 +232,19 @@ class ModelsExplorer extends Controller {
 
     loadModel(modelId, done, error) {
         if (!this._projectId) {
+            const errMsg = &quot;No project currently loaded&quot;;
+            this.error(errMsg);
             if (error) {
-                error(&quot;No project currently loaded&quot;);
+                error(errMsg);
             }
             return;
         }
         const modelInfo = this._modelsInfo[modelId];
         if (!modelInfo) {
+            const errMsg = &quot;Model not in currently loaded project&quot;;
+            this.error(errMsg);
             if (error) {
-                error(&quot;Model not in currently loaded project&quot;);
+                error(errMsg);
             }
             return;
         }
@@ -243,16 +253,20 @@ class ModelsExplorer extends Controller {
             (json) =&gt; {
                 this.server.getGeometry(this._projectId, modelId,
                     (arraybuffer) =&gt; {
+                        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+                        const objectDefaults = (objectColorSource === &quot;model&quot;) ? ModelIFCObjectColors : ViewerIFCObjectColors;
                         const model = this._xktLoader.load({
                             id: modelId,
                             metaModelData: json,
                             xkt: arraybuffer,
+                            objectDefaults: objectDefaults,
                             excludeUnclassifiedObjects: true,
                             position: modelInfo.position,
                             scale: modelInfo.scale,
                             rotation: modelInfo.rotation,
                             matrix: modelInfo.matrix,
-                            edges: (modelInfo.edges !== false)
+                            edges: (modelInfo.edges !== false),
+                            saoEnabled: modelInfo.saoEnabled
                         });
                         model.on(&quot;loaded&quot;, () =&gt; {
                             document.getElementById(&quot;&quot; + modelId).checked = true;
@@ -260,7 +274,7 @@ class ModelsExplorer extends Controller {
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
                             this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
-                            if (this._numModelsLoaded === 1) { // Jump camera when only one model
+                            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
                                 });
@@ -270,28 +284,29 @@ class ModelsExplorer extends Controller {
                                 if (done) {
                                     done();
                                 }
-                            } else { // Fly camera when multiple models
-                                this.viewer.cameraFlight.flyTo({
-                                    aabb: aabb
-                                }, () =&gt; {
-                                    this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-                                    this.fire(&quot;modelLoaded&quot;, modelId);
-                                    this.bimViewer._busyModal.hide();
-                                    if (done) {
-                                        done();
-                                    }
-                                });
+                            } else {
+                                this.fire(&quot;modelLoaded&quot;, modelId);
+                                this.bimViewer._busyModal.hide();
+                                if (done) {
+                                    done();
+                                }
                             }
                         });
                     },
                     (errMsg) =&gt; {
-                        this.error(errMsg);
                         this.bimViewer._busyModal.hide();
+                        this.error(errMsg);
+                        if (error) {
+                            error(errMsg);
+                        }
                     });
             },
             (errMsg) =&gt; {
-                this.error(errMsg);
                 this.bimViewer._busyModal.hide();
+                this.error(errMsg);
+                if (error) {
+                    error(errMsg);
+                }
             });
     }
 
@@ -302,8 +317,6 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const scene = this.viewer.scene;
-        const aabb = scene.getAABB(scene.visibleObjectIds);
         document.getElementById(&quot;&quot; + modelId).checked = false;
         this._numModelsLoaded--;
         if (this._numModelsLoaded &gt; 0) {
@@ -311,12 +324,6 @@ class ModelsExplorer extends Controller {
         } else {
             this._unloadModelsButtonElement.classList.add(&quot;disabled&quot;);
         }
-        this.viewer.cameraFlight.flyTo({
-            aabb: aabb
-        }, () =&gt; {
-            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-            this.fire(&quot;modelUnloaded&quot;, modelId);
-        });
     }
 
     unloadAllModels() {

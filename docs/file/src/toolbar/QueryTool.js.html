@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -141,19 +142,20 @@ class QueryTool extends Controller {
                 }
                 const modelId = model.id;
                 const objectId = entity.id;
-                this.server.getObjectInfo(projectId, modelId, objectId, (objectInfo) =&gt; {
-                    this.fire(&quot;queryPicked&quot;, {
-                        projectId: projectId,
-                        modelId: modelId,
-                        objectId: objectId,
-                        objectInfo: objectInfo
-                    });
-                }, (errMsg) =&gt; {
-                    this.error(&quot;Query tool: &quot; + errMsg);
-                    this.fire(&quot;queryPicked&quot;, {
-                        objectId: objectId
-                    });
-                });
+                const metaObject = viewer.metaScene.metaObjects[objectId];
+                if (!metaObject) {
+                    return;
+                }
+                const objectName = metaObject.name;
+                const objectType = metaObject.type;
+                const objectQueryResult = {
+                    projectId: projectId,
+                    modelId: modelId,
+                    objectId: objectId,
+                    objectName: objectName,
+                    objectType: objectType
+                };
+                this.fire(&quot;queryPicked&quot;, objectQueryResult);
                 entity = null;
             } else {
                 this.fire(&quot;queryNotPicked&quot;, false);

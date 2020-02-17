@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -78,6 +79,9 @@ class ThreeDMode extends Controller {
 
     setActive(active, done) {
         if (this._active === active) {
+            if (done) {
+                done();
+            }
             return;
         }
         this._active = active;
@@ -171,6 +175,7 @@ class ThreeDMode extends Controller {
         this.bimViewer._sectionTool.clear();
         this.viewer.cameraControl.planView = true;
         this.bimViewer._firstPersonMode.setEnabled(false);
+        this.bimViewer._firstPersonMode.setActive(false);
         this.bimViewer._sectionTool.setEnabled(false);
 
         if (done) {

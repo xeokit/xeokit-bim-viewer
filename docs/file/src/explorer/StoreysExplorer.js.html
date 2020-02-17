@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -39,6 +40,9 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {TreeViewPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js&quot;;
 import {TreeViewContextMenu} from &quot;../contextMenus/TreeViewContextMenu.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+
+const tempVec3 = math.vec3();
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -87,7 +91,8 @@ class StoreysExplorer extends Controller {
             this._treeViewContextMenu.context = {
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
-                treeViewNode: e.treeViewNode
+                treeViewNode: e.treeViewNode,
+                pruneEmptyNodes: true
             };
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
@@ -95,7 +100,13 @@ class StoreysExplorer extends Controller {
         // Left-clicking on a tree node isolates that object in the 3D view
 
         this._treeView.on(&quot;nodeTitleClicked&quot;, (e) =&gt; {
-            this.selectStorey(e.treeViewNode.objectId, () =&gt; {// Animated
+            const objectIds = [];
+            e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) =&gt; {
+                if (treeViewNode.objectId) {
+                    objectIds.push(treeViewNode.objectId);
+                }
+            });
+            this._selectObjects(objectIds, () =&gt; {
             });
         });
 
@@ -149,10 +160,6 @@ class StoreysExplorer extends Controller {
     //         this.error(&quot;flyToStorey() - object is not found: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
     //         return;
     //     }
-    //     if (storeyMetaObject.type !== &quot;IfcBuildingStorey&quot;) {
-    //         this.error(&quot;flyToStorey() - object is not an IfcBuildingStorey: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
-    //         return;
-    //     }
     //     const scene = this.viewer.scene;
     //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
     //     scene.setObjectsSelected(scene.selectedObjectIds, false);
@@ -183,28 +190,59 @@ class StoreysExplorer extends Controller {
         const metaScene = this.viewer.metaScene;
         const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
         if (!storeyMetaObject) {
-            this.error(&quot;flyToStorey() - object is not found: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
+            this.error(&quot;selectStorey() - object is not found: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
             return;
         }
         if (storeyMetaObject.type !== &quot;IfcBuildingStorey&quot;) {
-            this.error(&quot;flyToStorey() - object is not an IfcBuildingStorey: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
+            this.error(&quot;selectStorey() - object is not found: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
             return;
         }
-        const scene = this.viewer.scene;
         const objectIds = storeyMetaObject.getObjectIDsInSubtree();
-        scene.setObjectsVisible(scene.visibleObjectIds, false);
-        scene.setObjectsSelected(scene.selectedObjectIds, false);
-        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-        scene.setObjectsVisible(objectIds, true);
+        this._selectObjects(objectIds, done);
+    }
+
+    _selectObjects(objectIds, done) {
+        const scene = this.viewer.scene;
+        // scene.setObjectsVisible(scene.visibleObjectIds, false);
+        // scene.setObjectsSelected(scene.selectedObjectIds, false);
+        // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+
+
+        const aabb = scene.getAABB(objectIds);
+
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
         if (done) {
+
+            scene.setObjectsXRayed(scene.objectIds, true);
+            scene.setObjectsVisible(scene.objectIds, true);
+            scene.setObjectsPickable(scene.objectIds, false);
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             }, () =&gt; {
+                setTimeout(function () {
+                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                }, 500);
                 done();
             });
         } else {
+
+            scene.setObjectsVisible(scene.objectIds, false);
+            scene.setObjectsPickable(scene.xrayedObjectIds, true);
+            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsVisible(objectIds, true);
+
             this.viewer.cameraFlight.jumpTo({
-                aabb: scene.getAABB(objectIds)
+                aabb: aabb
             });
         }
     }

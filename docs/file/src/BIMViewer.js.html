@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -175,6 +176,9 @@ function initTabs(containerElement) {
 
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
+ *
+
+ *
  */
 class BIMViewer extends Controller {
 
@@ -235,6 +239,7 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
+        this._initConfigs();
 
         explorerElement.innerHTML = explorerTemplate;
         toolbarElement.innerHTML = toolbarTemplate;
@@ -394,7 +399,7 @@ class BIMViewer extends Controller {
 
         const scene = this.viewer.scene;
 
-        scene.xrayMaterial.fill = true;
+        scene.xrayMaterial.fill = false;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
         scene.xrayMaterial.edges = true;
@@ -494,6 +499,20 @@ class BIMViewer extends Controller {
         });
     }
 
+    _initConfigs() {
+        this._configs = {};
+        this.setConfigs({
+            &quot;cameraNear&quot;: &quot;0.05&quot;,
+            &quot;cameraFar&quot;: &quot;3000.0&quot;,
+            &quot;saoEnabled&quot;: &quot;false&quot;,
+            &quot;saoBias&quot;: &quot;0.5&quot;,
+            &quot;saoIntensity&quot;: &quot;0.5&quot;,
+            &quot;saoScale&quot;: &quot;1200.0&quot;,
+            &quot;saoKernelRadius&quot;: &quot;100&quot;,
+            &quot;xrayContext&quot;: true,
+            &quot;backgroundColor&quot;: [1.0, 1.0, 1.0]
+        });
+    }
     /**
      * Sets a batch of viewer configurations.
      *
@@ -511,10 +530,10 @@ class BIMViewer extends Controller {
     /**
      * Sets a viewer configuration.
      *
-     * TODO: Document available options
+     * See class comments for the list of available viewer configurations.
      *
      * @param {String} name Configuration name.
-     * @param {String|Number|Boolean} value Configuration value.
+     * @param {*} value Configuration value.
      */
     setConfig(name, value) {
 
@@ -528,18 +547,21 @@ class BIMViewer extends Controller {
                 case &quot;backgroundColor&quot;:
                     const rgbColor = value;
                     this.setBackgroundColor(rgbColor);
+                    this._configs[name] = rgbColor;
                     break;
 
                 case &quot;cameraNear&quot;:
                     const near = parseFloat(value);
                     this.viewer.scene.camera.perspective.near = near;
                     this.viewer.scene.camera.ortho.near = near;
+                    this._configs[name] = near;
                     break;
 
                 case &quot;cameraFar&quot;:
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
                     this.viewer.scene.camera.ortho.far = far;
+                    this._configs[name] = far;
                     break;
 
                 case &quot;saoEnabled&quot;:
@@ -555,27 +577,40 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;saoScale&quot;:
-                    this.viewer.scene.sao.scale = parseFloat(value);
+                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);
                     break;
 
                 case &quot;saoKernelRadius&quot;:
-                    this.viewer.scene.sao.kernelRadius = parseFloat(value);
+                    this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);
                     break;
 
                 case &quot;saoBlur&quot;:
-                    this.viewer.scene.sao.blur = parseBool(value);
+                    this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;viewFitFOV&quot;:
-                    this.viewer.cameraFlight.fitFOV = parseFloat(value);
+                    this.viewer.cameraFlight.fitFOV = this._configs[name] = parseFloat(value);
                     break;
 
                 case &quot;viewFitDuration&quot;:
-                    this.viewer.cameraFlight.duration = parseFloat(value);
+                    this.viewer.cameraFlight.duration = this._configs[name] = parseFloat(value);
                     break;
 
                 case &quot;perspectiveFOV&quot;:
-                    this.viewer.camera.perspective.fov = parseFloat(value);
+                    this.viewer.camera.perspective.fov = this._configs[name] = parseFloat(value);
+                    break;
+
+                case &quot;excludeUnclassifiedObjects&quot;:
+                    this._configs[name] = parseBool(value);
+                    break;
+
+                case &quot;objectColorSource&quot;:
+                    this.setObjectColorSource(value);
+                    this._configs[name] = value;
+                    break;
+
+                case &quot;xrayContext&quot;:
+                    this._configs[name] = value;
                     break;
 
                 default:
@@ -588,7 +623,21 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Gets the value of a viewer configuration.
+     * 
+     * These are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.
+     *
+     * @param {String} name Configuration name.
+     * @ereturns {*} Configuration value.
+     */
+    getConfig(name) {
+        return this._configs[name];
+    }
+
+    /**
      * Gets information on all available projects.
+     * 
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProjects}. 
      *
      * ### Example
      *
@@ -637,6 +686,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given project.
      *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProject}.
+     * 
      * Use {@link BIMViewer#getProjects} to get information on all available projects.
      *
      * ### Example
@@ -681,7 +732,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given object, belonging to the given model, within the given project.
      *
-     *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getObjectInfo}.
+     * 
      * ### Example
      *
      * ````javascript
@@ -727,8 +779,8 @@ class BIMViewer extends Controller {
             return;
         }
         this.server.getObjectInfo(projectId, modelId, objectId,
-            done, (errorMsg) =&gt; {
-                this.error(&quot;getObjectInfo() - &quot; + errorMsg);
+            done,
+            (errorMsg) =&gt; {
                 if (error) {
                     error(errorMsg);
                 }
@@ -848,13 +900,49 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets where the colors for model objects will be loaded from.
+     *
+     * Options are:
+     *
+     * * &quot;model&quot; - (default) load colors from models, and
+     * * &quot;viewer&quot; - load colors from the viewer&apos;s inbuilt table of colors for IFC types.
+     *
+     * This is &quot;model&quot; by default.
+     *
+     * @param {String} source Where colors will be loaded from - &quot;model&quot; or &quot;viewer&quot;.
+     */
+    setObjectColorSource(source) {
+        switch (source) {
+            case &quot;model&quot;:
+                break;
+            case &quot;viewer&quot;:
+                break;
+            default:
+                source = &quot;model&quot;;
+                this.error(&quot;setObjectColorSource() - Unsupported value - accepted values are &apos;model&apos; and &apos;viewer&apos; - defaulting to &apos;model&apos;&quot;);
+                return;
+        }
+        this._objectColorSource = source;
+    }
+
+    /**
+     * Gets where the colors for model objects will be loaded from.
+     *
+     * This is &quot;model&quot; by default.
+     *
+     * @return {String} Where colors will be loaded from - &quot;model&quot; to get colors from the model, or &quot;viewer&quot; to get them from the viewer&apos;s built-in table of colors for IFC types.
+     */
+    getObjectColorSource() {
+        return this._objectColorSource || &quot;model&quot;;
+    }
+
+
+    /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
      *
-     * This scrolls the object&apos;s node into view, then highlights it.
+     * Also scrolls the object&apos;s node into view within each tree, then highlights it.
      *
-     * De-highlights whatever node is currently highlighted in each of those tabs.
-     *
-     * The node will be de-highlighted if the subtree containing it is then collapsed.
+     * De-highlights whatever node is currently highlighted in each of those trees.
      *
      * @param {String} objectId ID of the object
      */
@@ -873,7 +961,7 @@ class BIMViewer extends Controller {
      *
      * This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.
      *
-     * For each tab, does nothing if no node is currently highlighted.
+     * For each tab, does nothing if a node is currently highlighted.
      */
     unShowObjectInExplorers() {
         this._objectsExplorer.unShowNodeInTreeView();
@@ -883,6 +971,7 @@ class BIMViewer extends Controller {
 
     /**
      * Shows the object with the given ID.
+
      * @param {String} objectId ID of object to show.
      */
     showObject(objectId) {
@@ -910,7 +999,7 @@ class BIMViewer extends Controller {
      * @param {String[]} objectIds IDs of objects to not show.
      */
     showAllObjectsExceptFor(objectIds) {
-        if (!objectId) {
+        if (!objectIds) {
             this.error(&quot;showAllObjectsExceptFor() - Argument expected: objectId&quot;);
             return;
         }
@@ -920,7 +1009,7 @@ class BIMViewer extends Controller {
      * Hides the object with the given ID.
      * @param {String} objectId ID of object to hide.
      */
-    hideObject(objectId) {
+    hideObject(objectId) { // TODO
         if (!objectId) {
             this.error(&quot;hideObject() - Argument expected: objectId&quot;);
             return;
@@ -930,7 +1019,7 @@ class BIMViewer extends Controller {
     /**
      * Hides all objects currently in the viewer.
      */
-    hideAllObjects() {
+    hideAllObjects() { // TODO
         this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
     }
 
@@ -938,7 +1027,7 @@ class BIMViewer extends Controller {
      * Hides all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not hide.
      */
-    hideAllObjectsExceptFor(objectIds) {
+    hideAllObjectsExceptFor(objectIds) { // TODO
         if (!objectIds) {
             this.error(&quot;hideAllObjectsExceptFor() - Argument expected: objectId&quot;);
             return;
@@ -1046,7 +1135,7 @@ class BIMViewer extends Controller {
      * X-rays all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not x-ray.
      */
-    xrayAllObjectsExceptFor(objectIds) {
+    xrayAllObjectsExceptFor(objectIds) { // TODO
 
     }
 
@@ -1088,7 +1177,7 @@ class BIMViewer extends Controller {
      *
      * @param {String[]} objectIds IDs of objects to not select.
      */
-    selectAllObjectsExceptFor(objectIds) {
+    selectAllObjectsExceptFor(objectIds) { // TODO
 
     }
 

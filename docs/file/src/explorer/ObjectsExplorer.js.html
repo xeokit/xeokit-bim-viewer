@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -39,6 +40,9 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {TreeViewPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js&quot;;
 import {TreeViewContextMenu} from &quot;../contextMenus/TreeViewContextMenu.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+
+const tempVec3 = math.vec3();
 
 /** @private */
 class ObjectsExplorer extends Controller {
@@ -77,7 +81,8 @@ class ObjectsExplorer extends Controller {
         this._treeView = new TreeViewPlugin(this.viewer, {
             containerElement: objectsElement,
             hierarchy: &quot;containment&quot;,
-            autoAddModels: false
+            autoAddModels: false,
+            pruneEmptyNodes: true
         });
 
         this._treeViewContextMenu = new TreeViewContextMenu();
@@ -101,18 +106,28 @@ class ObjectsExplorer extends Controller {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
+
             scene.setObjectsXRayed(scene.objectIds, true);
             scene.setObjectsVisible(scene.objectIds, true);
-            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsPickable(scene.objectIds, false);
             scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+            scene.setObjectsXRayed(objectIds, false);
+            scene.setObjectsVisible(objectIds, true);
+            scene.setObjectsPickable(objectIds, true);
+
+            const aabb = scene.getAABB(objectIds);
+
+            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
             this.viewer.cameraFlight.flyTo({
-                aabb: scene.getAABB(objectIds),
+                aabb: aabb,
                 duration: 0.5
             }, () =&gt; {
-                setTimeout(function () {
-                    scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                    scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                }, 500);
+                // setTimeout(function () {
+                //     scene.setObjectsVisible(scene.xrayedObjectIds, false);
+                //     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                // }, 500);
             });
         });
 

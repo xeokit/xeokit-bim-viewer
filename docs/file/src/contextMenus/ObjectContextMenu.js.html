@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -134,6 +135,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -145,16 +147,9 @@ class ObjectContextMenu extends ContextMenu {
                             return (!context.entity.xrayed);
                         },
                         doAction: function (context) {
-                            context.entity.xrayed = true;
-                        }
-                    },
-                    {
-                        title: &quot;Undo X-Ray&quot;,
-                        getEnabled: function (context) {
-                            return context.entity.xrayed;
-                        },
-                        doAction: function (context) {
-                            context.entity.xrayed = false;
+                            const entity = context.entity;
+                            entity.xrayed = true;
+                            entity.pickable = false;
                         }
                     },
                     {
@@ -169,11 +164,13 @@ class ObjectContextMenu extends ContextMenu {
                             }
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             metaObject.withMetaObjectsInSubtree((metaObject) =&gt; {
                                 const entity = scene.objects[metaObject.id];
                                 if (entity) {
                                     entity.xrayed = false;
+                                    entity.pickable = true;
                                 }
                             });
                         }
@@ -187,6 +184,7 @@ class ObjectContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                         }
                     },
@@ -196,7 +194,10 @@ class ObjectContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects &gt; 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
@@ -208,6 +209,7 @@ class ObjectContextMenu extends ContextMenu {
                         },
                         doAction: function (context) {
                             context.entity.selected = true;
+
                         }
                     },
                     {

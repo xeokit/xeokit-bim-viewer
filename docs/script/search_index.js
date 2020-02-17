@@ -12,6 +12,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-viewer/src/ifcobjectdefaults/viewerifcobjectcolors.js~viewerifcobjectcolors",
+    "variable/index.html#static-variable-ViewerIFCObjectColors",
+    "<span>ViewerIFCObjectColors</span> <span class=\"search-result-import-path\">@xeokit/xeokit-viewer/src/IFCObjectDefaults/ViewerIFCObjectColors.js</span>",
+    "variable"
+  ],
+  [
     "src/.external-ecmascript.js~array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
     "src/.external-ecmascript.js~Array",
@@ -330,6 +336,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getconfig",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getConfig",
+    "src/BIMViewer.js~BIMViewer#getConfig",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getloadedmodelids",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getLoadedModelIds",
     "src/BIMViewer.js~BIMViewer#getLoadedModelIds",
@@ -339,6 +351,12 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#getloadedprojectid",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getLoadedProjectId",
     "src/BIMViewer.js~BIMViewer#getLoadedProjectId",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#getobjectcolorsource",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getObjectColorSource",
+    "src/BIMViewer.js~BIMViewer#getObjectColorSource",
     "method"
   ],
   [
@@ -480,6 +498,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setobjectcolorsource",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectColorSource",
+    "src/BIMViewer.js~BIMViewer#setObjectColorSource",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#showallobjects",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-showAllObjects",
     "src/BIMViewer.js~BIMViewer#showAllObjects",
@@ -570,9 +594,15 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/ifcobjectdefaults/ifcobjectdefaults.js",
-    "file/src/IFCObjectDefaults/IFCObjectDefaults.js.html",
-    "src/IFCObjectDefaults/IFCObjectDefaults.js",
+    "src/ifcobjectdefaults/modelifcobjectcolors.js",
+    "file/src/IFCObjectDefaults/ModelIFCObjectColors.js.html",
+    "src/IFCObjectDefaults/ModelIFCObjectColors.js",
+    "file"
+  ],
+  [
+    "src/ifcobjectdefaults/viewerifcobjectcolors.js",
+    "file/src/IFCObjectDefaults/ViewerIFCObjectColors.js.html",
+    "src/IFCObjectDefaults/ViewerIFCObjectColors.js",
     "file"
   ],
   [

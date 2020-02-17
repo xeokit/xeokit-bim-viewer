@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -106,6 +107,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
@@ -137,6 +139,9 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.visible = true;
+                                        if (entity.xrayed) {
+                                            entity.pickable = true;
+                                        }
                                         entity.xrayed = false;
                                         entity.selected = false;
                                     }
@@ -149,6 +154,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -169,6 +175,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         }
                     }
@@ -183,6 +190,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     if (entity) {
                                         entity.xrayed = true;
                                         entity.visible = true;
+                                        entity.pickable = false;
                                     }
                                 }
                             });
@@ -196,6 +204,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -206,6 +215,7 @@ class TreeViewContextMenu extends ContextMenu {
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
                             scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
@@ -213,6 +223,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     const entity = scene.objects[treeViewNode.objectId];
                                     if (entity) {
                                         entity.xrayed = false;
+                                        entity.pickable = true;
                                     }
                                 }
                             });
@@ -224,6 +235,7 @@ class TreeViewContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
                     {
@@ -232,7 +244,10 @@ class TreeViewContextMenu extends ContextMenu {
                             return (context.viewer.scene.numXRayedObjects &gt; 0);
                         },
                         doAction: function (context) {
-                            context.viewer.scene.setObjectsXRayed(context.viewer.scene.xrayedObjectIds, false);
+                            const scene = context.viewer.scene;
+                            const xrayedObjectIds = scene.xrayedObjectIds;
+                            scene.setObjectsPickable(xrayedObjectIds, true);
+                            scene.setObjectsXRayed(xrayedObjectIds, false);
                         }
                     }
                 ],
