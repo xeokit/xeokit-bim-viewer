@@ -67,7 +67,7 @@ xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero
  
 In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
 
-We'll configure the ````Server```` to load the data from the [````.data````](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory of this repository.
+We'll configure the ````Server```` to load the data from the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory.
  
 We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: a ````<canvas>```` for the 3D canvas, a ````<div>```` to contain the explorer panel, a ````<div>```` to contain the toolbar, and a ````<canvas>```` for the NavCube. 
   
@@ -98,7 +98,7 @@ In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/
  <canvas id="myNavCubeCanvas"></canvas>
 ````
  
-See ````app/index.html```` for how to style the elements with CSS.
+See ````app/css/style.css```` for how we've styled these elements.
  
 Allowing the ````BIMViewer```` to be configured with different places in which to locate its various elements allows more flexible integration into your web page or application.
  
