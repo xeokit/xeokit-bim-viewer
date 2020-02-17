@@ -85,7 +85,7 @@ const bimViewer = new BIMViewer(server, {
 });
 ````
  
-In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the elements look like this. Below 
+In our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the elements look like this:
  
 ````html
 <div id="myViewer">
@@ -98,7 +98,7 @@ In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/
  <canvas id="myNavCubeCanvas"></canvas>
 ````
  
-See [````app/css/style.css````](https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css) for how we've styled these elements.
+See [````app/css/style.css````](https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css) for how we've styled these elements. See [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to its internally-created HTML.  
  
 ## Configuring the Viewer
  
