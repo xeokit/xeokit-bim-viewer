@@ -53,7 +53,9 @@
     "saoIntensity": 0.7,
     "saoScale": 1200.0,
     "saoKernelRadius": 100,
-    "saoBlur": true
+    "saoBlur": true,
+    "saoInteractive": false,
+    "saoInteractiveDelay": 200
   },
   "viewerContent": {
     "modelsLoaded": [

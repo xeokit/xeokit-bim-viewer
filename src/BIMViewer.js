@@ -191,6 +191,8 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
+        this._configs = {};
+
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
@@ -419,6 +421,44 @@ class BIMViewer extends Controller {
         sao.intensity = 0.5;
         sao.scale = 1200.0;
         sao.kernelRadius = 100;
+
+        // Only enable SAO and normal edge emphasis while camera is not moving
+
+        const timeoutDuration = 200;
+        var timer = timeoutDuration;
+        var saoEnabled = false;
+
+        const onCameraMatrix = scene.camera.on("matrix", () => {
+            if (this._configs.saoInteractive) {
+                return;
+            }
+            const saoInteractiveDelay = this._configs.saoInteractiveDelay;
+            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);
+            if (saoEnabled) {
+                scene.sao.enabled = false;
+                saoEnabled = false;
+            }
+        });
+
+        const onSceneTick = scene.on("tick", (e) => {
+            if (this._configs.saoInteractive) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+                return;
+            }
+            if (saoEnabled) {
+                return;
+            }
+            timer -= e.deltaTime;
+            if (timer <= 0) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+            }
+        });
     }
 
     _initCanvasContextMenus() {
@@ -461,7 +501,6 @@ class BIMViewer extends Controller {
     }
 
     _initConfigs() {
-        this._configs = {};
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
@@ -471,7 +510,9 @@ class BIMViewer extends Controller {
             "saoScale": "1200.0",
             "saoKernelRadius": "100",
             "xrayContext": true,
-            "backgroundColor": [1.0, 1.0, 1.0]
+            "backgroundColor": [1.0, 1.0, 1.0],
+            "saoInteractive": true,
+            "saoInteractiveDelay": 200
         });
     }
     /**
@@ -526,7 +567,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoEnabled":
-                    this.viewer.scene.sao.enabled = parseBool(value);
+                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
                     break;
 
                 case "saoBias":
@@ -573,6 +614,20 @@ class BIMViewer extends Controller {
                 case "xrayContext":
                     this._configs[name] = value;
                     break;
+
+                case "saoInteractive":
+                    this._configs["saoInteractive"] = parseBool(value);
+                    break;
+
+                case "saoInteractiveDelay":
+                    var saoInteractiveDelay = parseFloat(value);
+                    if (saoInteractiveDelay < 0) {
+                        this.error("setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero");
+                        saoInteractiveDelay = 0;
+                    }
+                    this._configs["saoInteractiveDelay"] = parseFloat(value);
+                    break;
+
 
                 default:
                     this.error("setConfig() - unsupported configuration: '" + name + "'");
@@ -970,7 +1025,7 @@ class BIMViewer extends Controller {
      * Hides the object with the given ID.
      * @param {String} objectId ID of object to hide.
      */
-    hideObject(objectIds) { // TODO
+    hideObject(objectId) { // TODO
         if (!objectId) {
             this.error("hideObject() - Argument expected: objectId");
             return;
