@@ -90,7 +90,7 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=OTCConferenceCenter&amp;tab=storeys">OTC Conference Center</a></td>
+<td><a href="https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys">OTC Conference Center</a></td>
 <td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301">Details</a></td>
 </tr>
 <tr>
@@ -117,8 +117,8 @@
 </table>
 <h2 id="license">License</h2><p>xeokit-viewer is bundled with the xeokit SDK, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please <a href="https://xeokit.github.io/xeokit-licensing/">see here</a> for commercial licensing options.</p>
 <h2 id="creating-a-viewer">Creating a Viewer</h2><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load project and model data from the file system.  </p>
-<p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-viewer/tree/master/data"><code>.data</code></a> directory of this repository.</p>
-<p>We also configure our <code>BimViewer</code> with DOM elements for the four parts of its UI: a <code>&lt;canvas&gt;</code> for the 3D canvas, a <code>&lt;div&gt;</code> to contain the explorer panel, a <code>&lt;div&gt;</code> to contain the toolbar, and a <code>&lt;canvas&gt;</code> for the NavCube. </p>
+<p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-viewer/tree/master/app/data"><code>.app/data</code></a> directory.</p>
+<p>We also configure our <code>BimViewer</code> with DOM elements for the four parts of its UI: a <code>&lt;canvas&gt;</code> for the 3D canvas, a <code>&lt;div&gt;</code> to contain the explorer panel, a <code>&lt;div&gt;</code> to contain the toolbar, and a <code>&lt;canvas&gt;</code> for the NavCube. Configuring the <code>BIMViewer</code> with separate places to locate its various elements allows more flexible integration into your web page.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const server = new Server({
      dataDir: &quot;./data&quot;
  });
@@ -131,7 +131,7 @@ const bimViewer = new BIMViewer(server, {
      navCubeCanvasElement: document.getElementById(&quot;myNavCubeCanvas&quot;)
 });</code>
 </code></pre>
-<p>In our default <a href="https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html"><code>app/index.html</code></a> page, the elements look like this. Below </p>
+<p>In our <a href="https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html"><code>app/index.html</code></a> page, the elements look like this:</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;div id=&quot;myViewer&quot;&gt;
      &lt;div id=&quot;myExplorer&quot; class=&quot;active&quot;&gt;&lt;/div&gt;
      &lt;div id=&quot;myContent&quot;&gt;
@@ -141,8 +141,7 @@ const bimViewer = new BIMViewer(server, {
  &lt;/div&gt;
  &lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;</code>
 </code></pre>
-<p>See <code>app/index.html</code> for how to style the elements with CSS.</p>
-<p>Allowing the <code>BIMViewer</code> to be configured with different places in which to locate its various elements allows more flexible integration into your web page or application.</p>
+<p>See <a href="https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css"><code>app/css/style.css</code></a> for how we&apos;ve styled these elements. See <a href="https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a> for the CSS styles that BIMViewer applies to its internally-created HTML.  </p>
 <h2 id="configuring-the-viewer">Configuring the Viewer</h2><p>Configure your viewer using <a href="https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs">BIMViewer#setConfigs</a>:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.setConfigs({
     &quot;saoEnabled&quot;:        &quot;false&quot;,
