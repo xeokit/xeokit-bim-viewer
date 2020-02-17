@@ -138,34 +138,7 @@ function initTabs(containerElement) {
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
  *
- * ## Configuration
- *
- * BIMViewer may be configured programmatically using its {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs} methods.
- *
- * Configs may be set individually, or in a batch.
- *
- * Values can be given as their types, or as strings.
- *
- * ````javascript
- * myBimViewer.setConfig("saoEnabled", true);
- *
- * myBIMViewer.setConfigs({
- *     "saoEnabled":        "false",
- *     "saoBias":           "0.5",
- *     "saoIntensity":      "0.5",
- *     "backgroundColor":   [1.0, 1.0, 1.0]
- * });
- * ````
- *
- * The available configurations are:
- *
- * | Property     | Type      | Range      | Default Value | Description |
- * |:------------:|:---------:|:----------:|:-------------:|:-----------:|
- * | "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
- * | "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
- * | "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
 
- * TODO
  *
  */
 class BIMViewer extends Controller {
@@ -518,7 +491,7 @@ class BIMViewer extends Controller {
     /**
      * Sets a viewer configuration.
      *
-     * TODO: Document available options
+     * See class comments for the list of available viewer configurations.
      *
      * @param {String} name Configuration name.
      * @param {*} value Configuration value.
@@ -611,7 +584,9 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Gets a viewer configuration that was set with {@link BIMViewer#setConfig}.
+     * Gets the value of a viewer configuration.
+     * 
+     * These are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.
      *
      * @param {String} name Configuration name.
      * @ereturns {*} Configuration value.
@@ -622,6 +597,8 @@ class BIMViewer extends Controller {
 
     /**
      * Gets information on all available projects.
+     * 
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProjects}. 
      *
      * ### Example
      *
@@ -670,6 +647,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given project.
      *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getProject}.
+     * 
      * Use {@link BIMViewer#getProjects} to get information on all available projects.
      *
      * ### Example
@@ -714,7 +693,8 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given object, belonging to the given model, within the given project.
      *
-     *
+     * Internally, internally, the viewer obtains this information via via {@link Server#getObjectInfo}.
+     * 
      * ### Example
      *
      * ````javascript
@@ -921,11 +901,9 @@ class BIMViewer extends Controller {
     /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
      *
-     * This scrolls the object's node into view, then highlights it.
+     * Also scrolls the object's node into view within each tree, then highlights it.
      *
-     * De-highlights whatever node is currently highlighted in each of those tabs.
-     *
-     * The node will be de-highlighted if the subtree containing it is then collapsed.
+     * De-highlights whatever node is currently highlighted in each of those trees.
      *
      * @param {String} objectId ID of the object
      */
@@ -944,7 +922,7 @@ class BIMViewer extends Controller {
      *
      * This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.
      *
-     * For each tab, does nothing if no node is currently highlighted.
+     * For each tab, does nothing if a node is currently highlighted.
      */
     unShowObjectInExplorers() {
         this._objectsExplorer.unShowNodeInTreeView();
@@ -954,6 +932,7 @@ class BIMViewer extends Controller {
 
     /**
      * Shows the object with the given ID.
+
      * @param {String} objectId ID of object to show.
      */
     showObject(objectId) {
@@ -981,7 +960,7 @@ class BIMViewer extends Controller {
      * @param {String[]} objectIds IDs of objects to not show.
      */
     showAllObjectsExceptFor(objectIds) {
-        if (!objectId) {
+        if (!objectIds) {
             this.error("showAllObjectsExceptFor() - Argument expected: objectId");
             return;
         }
@@ -991,7 +970,7 @@ class BIMViewer extends Controller {
      * Hides the object with the given ID.
      * @param {String} objectId ID of object to hide.
      */
-    hideObject(objectId) {
+    hideObject(objectIds) { // TODO
         if (!objectId) {
             this.error("hideObject() - Argument expected: objectId");
             return;
@@ -1001,7 +980,7 @@ class BIMViewer extends Controller {
     /**
      * Hides all objects currently in the viewer.
      */
-    hideAllObjects() {
+    hideAllObjects() { // TODO
         this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
     }
 
@@ -1009,7 +988,7 @@ class BIMViewer extends Controller {
      * Hides all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not hide.
      */
-    hideAllObjectsExceptFor(objectIds) {
+    hideAllObjectsExceptFor(objectIds) { // TODO
         if (!objectIds) {
             this.error("hideAllObjectsExceptFor() - Argument expected: objectId");
             return;
@@ -1117,7 +1096,7 @@ class BIMViewer extends Controller {
      * X-rays all objects currently in the viewer, except for those with the given IDs.
      * @param {String[]} objectIds IDs of objects to not x-ray.
      */
-    xrayAllObjectsExceptFor(objectIds) {
+    xrayAllObjectsExceptFor(objectIds) { // TODO
 
     }
 
@@ -1159,7 +1138,7 @@ class BIMViewer extends Controller {
      *
      * @param {String[]} objectIds IDs of objects to not select.
      */
-    selectAllObjectsExceptFor(objectIds) {
+    selectAllObjectsExceptFor(objectIds) { // TODO
 
     }
 

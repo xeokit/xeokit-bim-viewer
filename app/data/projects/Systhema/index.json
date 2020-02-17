@@ -12,8 +12,7 @@
     },
     {
       "id": "2013022_IAA_BWK_R2019-BLOK_recht_2020-02-06",
-      "name": "2013022_IAA_BWK_R2019-BLOK_recht_2020-02-06",
-      "saoEnabled": true
+      "name": "2013022_IAA_BWK_R2019-BLOK_recht_2020-02-06"
     },
     {
       "id": "20191011_11293-20174268_Oostenburgereiland_K2B_UO",
@@ -39,7 +38,8 @@
     "saoBias": "0.5",
     "saoIntensity": "0.5",
     "saoScale": "1200.0",
-    "saoKernelRadius": "100"
+    "saoKernelRadius": "100",
+    "xrayContext": true
   },
   "viewerContent": {
     "modelsLoaded": [

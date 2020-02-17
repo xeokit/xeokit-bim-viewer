@@ -1,31 +1,36 @@
 # xeokit-viewer
 
-xeokit-viewer is an open source BIM viewer for the Web, built on the [xeokit SDK](http://xeokit.io). The viewer is developed by [xeolabs](http://xeolabs.com) for integration within [OpenProject's](https://www.openproject.org/) BIM construction project management software, and is also usable as a stand-alone viewer for your BIM models. 
+xeokit-viewer is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
+
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/) and is integrated  within OpenProject's BIM construction project management software. 
+
+The viewer is also usable as a stand-alone viewer, which you can fork and host at GitHub, or on your own HTTP server. The viewer is bundled as part of the [xeokit SDK](http://xeokit.io) - see [pricing](https://xeokit.github.io/xeokit-licensing/) for licensing details.
+
+To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer's data directory. Read the guide below for more info.  
+
+---
+* [Homepage](https://xeokit.github.io/xeokit-viewer/)
+* [Source Code](https://github.com/xeokit/xeokit-viewer)
+* [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
+* [xeokit SDK](http://xeokit.io)
  
 [![Screenshothttps://xeokit.github.io/xeokit-licensing/](https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=OTCConferenceCenter&tab=storeys).
 
 ## Contents
 
- * [Links](#links)
- * [Features](#features)
-  * [Demos](#demos)
-  * [Roadmap](#roadmap)
-  * [License](#license)
-  * [Usage](#usage)
-    + [Model Database](#model-database)
-      - [Adding your own models](#adding-your-own-models)
-      - [Loading models from a custom source](#loading-models-from-a-custom-source)
-    + [Customizing CSS](#customizing-css)
-    + [Tooltips](#tooltips)
-    + [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
-  * [Building](#building)
-  
-## Links
-
-* [Homepage](https://xeokit.github.io/xeokit-viewer/)
-* [Source Code](https://github.com/xeokit/xeokit-viewer)
-* [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
-* [xeokit SDK](http://xeokit.io)
+- [Features](#features)
+- [Demos](#demos)
+- [License](#license)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Programming API](#programming-api)
+  * [Model Database](#model-database)
+    + [Adding your own models](#adding-your-own-models)
+    + [Loading models from a custom source](#loading-models-from-a-custom-source)
+  * [Customizing CSS](#customizing-css)
+  * [Tooltips](#tooltips)
+  * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
+- [Building](#building)
 
 ## Features
 
@@ -47,31 +52,159 @@ xeokit-viewer is an open source BIM viewer for the Web, built on the [xeokit SDK
 | Live Demo | Model Source |
 |---|---|
 | [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
-| [Holter Tower](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
-| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
-| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
-| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
-| [Duplex](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
-| [Duplex and Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=ManyModels)| [Duplex](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274), [Conference Center](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
-
-## Roadmap
-
-- [x] Standalone viewer MVP
-- [x] Integration into [OpenProject](https://www.openproject.org/)
-- [x] Save and load BCF viewpoints
-- [x] Programming API
-- [ ] Measurement tools
-- [ ] Memory usage monitoring
-- [ ] Explode tool  
-- [ ] Ambient shadows (SAO)
-
-Do you have feedback, or features you'd like to see in the viewer? Let us know in the [issue tracker](https://github.com/xeokit/xeokit-viewer/issues).  
+| [Holter Tower](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
+| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
+| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Duplex](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) ||
   
 ## License
 
 xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
 
-## Usage
+
+## Creating a Viewer
+ 
+In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
+
+We'll configure the ````Server```` to load the data from the [````.data````](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory of this repository.
+ 
+We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: a ````<canvas>```` for the 3D canvas, a ````<div>```` to contain the explorer panel, a ````<div>```` to contain the toolbar, and a ````<canvas>```` for the NavCube. 
+  
+````javascript
+const server = new Server({
+     dataDir: "./data"
+ });
+
+const bimViewer = new BIMViewer(server, {
+    
+     canvasElement: document.getElementById("myCanvas"), // WebGL canvas
+     explorerElement: document.getElementById("myExplorer"), // Explorer panel
+     toolbarElement: document.getElementById("myToolbar"), // Toolbar
+     navCubeCanvasElement: document.getElementById("myNavCubeCanvas")
+});
+````
+ 
+In our default [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the elements look like this. Below 
+ 
+````html
+<div id="myViewer">
+     <div id="myExplorer" class="active"></div>
+     <div id="myContent">
+         <div id="myToolbar"></div>
+         <canvas id="myCanvas"></canvas>
+     </div>
+ </div>
+ <canvas id="myNavCubeCanvas"></canvas>
+````
+ 
+See ````app/index.html```` for how to style the elements with CSS.
+ 
+Allowing the ````BIMViewer```` to be configured with different places in which to locate its various elements allows more flexible integration into your web page or application.
+ 
+## Configuring the Viewer
+ 
+Configure your viewer using [BIMViewer#setConfigs](https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs):
+ 
+````javascript
+myBIMViewer.setConfigs({
+    "saoEnabled":        "false",
+    "saoBias":           "0.5",
+    "saoIntensity":      "0.5",
+    "backgroundColor":   [1.0, 1.0, 1.0]
+});
+````
+ 
+The available configurations are:
+ 
+| Property     | Type      | Range      | Default Value | Description |
+|:------------:|:---------:|:----------:|:-------------:|:-----------:|
+| "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
+| "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
+| "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
+
+TODO
+
+
+### Customizing Viewer Style
+
+The [app/index.html](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+
+### Tooltips
+
+Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with ````data-tippy-content```` attributes that provide strings to show in their tooltips. 
+
+For example, the *Toggle 2D/3D* button's element looks like this:
+
+````html
+<button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
+```` 
+
+In the [app/index.html](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
+
+### Customizing Appearances of IFC Types
+
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
+
+You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
+
+For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
+
+````javascript
+const IFCObjectDefaults = {
+    IfcSpace: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.5
+    }
+};
+
+export {IFCObjectDefaults};
+```` 
+ 
+Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
+  
+## Programming API
+ 
+````BIMViewer```` provides a complete set of methods to programmatically control it.
+ 
+Using these methods, we can query what models are available, load models, interact with the 3D view, control the various tools, and drive the UI itself.
+ 
+Let's start off by querying what projects are available. Since we're using the default {@link Server}, this will be the JSON in ````./data/projects/index.json````. We'll just log that information to the console.
+ 
+````javascript
+myViewer.getProjectsInfo((projectsInfo) => {
+     console.log(JSON.stringify(projectsInfo, null, "\t"));
+});
+````
+ 
+The projects JSON will be similar to:
+ 
+````json
+{
+     "projects": [
+         {
+             "id": "Duplex",
+             "name": "Duplex"
+         },
+         {
+             "id": "Schependomlaan",
+             "name": "Schependomlaan"
+         },
+         {
+             "id": "WestRiversideHospital",
+             "name": "West Riverside Hospital"
+         }
+ 	    ]
+}
+````
+
+Let's now query some info on a project.
 
 ### Model Database
 
@@ -182,11 +315,11 @@ The ````index.json```` for the "WestRiversideHospital" project is shown below. T
 }
 ````
 
-#### Adding your own models
+## Adding Your Own Models
 
 To add your own project to the database, you need to: 
 
- * add a new project directory within ````./data````,
+add a new project directory within ````./data````,
  * add a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
  * add a ````index.json```` manifest of the models within the project directory, which lists the models, and
  * list your project in the ````index.json```` at the root of ````./data````.    
@@ -200,50 +333,7 @@ To load models from a different source than the file system, configure
 
 ````
 
-### Customizing CSS
-
-The [viewer.html](https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
-
-### Tooltips
-
-Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with ````data-tippy-content```` attributes that provide strings to show in their tooltips. 
-
-For example, the *Toggle 2D/3D* button's element looks like this:
-
-````html
-<button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
-```` 
-
-In the [viewer.html](https://github.com/xeokit/xeokit-viewer/blob/master/viewer.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
-
-### Customizing Appearances of IFC Types
-
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
-
-You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
-
-For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
-
-````javascript
-const IFCObjectDefaults = {
-    IfcSpace: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.2
-    },
-    IfcWindow: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.5
-    }
-};
-
-export {IFCObjectDefaults};
-```` 
- 
-Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
- 
-## Building 
+## Building the Viewer 
 
 Initialize:
 
