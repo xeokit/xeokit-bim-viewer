@@ -51,7 +51,7 @@ To serve your own models with this viewer, all you need to do is convert their I
 
 | Live Demo | Model Source |
 |---|---|
-| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
 | [Holter Tower](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
 | [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
 | [Schependomlaan](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
