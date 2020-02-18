@@ -16,6 +16,8 @@
     "saoScale": 1200.0,
     "saoKernelRadius": 100,
     "saoBlur": true,
+    "saoInteractive": true,
+    "saoInteractiveDelay": 200,
     "viewFitDuration": 0.5,
     "viewFitFOV": 45,
     "perspectiveFOV": 55,

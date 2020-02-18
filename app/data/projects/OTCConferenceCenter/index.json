@@ -23,5 +23,10 @@
     "modelsLoaded": [
       "design"
     ]
+  },
+  "viewerState": {
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
   }
 }

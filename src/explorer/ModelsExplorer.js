@@ -145,11 +145,25 @@ class ModelsExplorer extends Controller {
             this.bimViewer.openTab(viewerState.tabOpen);
         }
 
+        this._parseExpandTrees(viewerState);
+
         this._parseSelectedStorey(viewerState, () => {
             this._parseThreeDMode(viewerState, () => {
                 done();
             });
         });
+    }
+
+    _parseExpandTrees(viewerState) {
+        if (viewerState.expandObjectsTree) {
+            this.bimViewer._objectsExplorer.expandTreeViewToDepth(viewerState.expandObjectsTree);
+        }
+        if (viewerState.expandClassesTree) {
+            this.bimViewer._classesExplorer.expandTreeViewToDepth(viewerState.expandClassesTree);
+        }
+        if (viewerState.expandStoreysTree) {
+            this.bimViewer._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
+        }
     }
 
     _parseSelectedStorey(viewerState, done) {

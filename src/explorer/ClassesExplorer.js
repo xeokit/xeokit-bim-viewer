@@ -127,6 +127,10 @@ class ClassesExplorer extends Controller {
         }
     }
 
+    expandTreeViewToDepth(depth) {
+        this._treeView.expandToDepth(depth);
+    }
+
     showNodeInTreeView(objectId) {
         this._treeView.collapse();
         this._treeView.showNode(objectId);
