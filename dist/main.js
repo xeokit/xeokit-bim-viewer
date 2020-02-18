@@ -53050,7 +53050,7 @@ class ModelsExplorer extends Controller {
             }
             return;
         }
-        this.bimViewer._busyModal.show("Loading " + modelInfo.name);
+        this.bimViewer._busyModal.show("Loading: " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -60377,6 +60377,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -60387,6 +60388,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(".xeokit-showAllClasses").addEventListener("click", (event) => {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -60397,6 +60399,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(".xeokit-showAllStoreys").addEventListener("click", (event) => {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -61061,6 +61064,10 @@ class BIMViewer extends Controller {
 
     /**
      * Shows all objects currently in the viewer.
+     *
+     * If any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.
+     *
+     * Likewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.
      */
     showAllObjects() {
         this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
