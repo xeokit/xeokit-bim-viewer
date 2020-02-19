@@ -354,6 +354,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getmodelids",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getModelIds",
+    "src/BIMViewer.js~BIMViewer#getModelIds",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getobjectcolorsource",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getObjectColorSource",
     "src/BIMViewer.js~BIMViewer#getObjectColorSource",
@@ -402,9 +408,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#ismodelloaded",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-isModelLoaded",
+    "src/BIMViewer.js~BIMViewer#isModelLoaded",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#jumptoobject",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-jumpToObject",
     "src/BIMViewer.js~BIMViewer#jumpToObject",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#loadallmodels",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-loadAllModels",
+    "src/BIMViewer.js~BIMViewer#loadAllModels",
     "method"
   ],
   [
@@ -498,6 +516,24 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setmodelsselected",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsSelected",
+    "src/BIMViewer.js~BIMViewer#setModelsSelected",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setmodelsvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsVisible",
+    "src/BIMViewer.js~BIMViewer#setModelsVisible",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setmodelsxrayed",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsXRayed",
+    "src/BIMViewer.js~BIMViewer#setModelsXRayed",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setobjectcolorsource",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectColorSource",
     "src/BIMViewer.js~BIMViewer#setObjectColorSource",
@@ -528,12 +564,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#unloadmodel",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-unLoadModel",
-    "src/BIMViewer.js~BIMViewer#unLoadModel",
-    "method"
-  ],
-  [
     "src/bimviewer.js~bimviewer#unshowobjectinexplorers",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-unShowObjectInExplorers",
     "src/BIMViewer.js~BIMViewer#unShowObjectInExplorers",
@@ -546,9 +576,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#unloadmodel",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-unloadModel",
+    "src/BIMViewer.js~BIMViewer#unloadModel",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#unloadproject",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-unloadProject",
     "src/BIMViewer.js~BIMViewer#unloadProject",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#viewfitmodels",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-viewFitModels",
+    "src/BIMViewer.js~BIMViewer#viewFitModels",
     "method"
   ],
   [
@@ -609,6 +651,12 @@ window.esdocSearchIndex = [
     "src/contextmenus/canvascontextmenu.js",
     "file/src/contextMenus/CanvasContextMenu.js.html",
     "src/contextMenus/CanvasContextMenu.js",
+    "file"
+  ],
+  [
+    "src/contextmenus/modelscontextmenu.js",
+    "file/src/contextMenus/ModelsContextMenu.js.html",
+    "src/contextMenus/ModelsContextMenu.js",
     "file"
   ],
   [

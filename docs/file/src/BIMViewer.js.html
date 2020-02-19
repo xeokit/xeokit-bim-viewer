@@ -230,6 +230,8 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
+        this._configs = {};
+
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
@@ -358,6 +360,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(&quot;.xeokit-showAllObjects&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -368,6 +371,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(&quot;.xeokit-showAllClasses&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -378,6 +382,7 @@ class BIMViewer extends Controller {
 
         explorerElement.querySelector(&quot;.xeokit-showAllStoreys&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
             this.showAllObjects();
+            this.xrayNoObjects();
             event.preventDefault();
         });
 
@@ -458,6 +463,44 @@ class BIMViewer extends Controller {
         sao.intensity = 0.5;
         sao.scale = 1200.0;
         sao.kernelRadius = 100;
+
+        // Only enable SAO and normal edge emphasis while camera is not moving
+
+        const timeoutDuration = 200;
+        var timer = timeoutDuration;
+        var saoEnabled = false;
+
+        const onCameraMatrix = scene.camera.on(&quot;matrix&quot;, () =&gt; {
+            if (this._configs.saoInteractive) {
+                return;
+            }
+            const saoInteractiveDelay = this._configs.saoInteractiveDelay;
+            timer = ((saoInteractiveDelay !== null &amp;&amp; saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);
+            if (saoEnabled) {
+                scene.sao.enabled = false;
+                saoEnabled = false;
+            }
+        });
+
+        const onSceneTick = scene.on(&quot;tick&quot;, (e) =&gt; {
+            if (this._configs.saoInteractive) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+                return;
+            }
+            if (saoEnabled) {
+                return;
+            }
+            timer -= e.deltaTime;
+            if (timer &lt;= 0) {
+                if (!saoEnabled) {
+                    scene.sao.enabled = (!!this._configs.saoEnabled);
+                    saoEnabled = true;
+                }
+            }
+        });
     }
 
     _initCanvasContextMenus() {
@@ -500,7 +543,6 @@ class BIMViewer extends Controller {
     }
 
     _initConfigs() {
-        this._configs = {};
         this.setConfigs({
             &quot;cameraNear&quot;: &quot;0.05&quot;,
             &quot;cameraFar&quot;: &quot;3000.0&quot;,
@@ -510,7 +552,9 @@ class BIMViewer extends Controller {
             &quot;saoScale&quot;: &quot;1200.0&quot;,
             &quot;saoKernelRadius&quot;: &quot;100&quot;,
             &quot;xrayContext&quot;: true,
-            &quot;backgroundColor&quot;: [1.0, 1.0, 1.0]
+            &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
+            &quot;saoInteractive&quot;: true,
+            &quot;saoInteractiveDelay&quot;: 200
         });
     }
     /**
@@ -565,7 +609,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;saoEnabled&quot;:
-                    this.viewer.scene.sao.enabled = parseBool(value);
+                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;saoBias&quot;:
@@ -612,6 +656,20 @@ class BIMViewer extends Controller {
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
                     break;
+
+                case &quot;saoInteractive&quot;:
+                    this._configs[&quot;saoInteractive&quot;] = parseBool(value);
+                    break;
+
+                case &quot;saoInteractiveDelay&quot;:
+                    var saoInteractiveDelay = parseFloat(value);
+                    if (saoInteractiveDelay &lt; 0) {
+                        this.error(&quot;setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero&quot;);
+                        saoInteractiveDelay = 0;
+                    }
+                    this._configs[&quot;saoInteractiveDelay&quot;] = parseFloat(value);
+                    break;
+
 
                 default:
                     this.error(&quot;setConfig() - unsupported configuration: &apos;&quot; + name + &quot;&apos;&quot;);
@@ -833,6 +891,15 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Returns the IDs of the models in the currently loaded project.
+     *
+     * @returns {String[]} The IDs of the models in the currently loaded project.
+     */
+    getModelIds() {
+        return this._modelsExplorer.getModelIds();
+    }
+
+    /**
      * Loads a model into the viewer.
      *
      * Assumes that the project containing the model is currently loaded.
@@ -860,6 +927,36 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Load all models in the currently loaded project.
+     *
+     * Doesn&apos;t reload any models that are currently loaded.
+     *
+     * @param {Function} done Callback invoked on successful loading of the models.
+     */
+    loadAllModels(done = function () {
+    }) {
+        const modelIds = this._modelsExplorer.getModelIds();
+        const loadNextModel = (i, done2) =&gt; {
+            if (i &gt;= modelIds.length) {
+                done2();
+            } else {
+                const modelId = modelIds[i];
+                if (!this._modelsExplorer.isModelLoaded(modelId)) {
+                    this._modelsExplorer.loadModel(modelId, () =&gt; {
+                        loadNextModel(i + 1, done2);
+                    }, (errorMsg) =&gt; {
+                        this.error(&quot;loadAllModels() - &quot; + errorMsg);
+                        loadNextModel(i + 1, done2);
+                    });
+                } else {
+                    loadNextModel(i + 1, done2);
+                }
+            }
+        };
+        loadNextModel(0, done);
+    }
+
+    /**
      * Returns the IDs of the currently loaded models, if any.
      *
      * @returns {String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded.
@@ -869,15 +966,29 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Gets if the given model is loaded.
+     *
+     * @param {String} modelId ID of the model to check. Must be the ID of one of the models in the currently loaded project.
+     * @returns {Boolean} True if the given model is loaded.
+     */
+    isModelLoaded(modelId) {
+        if (!modelId) {
+            this.error(&quot;unloadModel() - Argument expected: modelId&quot;);
+            return;
+        }
+        return this._modelsExplorer.isModelLoaded(modelId);
+    }
+
+    /**
      * Unloads a model from the viewer.
      *
      * Does nothing if the model is not currently loaded.
      *
      * @param {String} modelId ID of the model to unload.
      */
-    unLoadModel(modelId) {
+    unloadModel(modelId) {
         if (!modelId) {
-            this.error(&quot;unLoadModel() - Argument expected: modelId&quot;);
+            this.error(&quot;unloadModel() - Argument expected: modelId&quot;);
             return;
         }
         this._modelsExplorer.unloadModel(modelId);
@@ -988,7 +1099,39 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given models are visible.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} visible Whether or not to select the models.
+     */
+    setModelsVisible(modelIds, visible) {
+        if (!modelIds) {
+            this.error(&quot;setModelsVisible() - Argument expected: modelIds&quot;);
+            return;
+        }
+        if (visible === undefined || visible === null) {
+            this.error(&quot;setModelsVisible() - Argument expected: visible&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error(&quot;setModelsVisible() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
+                continue;
+            }
+            model.visible = visible;
+        }
+    }
+
+    /**
      * Shows all objects currently in the viewer.
+     *
+     * If any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.
+     *
+     * Likewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.
      */
     showAllObjects() {
         this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
@@ -1107,6 +1250,52 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Fits the given models in view.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Function} [done] Callback invoked on completion. Will be animated if this is given, otherwise will be instantaneous.
+     */
+    viewFitModels(modelIds, done) {
+        if (!modelIds) {
+            this.error(&quot;viewFitModels() - Argument expected: modelIds&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = math.AABB3();
+        math.collapseAABB3(aabb);
+        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error(&quot;Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
+                continue;
+            }
+            model.visible = true;
+            model.highlighted = true;
+            math.expandAABB3(aabb, model.aabb);
+        }
+        if (done) {
+            viewer.cameraFlight.flyTo({
+                aabb: aabb
+            }, () =&gt; {
+                done();
+                setTimeout(function () {
+                    scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                }, 500);
+            });
+        } else {
+            viewer.cameraFlight.jumpTo({
+                aabb: aabb
+            });
+            setTimeout(function () {
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            }, 500);
+        }
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
      * X-rays the object with the given ID.
      *
      * @param {String} objectId ID of object to x-ray.
@@ -1140,6 +1329,34 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given models are X-rayed.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} xrayed Whether or not to X-ray the models.
+     */
+    setModelsXRayed(modelIds, xrayed) {
+        if (!modelIds) {
+            this.error(&quot;setModelsXRayed() - Argument expected: modelIds&quot;);
+            return;
+        }
+        if (xrayed === undefined || xrayed === null) {
+            this.error(&quot;setModelsXRayed() - Argument expected: xrayed&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error(&quot;setModelsXRayed() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
+                continue;
+            }
+            model.xrayed = xrayed;
+        }
+    }
+
+    /**
      * Un-x-rays all objects currently in the viewer.
      */
     xrayNoObjects() {
@@ -1161,6 +1378,34 @@ class BIMViewer extends Controller {
                 entity.selected = true;
             }
         });
+    }
+
+    /**
+     * Sets whether or not the given models are selected.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} selected Whether or not to select the models.
+     */
+    setModelsSelected(modelIds, selected) {
+        if (!modelIds) {
+            this.error(&quot;setModelsSelected() - Argument expected: modelIds&quot;);
+            return;
+        }
+        if (selected === undefined || selected === null) {
+            this.error(&quot;setModelsSelected() - Argument expected: selected&quot;);
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error(&quot;setModelsSelected() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
+                continue;
+            }
+            model.selected = selected;
+        }
     }
 
     /**

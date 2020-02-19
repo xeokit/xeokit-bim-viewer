@@ -42,6 +42,7 @@ import {XKTLoaderPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlug
 import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 import {ModelIFCObjectColors} from &quot;../IFCObjectDefaults/ModelIFCObjectColors.js&quot;;
 import {ViewerIFCObjectColors} from &quot;../IFCObjectDefaults/ViewerIFCObjectColors.js&quot;;
+import {ModelsContextMenu} from &quot;../contextMenus/ModelsContextMenu.js&quot;;
 
 const tempVec3 = math.vec3();
 
@@ -76,6 +77,8 @@ class ModelsExplorer extends Controller {
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
             objectDefaults: ModelIFCObjectColors
         });
+
+        this._modelsContextMenu = new ModelsContextMenu();
 
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
@@ -114,7 +117,7 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
             html += &quot;&lt;div class=&apos;xeokit-form-check&apos;&gt;&quot;;
-            html += &quot;&lt;input id=&apos;&quot; + modelInfo.id + &quot;&apos; type=&apos;checkbox&apos; value=&apos;&apos;&gt;&quot; + modelInfo.name;
+            html += &quot;&lt;input id=&apos;&quot; + modelInfo.id + &quot;&apos; type=&apos;checkbox&apos; value=&apos;&apos;&gt;&lt;span id=&apos;span-&quot; + modelInfo.id + &quot;&apos; class=&apos;disabled&apos;&gt;&quot; + modelInfo.name + &quot;&lt;/span&gt;&quot;;
             html += &quot;&lt;/div&gt;&quot;;
         }
         this._modelsElement.innerHTML = html;
@@ -122,6 +125,7 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             const modelId = modelInfo.id;
             const checkBox = document.getElementById(&quot;&quot; + modelId);
+            const span = document.getElementById(&quot;span-&quot; + modelId);
             checkBox.addEventListener(&quot;click&quot;, () =&gt; {
                 if (checkBox.checked) {
                     this.loadModel(modelId);
@@ -129,6 +133,41 @@ class ModelsExplorer extends Controller {
                     this.unloadModel(modelInfo.id);
                 }
             });
+            span.oncontextmenu = (e) =&gt; {
+                this._modelsContextMenu.context = {
+                    bimViewer: this.bimViewer,
+                    viewer: this.viewer,
+                    modelId: modelId
+                };
+                this._modelsContextMenu.show(e.pageX, e.pageY);
+                e.preventDefault();
+            };
+            span.onclick = (e) =&gt; {
+                const scene = this.viewer.scene;
+                const model = scene.models[modelId];
+                if (!model) {
+                    return;
+                }
+                scene.setObjectsXRayed(scene.objectIds, true);
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsPickable(scene.objectIds, false);
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+                model.xrayed = false;
+                model.visible = true;
+                model.pickable = true;
+
+                const aabb = model.aabb;
+
+                this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
+                this.viewer.cameraFlight.flyTo({
+                    aabb: aabb,
+                    duration: 0.5
+                }, () =&gt; {
+                });
+                e.preventDefault();
+            };
         }
     }
 
@@ -184,11 +223,25 @@ class ModelsExplorer extends Controller {
             this.bimViewer.openTab(viewerState.tabOpen);
         }
 
+        this._parseExpandTrees(viewerState);
+
         this._parseSelectedStorey(viewerState, () =&gt; {
             this._parseThreeDMode(viewerState, () =&gt; {
                 done();
             });
         });
+    }
+
+    _parseExpandTrees(viewerState) {
+        if (viewerState.expandObjectsTree) {
+            this.bimViewer._objectsExplorer.expandTreeViewToDepth(viewerState.expandObjectsTree);
+        }
+        if (viewerState.expandClassesTree) {
+            this.bimViewer._classesExplorer.expandTreeViewToDepth(viewerState.expandClassesTree);
+        }
+        if (viewerState.expandStoreysTree) {
+            this.bimViewer._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
+        }
     }
 
     _parseSelectedStorey(viewerState, done) {
@@ -230,6 +283,10 @@ class ModelsExplorer extends Controller {
         return this._projectId;
     }
 
+    getModelIds() {
+        return Object.keys(this._modelsInfo);
+    }
+
     loadModel(modelId, done, error) {
         if (!this._projectId) {
             const errMsg = &quot;No project currently loaded&quot;;
@@ -248,7 +305,7 @@ class ModelsExplorer extends Controller {
             }
             return;
         }
-        this.bimViewer._busyModal.show(&quot;Loading &quot; + modelInfo.name);
+        this.bimViewer._busyModal.show(&quot;Loading: &quot; + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) =&gt; {
                 this.server.getGeometry(this._projectId, modelId,
@@ -269,7 +326,10 @@ class ModelsExplorer extends Controller {
                             saoEnabled: modelInfo.saoEnabled
                         });
                         model.on(&quot;loaded&quot;, () =&gt; {
-                            document.getElementById(&quot;&quot; + modelId).checked = true;
+                            const checkbox = document.getElementById(&quot;&quot; + modelId);
+                            checkbox.checked = true;
+                            const span = document.getElementById(&quot;span-&quot; + modelId);
+                            span.classList.remove(&quot;disabled&quot;);
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
@@ -317,7 +377,10 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        document.getElementById(&quot;&quot; + modelId).checked = false;
+        const checkbox = document.getElementById(&quot;&quot; + modelId);
+        checkbox.checked = false;
+        const span = document.getElementById(&quot;span-&quot; + modelId);
+        span.classList.add(&quot;disabled&quot;);
         this._numModelsLoaded--;
         if (this._numModelsLoaded &gt; 0) {
             this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
@@ -341,6 +404,10 @@ class ModelsExplorer extends Controller {
 
     _getLoadedModelIds() {
         return Object.keys(this.viewer.scene.models);
+    }
+
+    isModelLoaded(modelId) {
+        return (!!this.viewer.scene.models[modelId]);
     }
 
     getModelsInfo() {
