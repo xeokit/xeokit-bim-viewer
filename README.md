@@ -17,7 +17,7 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
 * [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
 * [xeokit SDK](http://xeokit.io)
  
-[![Screenshothttps://xeokit.github.io/xeokit-licensing/](https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/viewer.html?projectId=OTCConferenceCenter&tab=storeys).
+[![Screenshot](https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys).
 
 ## Contents
 
