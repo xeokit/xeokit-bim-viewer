@@ -29,6 +29,12 @@
     {
       "id": "vakantiewoning_original",
       "name": "vakantiewoning_original"
+    },
+    {
+      "id": "2017058AA_Sparrenlaan_Ermelo_BWK_2020-02-17_EXCL-A_optimized",
+      "name": "Sparrenlaan_Ermelo",
+      "objectColorSource": "viewer",
+      "saoEnabled": false
     }
   ],
   "viewerConfigs": {
@@ -39,13 +45,15 @@
     "saoIntensity": "0.5",
     "saoScale": "1200.0",
     "saoKernelRadius": "100",
-    "xrayContext": true
+    "xrayContext": true,
+    "saoInteractive": false,
+    "saoInteractiveDelay": 200
   },
   "viewerContent": {
     "modelsLoaded": [
     ]
   },
   "viewerState": {
-    "tabOpen": "storeys"
+    "tabOpen": "models"
   }
 }
