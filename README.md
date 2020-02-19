@@ -2,11 +2,14 @@
 
 xeokit-viewer is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
 
-The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/) and is integrated  within OpenProject's BIM construction project management software. 
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is integrated  within OpenProject's BIM construction project management software. 
 
-The viewer is also usable as a stand-alone viewer, which you can fork and host at GitHub, or on your own HTTP server. The viewer is bundled as part of the [xeokit SDK](http://xeokit.io) - see [pricing](https://xeokit.github.io/xeokit-licensing/) for licensing details.
+The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory, then host it via [GitHub Pages](https://help.github.com/en/github/working-with-github-pages/about-github-pages). You can also just download the repository to your own HTTP server and serve everything from there. 
 
 To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer's data directory. Read the guide below for more info.  
+
+The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit licensing](https://xeokit.github.io/xeokit-licensing/) page for licensing details.
+
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-viewer/)
