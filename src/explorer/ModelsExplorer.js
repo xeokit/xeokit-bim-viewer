@@ -3,6 +3,7 @@ import {XKTLoaderPlugin} from "@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XK
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js";
 import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
+import {ModelsContextMenu} from "../contextMenus/ModelsContextMenu.js";
 
 const tempVec3 = math.vec3();
 
@@ -37,6 +38,8 @@ class ModelsExplorer extends Controller {
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
             objectDefaults: ModelIFCObjectColors
         });
+
+        this._modelsContextMenu = new ModelsContextMenu();
 
         this._modelsInfo = {};
         this._numModelsLoaded = 0;
@@ -75,7 +78,7 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
             html += "<div class='xeokit-form-check'>";
-            html += "<input id='" + modelInfo.id + "' type='checkbox' value=''>" + modelInfo.name;
+            html += "<input id='" + modelInfo.id + "' type='checkbox' value=''><span id='span-" + modelInfo.id + "' class='disabled'>" + modelInfo.name + "</span>";
             html += "</div>";
         }
         this._modelsElement.innerHTML = html;
@@ -83,6 +86,7 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             const modelId = modelInfo.id;
             const checkBox = document.getElementById("" + modelId);
+            const span = document.getElementById("span-" + modelId);
             checkBox.addEventListener("click", () => {
                 if (checkBox.checked) {
                     this.loadModel(modelId);
@@ -90,6 +94,41 @@ class ModelsExplorer extends Controller {
                     this.unloadModel(modelInfo.id);
                 }
             });
+            span.oncontextmenu = (e) => {
+                this._modelsContextMenu.context = {
+                    bimViewer: this.bimViewer,
+                    viewer: this.viewer,
+                    modelId: modelId
+                };
+                this._modelsContextMenu.show(e.pageX, e.pageY);
+                e.preventDefault();
+            };
+            span.onclick = (e) => {
+                const scene = this.viewer.scene;
+                const model = scene.models[modelId];
+                if (!model) {
+                    return;
+                }
+                scene.setObjectsXRayed(scene.objectIds, true);
+                scene.setObjectsVisible(scene.objectIds, true);
+                scene.setObjectsPickable(scene.objectIds, false);
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+                model.xrayed = false;
+                model.visible = true;
+                model.pickable = true;
+
+                const aabb = model.aabb;
+
+                this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
+                this.viewer.cameraFlight.flyTo({
+                    aabb: aabb,
+                    duration: 0.5
+                }, () => {
+                });
+                e.preventDefault();
+            };
         }
     }
 
@@ -205,6 +244,10 @@ class ModelsExplorer extends Controller {
         return this._projectId;
     }
 
+    getModelIds() {
+        return Object.keys(this._modelsInfo);
+    }
+
     loadModel(modelId, done, error) {
         if (!this._projectId) {
             const errMsg = "No project currently loaded";
@@ -223,7 +266,7 @@ class ModelsExplorer extends Controller {
             }
             return;
         }
-        this.bimViewer._busyModal.show("Loading " + modelInfo.name);
+        this.bimViewer._busyModal.show("Loading: " + modelInfo.name);
         this.server.getMetadata(this._projectId, modelId,
             (json) => {
                 this.server.getGeometry(this._projectId, modelId,
@@ -244,7 +287,10 @@ class ModelsExplorer extends Controller {
                             saoEnabled: modelInfo.saoEnabled
                         });
                         model.on("loaded", () => {
-                            document.getElementById("" + modelId).checked = true;
+                            const checkbox = document.getElementById("" + modelId);
+                            checkbox.checked = true;
+                            const span = document.getElementById("span-" + modelId);
+                            span.classList.remove("disabled");
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
@@ -292,7 +338,10 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        document.getElementById("" + modelId).checked = false;
+        const checkbox = document.getElementById("" + modelId);
+        checkbox.checked = false;
+        const span = document.getElementById("span-" + modelId);
+        span.classList.add("disabled");
         this._numModelsLoaded--;
         if (this._numModelsLoaded > 0) {
             this._unloadModelsButtonElement.classList.remove("disabled");
@@ -316,6 +365,10 @@ class ModelsExplorer extends Controller {
 
     _getLoadedModelIds() {
         return Object.keys(this.viewer.scene.models);
+    }
+
+    isModelLoaded(modelId) {
+        return (!!this.viewer.scene.models[modelId]);
     }
 
     getModelsInfo() {

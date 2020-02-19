@@ -852,6 +852,15 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Returns the IDs of the models in the currently loaded project.
+     *
+     * @returns {String[]} The IDs of the models in the currently loaded project.
+     */
+    getModelIds() {
+        return this._modelsExplorer.getModelIds();
+    }
+
+    /**
      * Loads a model into the viewer.
      *
      * Assumes that the project containing the model is currently loaded.
@@ -879,6 +888,36 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Load all models in the currently loaded project.
+     *
+     * Doesn't reload any models that are currently loaded.
+     *
+     * @param {Function} done Callback invoked on successful loading of the models.
+     */
+    loadAllModels(done = function () {
+    }) {
+        const modelIds = this._modelsExplorer.getModelIds();
+        const loadNextModel = (i, done2) => {
+            if (i >= modelIds.length) {
+                done2();
+            } else {
+                const modelId = modelIds[i];
+                if (!this._modelsExplorer.isModelLoaded(modelId)) {
+                    this._modelsExplorer.loadModel(modelId, () => {
+                        loadNextModel(i + 1, done2);
+                    }, (errorMsg) => {
+                        this.error("loadAllModels() - " + errorMsg);
+                        loadNextModel(i + 1, done2);
+                    });
+                } else {
+                    loadNextModel(i + 1, done2);
+                }
+            }
+        };
+        loadNextModel(0, done);
+    }
+
+    /**
      * Returns the IDs of the currently loaded models, if any.
      *
      * @returns {String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded.
@@ -888,15 +927,29 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Gets if the given model is loaded.
+     *
+     * @param {String} modelId ID of the model to check. Must be the ID of one of the models in the currently loaded project.
+     * @returns {Boolean} True if the given model is loaded.
+     */
+    isModelLoaded(modelId) {
+        if (!modelId) {
+            this.error("unloadModel() - Argument expected: modelId");
+            return;
+        }
+        return this._modelsExplorer.isModelLoaded(modelId);
+    }
+
+    /**
      * Unloads a model from the viewer.
      *
      * Does nothing if the model is not currently loaded.
      *
      * @param {String} modelId ID of the model to unload.
      */
-    unLoadModel(modelId) {
+    unloadModel(modelId) {
         if (!modelId) {
-            this.error("unLoadModel() - Argument expected: modelId");
+            this.error("unloadModel() - Argument expected: modelId");
             return;
         }
         this._modelsExplorer.unloadModel(modelId);
@@ -1004,6 +1057,34 @@ class BIMViewer extends Controller {
                 entity.visible = true;
             }
         });
+    }
+
+    /**
+     * Sets whether or not the given models are visible.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} visible Whether or not to select the models.
+     */
+    setModelsVisible(modelIds, visible) {
+        if (!modelIds) {
+            this.error("setModelsVisible() - Argument expected: modelIds");
+            return;
+        }
+        if (visible === undefined || visible === null) {
+            this.error("setModelsVisible() - Argument expected: visible");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i < len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error("setModelsVisible() - Model not found in viewer: '" + modelId + "'");
+                continue;
+            }
+            model.visible = visible;
+        }
     }
 
     /**
@@ -1130,6 +1211,52 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Fits the given models in view.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Function} [done] Callback invoked on completion. Will be animated if this is given, otherwise will be instantaneous.
+     */
+    viewFitModels(modelIds, done) {
+        if (!modelIds) {
+            this.error("viewFitModels() - Argument expected: modelIds");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = math.AABB3();
+        math.collapseAABB3(aabb);
+        for (var i = 0, len = modelIds.length; i < len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error("Model not found in viewer: '" + modelId + "'");
+                continue;
+            }
+            model.visible = true;
+            model.highlighted = true;
+            math.expandAABB3(aabb, model.aabb);
+        }
+        if (done) {
+            viewer.cameraFlight.flyTo({
+                aabb: aabb
+            }, () => {
+                done();
+                setTimeout(function () {
+                    scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                }, 500);
+            });
+        } else {
+            viewer.cameraFlight.jumpTo({
+                aabb: aabb
+            });
+            setTimeout(function () {
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            }, 500);
+        }
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
      * X-rays the object with the given ID.
      *
      * @param {String} objectId ID of object to x-ray.
@@ -1163,6 +1290,34 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given models are X-rayed.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} xrayed Whether or not to X-ray the models.
+     */
+    setModelsXRayed(modelIds, xrayed) {
+        if (!modelIds) {
+            this.error("setModelsXRayed() - Argument expected: modelIds");
+            return;
+        }
+        if (xrayed === undefined || xrayed === null) {
+            this.error("setModelsXRayed() - Argument expected: xrayed");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i < len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error("setModelsXRayed() - Model not found in viewer: '" + modelId + "'");
+                continue;
+            }
+            model.xrayed = xrayed;
+        }
+    }
+
+    /**
      * Un-x-rays all objects currently in the viewer.
      */
     xrayNoObjects() {
@@ -1184,6 +1339,34 @@ class BIMViewer extends Controller {
                 entity.selected = true;
             }
         });
+    }
+
+    /**
+     * Sets whether or not the given models are selected.
+     *
+     * @param {String[]} modelIds ID of the models.
+     * @param {Boolean} selected Whether or not to select the models.
+     */
+    setModelsSelected(modelIds, selected) {
+        if (!modelIds) {
+            this.error("setModelsSelected() - Argument expected: modelIds");
+            return;
+        }
+        if (selected === undefined || selected === null) {
+            this.error("setModelsSelected() - Argument expected: selected");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        for (var i = 0, len = modelIds.length; i < len; i++) {
+            const modelId = modelIds[i];
+            const model = scene.models[modelId];
+            if (!model) {
+                this.error("setModelsSelected() - Model not found in viewer: '" + modelId + "'");
+                continue;
+            }
+            model.selected = selected;
+        }
     }
 
     /**

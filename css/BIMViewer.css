@@ -217,10 +217,43 @@
 }
 
 .xeokit-modelsTab {
+
 }
 
-.xeokit-modelsTab .xeokit-form-check{
-    padding-left: 15px;
+.xeokit-modelsTab .xeokit-form-check {
+    padding: 2px 0 2px 15px;
+    line-height: 3ex;
+}
+
+.xeokit-modelsTab .xeokit-form-check input {
+    vertical-align: middle;
+}
+
+.xeokit-modelsTab .xeokit-form-check span {
+    display: inline-block;
+    color: #ffff;
+    background-color: #03103F;
+    padding-left: 3px;
+    width: calc(100% - 30px);
+    vertical-align: middle;
+}
+
+.xeokit-modelsTab .xeokit-form-check span.disabled {
+    color: #99A4AD;
+    background-color: #03103F;
+}
+
+.xeokit-modelsTab .xeokit-form-check span:hover {
+    color: #ffffff;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    padding-left: 3px;
+}
+
+.xeokit-modelsTab .xeokit-form-check span.disabled:hover {
+    color: #99A4AD;
+    background-color: #03103F;
+    cursor: default;
 }
 
 .xeokit-objectsTab ul {
@@ -232,6 +265,7 @@
     margin: 2px 0;
     position: relative;
     width: 500px;
+    line-height: 3ex;
 }
 
 .xeokit-objectsTab ul li a {
@@ -260,10 +294,15 @@
     top: 1px;
 }
 
+.xeokit-objectsTab ul li input {
+    vertical-align: middle;
+}
+
 .xeokit-objectsTab ul li span {
     display: inline-block;
     width: calc(100% - 50px);
     padding-left: 2px;
+    vertical-align: middle;
 }
 
 .xeokit-objectsTab ul li span:hover {
@@ -271,6 +310,7 @@
     cursor: pointer;
     background: rgba(255, 255, 255, 0.2);
     padding-left: 2px;
+    vertical-align: middle;
 }
 
 .xeokit-objectsTab .top-right {
@@ -297,6 +337,7 @@
     margin: 2px 0;
     position: relative;
     width: 500px;
+    line-height: 3ex;
 }
 
 .xeokit-storeysTab ul li a {
@@ -325,10 +366,15 @@
     top: 1px;
 }
 
+.xeokit-storeysTab ul li input {
+    vertical-align: middle;
+}
+
 .xeokit-storeysTab ul li span {
     display: inline-block;
     width: calc(100% - 50px);
     padding-left: 2px;
+    vertical-align: middle;
 }
 
 .xeokit-storeysTab ul li span:hover {
@@ -362,6 +408,7 @@
     margin: 2px 0;
     position: relative;
     width: 500px;
+    line-height: 3ex;
 }
 
 .xeokit-classesTab ul li a {
@@ -390,10 +437,15 @@
     top: 1px;
 }
 
+.xeokit-classesTab ul li input {
+    vertical-align: middle;
+}
+
 .xeokit-classesTab ul li span {
     display: inline-block;
     width: calc(100% - 50px);
     padding-left: 2px;
+    vertical-align: middle;
 }
 
 .xeokit-classesTab ul li span:hover {
@@ -401,6 +453,7 @@
     cursor: pointer;
     background: rgba(255, 255, 255, 0.2);
     padding-left: 2px;
+    vertical-align: middle;
 }
 
 .xeokit-classesTab .top-right {
