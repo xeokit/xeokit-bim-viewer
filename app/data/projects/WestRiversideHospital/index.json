@@ -66,6 +66,6 @@
   "viewerState": {
     "viewCubeEnabled": true,
     "threeDEnabled": true,
-    "tabOpen": "storeys"
+    "tabOpen": "models"
   }
 }
