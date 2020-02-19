@@ -374,7 +374,7 @@ class BIMViewer extends Controller {
 
         scene.highlightMaterial.edges = true;
         scene.highlightMaterial.edgeColor = [.5, .5, 0];
-        scene.highlightMaterial.edgeAlpha = 1.0;
+        scene.highlightMaterial.edgeAlpha = 0.9;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
@@ -515,7 +515,8 @@ class BIMViewer extends Controller {
             "xrayContext": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "saoInteractive": true,
-            "saoInteractiveDelay": 200
+            "saoInteractiveDelay": 200,
+            "objectColorSource": "model"
         });
     }
     /**
