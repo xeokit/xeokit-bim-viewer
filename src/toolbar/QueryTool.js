@@ -76,14 +76,18 @@ class QueryTool extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+        const input = viewer.scene.input;
+        this._onMousedown = input.on("mousedown", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
                 return;
             }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+        this._onMouseup = input.on("mouseup", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
