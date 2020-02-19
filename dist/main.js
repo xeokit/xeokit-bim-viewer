@@ -6587,11 +6587,15 @@ class HideTool extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = this.viewer.scene.input.on("mousedown", (coords) => {
+        const input = this.viewer.scene.input;
+        this._onMousedown = input.on("mousedown", (coords) => {
+            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
+                return;
+            }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = this.viewer.scene.input.on("mouseup", (coords) => {
+        this._onMouseup = input.on("mouseup", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -6683,14 +6687,18 @@ class SelectionTool extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+        const input = viewer.scene.input;
+        this._onMousedown = input.on("mousedown", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
                 return;
             }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+        this._onMouseup = input.on("mouseup", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -6781,14 +6789,18 @@ class QueryTool extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = viewer.scene.input.on("mousedown", (coords) => {
+        const input = viewer.scene.input;
+        this._onMousedown = input.on("mousedown", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
                 return;
             }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = viewer.scene.input.on("mouseup", (coords) => {
+        this._onMouseup = input.on("mouseup", (coords) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
@@ -29285,7 +29297,7 @@ class Metrics extends Component {
  * objects near to the viewpoint will use larger radii than farther pixels. Therefore, computing  SAO for close objects
  * is more expensive than for objects far away, that occupy fewer pixels on the canvas.
  *
- * ## Selectively enabling for models
+ * ## Selectively enabling SAO for models
  *
  * When loading multiple models into a Scene, we sometimes only want SAO on the models that are actually going to
  * show it, such as the architecture or structure, and not show SAO on models that won't show it well, such as the
@@ -29330,6 +29342,39 @@ class Metrics extends Component {
  *      });
  * });
  * ````
+ *
+ * ## Disabling SAO while camera is moving
+ *
+ * For smoother interaction with large models on low-power hardware, we can disable SAO while the {@link Camera} is moving:
+ *
+ * ````javascript
+ * const timeoutDuration = 150; // Milliseconds
+ * var timer = timeoutDuration;
+ * var saoDisabled = false;
+ *
+ * const onCameraMatrix = scene.camera.on("matrix", () => {
+ *     timer = timeoutDuration;
+ *     if (!saoDisabled) {
+ *         scene.sao.enabled = false;
+ *         saoDisabled = true;
+ *     }
+ * });
+ *
+ * const onSceneTick = scene.on("tick", (tickEvent) => {
+ *     if (!saoDisabled) {
+ *         return;
+ *     }
+ *     timer -= tickEvent.deltaTime; // Milliseconds
+ *     if (timer <= 0) {
+ *         if (saoDisabled) {
+ *             scene.sao.enabled = true;
+ *             saoDisabled = false;
+ *         }
+ *     }
+ * });
+ * ````
+ *
+ * [[Run this example](https://xeokit.github.io/xeokit-sdk/examples/#techniques_nonInteractiveQuality)]
  */
 class SAO extends Component {
 
@@ -29339,12 +29384,8 @@ class SAO extends Component {
         super(owner, cfg);
 
         this._supported = WEBGL_INFO.SUPPORTED_EXTENSIONS["OES_standard_derivatives"]; // For computing normals in SAO fragment shader
-        this._interactiveActive = true;
-        this._interactiveCountDown = 0;
 
         this.enabled = cfg.enabled;
-        this.interactive = cfg.interactive;
-        this.interactiveDelay = cfg.interactiveDelay;
         this.kernelRadius = cfg.kernelRadius;
         this.intensity = cfg.intensity;
         this.bias = cfg.bias;
@@ -29419,71 +29460,6 @@ class SAO extends Component {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Sets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
-     *
-     * When this is ````false````, SAO will only be applied after the Camera has rested for longer than the duration specified by {@link  SAO#interactiveDelay}.
-     *
-     * Default value is ````true````.
-     *
-     * @type {Boolean}
-     */
-    set interactive(value) {
-        value = !!value;
-        if (this._interactive === value) {
-            return;
-        }
-        this._interactive = value;
-    }
-
-    /**
-     * Gets whether SAO is applied interactively, ie. while the {@link Camera} is moving.
-     *
-     * When this is ````false````, SAO will only be applied after the Camera has rested for longer than the duration specified by {@link  SAO#interactiveDelay}.
-     *
-     * Default value is ````true````.
-     *
-     * @type {Boolean}
-     */
-    get interactive() {
-        return this._interactive;
-    }
-
-    /**
-     * Sets the interaction time delay after the {@link Camera} stops moving before SAO is applied.
-     *
-     * Only applies when {@link SAO#interactive} is ````true````.
-     *
-     * Default value is ````2.0````.
-     *
-     * @type {Number}
-     */
-    set interactiveDelay(value) {
-        if (value === undefined || value === null) {
-            value = 2.0;
-        }
-        if (this._interactiveDelay === value) {
-            return;
-        }
-        this._interactiveDelay = value;
-        this._interactiveCountDown = this._interactiveDelay;
-
-        //this.glRedraw();
-    }
-
-    /**
-     * Gets the interaction time delay after the {@link Camera} stops moving before SAO is applied.
-     *
-     * Only applies when {@link SAO#interactive} is ````true````.
-     *
-     * Default value is ````2.0````.
-     *
-     * @type {Number}
-     */
-    get interactiveDelay() {
-        return this._interactiveDelay;
     }
 
     /**
@@ -29740,7 +29716,6 @@ class SAO extends Component {
      * Destroys this component.
      */
     destroy() {
-        this.interactive = false; // Unbinds Scene and Camera events
         super.destroy();
     }
 }
@@ -36104,7 +36079,7 @@ function buildVertex$7(layer) {
     src.push("bool visible      = (float(flags.x) > 0.0);");
     src.push("bool xrayed       = (float(flags.y) > 0.0);");
     src.push("bool highlighted  = (float(flags.z) > 0.0);");
-    src.push("bool selected     = false;");
+    src.push("bool selected     = (float(flags.w) > 0.0);");
     src.push("bool edges        = (float(flags2.y) > 0.0);");
 
     src.push("bool transparent  = (color.a < 1.0);"); // Color comes from EdgeMaterial.edgeColor, so is not quantized
@@ -36268,7 +36243,6 @@ BatchingEdgesRenderer.prototype.drawLayer = function (frameCtx, layer, renderPas
 
     gl.uniformMatrix4fv(this._uPositionsDecodeMatrix, false, layer._state.positionsDecodeMatrix);
     gl.uniformMatrix4fv(this._uViewMatrix, false, model.viewMatrix);
-    gl.uniformMatrix4fv(this._uViewNormalMatrix, false, model.viewNormalMatrix);
     gl.uniform1i(this._uRenderPass, renderPass);
     this._aPosition.bindArrayBuffer(state.positionsBuf);
     frameCtx.bindArray++;
@@ -52968,8 +52942,11 @@ class ContextMenu {
         this._menuElement = null;
         this._enabled = false;
         this._items = [];
-        document.addEventListener("click", (e) => {
-            this.hide();
+        document.addEventListener("mousedown", (event) => {
+            if (!event.target.classList.contains("xeokit-context-menu-item")) {
+                this.hide();
+            }
+            event.preventDefault();
         });
         if (cfg.items) {
             this.items = cfg.items;
@@ -53051,7 +53028,7 @@ class ContextMenu {
             }
             const itemId = "xeokit-context-menu-" + this._id + "-" + ctx.id++;
             const actionTitle = item.title;
-            html.push('<li id="' + itemId + '" style="' + ((ctx.groupIdx === ctx.groupLen - 1) || ((i < len - 1)) ? 'border-bottom: 0' : 'border-bottom: 1px solid black') + '">' + actionTitle + '</li>');
+            html.push('<li id="' + itemId + '" class="xeokit-context-menu-item" style="' + ((ctx.groupIdx === ctx.groupLen - 1) || ((i < len - 1)) ? 'border-bottom: 0' : 'border-bottom: 1px solid black') + '">' + actionTitle + '</li>');
             item._itemId = itemId;
         }
     }
@@ -57907,10 +57884,12 @@ class CameraControl extends Component {
                     needPickSurface = self._pivoting;
                     updatePick();
                     if (self._pivoting) {
-                        if (pickResult) {
-                            self._pivoter.startPivot(pickResult.worldPos);
-                        } else {
-                            self._pivoter.startPivot(); // Continue to use last pivot point
+                        if (e.which === 1) {// Left button
+                            if (pickResult) {
+                                self._pivoter.startPivot(pickResult.worldPos);
+                            } else {
+                                self._pivoter.startPivot(); // Continue to use last pivot point
+                            }
                         }
                     }
                 });
@@ -60537,7 +60516,7 @@ class BIMViewer extends Controller {
 
         scene.highlightMaterial.edges = true;
         scene.highlightMaterial.edgeColor = [.5, .5, 0];
-        scene.highlightMaterial.edgeAlpha = 1.0;
+        scene.highlightMaterial.edgeAlpha = 0.9;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
@@ -60678,7 +60657,8 @@ class BIMViewer extends Controller {
             "xrayContext": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "saoInteractive": true,
-            "saoInteractiveDelay": 200
+            "saoInteractiveDelay": 200,
+            "objectColorSource": "model"
         });
     }
     /**
