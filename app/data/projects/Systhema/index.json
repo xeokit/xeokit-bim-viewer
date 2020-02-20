@@ -33,8 +33,7 @@
     {
       "id": "2017058AA_Sparrenlaan_Ermelo_BWK_2020-02-17_EXCL-A_optimized",
       "name": "Sparrenlaan_Ermelo",
-      "objectColorSource": "viewer",
-      "saoEnabled": false
+      "objectColorSource": "viewer"
     }
   ],
   "viewerConfigs": {
