@@ -72,7 +72,17 @@ In the example below, we'll create a [````BIMViewer````](https://xeokit.github.i
 
 We'll configure the ````Server```` to load the data from the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory.
  
-We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: a ````<canvas>```` for the 3D canvas, a ````<div>```` to contain the explorer panel, a ````<div>```` to contain the toolbar, and a ````<canvas>```` for the NavCube. Configuring the ````BIMViewer```` with separate places to locate its various elements allows more flexible integration into your web page.
+We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: 
+
+ * ````canvasElement```` - a ````<canvas>```` for the 3D canvas, 
+ * ````explorerElement```` - a ````<div>```` to contain the explorer panel, 
+ * ````toolbarElement```` - a ````<div>```` to contain the toolbar, 
+ * ````navCubeCanvasElement```` - a ````<canvas>```` for the NavCube, and 
+ * ````busyModelBackdropElement```` - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. 
+ 
+ Configuring the ````BIMViewer```` with separate places to locate these various elements allows flexible integration into your web page.
+ 
+ For example:
   
 ````javascript
 const server = new Server({
@@ -84,14 +94,15 @@ const bimViewer = new BIMViewer(server, {
      canvasElement: document.getElementById("myCanvas"), // WebGL canvas
      explorerElement: document.getElementById("myExplorer"), // Explorer panel
      toolbarElement: document.getElementById("myToolbar"), // Toolbar
-     navCubeCanvasElement: document.getElementById("myNavCubeCanvas")
+     navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
+     busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop")
 });
 ````
  
 In our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the elements look like this:
  
 ````html
-<div id="myViewer">
+<div id="myViewer" class="xeokit-busy-modal-backdrop">
      <div id="myExplorer" class="active"></div>
      <div id="myContent">
          <div id="myToolbar"></div>
@@ -127,9 +138,36 @@ The available configurations are:
 TODO
 
 
-### Customizing Viewer Style
+## Customizing Viewer Style
 
 The [app/index.html](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+
+### Modal Busy Dialog
+
+As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
+
+Within our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
+ 
+````html
+<div id="myViewer" class="xeokit-busy-modal-backdrop">
+    <div id="myExplorer" class="active"></div>
+    <div id="myContent">
+        <div id="myToolbar"></div>
+        <canvas id="myCanvas"></canvas>
+    </div>
+</div>
+<canvas id="myNavCubeCanvas"></canvas>
+````
+
+As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css), the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:
+
+````css
+.xeokit-busy-modal-backdrop {
+    position:relative;
+}
+````
+
+If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog" within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css).
 
 ### Tooltips
 

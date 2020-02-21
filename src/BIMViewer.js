@@ -171,6 +171,7 @@ class BIMViewer extends Controller {
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
+        const busyModelBackdropElement = cfg.busyModelBackdropElement;
 
         explorerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -210,8 +211,6 @@ class BIMViewer extends Controller {
         this._explorerElement = explorerElement;
 
         initTabs(explorerElement);
-
-        this._busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
@@ -284,6 +283,10 @@ class BIMViewer extends Controller {
         this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
             active: true
+        });
+
+        this._busyModal = new BusyModal(this, {
+            busyModalBackdropElement: busyModelBackdropElement
         });
 
         this._threeDMode.setActive(true);
@@ -1061,10 +1064,20 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given classes are visible.
+     *
+     * @param {String[]} classes Class types.
+     * @param {Boolean} visible Whether or not to show the classes.
+     */
+    setClassesVisible(classes, visible) {
+
+    }
+
+    /**
      * Sets whether or not the given models are visible.
      *
      * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} visible Whether or not to select the models.
+     * @param {Boolean} visible Whether or not to show the models.
      */
     setModelsVisible(modelIds, visible) {
         if (!modelIds) {

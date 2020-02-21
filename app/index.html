@@ -22,7 +22,7 @@
 
 <body>
 
-<div id="myViewer">
+<div id="myViewer" class="xeokit-busy-modal-backdrop">
     <div id="myExplorer" class="active"></div>
     <div id="myContent">
         <div id="myToolbar"></div>
@@ -54,7 +54,8 @@
             canvasElement: document.getElementById("myCanvas"), // WebGL canvas
             explorerElement: document.getElementById("myExplorer"), // Left panel
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
-            navCubeCanvasElement: document.getElementById("myNavCubeCanvas")
+            navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
+            busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop")
         });
 
         // Create tooltips on various HTML elements created by BIMViewer
