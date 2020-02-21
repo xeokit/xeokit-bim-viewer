@@ -891,20 +891,25 @@ class BusyModal extends Controller {
 
         super(parent, cfg);
 
-        document.body.insertAdjacentHTML('beforeend', `<div class="xeokit-busy-modal">
-            <div class="xeokit-busy-modal-content">
-                <div class="xeokit-busy-modal-body">
-              <div class="xeokit-busy-modal-message">Default text</div>
-                </div>
-            </div>
-        </div>`);
+        const busyModalBackdropElement = cfg.busyModalBackdropElement || document.body;
 
-        this._modal = document.querySelector(".xeokit-busy-modal");
+        if (!busyModalBackdropElement) {
+            throw "Missing config: busyModalBackdropElement";
+        }
+
+        this._modal = document.createElement("div");
+        this._modal.classList.add("xeokit-busy-modal");
+        this._modal.innerHTML = '<div class="xeokit-busy-modal-content"><div class="xeokit-busy-modal-body"><div class="xeokit-busy-modal-message">Default text</div></div></div>';
+
+        busyModalBackdropElement.appendChild(this._modal);
+
+        this._modalVisible = false;
+        this._modal.style.display = 'hidden';
     }
 
     show(message) {
         this._modalVisible = true;
-        document.querySelector('.xeokit-busy-modal-message').innerText = message;
+        this._modal.querySelector('.xeokit-busy-modal-message').innerText = message;
         this._modal.style.display = 'block';
     }
 
@@ -60313,6 +60318,7 @@ class BIMViewer extends Controller {
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
+        const busyModelBackdropElement = cfg.busyModelBackdropElement;
 
         explorerElement.oncontextmenu = (e) => {
             e.preventDefault();
@@ -60352,8 +60358,6 @@ class BIMViewer extends Controller {
         this._explorerElement = explorerElement;
 
         initTabs(explorerElement);
-
-        this._busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
@@ -60426,6 +60430,10 @@ class BIMViewer extends Controller {
         this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
             active: true
+        });
+
+        this._busyModal = new BusyModal(this, {
+            busyModalBackdropElement: busyModelBackdropElement
         });
 
         this._threeDMode.setActive(true);
@@ -61203,10 +61211,20 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given classes are visible.
+     *
+     * @param {String[]} classes Class types.
+     * @param {Boolean} visible Whether or not to show the classes.
+     */
+    setClassesVisible(classes, visible) {
+
+    }
+
+    /**
      * Sets whether or not the given models are visible.
      *
      * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} visible Whether or not to select the models.
+     * @param {Boolean} visible Whether or not to show the models.
      */
     setModelsVisible(modelIds, visible) {
         if (!modelIds) {
