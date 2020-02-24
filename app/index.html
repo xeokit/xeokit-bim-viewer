@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="./lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
     <link rel="stylesheet" href="../css/BIMViewer.css" type="text/css"/>
 
-    <!-- App tooltips style -->
-    <link rel="stylesheet" href="./lib/backdrop.css"/>
+
 
     <!-- App style -->
     <link rel="stylesheet" href="./css/style.css"/>
+
+    <!-- App tooltips style -->
+    <link rel="stylesheet" href="./lib/backdrop.css"/>
 
 </head>
 
@@ -59,7 +61,11 @@
         });
 
         // Create tooltips on various HTML elements created by BIMViewer
-        tippy('[data-tippy-content]');
+        tippy('[data-tippy-content]', {
+            appendTo: function () {
+                return document.querySelector('#myViewer')
+            }
+        });
 
 
         // Configure our viewer
