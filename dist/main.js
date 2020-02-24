@@ -4144,6 +4144,18 @@ const math = {
     }))(),
 
     /**
+     * Gets the area of an AABB.
+     *
+     * @private
+     */
+    getAABB3Area(aabb) {
+        const width = (aabb[3] - aabb[0]);
+        const height = (aabb[4] - aabb[1]);
+        const depth = (aabb[5] - aabb[2]);
+        return (width * height * depth);
+    },
+
+    /**
      * Gets the center of an AABB.
      *
      * @private
@@ -9878,6 +9890,8 @@ class ReadableGeometry extends Geometry {
             hash: ""
         });
 
+        this._numTriangles = 0;
+
         this._edgeThreshold = cfg.edgeThreshold || 10.0;
 
         // Lazy-generated VBOs
@@ -9976,6 +9990,9 @@ class ReadableGeometry extends Geometry {
                 return;
             }
             state.indices = (cfg.indices.constructor === Uint32Array || cfg.indices.constructor === Uint16Array) ? cfg.indices : new IndexArrayType(cfg.indices);
+            if (this._state.primitiveName === "triangles") {
+                this._numTriangles = (cfg.indices.length / 3);
+            }
         }
 
         this._buildHash();
@@ -10369,6 +10386,17 @@ class ReadableGeometry extends Geometry {
             this._obbDirty = false;
         }
         return this._obb;
+    }
+
+    /**
+     * Approximate number of triangles in this ReadableGeometry.
+     *
+     * Will be zero if {@link ReadableGeometry#primitive} is not 'triangles', 'triangle-strip' or 'triangle-fan'.
+     *
+     * @type {Number}
+     */
+    get numTriangles() {
+        return this._numTriangles;
     }
 
     _setAABBDirty() {
@@ -12080,6 +12108,8 @@ class Node extends Component {
 
         this.scene._aabbDirty = true;
 
+        this._numTriangles = 0;
+
         this._scale = math.vec3();
         this._quaternion = math.identityQuaternion();
         this._rotation = math.vec3();
@@ -12201,6 +12231,15 @@ class Node extends Component {
             this._updateAABB();
         }
         return this._aabb;
+    }
+
+    /**
+     * The number of triangles in this Node.
+     *
+     * @type {Number}
+     */
+    get numTriangles() {
+        return this._numTriangles;
     }
 
     /**
@@ -12736,6 +12775,7 @@ class Node extends Component {
         }
         child._setWorldMatrixDirty();
         child._setAABBDirty();
+        this._numTriangles += child.numTriangles;
         return child;
     }
 
@@ -12752,6 +12792,7 @@ class Node extends Component {
                 child._setWorldMatrixDirty();
                 child._setAABBDirty();
                 this._setAABBDirty();
+                this._numTriangles -= child.numTriangles;
                 return;
             }
         }
@@ -12767,6 +12808,7 @@ class Node extends Component {
             child._parentNode = null;
             child._setWorldMatrixDirty();
             child._setAABBDirty();
+            this._numTriangles -= child.numTriangles;
         }
         this._children = [];
         this._setAABBDirty();
@@ -17733,6 +17775,8 @@ class Mesh extends Component {
         this._aabb = null;
         this._aabbDirty = true;
 
+        this._numTriangles = (this._geometry ? this._geometry.numTriangles : 0);
+
         this.scene._aabbDirty = true;
 
         this._scale = math.vec3();
@@ -18398,6 +18442,15 @@ class Mesh extends Component {
     }
 
     /**
+     * The approximate number of triangles in this Mesh.
+     *
+     * @type {Number}
+     */
+    get numTriangles() {
+        return this._numTriangles;
+    }
+
+    /**
      * Sets if this Mesh is visible.
      *
      * Only rendered when {@link Mesh#visible} is ````true```` and {@link Mesh#culled} is ````false````.
@@ -18943,14 +18996,10 @@ class Mesh extends Component {
             }
             if (state.edges) {
                 const edgeMaterial = this._edgeMaterial._state;
-                if (this.numEdgesLayerPortions > 0) {
-                    if (edgeMaterial.edges) {
-                        if (edgeMaterial.alpha < 1.0) {
-                            renderFlags.normalEdgesTransparent = true;
-                        } else {
-                            renderFlags.normalEdgesOpaque = true;
-                        }
-                    }
+                if (edgeMaterial.alpha < 1.0) {
+                    renderFlags.normalEdgesTransparent = true;
+                } else {
+                    renderFlags.normalEdgesOpaque = true;
                 }
             }
             if (state.selected) {
@@ -21863,6 +21912,14 @@ class FrameContext {
         this.lastProgramId = null;
 
         /**
+         * Whether SAO is currently enabled during the current frame.
+         * @property withSAO
+         * @default false
+         * @type {Boolean}
+         */
+        this.withSAO = false;
+
+        /**
          * Whether backfaces are currently enabled during the current frame.
          * @property backfaces
          * @default false
@@ -23962,7 +24019,7 @@ const Renderer = function (scene, options) {
                 saoBlurRenderer.render(saoDepthBuffer.getTexture(), occlusionBuffer2.getTexture(), 1);
                 occlusionBuffer1.unbind();
             }
-            }
+        }
 
         drawColor(params);
     };
@@ -24025,6 +24082,7 @@ const Renderer = function (scene, options) {
 
     const drawColor = (function () { // Draws the drawables in drawableListSorted
 
+        const normalDrawSAOBin = [];
         const normalEdgesOpaqueBin = [];
         const normalFillTransparentBin = [];
         const normalEdgesTransparentBin = [];
@@ -24056,6 +24114,7 @@ const Renderer = function (scene, options) {
 
             frameCtx.reset();
             frameCtx.pass = params.pass;
+            frameCtx.withSAO = false;
 
             gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
@@ -24073,7 +24132,8 @@ const Renderer = function (scene, options) {
             gl.lineWidth(1);
             frameCtx.lineWidth = 1;
 
-            frameCtx.occlusionTexture = scene.sao.possible ? occlusionBuffer1.getTexture() : null;
+            const saoPossible = scene.sao.possible;
+            frameCtx.occlusionTexture = saoPossible ? occlusionBuffer1.getTexture() : null;
 
             let i;
             let len;
@@ -24085,6 +24145,7 @@ const Renderer = function (scene, options) {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
             }
 
+            let normalDrawSAOBinLen = 0;
             let normalEdgesOpaqueBinLen = 0;
             let normalFillTransparentBinLen = 0;
             let normalEdgesTransparentBinLen = 0;
@@ -24125,7 +24186,11 @@ const Renderer = function (scene, options) {
                         drawable.getRenderFlags(renderFlags);
 
                         if (renderFlags.normalFillOpaque) {
-                            drawable.drawNormalFillOpaque(frameCtx);
+                            if (saoPossible && drawable.saoEnabled) {
+                                normalDrawSAOBin[normalDrawSAOBinLen++] = drawable;
+                            } else {
+                                drawable.drawNormalFillOpaque(frameCtx);
+                            }
                         }
 
                         if (renderFlags.normalEdgesOpaque) {
@@ -24194,6 +24259,13 @@ const Renderer = function (scene, options) {
             //------------------------------------------------------------------------------------------------------
             // Render deferred bins
             //------------------------------------------------------------------------------------------------------
+
+            if (normalDrawSAOBinLen > 0) {
+                frameCtx.withSAO = true;
+                for (i = 0; i < normalDrawSAOBinLen; i++) {
+                    normalDrawSAOBin[i].drawNormalFillOpaque(frameCtx);
+                }
+            }
 
             if (normalEdgesOpaqueBinLen > 0) {
                 for (i = 0; i < normalEdgesOpaqueBinLen; i++) {
@@ -29264,7 +29336,7 @@ class Metrics extends Component {
  * sao.enabled = true; // Enable SAO - only works if supported (see above)
  * sao.intensity = 0.25;
  * sao.bias = 0.5;
- * sao.scale = 1000.0;
+ * sao.scale = 500.0;
  * sao.minResolution = 0.0;
  * sao.kernelRadius = 100;
  * sao.blendCutoff = 0.2;
@@ -29565,13 +29637,13 @@ class SAO extends Component {
     /**
      * Sets the SAO occlusion scale.
      *
-     * Default value is ````1000.0````.
+     * Default value is ````500.0````.
      *
      * @type {Number}
      */
     set scale(value) {
         if (value === undefined || value === null) {
-            value = 1000.0;
+            value = 500.0;
         }
         if (this._scale === value) {
             return;
@@ -29583,7 +29655,7 @@ class SAO extends Component {
     /**
      * Gets the SAO occlusion scale.
      *
-     * Default value is ````1000.0````.
+     * Default value is ````500.0````.
      *
      * @type {Number}
      */
@@ -34484,6 +34556,8 @@ class PerformanceMesh {
         this._color = [color[0], color[1], color[2], opacity]; // [0..255]
         this._colorize = [color[0], color[1], color[2], opacity]; // [0..255]
         this._colorizing = false;
+
+        this.numTriangles = 0;
     }
 
     /**
@@ -34693,9 +34767,12 @@ class PerformanceNode {
          */
         this.meshes = meshes;
 
+        this._numTriangles = 0;
+
         for (var i = 0, len = this.meshes.length; i < len; i++) {  // TODO: tidier way? Refactor?
             const mesh = this.meshes[i];
             mesh.parent = this;
+            this._numTriangles += mesh.numTriangles;
         }
 
         /**
@@ -34757,6 +34834,15 @@ class PerformanceNode {
      */
     get aabb() {
         return this._aabb;
+    }
+
+    /**
+     * The approximate number of triangles in this PerformanceNode.
+     *
+     * @type {Number}
+     */
+    get numTriangles() {
+        return this._numTriangles;
     }
 
     /**
@@ -35306,9 +35392,9 @@ const RENDER_PASSES = {
  * @private
  * @constructor
  */
-const BatchingDrawShaderSource = function (layer) {
+const BatchingDrawShaderSource = function (layer, withSAO) {
     this.vertex = buildVertex$5(layer);
-    this.fragment = buildFragment$5(layer);
+    this.fragment = buildFragment$5(layer, withSAO);
 };
 
 function buildVertex$5(layer) {
@@ -35449,7 +35535,7 @@ function buildVertex$5(layer) {
     return src;
 }
 
-function buildFragment$5(layer) {
+function buildFragment$5(layer, withSAO) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     let i;
@@ -35460,20 +35546,19 @@ function buildFragment$5(layer) {
     src.push("precision mediump float;");
     src.push("precision mediump int;");
 
-    src.push("uniform bool      uSAOEnabled;");
-    src.push("uniform sampler2D uOcclusionTexture;");
-    src.push("uniform vec4      uSAOParams;");
+    if (withSAO) {
+        src.push("uniform sampler2D uOcclusionTexture;");
+        src.push("uniform vec4      uSAOParams;");
 
-    src.push("const float       packUpscale = 256. / 255.;");
-    src.push("const float       unpackDownScale = 255. / 256.;");
+        src.push("const float       packUpscale = 256. / 255.;");
+        src.push("const float       unpackDownScale = 255. / 256.;");
+        src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+        src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
 
-    src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
-    src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
-
-    src.push("float unpackRGBAToDepth( const in vec4 v ) {");
-    src.push("    return dot( v, unPackFactors );");
-    src.push("}");
-
+        src.push("float unpackRGBAToDepth( const in vec4 v ) {");
+        src.push("    return dot( v, unPackFactors );");
+        src.push("}");
+    }
     if (clipping) {
         src.push("varying vec4 vWorldPosition;");
         src.push("varying vec4 vFlags2;");
@@ -35497,21 +35582,19 @@ function buildFragment$5(layer) {
         src.push("  if (dist > 0.0) { discard; }");
         src.push("}");
     }
-
-    // Doing SAO blend in the main solid fill draw shader just so that edge lines can be drawn over the top
-    // Would be more efficient to defer this, then render lines later, using same depth buffer for Z-reject
-
-    src.push("  if (uSAOEnabled) {");
-    src.push("      float viewportWidth     = uSAOParams[0];");
-    src.push("      float viewportHeight    = uSAOParams[1];");
-    src.push("      float blendCutoff       = uSAOParams[2];");
-    src.push("      float blendFactor       = uSAOParams[3];");
-    src.push("      vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
-    src.push("      float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
-    src.push("      gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
-    src.push("  } else {");
-    src.push("      gl_FragColor = vColor;");
-    src.push("  }");
+    if (withSAO) {
+        // Doing SAO blend in the main solid fill draw shader just so that edge lines can be drawn over the top
+        // Would be more efficient to defer this, then render lines later, using same depth buffer for Z-reject
+        src.push("   float viewportWidth     = uSAOParams[0];");
+        src.push("   float viewportHeight    = uSAOParams[1];");
+        src.push("   float blendCutoff       = uSAOParams[2];");
+        src.push("   float blendFactor       = uSAOParams[3];");
+        src.push("   vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
+        src.push("   float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
+        src.push("   gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
+    } else {
+        src.push("   gl_FragColor            = vColor;");
+    }
     src.push("}");
     return src;
 }
@@ -35523,23 +35606,24 @@ const tempVec4$1 = math.vec4();
  * @private
  * @constructor
  */
-const BatchingDrawRenderer = function (hash, layer) {
+const BatchingDrawRenderer = function (hash, layer, withSAO) {
     this.id = ids$5.addItem({});
     this._hash = hash;
+    this._withSAO = withSAO;
     this._scene = layer.model.scene;
     this._useCount = 0;
-    this._shaderSource = new BatchingDrawShaderSource(layer);
+    this._shaderSource = new BatchingDrawShaderSource(layer, withSAO);
     this._allocate(layer);
 };
 
 const renderers$4 = {};
 
-BatchingDrawRenderer.get = function (layer) {
+BatchingDrawRenderer.get = function (layer, withSAO = false) {
     const scene = layer.model.scene;
-    const hash = getHash(scene);
+    const hash = getHash(scene, withSAO);
     let renderer = renderers$4[hash];
     if (!renderer) {
-        renderer = new BatchingDrawRenderer(hash, layer);
+        renderer = new BatchingDrawRenderer(hash, layer, withSAO);
         if (renderer.errors) {
             console.log(renderer.errors.join("\n"));
             return null;
@@ -35551,8 +35635,8 @@ BatchingDrawRenderer.get = function (layer) {
     return renderer;
 };
 
-function getHash(scene) {
-    return [scene.canvas.canvas.id, "", scene._lightsState.getHash(), scene._sectionPlanesState.getHash()].join(";")
+function getHash(scene, withSAO) {
+    return [scene.canvas.canvas.id, "", scene._lightsState.getHash(), scene._sectionPlanesState.getHash(), (withSAO ? "sao" : "nosao")].join(";");
 }
 
 BatchingDrawRenderer.prototype.getValid = function () {
@@ -35609,11 +35693,6 @@ BatchingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPass
         this._aFlags2.bindArrayBuffer(state.flags2Buf);
         frameCtx.bindArray++;
     }
-
-    const sao = scene.sao;
-    const saoEnabled = (sao.possible && model.saoEnabled);
-    gl.uniform1i(this._uSAOEnabled, saoEnabled);
-
     state.indicesBuf.bind();
     frameCtx.bindArray++;
     gl.drawElements(state.primitive, state.indicesBuf.numItems, state.indicesBuf.itemType, 0);
@@ -35683,9 +35762,11 @@ BatchingDrawRenderer.prototype._allocate = function (layer) {
     this._aColor = program.getAttribute("color");
     this._aFlags = program.getAttribute("flags");
     this._aFlags2 = program.getAttribute("flags2");
-    this._uSAOEnabled = program.getLocation("uSAOEnabled");
-    this._uOcclusionTexture = "uOcclusionTexture";
-    this._uSAOParams = program.getLocation("uSAOParams");
+    if (this._withSAO) {
+        this._uSAOEnabled = program.getLocation("uSAOEnabled");
+        this._uOcclusionTexture = "uOcclusionTexture";
+        this._uSAOParams = program.getLocation("uSAOParams");
+    }
 };
 
 BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
@@ -35743,17 +35824,19 @@ BatchingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
             }
         }
     }
-    const sao = scene.sao;
-    const saoEnabled = sao.possible;
-    if (saoEnabled) {
-        const viewportWidth = gl.drawingBufferWidth;
-        const viewportHeight = gl.drawingBufferHeight;
-        tempVec4$1[0] = viewportWidth;
-        tempVec4$1[1] = viewportHeight;
-        tempVec4$1[2] = sao.blendCutoff;
-        tempVec4$1[3] = sao.blendFactor;
-        this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
-        gl.uniform4fv(this._uSAOParams, tempVec4$1);
+    if (this._withSAO) {
+        const sao = scene.sao;
+        const saoEnabled = sao.possible;
+        if (saoEnabled) {
+            const viewportWidth = gl.drawingBufferWidth;
+            const viewportHeight = gl.drawingBufferHeight;
+            tempVec4$1[0] = viewportWidth;
+            tempVec4$1[1] = viewportHeight;
+            tempVec4$1[2] = sao.blendCutoff;
+            tempVec4$1[3] = sao.blendFactor;
+            gl.uniform4fv(this._uSAOParams, tempVec4$1);
+            this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
+        }
     }
 };
 
@@ -38415,8 +38498,14 @@ class BatchingLayer {
         if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
             return;
         }
-        if (this._drawRenderer) {
-            this._drawRenderer.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+        if (frameCtx.withSAO) {
+            if (this._drawRendererWithSAO) {
+                this._drawRendererWithSAO.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+            }
+        } else {
+            if (this._drawRenderer) {
+                this._drawRenderer.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+            }
         }
     }
 
@@ -38635,6 +38724,10 @@ class BatchingLayer {
             this._drawRenderer.put();
             this._drawRenderer = null;
         }
+        if (this._drawRendererWithSAO && this._drawRendererWithSAO.getValid() === false) {
+            this._drawRendererWithSAO.put();
+            this._drawRendererWithSAO = null;
+        }
         if (this._depthRenderer && this._depthRenderer.getValid() === false) {
             this._depthRenderer.put();
             this._depthRenderer = null;
@@ -38670,6 +38763,10 @@ class BatchingLayer {
         if (!this._drawRenderer) {
             this._drawRenderer = BatchingDrawRenderer.get(this);
         }
+        if (!this._drawRendererWithSAO) {
+            const withSAO = true;
+            this._drawRendererWithSAO = BatchingDrawRenderer.get(this, withSAO);
+        }
 
         // Lazy-get normals and depth renderers when needed
 
@@ -38697,6 +38794,10 @@ class BatchingLayer {
         if (this._drawRenderer) {
             this._drawRenderer.put();
             this._drawRenderer = null;
+        }
+        if (this._drawRendererWithSAO) {
+            this._drawRendererWithSAO.put();
+            this._drawRendererWithSAO = null;
         }
         if (this._depthRenderer) {
             this._depthRenderer.put();
@@ -38890,9 +38991,9 @@ function dot$1(p, vec3) { // Dot product of a normal in an array against a candi
 /**
  * @private
  */
-const InstancingDrawShaderSource = function (layer) {
+const InstancingDrawShaderSource = function (layer, withSAO) {
     this.vertex = buildVertex$e(layer);
-    this.fragment = buildFragment$e(layer);
+    this.fragment = buildFragment$e(layer, withSAO);
 };
 
 function buildVertex$e(layer) {
@@ -39042,7 +39143,7 @@ function buildVertex$e(layer) {
     return src;
 }
 
-function buildFragment$e(layer) {
+function buildFragment$e(layer, withSAO) {
     const scene = layer.model.scene;
     const sectionPlanesState = scene._sectionPlanesState;
     let i;
@@ -39053,19 +39154,19 @@ function buildFragment$e(layer) {
     src.push("precision mediump float;");
     src.push("precision mediump int;");
 
-    src.push("uniform bool      uSAOEnabled;");
-    src.push("uniform sampler2D uOcclusionTexture;");
-    src.push("uniform vec4      uSAOParams;");
+    if (withSAO) {
+        src.push("uniform sampler2D uOcclusionTexture;");
+        src.push("uniform vec4      uSAOParams;");
 
-    src.push("const float       packUpscale = 256. / 255.;");
-    src.push("const float       unpackDownScale = 255. / 256.;");
+        src.push("const float       packUpscale = 256. / 255.;");
+        src.push("const float       unpackDownScale = 255. / 256.;");
+        src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
+        src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
 
-    src.push("const vec3        packFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );");
-    src.push("const vec4        unPackFactors = unpackDownScale / vec4( packFactors, 1. );");
-
-    src.push("float unpackRGBAToDepth( const in vec4 v ) {");
-    src.push("    return dot( v, unPackFactors );");
-    src.push("}");
+        src.push("float unpackRGBAToDepth( const in vec4 v ) {");
+        src.push("    return dot( v, unPackFactors );");
+        src.push("}");
+    }
 
     if (clipping) {
         src.push("varying vec4 vWorldPosition;");
@@ -39094,17 +39195,17 @@ function buildFragment$e(layer) {
     // Doing SAO blend in the main solid fill draw shader just so that edge lines can be drawn over the top
     // Would be more efficient to defer this, then render lines later, using same depth buffer for Z-reject
 
-    src.push("  if (uSAOEnabled) {");
-    src.push("      float viewportWidth     = uSAOParams[0];");
-    src.push("      float viewportHeight    = uSAOParams[1];");
-    src.push("      float blendCutoff       = uSAOParams[2];");
-    src.push("      float blendFactor       = uSAOParams[3];");
-    src.push("      vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
-    src.push("      float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
-    src.push("      gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
-    src.push("  } else {");
-    src.push("      gl_FragColor = vColor;");
-    src.push("  }");
+    if (withSAO) {
+        src.push("   float viewportWidth     = uSAOParams[0];");
+        src.push("   float viewportHeight    = uSAOParams[1];");
+        src.push("   float blendCutoff       = uSAOParams[2];");
+        src.push("   float blendFactor       = uSAOParams[3];");
+        src.push("   vec2 uv                 = vec2(gl_FragCoord.x / viewportWidth, gl_FragCoord.y / viewportHeight);");
+        src.push("   float ambient           = smoothstep(blendCutoff, 1.0, unpackRGBAToDepth(texture2D(uOcclusionTexture, uv))) * blendFactor;");
+        src.push("   gl_FragColor            = vec4(vColor.rgb * ambient, vColor.a);");
+    } else {
+        src.push("    gl_FragColor           = vColor;");
+    }
     src.push("}");
     return src;
 }
@@ -39115,10 +39216,11 @@ const tempVec4$2 = math.vec4();
 /**
  * @private
  */
-const InstancingDrawRenderer = function (hash, layer) {
+const InstancingDrawRenderer = function (hash, layer, withSAO) {
     this.id = ids$e.addItem({});
     this._hash = hash;
     this._scene = layer.model.scene;
+    this._withSAO = withSAO;
     this._useCount = 0;
     this._shaderSource = new InstancingDrawShaderSource(layer);
     this._allocate(layer);
@@ -39126,9 +39228,9 @@ const InstancingDrawRenderer = function (hash, layer) {
 
 const renderers$d = {};
 
-InstancingDrawRenderer.get = function (layer) {
+InstancingDrawRenderer.get = function (layer, withSAO = false) {
     const scene = layer.model.scene;
-    const hash = getHash$9(scene);
+    const hash = getHash$9(scene, withSAO);
     let renderer = renderers$d[hash];
     if (!renderer) {
         renderer = new InstancingDrawRenderer(hash, layer);
@@ -39143,8 +39245,8 @@ InstancingDrawRenderer.get = function (layer) {
     return renderer;
 };
 
-function getHash$9(scene) {
-    return [scene.canvas.canvas.id, "", scene._lightsState.getHash(), scene._sectionPlanesState.getHash()].join(";")
+function getHash$9(scene, withSAO) {
+    return [scene.canvas.canvas.id, "", scene._lightsState.getHash(), scene._sectionPlanesState.getHash(), (withSAO ? "sao" : "nosao")].join(";");
 }
 
 InstancingDrawRenderer.prototype.getValid = function () {
@@ -39246,11 +39348,6 @@ InstancingDrawRenderer.prototype.drawLayer = function (frameCtx, layer, renderPa
     if (this._aFlags2) { // Won't be in shader when not clipping
         instanceExt.vertexAttribDivisorANGLE(this._aFlags2.location, 0);
     }
-
-    const sao = scene.sao;
-    const saoEnabled = (sao.possible && model.saoEnabled);
-    gl.uniform1i(this._uSAOEnabled, saoEnabled);
-
     frameCtx.drawElements++;
 };
 
@@ -39397,17 +39494,19 @@ InstancingDrawRenderer.prototype._bindProgram = function (frameCtx, layer) {
             }
         }
     }
-    const sao = scene.sao;
-    const saoEnabled = sao.possible;
-    if (saoEnabled) {
-        const viewportWidth = gl.drawingBufferWidth;
-        const viewportHeight = gl.drawingBufferHeight;
-        tempVec4$2[0] = viewportWidth;
-        tempVec4$2[1] = viewportHeight;
-        tempVec4$2[2] = sao.blendCutoff;
-        tempVec4$2[3] = sao.blendFactor;
-        this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
-        gl.uniform4fv(this._uSAOParams, tempVec4$2);
+    if (this._withSAO) {
+        const sao = scene.sao;
+        const saoEnabled = sao.possible;
+        if (saoEnabled) {
+            const viewportWidth = gl.drawingBufferWidth;
+            const viewportHeight = gl.drawingBufferHeight;
+            tempVec4$2[0] = viewportWidth;
+            tempVec4$2[1] = viewportHeight;
+            tempVec4$2[2] = sao.blendCutoff;
+            tempVec4$2[3] = sao.blendFactor;
+            gl.uniform4fv(this._uSAOParams, tempVec4$2);
+            this._program.bindTexture(this._uOcclusionTexture, frameCtx.occlusionTexture, 0);
+        }
     }
 };
 
@@ -42434,8 +42533,14 @@ class InstancingLayer {
         if (this._numVisibleLayerPortions === 0 || this._numTransparentLayerPortions === this._numPortions || this._numXRayedLayerPortions === this._numPortions) {
             return;
         }
-        if (this._drawRenderer) {
-            this._drawRenderer.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+        if (frameCtx.withSAO) {
+            if (this._drawRendererWithSAO) {
+                this._drawRendererWithSAO.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+            }
+        } else {
+            if (this._drawRenderer) {
+                this._drawRenderer.drawLayer(frameCtx, this, RENDER_PASSES.NORMAL_OPAQUE);
+            }
         }
     }
 
@@ -42654,6 +42759,10 @@ class InstancingLayer {
             this._drawRenderer.put();
             this._drawRenderer = null;
         }
+        if (this._drawRendererWithSAO && this._drawRendererWithSAO.getValid() === false) {
+            this._drawRendererWithSAO.put();
+            this._drawRendererWithSAO = null;
+        }
         if (this._depthRenderer && this._depthRenderer.getValid() === false) {
             this._depthRenderer.put();
             this._depthRenderer = null;
@@ -42688,6 +42797,10 @@ class InstancingLayer {
         }
         if (!this._drawRenderer) {
             this._drawRenderer = InstancingDrawRenderer.get(this);
+        }
+        if (!this._drawRendererWithSAO) {
+            const withSAO = true;
+            this._drawRendererWithSAO = InstancingDrawRenderer.get(this, withSAO);
         }
 
         // Lazy-get depth and normals renderers, only when needed
@@ -43037,7 +43150,7 @@ class PerformanceModel extends Component {
         this.numEntities = 0;
 
         /** @private */
-        this.numTriangles = 0;
+        this._numTriangles = 0;
 
         this.visible = cfg.visible;
         this.culled = cfg.culled;
@@ -43297,14 +43410,14 @@ class PerformanceModel extends Component {
         tile.layers.push(instancingLayer);
         tile.instancingLayers[geometryId] = instancingLayer;
         this.numGeometries++;
-        this.numTriangles += cfg.indices ? cfg.indices.length / 3 : 0;
+        this._numTriangles += (cfg.indices ? Math.round(cfg.indices.length / 3) : 0);
     }
 
     /**
      * Creates a mesh within this PerformanceModel.
      *
      * A mesh has a geometry, given either as the ID of a shared geometry created with {@link PerformanceModel#createGeometry}, or as
-     * geometr data arrays to create a unique geometry belong to the mesh.
+     * geometry data arrays to create a unique geometry belong to the mesh.
      *
      * When you provide a geometry ID, then the PerformanceModelMesh will instance the shared geometry for the mesh.
      *
@@ -43406,7 +43519,10 @@ class PerformanceModel extends Component {
             layer = instancingLayer;
             portionId = instancingLayer.createPortion(flags, color, opacity, meshMatrix, worldMatrix, aabb, pickColor);
             math.expandAABB3(this._aabb, aabb);
-            this.numTriangles += instancingLayer.numIndices.length / 3;
+
+            const numTriangles = Math.round(instancingLayer.numIndices / 3);
+            this._numTriangles += numTriangles;
+            mesh.numTriangles = numTriangles;
 
         } else {
 
@@ -43481,7 +43597,10 @@ class PerformanceModel extends Component {
             math.expandAABB3(this._aabb, aabb);
 
             this.numGeometries++;
-            this.numTriangles += indices.length / 3;
+
+            const numTriangles = Math.round(indices.length / 3);
+            this._numTriangles += numTriangles;
+            mesh.numTriangles = numTriangles;
         }
 
         mesh.parent = null; // Will be set within PerformanceModelNode constructor
@@ -43704,6 +43823,15 @@ class PerformanceModel extends Component {
      */
     get aabb() {
         return this._aabb;
+    }
+
+    /**
+     * The approximate number of triangles in this PerformanceModel.
+     *
+     * @type {Number}
+     */
+    get numTriangles() {
+        return this._numTriangles;
     }
 
     /**
@@ -59141,19 +59269,19 @@ class Viewer {
     }
 
     /**
-     * Clears content from this Viewer and all installed {@link Plugin}s.
+     * @private
+     * @deprecated
      */
     clear() {
-        this.sendToPlugins("clear");
+        throw "Viewer#clear() no longer implemented - use '#sendToPlugins(\"clear\") instead";
     }
 
     /**
-     * Resets viewing state.
-     *
-     * Sends a "resetView" message to each installed {@link Plugin}.
+     * @private
+     * @deprecated
      */
     resetView() {
-        this.sendToPlugins("resetView");
+        throw "Viewer#resetView() no longer implemented - use CameraMemento & ObjectsMemento classes instead";
     }
 
     /**
@@ -59213,8 +59341,9 @@ class Viewer {
     /** Destroys this Viewer.
      */
     destroy() {
-        for (let i = 0, len = this._plugins.length; i < len; i++) {
-            const plugin = this._plugins[i];
+        const plugins = this._plugins.slice(); // Array will modify as we delete plugins
+        for (let i = 0, len = plugins.length; i < len; i++) {
+            const plugin = plugins[i];
             plugin.destroy();
         }
         this.scene.destroy();
