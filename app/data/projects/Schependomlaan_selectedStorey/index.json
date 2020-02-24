@@ -26,9 +26,11 @@
     ]
   },
   "viewerState": {
-    "viewCubeEnabled": true,
     "threeDEnabled": true,
-    "tabOpen": "storeys",
-    "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1"
+    "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1",
+    "tabOpen": "objects",
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
   }
 }
