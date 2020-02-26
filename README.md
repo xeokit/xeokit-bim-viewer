@@ -1,6 +1,6 @@
 # xeokit-bim-viewer
 
-xeokit-bim-viewer is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
+**xeokit-bim-viewer** is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
 
 The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is integrated  within OpenProject's BIM construction project management software. 
 
