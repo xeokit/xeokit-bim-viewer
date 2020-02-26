@@ -8,7 +8,7 @@ The viewer is also usable as a stand-alone viewer. Simply fork this repository, 
 
 To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer's data directory. Read the guide below for more info.  
 
-The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit licensing](https://xeokit.github.io/xeokit-licensing/) page for licensing details.
+The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing](https://xeokit.io/index.html#pricing) for licensing details.
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
@@ -16,8 +16,10 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
 * [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
 * [xeokit SDK](http://xeokit.io)
  
-[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys).
-
+ ---
+ 
+[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
+---
 ## Contents
 
 - [Features](#features)
@@ -43,11 +45,11 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
 * Configure custom appearances for IFC types.
 * Supports IFC2x3 and IFC4.
 * 3D and 2D viewing modes.
-* Tree view with three hierarchy modes: containment, IFC type and storeys.
+* Tree view with three hierarchy modes: containment structure, IFC layers and storeys.
 * X-ray, highlight, show, hide and slice objects. 
 * Customize with your own CSS.
 * JavaScript programming API - load models, move camera, show/hide/select/xray objects etc.
-* Implemented in JavaScript (ES6), with no external dependencies (other than xeokit).
+* Implemented in JavaScript (ES6).
 
 ## Demos 
 
@@ -62,7 +64,7 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
   
 ## License
 
-xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
+xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
 
 
 ## Creating a Viewer
@@ -79,9 +81,8 @@ We also configure our ````BimViewer```` with DOM elements for the four parts of 
  * ````navCubeCanvasElement```` - a ````<canvas>```` for the NavCube, and 
  * ````busyModelBackdropElement```` - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. 
  
- Configuring the ````BIMViewer```` with separate places to locate these various elements allows flexible integration into your web page.
- 
- For example:
+ Configuring the ````BIMViewer```` with separate places to locate those elements allows flexible integration into your web page.
+
   
 ````javascript
 const server = new Server({
@@ -115,7 +116,7 @@ See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob
  
 ## Configuring the Viewer
  
-Configure your viewer using [BIMViewer#setConfigs](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs):
+Use [BIMViewer#setConfigs()](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to confiigure your viewer:
  
 ````javascript
 myBIMViewer.setConfigs({
@@ -126,15 +127,26 @@ myBIMViewer.setConfigs({
 });
 ````
  
-The available configurations are:
+The complete set of available configurations is:
  
-| Property     | Type      | Range      | Default Value | Description |
-|:------------:|:---------:|:----------:|:-------------:|:-----------:|
-| "cameraNear" | Number    | ````[0.01-0.1]```` | ````0.05````          | Distance to the near clipping plane |
-| "cameraFar"  | Number    | ````[1-10000]````  | ````3000.0````        | Distance to the far clipping plane |
-| "saoEnabled":| Boolean   |  - | ````false````         | Whether or not to enable Scalable Ambient Obscurance |
+| Property              | Type              | Range                 | Default Value     | Description                       |
+|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
+| "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
+| "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
+| "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
+| "saoEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Scalable Ambient Obscurance (SAO) |
+| "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
+| "saoIntensity"        | Number            | ````[0.0...200.0]```` | ````100.0````     | SAO intensity factor |
+| "saoScale"            | Number            | ````[0.0...1000.0]````| ````500.0````     | SAO scale factor |
+| "saoKernelRadius"     | Number            | ````[0.0...200.0]```` | ````100.0````     | The maximum area that SAO takes into account when checking for possible occlusion |
+| "saoBlur"             | Boolean           |                       | ````true````      | Whether Guassian blur is enabled for SAO |
+| "saoInteractive"      | Boolean           |                       | ````true````      | When ````true````, applies SAO when moving the camera, otherwise applies it once the camera stops moving |
+| "saoInteractiveDelay" | Number            |                       | ````200````       | when "saoInteractive" is ````false````, this is the time delay in milliseconds after which SAO is applied after the camera has stopped moving |
+| "viewFitFOV"          | Number            | ````[10.0...70.0]```` | ````30````        | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view |
+| "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
+| "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
+| "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
 
-TODO
 
 
 ## Customizing Viewer Style
