@@ -17,10 +17,10 @@
 
         "brand": {
           "logo": "./images/logo.jpg",
-          "title": "xeokit-viewer",
+          "title": "xeokit-bim-viewer",
           "description": "BIM viewer built on xeokit",
-          "repository": "https://github.com/xeokit/xeokit-viewer",
-          "site": "https://github.com/xeokit/xeokit-viewer",
+          "repository": "https://github.com/xeokit/xeokit-bim-viewer",
+          "site": "https://github.com/xeokit/xeokit-bim-viewer",
           "author": "http://xeolabs.com",
           "image": "./images/logo.jpg"
         }

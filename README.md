@@ -1,10 +1,10 @@
-# xeokit-viewer
+# xeokit-bim-viewer
 
-xeokit-viewer is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
+xeokit-bim-viewer is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
 
 The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is integrated  within OpenProject's BIM construction project management software. 
 
-The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory, then host it via [GitHub Pages](https://help.github.com/en/github/working-with-github-pages/about-github-pages). You can also just download the repository to your own HTTP server and serve everything from there. 
+The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the [````.app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, then host it via [GitHub Pages](https://help.github.com/en/github/working-with-github-pages/about-github-pages). You can also just download the repository to your own HTTP server and serve everything from there. 
 
 To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer's data directory. Read the guide below for more info.  
 
@@ -12,12 +12,12 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
 
 
 ---
-* [Homepage](https://xeokit.github.io/xeokit-viewer/)
-* [Source Code](https://github.com/xeokit/xeokit-viewer)
-* [API Docs](https://xeokit.github.io/xeokit-viewer/docs)
+* [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
+* [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
+* [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
 * [xeokit SDK](http://xeokit.io)
  
-[![Screenshot](https://github.com/xeokit/xeokit-viewer/raw/master/images/xeokit-viewer.png)](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys).
+[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys).
 
 ## Contents
 
@@ -54,23 +54,23 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit 
 
 | Live Demo | Model Source |
 |---|---|
-| [OTC Conference Center](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
-| [Holter Tower](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
-| [West Riverside Hospital](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
-| [Schependomlaan](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
-| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
-| [Duplex](https://xeokit.github.io/xeokit-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) ||
+| [OTC Conference Center](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [Holter Tower](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
+| [West Riverside Hospital](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
+| [Schependomlaan](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) ||
   
 ## License
 
-xeokit-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
+xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [see here](https://xeokit.github.io/xeokit-licensing/) for commercial licensing options.
 
 
 ## Creating a Viewer
  
-In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
+In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
 
-We'll configure the ````Server```` to load the data from the [````.app/data````](https://github.com/xeokit/xeokit-viewer/tree/master/app/data) directory.
+We'll configure the ````Server```` to load the data from the [````.app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
  
 We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: 
 
@@ -99,7 +99,7 @@ const bimViewer = new BIMViewer(server, {
 });
 ````
  
-In our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the elements look like this:
+In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the elements look like this:
  
 ````html
 <div id="myViewer" class="xeokit-busy-modal-backdrop">
@@ -112,11 +112,11 @@ In our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/mas
  <canvas id="myNavCubeCanvas"></canvas>
 ````
  
-See [````app/css/style.css````](https://github.com/xeokit/xeokit-viewer/blob/master/app/css/style.css) for how we've styled these elements. See [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to its internally-created HTML.  
+See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css) for how we've styled these elements. See [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to its internally-created HTML.  
  
 ## Configuring the Viewer
  
-Configure your viewer using [BIMViewer#setConfigs](https://xeokit.github.io/xeokit-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs):
+Configure your viewer using [BIMViewer#setConfigs](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs):
  
 ````javascript
 myBIMViewer.setConfigs({
@@ -140,13 +140,13 @@ TODO
 
 ## Customizing Viewer Style
 
-The [app/index.html](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+The [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
 
 ### Modal Busy Dialog
 
 As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
 
-Within our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
+Within our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
  
 ````html
 <div id="myViewer" class="xeokit-busy-modal-backdrop">
@@ -159,7 +159,7 @@ Within our [````app/index.html````](https://github.com/xeokit/xeokit-viewer/blob
 <canvas id="myNavCubeCanvas"></canvas>
 ````
 
-As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css), the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:
+As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css), the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:
 
 ````css
 .xeokit-busy-modal-backdrop {
@@ -167,7 +167,7 @@ As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewe
 }
 ````
 
-If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog" within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-viewer/blob/master/css/BIMViewer.css).
+If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog" within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css).
 
 ### Tooltips
 
@@ -179,7 +179,7 @@ For example, the *Toggle 2D/3D* button's element looks like this:
 <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
 ```` 
 
-In the [app/index.html](https://github.com/xeokit/xeokit-viewer/blob/master/app/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
+In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
 
 ### Customizing Appearances of IFC Types
 
@@ -247,7 +247,7 @@ Let's now query some info on a project.
 
 ### Model Database
 
-The viewer loads models from the file system by default. These are contained within the [./data](https://github.com/xeokit/xeokit-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
+The viewer loads models from the file system by default. These are contained within the [./data](https://github.com/xeokit/xeokit-bim-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
 
 Each model consists of an ````.XKT```` binary geometry file and a JSON metadata file which classifies its IFC elements. 
 
