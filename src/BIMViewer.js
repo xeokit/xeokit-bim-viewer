@@ -522,8 +522,13 @@ class BIMViewer extends Controller {
             "objectColorSource": "model"
         });
     }
+
     /**
      * Sets a batch of viewer configurations.
+     *
+     * Note that this method is not to be confused with {@link BIMViewer#setViewerState}, which batch-updates various states of the viewer's UI and 3D view.
+     *
+     * See [Configuring the Viewer](https://xeokit.github.io/xeokit-bim-viewer/docs/#configuring-the-viewer) in the main documentation page for the list of available configurations.
      *
      * @param {*} viewerConfigs Map of key-value configuration pairs.
      */
@@ -539,7 +544,7 @@ class BIMViewer extends Controller {
     /**
      * Sets a viewer configuration.
      *
-     * See class comments for the list of available viewer configurations.
+     * See [Configuring the Viewer](https://xeokit.github.io/xeokit-bim-viewer/docs/#configuring-the-viewer) in the main documentation page for the list of available configurations.
      *
      * @param {String} name Configuration name.
      * @param {*} value Configuration value.
@@ -647,7 +652,7 @@ class BIMViewer extends Controller {
 
     /**
      * Gets the value of a viewer configuration.
-     * 
+     *
      * These are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.
      *
      * @param {String} name Configuration name.
@@ -657,39 +662,15 @@ class BIMViewer extends Controller {
         return this._configs[name];
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Content querying methods
+    //------------------------------------------------------------------------------------------------------------------
+
     /**
      * Gets information on all available projects.
-     * 
-     * Internally, internally, the viewer obtains this information via via {@link Server#getProjects}. 
      *
-     * ### Example
+     * See [Getting Info on Available Projects](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-available-projects) for usage.
      *
-     * ````javascript
-     * myViewer.getProjectsInfo((projectsInfo) => {
-     *      console.log(JSON.stringify(projectsInfo, null, "\t"));
-     * });
-     * ````
-     *
-     * Returns JSON similar to:
-     *
-     * ````json
-     * {
-     *      "projects": [
-     *          {
-     *              "id": "Duplex",
-     *              "name": "Duplex"
-     *          },
-     *          {
-     *              "id": "Schependomlaan",
-     *              "name": "Schependomlaan"
-     *          },
-     *          {
-     *              "id": "WestRiversideHospital",
-     *              "name": "West Riverside Hospital"
-     *          }
-     *	    ]
-     * }
-     * ````
      * @param {Function} done Callback invoked on success, into which the projects information JSON is passed.
      * @param {Function} error Callback invoked on failure, into which the error message string is passed.
      */
@@ -698,7 +679,7 @@ class BIMViewer extends Controller {
             this.error("getProjectsInfo() - Argument expected: 'done'");
             return;
         }
-        this.server.getProjects( done, (errorMsg) => {
+        this.server.getProjects(done, (errorMsg) => {
             this.error("getProjectsInfo() - " + errorMsg);
             if (error) {
                 error(errorMsg);
@@ -709,26 +690,7 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given project.
      *
-     * Internally, internally, the viewer obtains this information via via {@link Server#getProject}.
-     * 
-     * Use {@link BIMViewer#getProjects} to get information on all available projects.
-     *
-     * ### Example
-     *
-     * ````javascript
-     * myViewer.getProjectInfo(("Duplex", (projectInfo) => {
-     *      console.log(JSON.stringify(projectInfo, null, "\t"));
-     * });
-     * ````
-     *
-     * Returns JSON similar to:
-     *
-     * ````json
-     * {
-     *      "id": "Duplex",
-     *      "name": "Duplex"
-     * }
-     * ````
+     * See [Getting Info on a Project](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-a-project) for usage.
      *
      * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
      * @param {Function} done Callback invoked on success, into which the project information JSON is passed.
@@ -755,28 +717,7 @@ class BIMViewer extends Controller {
     /**
      * Gets information on the given object, belonging to the given model, within the given project.
      *
-     * Internally, internally, the viewer obtains this information via via {@link Server#getObjectInfo}.
-     * 
-     * ### Example
-     *
-     * ````javascript
-     * myViewer.getObjectProperties(("Duplex", "design", "0wkEuT1wr1kOyafLY4vy3H", (objectInfo) => {
-     *      console.log(JSON.stringify(objectInfo, null, "\t"));
-     * });
-     * ````
-     *
-     * Returns JSON similar to:
-     *
-     * ````json
-     * {
-     *      "projectId": "
-     *      "name": "M_Tall Cabinet-Single Door(2):800 mm:157950",
-     *      "type": "IfcFurniture",
-     *      "uuid": "0wkEuT1wr1kOyafLY4vy3H",
-     *      "parent": "0BTBFw6f90Nfh9rP1dlXrb",
-     *      "id": "0wkEuT1wr1kOyafLY4vy3H"
-     * }
-     * ````
+     * See [Getting Info on an Object](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-an-object) for usage.
      *
      * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.
      * @param {String} modelId ID of a model within the project. Must be the ID of one of the models in the information obtained by {@link BIMViewer#getProjectInfo}.
@@ -809,6 +750,10 @@ class BIMViewer extends Controller {
                 }
             });
     }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Content loading methods
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * Loads a project into the viewer.
@@ -1012,6 +957,53 @@ class BIMViewer extends Controller {
         return this._objectColorSource || "model";
     }
 
+    /**
+     * Updates viewer UI state according to the properties in the given object.
+     *
+     * Note that, since some updates could be animated (e.g. flying the camera to fit objects to view) this
+     * method optionally takes a callback, which it invokes after updating the UI.
+     *
+     * Also, this method is not to be confused with {@link BIMViewer#setConfigs}, which is used to batch-update various configurations and user preferences on the viewer.
+     *
+     * See [Setting Viewer State](https://xeokit.github.io/xeokit-bim-viewer/docs/#setting-viewer-state) in the main documentation page for the list of states that may be batchh-updated using this method.
+     *
+     * @param {Object} viewerState Specifies the viewer UI state updates.
+     * @param {Function} done Callback invoked on successful update of the viewer states.
+     */
+    setViewerState(viewerState, done = () => {
+    }) {
+        if (viewerState.tabOpen) {
+            this.openTab(viewerState.tabOpen);
+        }
+        if (viewerState.expandObjectsTree) {
+            this._objectsExplorer.expandTreeViewToDepth(viewerState.expandObjectsTree);
+        }
+        if (viewerState.expandClassesTree) {
+            this._classesExplorer.expandTreeViewToDepth(viewerState.expandClassesTree);
+        }
+        if (viewerState.expandStoreysTree) {
+            this._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
+        }
+        this._parseSelectedStorey(viewerState, () => {
+            this._parseThreeDMode(viewerState, () => {
+                done();
+            });
+        });
+    }
+
+    _parseSelectedStorey(viewerState, done) {
+        if (viewerState.selectedStorey) {
+            this.selectStorey(viewerState.selectedStorey);
+            done();
+        } else {
+            done();
+        }
+    }
+
+    _parseThreeDMode(viewerState, done) {
+        const activateThreeDMode = (viewerState.threeDEnabled !== false);
+        this.set3DEnabled(activateThreeDMode, done);
+    }
 
     /**
      * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.
