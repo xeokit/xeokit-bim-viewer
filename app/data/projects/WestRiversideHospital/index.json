@@ -5,51 +5,40 @@
         {
             "id": "architectural",
             "name": "Hospital Architecture",
-            "edges": true,
             "saoEnabled": true
         },
         {
             "id": "structure",
-            "name": "Hospital Structure",
-            "default": true
+            "name": "Hospital Structure"
         },
         {
             "id": "electrical",
             "name": "Hospital Electrical",
-            "edges": true,
             "saoEnabled": false
         },
         {
             "id": "sprinklers",
             "name": "Hospital Sprinklers",
-            "edges": true,
             "saoEnabled": false
         },
         {
             "id": "plumbing",
             "name": "Hospital Plumbing",
-            "edges": true,
             "saoEnabled": false
         },
         {
             "id": "fireAlarms",
             "name": "Hospital Fire Alarms",
-            "edges": true,
             "saoEnabled": false
         },
         {
             "id": "mechanical",
             "name": "Hospital Mechanical",
-            "edges": true,
             "saoEnabled": false
         }
     ],
     "viewerConfigs": {
-        "backgroundColor": [
-            0.9,
-            0.9,
-            1.0
-        ],
+        "backgroundColor": [0.9, 0.9, 1.0],
         "cameraNear": 0.05,
         "cameraFar": 3000.0,
         "saoEnabled": true,

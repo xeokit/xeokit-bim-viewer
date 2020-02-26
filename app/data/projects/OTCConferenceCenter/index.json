@@ -4,8 +4,7 @@
   "models": [
     {
       "id": "design",
-      "name": "OTC Conference Center Design",
-      "default": true
+      "name": "OTC Conference Center Design"
     }
   ],
   "viewerConfigs": {
