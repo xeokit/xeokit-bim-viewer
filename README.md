@@ -10,7 +10,6 @@ To serve your own models with this viewer, all you need to do is convert their I
 
 The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [xeokit licensing](https://xeokit.github.io/xeokit-licensing/) page for licensing details.
 
-
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
 * [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
