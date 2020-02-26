@@ -25,15 +25,20 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing
 - [Features](#features)
 - [Demos](#demos)
 - [License](#license)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Programming API](#programming-api)
-  * [Model Database](#model-database)
-    + [Adding your own models](#adding-your-own-models)
-    + [Loading models from a custom source](#loading-models-from-a-custom-source)
-  * [Customizing CSS](#customizing-css)
+- [Creating a Viewer](#creating-a-viewer)
+- [Configuring the Viewer](#configuring-the-viewer)
+- [Customizing Viewer Style](#customizing-viewer-style)
+  * [Modal Busy Dialog](#modal-busy-dialog)
   * [Tooltips](#tooltips)
   * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
+- [Programming API](#programming-api)
+  * [Querying Info on Projects](#querying-info-on-projects)
+  * [Querying Info on a Project](#querying-info-on-a-project)
+  * [Loading a Project](#loading-a-project)
+  * [Loading a Model](#loading-a-model)
+  * [Model Database](#model-database)
+- [Adding Your Own Models](#adding-your-own-models)
+    + [Loading models from a custom source](#loading-models-from-a-custom-source)
 - [Building](#building)
 
 ## Features
@@ -65,9 +70,14 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing
 ## License
 
 xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
-
-
-## Creating a Viewer
+  
+## Programming API
+ 
+[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) provides a complete set of methods to programmatically control it with JavaScript.
+ 
+Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
+ 
+### Creating a Viewer
  
 In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
 
@@ -81,8 +91,7 @@ We also configure our ````BimViewer```` with DOM elements for the four parts of 
  * ````navCubeCanvasElement```` - a ````<canvas>```` for the NavCube, and 
  * ````busyModelBackdropElement```` - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. 
  
- Configuring the ````BIMViewer```` with separate places to locate those elements allows flexible integration into your web page.
-
+Configuring the ````BIMViewer```` with separate places to locate those elements allows flexible integration into your web page.
   
 ````javascript
 const server = new Server({
@@ -113,9 +122,9 @@ In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob
  
 See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css) for how we've styled these elements. See [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to its internally-created HTML.  
  
-## Configuring the Viewer
+### Configuring the Viewer
  
-Use [BIMViewer#setConfigs()](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to confiigure your viewer:
+Use [BIMViewer#setConfigs()](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to configure your viewer:
  
 ````javascript
 myBIMViewer.setConfigs({
@@ -147,84 +156,9 @@ The complete set of available configurations is:
 | "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
 
 
+### Querying Projects, Models and Objects
 
-## Customizing Viewer Style
-
-The [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
-
-### Modal Busy Dialog
-
-As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
-
-Within our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
- 
-````html
-<div id="myBIMViewer" class="xeokit-busy-modal-backdrop">
-    <div id="myExplorer" class="active"></div>
-    <div id="myContent">
-        <div id="myToolbar"></div>
-        <canvas id="myCanvas"></canvas>
-    </div>
-</div>
-<canvas id="myNavCubeCanvas"></canvas>
-````
-
-As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css), the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:
-
-````css
-.xeokit-busy-modal-backdrop {
-    position:relative;
-}
-````
-
-If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog" within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css).
-
-### Tooltips
-
-Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with ````data-tippy-content```` attributes that provide strings to show in their tooltips. 
-
-For example, the *Toggle 2D/3D* button's element looks like this:
-
-````html
-<button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
-```` 
-
-In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
-
-### Customizing Appearances of IFC Types
-
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
-
-You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
-
-For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
-
-````javascript
-const IFCObjectDefaults = {
-    IfcSpace: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.2
-    },
-    IfcWindow: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.5
-    }
-};
-
-export {IFCObjectDefaults};
-```` 
- 
-Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
-  
-## Programming API
- 
-[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) provides a complete set of methods to programmatically control it with JavaScript.
- 
-Using these methods, we can query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
- 
-### Querying Info on Projects
+#### Getting Info on Available Projects
 
 Let's start off by querying what projects are available. Since we're using the default [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html), this will be the JSON in [````.app/data/projects/index.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json). We'll just log that information to the console.
  
@@ -233,6 +167,8 @@ myBIMViewer.getProjectsInfo((projectsInfo) => {
      console.log(JSON.stringify(projectsInfo, null, "\t"));
 });
 ````
+ 
+Internally, the viewer will call [````Server#getProjects()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects) to get that information.
  
 The projects JSON will be similar to:
  
@@ -255,16 +191,17 @@ The projects JSON will be similar to:
 }
 ````
 
-### Querying Info on a Project
+#### Getting Info on a Project
 
-Now let's query some info on a project.
-
+Now let's query some info on one of the projects.
 
 ````javascript
 myBIMViewer.getProjectInfo("WestRiversideHospital", (projectInfo) => {
      console.log(JSON.stringify(projectInfo, null, "\t"));
 });
 ````
+
+Internally, the viewer will call [````Server#getProject()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject) to get that information.
 
 The project JSON will be similar to:
  
@@ -275,19 +212,15 @@ The project JSON will be similar to:
     "models": [
         {
             "id": "architectural",
-            "name": "Hospital Architecture",
-            "edges": true,
-            "saoEnabled": true
+            "name": "Hospital Architecture"
         },
         {
             "id": "structure",
-            "name": "Hospital Structure",
-            "default": true
+            "name": "Hospital Structure"
         },
         {
             "id": "electrical",
             "name": "Hospital Electrical",
-            "edges": true,
             "saoEnabled": false
         }
     ],
@@ -316,11 +249,53 @@ In this project info, we have:
 * **````id````** - ID of the project,
 * **````name````** - human-readable name of the project, 
 * **````models````** - info on each model in this project,
-* **````viewerConfigs````** - viewer configurations to apply when loading the project (see [Configuring the Viewer](#configuring-the-viewer)),
+* **````viewerConfigs````** - viewer configurations to apply when loading the project,
 * **````viewerContent````** - which models to load immediately when loading the project, and
 * **````viewerState````** - how the viewer should set up its UI after loading the project.
 
-### Loading a Project
+When we load the project (in a later section), the viewer is going to pass the ````viewerConfigs```` to [BIMViewer#setConfigs()](), which we described in [Configuring the Viewer](#configuring-the-viewer). 
+
+In the ````viewerConfigs```` we're enabling the viewer's Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer tp render, so we've disabled it for the "electrical" model, which contains many long, thin wire objects that  
+
+
+#### Getting Info on an Object
+
+Let's attempt to get some information on an object within one of our project's models.
+
+We say "attempt" because it's up to the [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) to try to find that information for us. 
+
+Internally, the viewer will call [````Server#getObjectInfo()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo), which will attempt to load that object information from a file. If you were to substitute ````Server```` with your own implementation, your implementation could get that information from a data store, such as a relational database, populated with metadata for all the objects in your project's models, keyed to their IDs. 
+ 
+We'll go ahead and assume that our ````Server```` has that object information. 
+
+````javascript
+myViewer.getObjectInfo("WestRiversideHospital", "architectural", "2HaS6zNOX8xOGjmaNi_r6b", 
+    (objectInfo) => {
+        console.log(JSON.stringify(objectInfo, null, "\t"));
+    },
+    (errMsg) => {
+         console.log("Oops! There was an error getting information for this object: " + errMsg);
+    });
+````
+
+If the object does not exist in the specified project and model, the method will invoke its error callback.
+
+If the object, does exist, then the result we'll get back will look similar to below. If ````````
+
+````json
+{
+    "id": "2HaS6zNOX8xOGjmaNi_r6b",
+    "projectId": "WestRiversideHospital",
+    "modelId": "architectural",
+    "name": "Basic Wall:Exterior - Metal Panel on Mtl. Stud:187578",
+    "type": "IfcWall",
+    "parent": "2hExBg8jj4NRG6zzD0RZML"
+}
+```` 
+      
+### Loading Projects and Models
+ 
+#### Loading a Project
 
 Let's load the project we just queried info on. 
 
@@ -352,7 +327,7 @@ The result would be:
 ["architectural", "structure"]
 ````
 
-### Loading a Model 
+#### Loading a Model 
 
 With our project loaded, let's load another of its models.
 
@@ -388,6 +363,33 @@ If we no longer need that model, we can unload it again:
 myBIMViewer.unloadModel("electrical");
 ````
 
+### Controlling Viewer State
+
+[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) has various methods with which we can programmatically control the state of its UI. 
+
+Let's take a quick look at some of these methods to get an idea of what sort of UI state we can control with them. This won't be an exhaustive guide - see the ````BIMViewer```` class documentation for the complete list.
+
+Having loaded a couple of models in the previous section, let's open the viewer's Objects tab, which contains a tree view of the containment hierarchy of the objects within those models:
+
+````javascript
+myBIMViewer.openTab("objects");
+````
+
+To confirm which tab is currently open: 
+
+````javascript
+const tabId = myBIMViewer.getOpenTab();
+
+console.log("Currently open tab: '" + tabId + "'"); // "objects"
+````
+
+Now let's arrange the camera to fit an object in view:
+
+````javascript
+myBIMViewer.flyToObject("1fOVjSd7T40PyRtVEklS6X", ()=>{ /* Done */ });
+````
+
+TODO: Complete this section once API methods are finalized
 
 ### Model Database
 
@@ -514,7 +516,79 @@ To load models from a different source than the file system, configure
 ````javascript
 
 
+
 ````
+
+
+## Customizing Viewer Style
+
+The [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+
+### Modal Busy Dialog
+
+As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
+
+Within our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
+ 
+````html
+<div id="myBIMViewer" class="xeokit-busy-modal-backdrop">
+    <div id="myExplorer" class="active"></div>
+    <div id="myContent">
+        <div id="myToolbar"></div>
+        <canvas id="myCanvas"></canvas>
+    </div>
+</div>
+<canvas id="myNavCubeCanvas"></canvas>
+````
+
+As defined in [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css), the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:
+
+````css
+.xeokit-busy-modal-backdrop {
+    position:relative;
+}
+````
+
+If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog" within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css).
+
+### Tooltips
+
+Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with ````data-tippy-content```` attributes that provide strings to show in their tooltips. 
+
+For example, the *Toggle 2D/3D* button's element looks like this:
+
+````html
+<button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
+```` 
+
+In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those elements.
+
+### Customizing Appearances of IFC Types
+
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
+
+You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
+
+For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
+
+````javascript
+const IFCObjectDefaults = {
+    IfcSpace: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.5
+    }
+};
+
+export {IFCObjectDefaults};
+```` 
+ 
+Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
 
 ## Building 
 
