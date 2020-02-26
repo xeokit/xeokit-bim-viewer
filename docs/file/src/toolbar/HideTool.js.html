@@ -115,11 +115,15 @@ class HideTool extends Controller {
             }
         });
         const lastCoords = math.vec2();
-        this._onMousedown = this.viewer.scene.input.on(&quot;mousedown&quot;, (coords) =&gt; {
+        const input = this.viewer.scene.input;
+        this._onMousedown = input.on(&quot;mousedown&quot;, (coords) =&gt; {
+            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
+                return;
+            }
             lastCoords[0] = coords[0];
             lastCoords[1] = coords[1];
         });
-        this._onMouseup = this.viewer.scene.input.on(&quot;mouseup&quot;, (coords) =&gt; {
+        this._onMouseup = input.on(&quot;mouseup&quot;, (coords) =&gt; {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }

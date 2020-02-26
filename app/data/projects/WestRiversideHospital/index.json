@@ -1,71 +1,75 @@
 {
-  "id": "WestRiversideHospital",
-  "name": "West Riverside Hospital",
-  "models": [
-    {
-      "id": "architectural",
-      "name": "Hospital Architecture",
-      "edges": true,
-      "saoEnabled": true
+    "id": "WestRiversideHospital",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "architectural",
+            "name": "Hospital Architecture",
+            "edges": true,
+            "saoEnabled": true
+        },
+        {
+            "id": "structure",
+            "name": "Hospital Structure",
+            "default": true
+        },
+        {
+            "id": "electrical",
+            "name": "Hospital Electrical",
+            "edges": true,
+            "saoEnabled": false
+        },
+        {
+            "id": "sprinklers",
+            "name": "Hospital Sprinklers",
+            "edges": true,
+            "saoEnabled": false
+        },
+        {
+            "id": "plumbing",
+            "name": "Hospital Plumbing",
+            "edges": true,
+            "saoEnabled": false
+        },
+        {
+            "id": "fireAlarms",
+            "name": "Hospital Fire Alarms",
+            "edges": true,
+            "saoEnabled": false
+        },
+        {
+            "id": "mechanical",
+            "name": "Hospital Mechanical",
+            "edges": true,
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.9,
+            0.9,
+            1.0
+        ],
+        "cameraNear": 0.05,
+        "cameraFar": 3000.0,
+        "saoEnabled": true,
+        "saoBias": 0.5,
+        "saoIntensity": 0.7,
+        "saoScale": 1200.0,
+        "saoKernelRadius": 100,
+        "saoBlur": true,
+        "saoInteractive": false,
+        "saoInteractiveDelay": 200
     },
-    {
-      "id": "structure",
-      "name": "Hospital Structure",
-      "default": true
+    "viewerContent": {
+        "modelsLoaded": [
+            "structure",
+            "architectural"
+        ]
     },
-    {
-      "id": "electrical",
-      "name": "Hospital Electrical",
-      "edges": true,
-      "saoEnabled": false
-    },
-    {
-      "id": "sprinklers",
-      "name": "Hospital Sprinklers",
-      "edges": true,
-      "saoEnabled": false
-    },
-    {
-      "id": "plumbing",
-      "name": "Hospital Plumbing",
-      "edges": true,
-      "saoEnabled": false
-    },
-    {
-      "id": "fireAlarms",
-      "name": "Hospital Fire Alarms",
-      "edges": true,
-      "saoEnabled": false
-    },
-    {
-      "id": "mechanical",
-      "name": "Hospital Mechanical",
-      "edges": true,
-      "saoEnabled": false
+    "viewerState": {
+        "viewCubeEnabled": true,
+        "threeDEnabled": true,
+        "tabOpen": "models"
     }
-  ],
-  "viewerConfigs": {
-    "backgroundColor": [0.9, 0.9, 1.0],
-    "cameraNear": 0.05,
-    "cameraFar": 3000.0,
-    "saoEnabled": true,
-    "saoBias": 0.5,
-    "saoIntensity": 0.7,
-    "saoScale": 1200.0,
-    "saoKernelRadius": 100,
-    "saoBlur": true,
-    "saoInteractive": false,
-    "saoInteractiveDelay": 200
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "structure",
-      "architectural"
-    ]
-  },
-  "viewerState": {
-    "viewCubeEnabled": true,
-    "threeDEnabled": true,
-    "tabOpen": "models"
-  }
 }

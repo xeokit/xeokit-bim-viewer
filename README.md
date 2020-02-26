@@ -89,8 +89,7 @@ const server = new Server({
      dataDir: "./data"
  });
 
-const bimViewer = new BIMViewer(server, {
-    
+const myBIMViewer = new BIMViewer(server, {
      canvasElement: document.getElementById("myCanvas"), // WebGL canvas
      explorerElement: document.getElementById("myExplorer"), // Explorer panel
      toolbarElement: document.getElementById("myToolbar"), // Toolbar
@@ -160,7 +159,7 @@ As mentioned above, the viewer displays a modal dialog box whenever we load a mo
 Within our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
  
 ````html
-<div id="myViewer" class="xeokit-busy-modal-backdrop">
+<div id="myBIMViewer" class="xeokit-busy-modal-backdrop">
     <div id="myExplorer" class="active"></div>
     <div id="myContent">
         <div id="myToolbar"></div>
@@ -221,14 +220,16 @@ Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements
   
 ## Programming API
  
-````BIMViewer```` provides a complete set of methods to programmatically control it.
+[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) provides a complete set of methods to programmatically control it with JavaScript.
  
-Using these methods, we can query what models are available, load models, interact with the 3D view, control the various tools, and drive the UI itself.
+Using these methods, we can query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
  
-Let's start off by querying what projects are available. Since we're using the default {@link Server}, this will be the JSON in ````./data/projects/index.json````. We'll just log that information to the console.
+### Querying Info on Projects
+
+Let's start off by querying what projects are available. Since we're using the default [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html), this will be the JSON in [````.app/data/projects/index.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json). We'll just log that information to the console.
  
 ````javascript
-myViewer.getProjectsInfo((projectsInfo) => {
+myBIMViewer.getProjectsInfo((projectsInfo) => {
      console.log(JSON.stringify(projectsInfo, null, "\t"));
 });
 ````
@@ -250,11 +251,143 @@ The projects JSON will be similar to:
              "id": "WestRiversideHospital",
              "name": "West Riverside Hospital"
          }
- 	    ]
+ 	 ]
 }
 ````
 
-Let's now query some info on a project.
+### Querying Info on a Project
+
+Now let's query some info on a project.
+
+
+````javascript
+myBIMViewer.getProjectInfo("WestRiversideHospital", (projectInfo) => {
+     console.log(JSON.stringify(projectInfo, null, "\t"));
+});
+````
+
+The project JSON will be similar to:
+ 
+````json
+{
+    "id": "WestRiversideHospital",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "architectural",
+            "name": "Hospital Architecture",
+            "edges": true,
+            "saoEnabled": true
+        },
+        {
+            "id": "structure",
+            "name": "Hospital Structure",
+            "default": true
+        },
+        {
+            "id": "electrical",
+            "name": "Hospital Electrical",
+            "edges": true,
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [0.9, 0.9, 1.0],
+        "saoEnabled": true,
+        "saoIntensity": 0.7,
+        "saoScale": 1200.0,
+        "saoInteractive": false,
+        "saoInteractiveDelay": 200
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "structure",
+            "architectural"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "models"
+    }
+}
+````
+
+In this project info, we have:
+
+* **````id````** - ID of the project,
+* **````name````** - human-readable name of the project, 
+* **````models````** - info on each model in this project,
+* **````viewerConfigs````** - viewer configurations to apply when loading the project (see [Configuring the Viewer](#configuring-the-viewer)),
+* **````viewerContent````** - which models to load immediately when loading the project, and
+* **````viewerState````** - how the viewer should set up its UI after loading the project.
+
+### Loading a Project
+
+Let's load the project we just queried info on. 
+
+````javascript
+myBIMViewer.loadProject("WestRiversideHospital", 
+    () => {
+         console.log("Nice! The project loaded successfully.");
+    },
+    (errMsg) => {
+         console.log("Oops! There was an error loading this project: " + errMsg);
+    });
+````
+
+If that succeeds, the viewer will now have two models loaded: ````"architectural"```` and ````"structure"````.
+
+The viewer will also open its "Models" tab open, thanks to the ````tabOpen```` property in the ````viewerState```` section of the project info (see previous section).
+
+We can confirm that the two models are loaded by querying the IDs of the models that are currently loaded in the viewer:
+
+````javascript
+const modelIds = myBIMViewer.getModelLoadedIds();
+
+console.log(modelIds);
+````
+
+The result would be:
+
+````json
+["architectural", "structure"]
+````
+
+### Loading a Model 
+
+With our project loaded, let's load another of its models.
+
+We could start by getting the IDs of all the models in our project, just to make sure it's there:
+
+````javascript
+const modelIds = myBIMViewer.getModelIds();
+
+console.log(modelIds);
+````
+
+The result would be:
+
+````json
+["architectural", "structure", "electrical"]
+````
+
+To load the model:
+
+````javascript
+myBIMViewer.loadModel("electrical", 
+    () => {
+         console.log("Nice! The model loaded successfully.");
+    },
+    (errMsg) => {
+         console.log("Oops! There was an error loading this model: " + errMsg);
+    });
+````
+
+If we no longer need that model, we can unload it again:
+
+````javascript
+myBIMViewer.unloadModel("electrical");
+````
+
 
 ### Model Database
 
@@ -383,9 +516,9 @@ To load models from a different source than the file system, configure
 
 ````
 
-## Building the Viewer 
+## Building 
 
-Initialize:
+To install the npm package:
 
 ````
 sudo npm install
@@ -397,16 +530,8 @@ Building ES6 module in ````/dist/main.js````:
 npm run build
 ````
 
-Then, within ````index.hml````, we use the module like so:
+Building API documentation in ````/docs/````:
 
-````javascript
-import {Server, ViewerUI} from "./dist/main.js";
-
-const server = new Server({
-    dataDir: "./data/"
-});
-
-const viewerUI = new ViewerUI(server, {
-    //...
-});
+````
+npm run docs
 ````

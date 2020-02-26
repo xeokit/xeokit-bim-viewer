@@ -1,38 +1,38 @@
 {
-  "coverage": "34.75%",
-  "expectCount": 282,
-  "actualCount": 98,
+  "coverage": "34.98%",
+  "expectCount": 283,
+  "actualCount": 99,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 80,
-      "actualCount": 54,
+      "expectCount": 81,
+      "actualCount": 55,
       "undocumentLines": [
         26,
         68,
         98,
-        194,
-        210,
-        214,
-        216,
-        222,
-        229,
-        236,
-        243,
-        248,
-        253,
-        258,
-        263,
-        268,
-        273,
-        279,
-        284,
-        361,
+        195,
+        211,
+        215,
+        221,
+        228,
+        235,
+        242,
+        247,
+        252,
+        257,
+        262,
+        267,
+        272,
+        278,
+        283,
+        288,
         364,
-        467,
-        469,
+        367,
         470,
-        506,
-        997
+        472,
+        473,
+        509,
+        1001
       ]
     },
     "src/BusyModal.js": {
@@ -40,11 +40,11 @@
       "actualCount": 1,
       "undocumentLines": [
         6,
-        18,
-        21,
+        16,
         22,
-        27,
-        32
+        26,
+        32,
+        37
       ]
     },
     "src/Controller.js": {
@@ -244,8 +244,8 @@
         56,
         58,
         69,
-        79,
-        83
+        80,
+        87
       ]
     },
     "src/toolbar/NavCubeMode.js": {
@@ -273,8 +273,8 @@
         54,
         58,
         69,
-        79,
-        86
+        80,
+        90
       ]
     },
     "src/toolbar/ResetAction.js": {
@@ -312,8 +312,8 @@
         55,
         59,
         70,
-        80,
-        87
+        81,
+        91
       ]
     },
     "src/toolbar/ThreeDMode.js": {

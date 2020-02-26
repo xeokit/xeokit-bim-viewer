@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/BIMViewer.js | xeokit-viewer</title>
+  <title data-ice="title">src/BIMViewer.js | xeokit-bim-viewer</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-viewer"><meta property="og:site_name" content="xeokit-viewer"><meta property="og:title" content="xeokit-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-bim-viewer"><meta property="og:site_name" content="xeokit-bim-viewer"><meta property="og:title" content="xeokit-bim-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-bim-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-viewer"><img width="20px" src="./image/github.png"></a></header>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-bim-viewer"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -210,6 +210,7 @@ class BIMViewer extends Controller {
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
         const queryInfoPanelElement = cfg.queryInfoPanelElement;
+        const busyModelBackdropElement = cfg.busyModelBackdropElement;
 
         explorerElement.oncontextmenu = (e) =&gt; {
             e.preventDefault();
@@ -249,8 +250,6 @@ class BIMViewer extends Controller {
         this._explorerElement = explorerElement;
 
         initTabs(explorerElement);
-
-        this._busyModal = new BusyModal(this); // TODO: Support external spinner dialog
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(&quot;.xeokit-modelsTab&quot;),
@@ -323,6 +322,10 @@ class BIMViewer extends Controller {
         this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
             active: true
+        });
+
+        this._busyModal = new BusyModal(this, {
+            busyModalBackdropElement: busyModelBackdropElement
         });
 
         this._threeDMode.setActive(true);
@@ -413,7 +416,7 @@ class BIMViewer extends Controller {
 
         scene.highlightMaterial.edges = true;
         scene.highlightMaterial.edgeColor = [.5, .5, 0];
-        scene.highlightMaterial.edgeAlpha = 1.0;
+        scene.highlightMaterial.edgeAlpha = 0.9;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
@@ -554,7 +557,8 @@ class BIMViewer extends Controller {
             &quot;xrayContext&quot;: true,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
             &quot;saoInteractive&quot;: true,
-            &quot;saoInteractiveDelay&quot;: 200
+            &quot;saoInteractiveDelay&quot;: 200,
+            &quot;objectColorSource&quot;: &quot;model&quot;
         });
     }
     /**
@@ -1099,10 +1103,20 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not the given classes are visible.
+     *
+     * @param {String[]} classes Class types.
+     * @param {Boolean} visible Whether or not to show the classes.
+     */
+    setClassesVisible(classes, visible) {
+
+    }
+
+    /**
      * Sets whether or not the given models are visible.
      *
      * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} visible Whether or not to select the models.
+     * @param {Boolean} visible Whether or not to show the models.
      */
     setModelsVisible(modelIds, visible) {
         if (!modelIds) {

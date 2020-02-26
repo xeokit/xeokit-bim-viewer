@@ -1,20 +1,20 @@
 window.esdocSearchIndex = [
   [
-    "@xeokit/xeokit-viewer/src/bimviewer.js~bimviewer",
+    "@xeokit/xeokit-bim-viewer/src/bimviewer.js~bimviewer",
     "class/src/BIMViewer.js~BIMViewer.html",
-    "<span>BIMViewer</span> <span class=\"search-result-import-path\">@xeokit/xeokit-viewer/src/BIMViewer.js</span>",
+    "<span>BIMViewer</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/BIMViewer.js</span>",
     "class"
   ],
   [
-    "@xeokit/xeokit-viewer/src/server/server.js~server",
+    "@xeokit/xeokit-bim-viewer/src/server/server.js~server",
     "class/src/server/Server.js~Server.html",
-    "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-viewer/src/server/Server.js</span>",
+    "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/server/Server.js</span>",
     "class"
   ],
   [
-    "@xeokit/xeokit-viewer/src/ifcobjectdefaults/viewerifcobjectcolors.js~viewerifcobjectcolors",
+    "@xeokit/xeokit-bim-viewer/src/ifcobjectdefaults/viewerifcobjectcolors.js~viewerifcobjectcolors",
     "variable/index.html#static-variable-ViewerIFCObjectColors",
-    "<span>ViewerIFCObjectColors</span> <span class=\"search-result-import-path\">@xeokit/xeokit-viewer/src/IFCObjectDefaults/ViewerIFCObjectColors.js</span>",
+    "<span>ViewerIFCObjectColors</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/IFCObjectDefaults/ViewerIFCObjectColors.js</span>",
     "variable"
   ],
   [
@@ -495,6 +495,12 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#setbackgroundcolor",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setBackgroundColor",
     "src/BIMViewer.js~BIMViewer#setBackgroundColor",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setclassesvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setClassesVisible",
+    "src/BIMViewer.js~BIMViewer#setClassesVisible",
     "method"
   ],
   [
