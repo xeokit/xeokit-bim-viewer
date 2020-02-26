@@ -38,7 +38,7 @@
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source BIM viewer for the Web. It uses the <a href="http://xeokit.io">xeokit SDK</a> for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.</p>
 <p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject GmbH</a>, and is integrated  within OpenProject&apos;s BIM construction project management software. </p>
-<p>The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>.app/data</code></a> directory, then host it via <a href="https://help.github.com/en/github/working-with-github-pages/about-github-pages">GitHub Pages</a>. You can also just download the repository to your own HTTP server and serve everything from there. </p>
+<p>The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory, then host it via <a href="https://help.github.com/en/github/working-with-github-pages/about-github-pages">GitHub Pages</a>. You can also just download the repository to your own HTTP server and serve everything from there. </p>
 <p>To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer&apos;s data directory. Read the guide below for more info.  </p>
 <p>The viewer is bundled with the <a href="http://xeokit.io">xeokit SDK</a> - see the <a href="https://xeokit.io/index.html#pricing">Pricing</a> for licensing details.</p>
 <hr>
@@ -136,7 +136,7 @@
 <h2 id="programming-api">Programming API</h2><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> provides a complete set of methods to programmatically control it with JavaScript.</p>
 <p>Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.</p>
 <h3 id="creating-a-viewer">Creating a Viewer</h3><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load project and model data from the file system.  </p>
-<p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>.app/data</code></a> directory.</p>
+<p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory.</p>
 <p>We also configure our <code>BimViewer</code> with DOM elements for the four parts of its UI: </p>
 <ul>
 <li><code>canvasElement</code> - a <code>&lt;canvas&gt;</code> for the 3D canvas, </li>
@@ -296,13 +296,13 @@ const myBIMViewer = new BIMViewer(server, {
 </tr>
 </tbody>
 </table>
-<h3 id="querying-projects--models-and-objects">Querying Projects, Models and Objects</h3><h4 id="getting-info-on-available-projects">Getting Info on Available Projects</h4><p>Let&apos;s start off by querying what projects are available. Since we&apos;re using the default <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a>, this will be the JSON in <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json"><code>.app/data/projects/index.json</code></a>. We&apos;ll just log that information to the console.</p>
+<h3 id="querying-projects--models-and-objects">Querying Projects, Models and Objects</h3><h4 id="getting-info-on-available-projects">Getting Info on Available Projects</h4><p>Let&apos;s start off by querying what projects are available. Since we&apos;re using the default <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a>, this will be the JSON in <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json"><code>./app/data/projects/index.json</code></a>. We&apos;ll just log that info to the console.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.getProjectsInfo((projectsInfo) =&gt; {
      console.log(JSON.stringify(projectsInfo, null, &quot;\t&quot;));
 });</code>
 </code></pre>
-<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects"><code>Server#getProjects()</code></a> to get that information.</p>
-<p>The projects JSON will be similar to:</p>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects"><code>Server#getProjects()</code></a> to get that info.</p>
+<p>The projects info will be similar to:</p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
      &quot;projects&quot;: [
          {
@@ -325,8 +325,9 @@ const myBIMViewer = new BIMViewer(server, {
      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
 });</code>
 </code></pre>
-<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject"><code>Server#getProject()</code></a> to get that information.</p>
-<p>The project JSON will be similar to:</p>
+<p>The project info will be the contents of <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/index.json"><code>./app/data/projects/WestRiversideHospital/index.json</code></a>.</p>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject"><code>Server#getProject()</code></a> to get that project info.</p>
+<p>The project info will be similar to:</p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
     &quot;id&quot;: &quot;WestRiversideHospital&quot;,
     &quot;name&quot;: &quot;West Riverside Hospital&quot;,
@@ -375,20 +376,22 @@ const myBIMViewer = new BIMViewer(server, {
 </ul>
 <p>When we load the project (in a later section), the viewer is going to pass the <code>viewerConfigs</code> to <a href>BIMViewer#setConfigs()</a>, which we described in <a href="#configuring-the-viewer">Configuring the Viewer</a>. </p>
 <p>In the <code>viewerConfigs</code> we&apos;re enabling the viewer&apos;s Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer tp render, so we&apos;ve disabled it for the &quot;electrical&quot; model, which contains many long, thin wire objects that  </p>
-<h4 id="getting-info-on-an-object">Getting Info on an Object</h4><p>Let&apos;s attempt to get some information on an object within one of our project&apos;s models.</p>
-<p>We say &quot;attempt&quot; because it&apos;s up to the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> to try to find that information for us. </p>
-<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo"><code>Server#getObjectInfo()</code></a>, which will attempt to load that object information from a file. If you were to substitute <code>Server</code> with your own implementation, your implementation could get that information from a data store, such as a relational database, populated with metadata for all the objects in your project&apos;s models, keyed to their IDs. </p>
-<p>We&apos;ll go ahead and assume that our <code>Server</code> has that object information. </p>
+<h4 id="getting-info-on-an-object">Getting Info on an Object</h4><p>Let&apos;s attempt to get some info on an object within one of our project&apos;s models.</p>
+<p>We say &quot;attempt&quot; because it&apos;s up to the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> to try to find that info for us. </p>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo"><code>Server#getObjectInfo()</code></a>, which will attempt to load that object info from a file. </p>
+<p>If you were to substitute <code>Server</code> with your own implementation, your implementation could get that info from a data store, such as a relational database, populated with metadata for all the objects in your project&apos;s models, keyed to their IDs. </p>
+<p>We&apos;ll go ahead and assume that our <code>Server</code> has that object info. </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getObjectInfo(&quot;WestRiversideHospital&quot;, &quot;architectural&quot;, &quot;2HaS6zNOX8xOGjmaNi_r6b&quot;, 
     (objectInfo) =&gt; {
         console.log(JSON.stringify(objectInfo, null, &quot;\t&quot;));
     },
     (errMsg) =&gt; {
-         console.log(&quot;Oops! There was an error getting information for this object: &quot; + errMsg);
+         console.log(&quot;Oops! There was an error getting info for this object: &quot; + errMsg);
     });</code>
 </code></pre>
 <p>If the object does not exist in the specified project and model, the method will invoke its error callback.</p>
-<p>If the object, does exist, then the result we&apos;ll get back will look similar to below. If <code></code></p>
+<p>Our file system database does happen to have info for that object, stored in <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/index.json"><code>./app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json</code></a>.</p>
+<p>Since our object info exists, we&apos;ll get a result similar to this: </p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
     &quot;id&quot;: &quot;2HaS6zNOX8xOGjmaNi_r6b&quot;,
     &quot;projectId&quot;: &quot;WestRiversideHospital&quot;,
@@ -398,7 +401,9 @@ const myBIMViewer = new BIMViewer(server, {
     &quot;parent&quot;: &quot;2hExBg8jj4NRG6zzD0RZML&quot;
 }</code>
 </code></pre>
-<h3 id="loading-projects-and-models">Loading Projects and Models</h3><h4 id="loading-a-project">Loading a Project</h4><p>Let&apos;s load the project we just queried info on. </p>
+<p>By now, you&apos;ve probably noticed that our file system database is structured to support <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> URIs, which our <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> constructs from the project, model and object IDs we supplied to the viewer&apos;s query methods.</p>
+<h3 id="loading-projects-and-models">Loading Projects and Models</h3><p>Let&apos;s now load some of the projects and models that we queried in the previous section.</p>
+<h4 id="loading-a-project">Loading a Project</h4><p>Let&apos;s load the project we just queried info on. </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.loadProject(&quot;WestRiversideHospital&quot;, 
     () =&gt; {
          console.log(&quot;Nice! The project loaded successfully.&quot;);
@@ -408,7 +413,8 @@ const myBIMViewer = new BIMViewer(server, {
     });</code>
 </code></pre>
 <p>If that succeeds, the viewer will now have two models loaded: <code>&quot;architectural&quot;</code> and <code>&quot;structure&quot;</code>.</p>
-<p>The viewer will also open its &quot;Models&quot; tab open, thanks to the <code>tabOpen</code> property in the <code>viewerState</code> section of the project info (see previous section).</p>
+<p>The viewer will also enable Scalable Ambient Obscurance, since that&apos;s specified by the <code>saoEnabled</code> property in the <code>viewerConfigs</code> section of the project info. The viewer will also set various other configs on itself, as specified in that section.</p>
+<p>The viewer will also open its &quot;Models&quot; tab, thanks to the <code>tabOpen</code> property in the <code>viewerState</code> section of the project info. </p>
 <p>We can confirm that the two models are loaded by querying the IDs of the models that are currently loaded in the viewer:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const modelIds = myBIMViewer.getModelLoadedIds();
 
@@ -452,7 +458,7 @@ console.log(&quot;Currently open tab: &apos;&quot; + tabId + &quot;&apos;&quot;)
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.flyToObject(&quot;1fOVjSd7T40PyRtVEklS6X&quot;, ()=&gt;{ /* Done */ });</code>
 </code></pre>
 <p>TODO: Complete this section once API methods are finalized</p>
-<h3 id="model-database">Model Database</h3><p>The viewer loads models from the file system by default. These are contained within the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/data">./data</a> directory, which also contains a number of sample models to get you started. </p>
+<h2 id="model-database">Model Database</h2><p>The viewer loads models from the file system by default. These are contained within the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/data">./data</a> directory, which also contains a number of sample models to get you started. </p>
 <p>Each model consists of an <code>.XKT</code> binary geometry file and a JSON metadata file which classifies its IFC elements. </p>
 <p>Models are grouped within <em>projects</em>. Each project can contain multiple models, and has a JSON <code>index.json</code> manifest which lists its models.</p>
 <p>At the root of <code>./data</code> is a JSON <code>index.json</code> manifest that lists all the projects.</p>
