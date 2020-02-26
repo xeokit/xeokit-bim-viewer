@@ -54,17 +54,24 @@
 <li><a href="#features">Features</a></li>
 <li><a href="#demos">Demos</a></li>
 <li><a href="#license">License</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#programming-api">Programming API</a><ul>
-<li><a href="#model-database">Model Database</a><ul>
-<li><a href="#adding-your-own-models">Adding your own models</a></li>
-<li><a href="#loading-models-from-a-custom-source">Loading models from a custom source</a></li>
-</ul>
-</li>
-<li><a href="#customizing-css">Customizing CSS</a></li>
+<li><a href="#creating-a-viewer">Creating a Viewer</a></li>
+<li><a href="#configuring-the-viewer">Configuring the Viewer</a></li>
+<li><a href="#customizing-viewer-style">Customizing Viewer Style</a><ul>
+<li><a href="#modal-busy-dialog">Modal Busy Dialog</a></li>
 <li><a href="#tooltips">Tooltips</a></li>
 <li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
+</ul>
+</li>
+<li><a href="#programming-api">Programming API</a><ul>
+<li><a href="#querying-info-on-projects">Querying Info on Projects</a></li>
+<li><a href="#querying-info-on-a-project">Querying Info on a Project</a></li>
+<li><a href="#loading-a-project">Loading a Project</a></li>
+<li><a href="#loading-a-model">Loading a Model</a></li>
+<li><a href="#model-database">Model Database</a></li>
+</ul>
+</li>
+<li><a href="#adding-your-own-models">Adding Your Own Models</a><ul>
+<li><a href="#loading-models-from-a-custom-source">Loading models from a custom source</a></li>
 </ul>
 </li>
 <li><a href="#building">Building</a></li>
@@ -118,7 +125,9 @@
 </tbody>
 </table>
 <h2 id="license">License</h2><p>xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please <a href="https://xeokit.io/index.html#pricing">Pricing</a> for commercial licensing options.</p>
-<h2 id="creating-a-viewer">Creating a Viewer</h2><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load project and model data from the file system.  </p>
+<h2 id="programming-api">Programming API</h2><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> provides a complete set of methods to programmatically control it with JavaScript.</p>
+<p>Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.</p>
+<h3 id="creating-a-viewer">Creating a Viewer</h3><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load project and model data from the file system.  </p>
 <p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>.app/data</code></a> directory.</p>
 <p>We also configure our <code>BimViewer</code> with DOM elements for the four parts of its UI: </p>
 <ul>
@@ -126,10 +135,9 @@
 <li><code>explorerElement</code> - a <code>&lt;div&gt;</code> to contain the explorer panel, </li>
 <li><code>toolbarElement</code> - a <code>&lt;div&gt;</code> to contain the toolbar, </li>
 <li><code>navCubeCanvasElement</code> - a <code>&lt;canvas&gt;</code> for the NavCube, and </li>
-<li><p><code>busyModelBackdropElement</code> - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. </p>
-<p>Configuring the <code>BIMViewer</code> with separate places to locate those elements allows flexible integration into your web page.</p>
-</li>
+<li><code>busyModelBackdropElement</code> - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. </li>
 </ul>
+<p>Configuring the <code>BIMViewer</code> with separate places to locate those elements allows flexible integration into your web page.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const server = new Server({
      dataDir: &quot;./data&quot;
  });
@@ -153,7 +161,7 @@ const myBIMViewer = new BIMViewer(server, {
  &lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;</code>
 </code></pre>
 <p>See <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css"><code>app/css/style.css</code></a> for how we&apos;ve styled these elements. See <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a> for the CSS styles that BIMViewer applies to its internally-created HTML.  </p>
-<h2 id="configuring-the-viewer">Configuring the Viewer</h2><p>Use <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs">BIMViewer#setConfigs()</a> to confiigure your viewer:</p>
+<h3 id="configuring-the-viewer">Configuring the Viewer</h3><p>Use <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs">BIMViewer#setConfigs()</a> to configure your viewer:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.setConfigs({
     &quot;saoEnabled&quot;:        &quot;false&quot;,
     &quot;saoBias&quot;:           &quot;0.5&quot;,
@@ -280,51 +288,7 @@ const myBIMViewer = new BIMViewer(server, {
 </tr>
 </tbody>
 </table>
-<h2 id="customizing-viewer-style">Customizing Viewer Style</h2><p>The <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.</p>
-<h3 id="modal-busy-dialog">Modal Busy Dialog</h3><p>As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer&apos;s UI. </p>
-<p>Within our <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html"><code>app/index.html</code></a> page, the main <code>&lt;div&gt;</code> is the backdrop element:</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;div id=&quot;myBIMViewer&quot; class=&quot;xeokit-busy-modal-backdrop&quot;&gt;
-    &lt;div id=&quot;myExplorer&quot; class=&quot;active&quot;&gt;&lt;/div&gt;
-    &lt;div id=&quot;myContent&quot;&gt;
-        &lt;div id=&quot;myToolbar&quot;&gt;&lt;/div&gt;
-        &lt;canvas id=&quot;myCanvas&quot;&gt;&lt;/canvas&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;</code>
-</code></pre>
-<p>As defined in <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a>, the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:</p>
-<pre><code class="lang-css"><code class="source-code prettyprint">.xeokit-busy-modal-backdrop {
-    position:relative;
-}</code>
-</code></pre>
-<p>If you need to tweak CSS relating to the dialog, search for &quot;xeokit-busy-dialog&quot; within <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a>.</p>
-<h3 id="tooltips">Tooltips</h3><p>Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with <code>data-tippy-content</code> attributes that provide strings to show in their tooltips. </p>
-<p>For example, the <em>Toggle 2D/3D</em> button&apos;s element looks like this:</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;</code>
-</code></pre>
-<p>In the <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone viewer, we&apos;re using <a href="https://github.com/atomiks/tippyjs">tippy.js</a>, which automatically creates tooltips for those elements.</p>
-<h3 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h3><p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file <a href="src/IFCObjectDefaults/IFCObjectDefaults.js">src/IFCObjectDefaults/IFCObjectDefaults.js</a>.</p>
-<p>You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.</p>
-<p>For example, to ensure that <code>IfcWindow</code> and <code>IfcSpace</code> types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">const IFCObjectDefaults = {
-    IfcSpace: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.2
-    },
-    IfcWindow: { 
-        visible: true,
-        pickable: true,
-        opacity: 0.5
-    }
-};
-
-export {IFCObjectDefaults};</code>
-</code></pre>
-<p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have configurations in there so that we can see through them.</p>
-<h2 id="programming-api">Programming API</h2><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> provides a complete set of methods to programmatically control it with JavaScript.</p>
-<p>Using these methods, we can query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.</p>
-<h3 id="querying-info-on-projects">Querying Info on Projects</h3><p>Let&apos;s start off by querying what projects are available. Since we&apos;re using the default <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a>, this will be the JSON in <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json"><code>.app/data/projects/index.json</code></a>. We&apos;ll just log that information to the console.</p>
+<h3 id="querying-projects--models-and-objects">Querying Projects, Models and Objects</h3><h4 id="getting-info-on-available-projects">Getting Info on Available Projects</h4><p>Let&apos;s start off by querying what projects are available. Since we&apos;re using the default <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a>, this will be the JSON in <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json"><code>.app/data/projects/index.json</code></a>. We&apos;ll just log that information to the console.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.getProjectsInfo((projectsInfo) =&gt; {
      console.log(JSON.stringify(projectsInfo, null, &quot;\t&quot;));
 });</code>
@@ -347,7 +311,7 @@ export {IFCObjectDefaults};</code>
       ]
 }</code>
 </code></pre>
-<h3 id="querying-info-on-a-project">Querying Info on a Project</h3><p>Now let&apos;s query some info on a project.</p>
+<h4 id="getting-info-on-a-project">Getting Info on a Project</h4><p>Now let&apos;s query some info on one of the projects.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.getProjectInfo(&quot;WestRiversideHospital&quot;, (projectInfo) =&gt; {
      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
 });</code>
@@ -359,19 +323,15 @@ export {IFCObjectDefaults};</code>
     &quot;models&quot;: [
         {
             &quot;id&quot;: &quot;architectural&quot;,
-            &quot;name&quot;: &quot;Hospital Architecture&quot;,
-            &quot;edges&quot;: true,
-            &quot;saoEnabled&quot;: true
+            &quot;name&quot;: &quot;Hospital Architecture&quot;
         },
         {
             &quot;id&quot;: &quot;structure&quot;,
-            &quot;name&quot;: &quot;Hospital Structure&quot;,
-            &quot;default&quot;: true
+            &quot;name&quot;: &quot;Hospital Structure&quot;
         },
         {
             &quot;id&quot;: &quot;electrical&quot;,
             &quot;name&quot;: &quot;Hospital Electrical&quot;,
-            &quot;edges&quot;: true,
             &quot;saoEnabled&quot;: false
         }
     ],
@@ -399,11 +359,35 @@ export {IFCObjectDefaults};</code>
 <li><strong><code>id</code></strong> - ID of the project,</li>
 <li><strong><code>name</code></strong> - human-readable name of the project, </li>
 <li><strong><code>models</code></strong> - info on each model in this project,</li>
-<li><strong><code>viewerConfigs</code></strong> - viewer configurations to apply when loading the project (see <a href="#configuring-the-viewer">Configuring the Viewer</a>),</li>
+<li><strong><code>viewerConfigs</code></strong> - viewer configurations to apply when loading the project,</li>
 <li><strong><code>viewerContent</code></strong> - which models to load immediately when loading the project, and</li>
 <li><strong><code>viewerState</code></strong> - how the viewer should set up its UI after loading the project.</li>
 </ul>
-<h3 id="loading-a-project">Loading a Project</h3><p>Let&apos;s load the project we just queried info on. </p>
+<p>When we load the project (in a later section), the viewer is going to pass the <code>viewerConfigs</code> to <a href>BIMViewer#setConfigs()</a>, which we described in <a href="#configuring-the-viewer">Configuring the Viewer</a>. </p>
+<p>In the <code>viewerConfigs</code> we&apos;re enabling the viewer&apos;s Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer tp render, so we&apos;ve disabled it for the &quot;electrical&quot; model, which contains many long, thin wire objects that  </p>
+<h4 id="getting-info-on-an-object">Getting Info on an Object</h4><p>Let&apos;s attempt to get some information on an object within one of our project&apos;s models.</p>
+<p>We say &quot;attempt&quot; because it&apos;s up to the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> to try to find that information for us. Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo"><code>Server#getObjectInfo()</code></a>, which will attempt to load that object information from a file. Were you to substitute <code>Server</code> with your own implementation, your implementation could be sourcing that information from a data store, such as a relational database, populated with metadata for all the objects in your project&apos;s models, keyed to their IDs. </p>
+<p>We&apos;ll go ahead and assume that our <code>Server</code> has that object information. </p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getObjectInfo(&quot;WestRiversideHospital&quot;, &quot;architectural&quot;, &quot;2HaS6zNOX8xOGjmaNi_r6b&quot;, 
+    (objectInfo) =&gt; {
+        console.log(JSON.stringify(objectInfo, null, &quot;\t&quot;));
+    },
+    (errMsg) =&gt; {
+         console.log(&quot;Oops! There was an error getting information for this object: &quot; + errMsg);
+    });</code>
+</code></pre>
+<p>If the object does not exist in the specified project and model, the method will invoke its error callback.</p>
+<p>If the object, does exist, then the result we&apos;ll get back will look similar to below. If <code></code></p>
+<pre><code class="lang-json"><code class="source-code prettyprint">{
+    &quot;id&quot;: &quot;2HaS6zNOX8xOGjmaNi_r6b&quot;,
+    &quot;projectId&quot;: &quot;WestRiversideHospital&quot;,
+    &quot;modelId&quot;: &quot;architectural&quot;,
+    &quot;name&quot;: &quot;Basic Wall:Exterior - Metal Panel on Mtl. Stud:187578&quot;,
+    &quot;type&quot;: &quot;IfcWall&quot;,
+    &quot;parent&quot;: &quot;2hExBg8jj4NRG6zzD0RZML&quot;
+}</code>
+</code></pre>
+<h3 id="loading-projects-and-models">Loading Projects and Models</h3><h4 id="loading-a-project">Loading a Project</h4><p>Let&apos;s load the project we just queried info on. </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.loadProject(&quot;WestRiversideHospital&quot;, 
     () =&gt; {
          console.log(&quot;Nice! The project loaded successfully.&quot;);
@@ -422,7 +406,7 @@ console.log(modelIds);</code>
 <p>The result would be:</p>
 <pre><code class="lang-json"><code class="source-code prettyprint">[&quot;architectural&quot;, &quot;structure&quot;]</code>
 </code></pre>
-<h3 id="loading-a-model">Loading a Model</h3><p>With our project loaded, let&apos;s load another of its models.</p>
+<h4 id="loading-a-model">Loading a Model</h4><p>With our project loaded, let&apos;s load another of its models.</p>
 <p>We could start by getting the IDs of all the models in our project, just to make sure it&apos;s there:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const modelIds = myBIMViewer.getModelIds();
 
@@ -443,6 +427,20 @@ console.log(modelIds);</code>
 <p>If we no longer need that model, we can unload it again:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.unloadModel(&quot;electrical&quot;);</code>
 </code></pre>
+<h3 id="controlling-viewer-state">Controlling Viewer State</h3><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> has various methods with which we can programmatically control the state of its UI. </p>
+<p>Let&apos;s take a quick look at some of these methods to get an idea of what sort of UI state we can control with them. This won&apos;t be an exhaustive guide - see the <code>BIMViewer</code> class documentation for the complete list.</p>
+<p>Having loaded a couple of models in the previous section, let&apos;s open the viewer&apos;s Objects tab, which contains a tree view of the containment hierarchy of the objects within those models:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.openTab(&quot;objects&quot;);</code>
+</code></pre>
+<p>To confirm which tab is currently open: </p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">const tabId = myBIMViewer.getOpenTab();
+
+console.log(&quot;Currently open tab: &apos;&quot; + tabId + &quot;&apos;&quot;); // &quot;objects&quot;</code>
+</code></pre>
+<p>Now let&apos;s arrange the camera to fit an object in view:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.flyToObject(&quot;1fOVjSd7T40PyRtVEklS6X&quot;, ()=&gt;{ /* Done */ });</code>
+</code></pre>
+<p>TODO: Complete this section once API methods are finalized</p>
 <h3 id="model-database">Model Database</h3><p>The viewer loads models from the file system by default. These are contained within the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/data">./data</a> directory, which also contains a number of sample models to get you started. </p>
 <p>Each model consists of an <code>.XKT</code> binary geometry file and a JSON metadata file which classifies its IFC elements. </p>
 <p>Models are grouped within <em>projects</em>. Each project can contain multiple models, and has a JSON <code>index.json</code> manifest which lists its models.</p>
@@ -562,8 +560,51 @@ console.log(modelIds);</code>
 </ul>
 <h4 id="loading-models-from-a-custom-source">Loading models from a custom source</h4><p>To load models from a different source than the file system, configure</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">
+
 </code>
 </code></pre>
+<h2 id="customizing-viewer-style">Customizing Viewer Style</h2><p>The <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.</p>
+<h3 id="modal-busy-dialog">Modal Busy Dialog</h3><p>As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer&apos;s UI. </p>
+<p>Within our <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html"><code>app/index.html</code></a> page, the main <code>&lt;div&gt;</code> is the backdrop element:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;div id=&quot;myBIMViewer&quot; class=&quot;xeokit-busy-modal-backdrop&quot;&gt;
+    &lt;div id=&quot;myExplorer&quot; class=&quot;active&quot;&gt;&lt;/div&gt;
+    &lt;div id=&quot;myContent&quot;&gt;
+        &lt;div id=&quot;myToolbar&quot;&gt;&lt;/div&gt;
+        &lt;canvas id=&quot;myCanvas&quot;&gt;&lt;/canvas&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;</code>
+</code></pre>
+<p>As defined in <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a>, the backdrop gets the following style, which allows the dialog to position itself correctly within the backdrop:</p>
+<pre><code class="lang-css"><code class="source-code prettyprint">.xeokit-busy-modal-backdrop {
+    position:relative;
+}</code>
+</code></pre>
+<p>If you need to tweak CSS relating to the dialog, search for &quot;xeokit-busy-dialog&quot; within <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a>.</p>
+<h3 id="tooltips">Tooltips</h3><p>Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked with <code>data-tippy-content</code> attributes that provide strings to show in their tooltips. </p>
+<p>For example, the <em>Toggle 2D/3D</em> button&apos;s element looks like this:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;</code>
+</code></pre>
+<p>In the <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone viewer, we&apos;re using <a href="https://github.com/atomiks/tippyjs">tippy.js</a>, which automatically creates tooltips for those elements.</p>
+<h3 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h3><p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file <a href="src/IFCObjectDefaults/IFCObjectDefaults.js">src/IFCObjectDefaults/IFCObjectDefaults.js</a>.</p>
+<p>You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.</p>
+<p>For example, to ensure that <code>IfcWindow</code> and <code>IfcSpace</code> types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">const IFCObjectDefaults = {
+    IfcSpace: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.2
+    },
+    IfcWindow: { 
+        visible: true,
+        pickable: true,
+        opacity: 0.5
+    }
+};
+
+export {IFCObjectDefaults};</code>
+</code></pre>
+<p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have configurations in there so that we can see through them.</p>
 <h2 id="building">Building</h2><p>To install the npm package:</p>
 <pre><code><code class="source-code prettyprint">sudo npm install</code>
 </code></pre><p>Building ES6 module in <code>/dist/main.js</code>:</p>

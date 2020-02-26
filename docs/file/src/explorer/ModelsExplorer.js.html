@@ -219,43 +219,7 @@ class ModelsExplorer extends Controller {
             done();
             return;
         }
-        if (viewerState.tabOpen) {
-            this.bimViewer.openTab(viewerState.tabOpen);
-        }
-
-        this._parseExpandTrees(viewerState);
-
-        this._parseSelectedStorey(viewerState, () =&gt; {
-            this._parseThreeDMode(viewerState, () =&gt; {
-                done();
-            });
-        });
-    }
-
-    _parseExpandTrees(viewerState) {
-        if (viewerState.expandObjectsTree) {
-            this.bimViewer._objectsExplorer.expandTreeViewToDepth(viewerState.expandObjectsTree);
-        }
-        if (viewerState.expandClassesTree) {
-            this.bimViewer._classesExplorer.expandTreeViewToDepth(viewerState.expandClassesTree);
-        }
-        if (viewerState.expandStoreysTree) {
-            this.bimViewer._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
-        }
-    }
-
-    _parseSelectedStorey(viewerState, done) {
-        if (viewerState.selectedStorey) {
-            this.bimViewer.selectStorey(viewerState.selectedStorey);
-            done();
-        } else {
-            done();
-        }
-    }
-
-    _parseThreeDMode(viewerState, done) {
-        const activateThreeDMode = (viewerState.threeDEnabled !== false);
-        this.bimViewer.set3DEnabled(activateThreeDMode, done);
+       this.bimViewer.setViewerState(viewerState, done);
     }
 
     unloadProject() {

@@ -546,6 +546,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setviewerstate",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState",
+    "src/BIMViewer.js~BIMViewer#setViewerState",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#showallobjects",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-showAllObjects",
     "src/BIMViewer.js~BIMViewer#showAllObjects",
