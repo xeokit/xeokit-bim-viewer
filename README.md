@@ -20,25 +20,30 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing
  
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 ---
+
 ## Contents
 
 - [Features](#features)
 - [Demos](#demos)
 - [License](#license)
-- [Creating a Viewer](#creating-a-viewer)
-- [Configuring the Viewer](#configuring-the-viewer)
+- [Programming API](#programming-api)
+  * [Creating a Viewer](#creating-a-viewer)
+  * [Configuring the Viewer](#configuring-the-viewer)
+  * [Querying Projects, Models and Objects](#querying-projects--models-and-objects)
+    + [Getting Info on Available Projects](#getting-info-on-available-projects)
+    + [Getting Info on a Project](#getting-info-on-a-project)
+    + [Getting Info on an Object](#getting-info-on-an-object)
+  * [Loading Projects and Models](#loading-projects-and-models)
+    + [Loading a Project](#loading-a-project)
+    + [Loading a Model](#loading-a-model)
+  * [Controlling Viewer State](#controlling-viewer-state)
+  * [Model Database](#model-database)
+- [Adding Your Own Models](#adding-your-own-models)
+    + [Loading models from a custom source](#loading-models-from-a-custom-source)
 - [Customizing Viewer Style](#customizing-viewer-style)
   * [Modal Busy Dialog](#modal-busy-dialog)
   * [Tooltips](#tooltips)
   * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
-- [Programming API](#programming-api)
-  * [Querying Info on Projects](#querying-info-on-projects)
-  * [Querying Info on a Project](#querying-info-on-a-project)
-  * [Loading a Project](#loading-a-project)
-  * [Loading a Model](#loading-a-model)
-  * [Model Database](#model-database)
-- [Adding Your Own Models](#adding-your-own-models)
-    + [Loading models from a custom source](#loading-models-from-a-custom-source)
 - [Building](#building)
 
 ## Features

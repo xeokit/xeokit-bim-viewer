@@ -54,24 +54,32 @@
 <li><a href="#features">Features</a></li>
 <li><a href="#demos">Demos</a></li>
 <li><a href="#license">License</a></li>
+<li><a href="#programming-api">Programming API</a><ul>
 <li><a href="#creating-a-viewer">Creating a Viewer</a></li>
 <li><a href="#configuring-the-viewer">Configuring the Viewer</a></li>
-<li><a href="#customizing-viewer-style">Customizing Viewer Style</a><ul>
-<li><a href="#modal-busy-dialog">Modal Busy Dialog</a></li>
-<li><a href="#tooltips">Tooltips</a></li>
-<li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
+<li><a href="#querying-projects--models-and-objects">Querying Projects, Models and Objects</a><ul>
+<li><a href="#getting-info-on-available-projects">Getting Info on Available Projects</a></li>
+<li><a href="#getting-info-on-a-project">Getting Info on a Project</a></li>
+<li><a href="#getting-info-on-an-object">Getting Info on an Object</a></li>
 </ul>
 </li>
-<li><a href="#programming-api">Programming API</a><ul>
-<li><a href="#querying-info-on-projects">Querying Info on Projects</a></li>
-<li><a href="#querying-info-on-a-project">Querying Info on a Project</a></li>
+<li><a href="#loading-projects-and-models">Loading Projects and Models</a><ul>
 <li><a href="#loading-a-project">Loading a Project</a></li>
 <li><a href="#loading-a-model">Loading a Model</a></li>
+</ul>
+</li>
+<li><a href="#controlling-viewer-state">Controlling Viewer State</a></li>
 <li><a href="#model-database">Model Database</a></li>
 </ul>
 </li>
 <li><a href="#adding-your-own-models">Adding Your Own Models</a><ul>
 <li><a href="#loading-models-from-a-custom-source">Loading models from a custom source</a></li>
+</ul>
+</li>
+<li><a href="#customizing-viewer-style">Customizing Viewer Style</a><ul>
+<li><a href="#modal-busy-dialog">Modal Busy Dialog</a></li>
+<li><a href="#tooltips">Tooltips</a></li>
+<li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
 </ul>
 </li>
 <li><a href="#building">Building</a></li>
@@ -293,6 +301,7 @@ const myBIMViewer = new BIMViewer(server, {
      console.log(JSON.stringify(projectsInfo, null, &quot;\t&quot;));
 });</code>
 </code></pre>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects"><code>Server#getProjects()</code></a> to get that information.</p>
 <p>The projects JSON will be similar to:</p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
      &quot;projects&quot;: [
@@ -316,6 +325,7 @@ const myBIMViewer = new BIMViewer(server, {
      console.log(JSON.stringify(projectInfo, null, &quot;\t&quot;));
 });</code>
 </code></pre>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject"><code>Server#getProject()</code></a> to get that information.</p>
 <p>The project JSON will be similar to:</p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
     &quot;id&quot;: &quot;WestRiversideHospital&quot;,
@@ -366,7 +376,8 @@ const myBIMViewer = new BIMViewer(server, {
 <p>When we load the project (in a later section), the viewer is going to pass the <code>viewerConfigs</code> to <a href>BIMViewer#setConfigs()</a>, which we described in <a href="#configuring-the-viewer">Configuring the Viewer</a>. </p>
 <p>In the <code>viewerConfigs</code> we&apos;re enabling the viewer&apos;s Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer tp render, so we&apos;ve disabled it for the &quot;electrical&quot; model, which contains many long, thin wire objects that  </p>
 <h4 id="getting-info-on-an-object">Getting Info on an Object</h4><p>Let&apos;s attempt to get some information on an object within one of our project&apos;s models.</p>
-<p>We say &quot;attempt&quot; because it&apos;s up to the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> to try to find that information for us. Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo"><code>Server#getObjectInfo()</code></a>, which will attempt to load that object information from a file. Were you to substitute <code>Server</code> with your own implementation, your implementation could be sourcing that information from a data store, such as a relational database, populated with metadata for all the objects in your project&apos;s models, keyed to their IDs. </p>
+<p>We say &quot;attempt&quot; because it&apos;s up to the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> to try to find that information for us. </p>
+<p>Internally, the viewer will call <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo"><code>Server#getObjectInfo()</code></a>, which will attempt to load that object information from a file. If you were to substitute <code>Server</code> with your own implementation, your implementation could get that information from a data store, such as a relational database, populated with metadata for all the objects in your project&apos;s models, keyed to their IDs. </p>
 <p>We&apos;ll go ahead and assume that our <code>Server</code> has that object information. </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myViewer.getObjectInfo(&quot;WestRiversideHospital&quot;, &quot;architectural&quot;, &quot;2HaS6zNOX8xOGjmaNi_r6b&quot;, 
     (objectInfo) =&gt; {
