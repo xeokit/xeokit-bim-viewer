@@ -1,14 +1,19 @@
 # xeokit-bim-viewer
 
-**xeokit-bim-viewer** is an open source BIM viewer for the Web. It uses the [xeokit SDK](http://xeokit.io) for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.
+**xeokit-bim-viewer** is an open source BIM viewer built on [xeokit](http://xeokit.io) that runs in the browser and loads models from your file system. 
 
-The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is integrated  within OpenProject's BIM construction project management software. 
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is used within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
-The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, then host it via [GitHub Pages](https://help.github.com/en/github/working-with-github-pages/about-github-pages). You can also just download the repository to your own HTTP server and serve everything from there. 
+To view your own BIM models with this viewer: 
 
-To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer's data directory. Read the guide below for more info.  
+1. Fork this repository.
+1. Convert your IFC STEP files using open source CLI tools. 
+3. Add your converted models to your fork's data directory.
+4. Serve your fork using GitHub Pages.
 
-The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing](https://xeokit.io/index.html#pricing) for licensing details.
+Then users can view your models in their browsers, with URLs like:
+
+````https://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter````
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
@@ -19,6 +24,7 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing
  ---
  
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
+
 ---
 
 ## Contents
@@ -48,18 +54,16 @@ The viewer is bundled with the [xeokit SDK](http://xeokit.io) - see the [Pricing
 
 ## Features
 
-* Uses [xeokit SDK](https://xeokit.io) for super fast loading and rendering of large models.
+* Uses [xeokit](https://xeokit.io) for efficient model loading and rendering.
 * Works in all major browsers, including mobile.
-* Loads BIM geometry and metadata from the file system.
-* Loads multiple models, at arbitrary position, scale and rotation.
-* Configure custom appearances for IFC types.
-* Supports IFC2x3 and IFC4.
+* Loads models from the file system.
+* Loads multiple models.
 * 3D and 2D viewing modes.
-* Tree view with three hierarchy modes: containment structure, IFC layers and storeys.
-* X-ray, highlight, show, hide and slice objects. 
-* Customize with your own CSS.
-* JavaScript programming API - load models, move camera, show/hide/select/xray objects etc.
-* Implemented in JavaScript (ES6).
+* Interactively X-ray, highlight, show, hide and section objects. 
+* Tree views of object containment, layers and storeys.
+* Supports IFC2x3 and IFC4.
+* Customize viewer appearance with your own CSS.
+* JavaScript programming API for all viewer functions.
 
 ## Demos 
 
@@ -84,19 +88,21 @@ Using these methods, we can create and configure a viewer, query what models are
  
 ### Creating a Viewer
  
-In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) through which it will load project and model data from the file system.  
+In the example below, we'll create a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) through which it will load projects and models from the file system.  
 
-We'll configure the ````Server```` to load the data from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
+We'll configure the ````Server```` to load that data from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
  
-We also configure our ````BimViewer```` with DOM elements for the four parts of its UI: 
+The viewer's UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and an element to cover everything and block input when the viewer needs to show a modal busy-loading dialog. 
+
+We'll also configure our ````BimViewer```` with DOM elements to hold those four parts: 
 
  * ````canvasElement```` - a ````<canvas>```` for the 3D canvas, 
  * ````explorerElement```` - a ````<div>```` to contain the explorer panel, 
  * ````toolbarElement```` - a ````<div>```` to contain the toolbar, 
  * ````navCubeCanvasElement```` - a ````<canvas>```` for the NavCube, and 
- * ````busyModelBackdropElement```` - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. 
+ * ````busyModelBackdropElement```` - the backdrop to show while busy loading. 
  
-Configuring the ````BIMViewer```` with separate places to locate those elements allows flexible integration into your web page.
+Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly into our web page.
   
 ````javascript
 const server = new Server({

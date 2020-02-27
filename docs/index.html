@@ -36,117 +36,108 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source BIM viewer for the Web. It uses the <a href="http://xeokit.io">xeokit SDK</a> for hardware-accelerated graphics, and is cross-platform, cross-browser, and geared for visualizing large, real-world BIM models.</p>
-<p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject GmbH</a>, and is integrated  within OpenProject&apos;s BIM construction project management software. </p>
-<p>The viewer is also usable as a stand-alone viewer. Simply fork this repository, add your own models to the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory, then host it via <a href="https://help.github.com/en/github/working-with-github-pages/about-github-pages">GitHub Pages</a>. You can also just download the repository to your own HTTP server and serve everything from there. </p>
-<p>To serve your own models with this viewer, all you need to do is convert their IFC STEP files using open source CLI tools and drop them into the viewer&apos;s data directory. Read the guide below for more info.  </p>
-<p>The viewer is bundled with the <a href="http://xeokit.io">xeokit SDK</a> - see the <a href="https://xeokit.io/index.html#pricing">Pricing</a> for licensing details.</p>
-<hr>
-<ul>
-<li><a href="https://xeokit.github.io/xeokit-bim-viewer/">Homepage</a></li>
-<li><a href="https://github.com/xeokit/xeokit-bim-viewer">Source Code</a></li>
-<li><a href="https://xeokit.github.io/xeokit-bim-viewer/docs">API Docs</a></li>
-<li><p><a href="http://xeokit.io">xeokit SDK</a></p>
-<hr>
-</li>
-</ul>
-<h2 id="-a-href--https---xeokit-github-io-xeokit-bim-viewer-app-index-html-projectid-otcconferencecenter-amp-tab-storeys---img-src--https---github-com-xeokit-xeokit-bim-viewer-raw-master-images-xeokit-bim-viewer-png--alt--screenshot----a-"><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png" alt="Screenshot"></a></h2><h2 id="contents">Contents</h2><ul>
-<li><a href="#features">Features</a></li>
-<li><a href="#demos">Demos</a></li>
-<li><a href="#license">License</a></li>
-<li><a href="#programming-api">Programming API</a><ul>
-<li><a href="#creating-a-viewer">Creating a Viewer</a></li>
-<li><a href="#configuring-the-viewer">Configuring the Viewer</a></li>
-<li><a href="#querying-projects--models-and-objects">Querying Projects, Models and Objects</a><ul>
-<li><a href="#getting-info-on-available-projects">Getting Info on Available Projects</a></li>
-<li><a href="#getting-info-on-a-project">Getting Info on a Project</a></li>
-<li><a href="#getting-info-on-an-object">Getting Info on an Object</a></li>
-</ul>
-</li>
-<li><a href="#loading-projects-and-models">Loading Projects and Models</a><ul>
-<li><a href="#loading-a-project">Loading a Project</a></li>
-<li><a href="#loading-a-model">Loading a Model</a></li>
-</ul>
-</li>
-<li><a href="#controlling-viewer-state">Controlling Viewer State</a></li>
-<li><a href="#model-database">Model Database</a></li>
-</ul>
-</li>
-<li><a href="#adding-your-own-models">Adding Your Own Models</a><ul>
-<li><a href="#loading-models-from-a-custom-source">Loading models from a custom source</a></li>
-</ul>
-</li>
-<li><a href="#customizing-viewer-style">Customizing Viewer Style</a><ul>
-<li><a href="#modal-busy-dialog">Modal Busy Dialog</a></li>
-<li><a href="#tooltips">Tooltips</a></li>
-<li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
-</ul>
-</li>
-<li><a href="#building">Building</a></li>
-</ul>
-<h2 id="features">Features</h2><ul>
-<li>Uses <a href="https://xeokit.io">xeokit SDK</a> for super fast loading and rendering of large models.</li>
-<li>Works in all major browsers, including mobile.</li>
-<li>Loads BIM geometry and metadata from the file system.</li>
-<li>Loads multiple models, at arbitrary position, scale and rotation.</li>
-<li>Configure custom appearances for IFC types.</li>
-<li>Supports IFC2x3 and IFC4.</li>
-<li>3D and 2D viewing modes.</li>
-<li>Tree view with three hierarchy modes: containment structure, IFC layers and storeys.</li>
-<li>X-ray, highlight, show, hide and slice objects. </li>
-<li>Customize with your own CSS.</li>
-<li>JavaScript programming API - load models, move camera, show/hide/select/xray objects etc.</li>
-<li>Implemented in JavaScript (ES6).</li>
-</ul>
-<h2 id="demos">Demos</h2><table>
-<thead>
-<tr>
-<th>Live Demo</th>
-<th>Model Source</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys">OTC Conference Center</a></td>
-<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301">Details</a></td>
-</tr>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=HolterTower&amp;tab=storeys">Holter Tower</a></td>
-<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/316">Details</a></td>
-</tr>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital&amp;tab=models">West Riverside Hospital</a></td>
-<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/308">Details</a></td>
-</tr>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&amp;tab=storeys">Schependomlaan</a></td>
-<td><a href="https://github.com/openBIMstandards/DataSetSchependomlaan">Details</a></td>
-</tr>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&amp;tab=storeys">Schependomlaan Ground Floor</a></td>
-<td><a href="https://github.com/openBIMstandards/DataSetSchependomlaan">Details</a></td>
-</tr>
-<tr>
-<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&amp;tab=storeys">Duplex</a></td>
-<td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/274">Details</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please <a href="https://xeokit.io/index.html#pricing">Pricing</a> for commercial licensing options.</p>
-<h2 id="programming-api">Programming API</h2><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> provides a complete set of methods to programmatically control it with JavaScript.</p>
-<p>Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.</p>
-<h3 id="creating-a-viewer">Creating a Viewer</h3><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load project and model data from the file system.  </p>
-<p>We&apos;ll configure the <code>Server</code> to load the data from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory.</p>
-<p>We also configure our <code>BimViewer</code> with DOM elements for the four parts of its UI: </p>
-<ul>
-<li><code>canvasElement</code> - a <code>&lt;canvas&gt;</code> for the 3D canvas, </li>
-<li><code>explorerElement</code> - a <code>&lt;div&gt;</code> to contain the explorer panel, </li>
-<li><code>toolbarElement</code> - a <code>&lt;div&gt;</code> to contain the toolbar, </li>
-<li><code>navCubeCanvasElement</code> - a <code>&lt;canvas&gt;</code> for the NavCube, and </li>
-<li><code>busyModelBackdropElement</code> - an element to use as the backdrop for the busy-loading modal dialog, which will block events on the viewer while the dialog is showing. </li>
-</ul>
-<p>Configuring the <code>BIMViewer</code> with separate places to locate those elements allows flexible integration into your web page.</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">const server = new Server({
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source BIM viewer built on <a href="http://xeokit.io">xeokit</a> that runs in the browser and loads models from your file system. </p>
+<p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject GmbH</a>, and is used within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
+<p>To view your own BIM models with this viewer: </p>
+<ol>
+<li>Fork this repository.</li>
+<li>Convert your IFC STEP files using open source CLI tools. </li>
+<li>Add your converted models to your fork&apos;s data directory.</li>
+<li>Serve your fork using GitHub Pages.</li>
+</ol>
+<p>Then users can view your models in their browsers, with URLs like:</p>
+<pre><code class="lang-https://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter````"><code class="source-code prettyprint">
+---
+* [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
+* [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
+* [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
+* [xeokit SDK](http://xeokit.io)
+
+ ---
+
+[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys)
+
+---
+
+## Contents
+
+- [Features](#features)
+- [Demos](#demos)
+- [License](#license)
+- [Programming API](#programming-api)
+  * [Creating a Viewer](#creating-a-viewer)
+  * [Configuring the Viewer](#configuring-the-viewer)
+  * [Querying Projects, Models and Objects](#querying-projects--models-and-objects)
+    + [Getting Info on Available Projects](#getting-info-on-available-projects)
+    + [Getting Info on a Project](#getting-info-on-a-project)
+    + [Getting Info on an Object](#getting-info-on-an-object)
+  * [Loading Projects and Models](#loading-projects-and-models)
+    + [Loading a Project](#loading-a-project)
+    + [Loading a Model](#loading-a-model)
+  * [Controlling Viewer State](#controlling-viewer-state)
+  * [Model Database](#model-database)
+- [Adding Your Own Models](#adding-your-own-models)
+    + [Loading models from a custom source](#loading-models-from-a-custom-source)
+- [Customizing Viewer Style](#customizing-viewer-style)
+  * [Modal Busy Dialog](#modal-busy-dialog)
+  * [Tooltips](#tooltips)
+  * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
+- [Building](#building)
+
+## Features
+
+* Uses [xeokit](https://xeokit.io) for efficient model loading and rendering.
+* Works in all major browsers, including mobile.
+* Loads models from the file system.
+* Loads multiple models.
+* 3D and 2D viewing modes.
+* Interactively X-ray, highlight, show, hide and section objects. 
+* Tree views of object containment, layers and storeys.
+* Supports IFC2x3 and IFC4.
+* Customize viewer appearance with your own CSS.
+* JavaScript programming API for all viewer functions.
+
+## Demos 
+
+| Live Demo | Model Source |
+|---|---|
+| [OTC Conference Center](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
+| [Holter Tower](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=HolterTower&amp;tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
+| [West Riverside Hospital](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital&amp;tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
+| [Schependomlaan](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&amp;tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&amp;tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
+| [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&amp;tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) ||
+
+## License
+
+xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
+
+## Programming API
+
+[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) provides a complete set of methods to programmatically control it with JavaScript.
+
+Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
+
+### Creating a Viewer
+
+In the example below, we&apos;ll create a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with a [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) through which it will load projects and models from the file system.  
+
+We&apos;ll configure the ````Server```` to load that data from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
+
+The viewer&apos;s UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and an element to cover everything and block input when the viewer needs to show a modal busy-loading dialog. 
+
+We&apos;ll also configure our ````BimViewer```` with DOM elements to hold those four parts: 
+
+ * ````canvasElement```` - a ````&lt;canvas&gt;```` for the 3D canvas, 
+ * ````explorerElement```` - a ````&lt;div&gt;```` to contain the explorer panel, 
+ * ````toolbarElement```` - a ````&lt;div&gt;```` to contain the toolbar, 
+ * ````navCubeCanvasElement```` - a ````&lt;canvas&gt;```` for the NavCube, and 
+ * ````busyModelBackdropElement```` - the backdrop to show while busy loading. 
+
+Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly into our web page.
+
+````javascript
+const server = new Server({
      dataDir: &quot;./data&quot;
  });
 
