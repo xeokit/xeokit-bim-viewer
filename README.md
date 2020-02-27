@@ -1,19 +1,28 @@
 # xeokit-bim-viewer
 
-**xeokit-bim-viewer** is an open source BIM viewer built on [xeokit](http://xeokit.io) that runs in the browser and loads models from your file system. The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is used within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
+**xeokit-bim-viewer** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit SDK](http://xeokit.io), and is bundled within the xeokit SDK.
 
-To view your own BIM models with this viewer: 
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is also integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
+
+The viewer can be used as a stand-alone application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.
+
+To view your models with this viewer: 
 
 1. Fork this repository.
-1. Convert your IFC STEP files using open source CLI tools. 
+1. Convert your IFC STEP files using [open source CLI tools](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM). 
 3. Add your converted models to your fork's data directory.
-4. Serve your fork using GitHub Pages.
+4. Serve your fork using [GitHub Pages](https://pages.github.com/).
 
 Then users can view your models in their browsers, with URLs like this:
 
 ````https://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter````
 
-Read the documentation below for a low-cost, high-performance solution for getting your IFC models on the Web.
+Read the documentation below to get started.
+
+---
+
+ 
+[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
@@ -22,11 +31,6 @@ Read the documentation below for a low-cost, high-performance solution for getti
 * [xeokit SDK](http://xeokit.io)
  
  ---
- 
-[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
-
----
-
 ## Contents
 
 - [Features](#features)

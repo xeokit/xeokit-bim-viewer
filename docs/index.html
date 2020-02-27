@@ -36,17 +36,24 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source BIM viewer built on <a href="http://xeokit.io">xeokit</a> that runs in the browser and loads models from your file system. The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject GmbH</a>, and is used within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
-<p>To view your own BIM models with this viewer: </p>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on <a href="http://xeokit.io">xeokit SDK</a>, and is bundled within the xeokit SDK.</p>
+<p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject</a>,  and is also integrated within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
+<p>The viewer can be used as a stand-alone application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.</p>
+<p>To view your models with this viewer: </p>
 <ol>
 <li>Fork this repository.</li>
-<li>Convert your IFC STEP files using open source CLI tools. </li>
+<li>Convert your IFC STEP files using <a href="https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM">open source CLI tools</a>. </li>
 <li>Add your converted models to your fork&apos;s data directory.</li>
-<li>Serve your fork using GitHub Pages.</li>
+<li>Serve your fork using <a href="https://pages.github.com/">GitHub Pages</a>.</li>
 </ol>
 <p>Then users can view your models in their browsers, with URLs like this:</p>
 <pre><code class="lang-https://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter````"><code class="source-code prettyprint">
-Read the documentation below for a low-cost, high-performance solution for getting your IFC models on the Web.
+Read the documentation below to get started.
+
+---
+
+
+[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys)
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
@@ -55,11 +62,6 @@ Read the documentation below for a low-cost, high-performance solution for getti
 * [xeokit SDK](http://xeokit.io)
 
  ---
-
-[![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys)
-
----
-
 ## Contents
 
 - [Features](#features)
