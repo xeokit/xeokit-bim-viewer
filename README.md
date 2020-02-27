@@ -1,8 +1,6 @@
 # xeokit-bim-viewer
 
-**xeokit-bim-viewer** is an open source BIM viewer built on [xeokit](http://xeokit.io) that runs in the browser and loads models from your file system. 
-
-The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is used within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
+**xeokit-bim-viewer** is an open source BIM viewer built on [xeokit](http://xeokit.io) that runs in the browser and loads models from your file system. The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject GmbH](https://www.openproject.org/), and is used within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
 To view your own BIM models with this viewer: 
 
@@ -11,9 +9,11 @@ To view your own BIM models with this viewer:
 3. Add your converted models to your fork's data directory.
 4. Serve your fork using GitHub Pages.
 
-Then users can view your models in their browsers, with URLs like:
+Then users can view your models in their browsers, with URLs like this:
 
 ````https://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter````
+
+Read the documentation below for a low-cost, high-performance solution for getting your IFC models on the Web.
 
 ---
 * [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
