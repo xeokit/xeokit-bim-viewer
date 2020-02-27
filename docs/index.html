@@ -38,7 +38,7 @@
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on <a href="http://xeokit.io">xeokit</a>, and is bundled as part of the xeokit SDK.</p>
 <p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject</a>,  and is also integrated within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
-<p>The viewer can be used as a stand-alone application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.</p>
+<p>The viewer can be used as a stand-alone JavaScript application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.</p>
 <p>To view your models with this viewer: </p>
 <ol>
 <li>Fork this repository.</li>
@@ -139,33 +139,25 @@
 </tr>
 </tbody>
 </table>
-<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please <a href="https://xeokit.io/index.html#pricing">Pricing</a> for commercial licensing options.</p>
-<h2 id="programming-api">Programming API</h2><p><a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> provides a complete set of methods to programmatically control it with JavaScript.</p>
+<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled within the <a href="http://xeokit.io">xeokit SDK</a>, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> for non-commercial use. See <a href="https://xeokit.io/index.html#pricing">Pricing</a> for commercial licensing options.</p>
+<h2 id="programming-api">Programming API</h2><p>The viewer is implemented by the <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> class, which provides a complete set of methods to programmatically control it.</p>
 <p>Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.</p>
 <h3 id="creating-a-viewer">Creating a Viewer</h3><p>In the example below, we&apos;ll create a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>, with a <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html"><code>Server</code></a> through which it will load projects and models from the file system.  </p>
 <p>We&apos;ll configure the <code>Server</code> to load that data from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory.</p>
-<p>The viewer&apos;s UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and an element to cover everything and block input when the viewer needs to show a modal busy-loading dialog. </p>
-<p>We&apos;ll also configure our <code>BimViewer</code> with DOM elements to hold those four parts: </p>
-<ul>
-<li><code>canvasElement</code> - a <code>&lt;canvas&gt;</code> for the 3D canvas, </li>
-<li><code>explorerElement</code> - a <code>&lt;div&gt;</code> to contain the explorer panel, </li>
-<li><code>toolbarElement</code> - a <code>&lt;div&gt;</code> to contain the toolbar, </li>
-<li><code>navCubeCanvasElement</code> - a <code>&lt;canvas&gt;</code> for the NavCube, and </li>
-<li><code>busyModelBackdropElement</code> - the backdrop to show while busy loading. </li>
-</ul>
-<p>Configuring the <code>BIMViewer</code> with separate places to locate its parts allows us to integrate them more flexibly into our web page.</p>
+<p>The viewer&apos;s UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and a &quot;backdrop&quot; element to cover everything and block input whenever the viewer needs to show a modal busy-loading dialog. We&apos;ll also configure our <code>BimViewer</code> with DOM elements to hold those four parts.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const server = new Server({
      dataDir: &quot;./data&quot;
  });
 
 const myBIMViewer = new BIMViewer(server, {
-     canvasElement: document.getElementById(&quot;myCanvas&quot;), // WebGL canvas
-     explorerElement: document.getElementById(&quot;myExplorer&quot;), // Explorer panel
-     toolbarElement: document.getElementById(&quot;myToolbar&quot;), // Toolbar
-     navCubeCanvasElement: document.getElementById(&quot;myNavCubeCanvas&quot;),
-     busyModelBackdropElement: document.querySelector(&quot;.xeokit-busy-modal-backdrop&quot;)
+     canvasElement: document.getElementById(&quot;myCanvas&quot;),                // The 3D WebGL canvas
+     explorerElement: document.getElementById(&quot;myExplorer&quot;),            // Container for the explorer panel
+     toolbarElement: document.getElementById(&quot;myToolbar&quot;),              // Container for the toolbar
+     navCubeCanvasElement: document.getElementById(&quot;myNavCubeCanvas&quot;),  // Canvas for the NavCube
+     busyModelBackdropElement: document.querySelector(&quot;.xeokit-busy-modal-backdrop&quot;) // Busy modal dialog backdrop element
 });</code>
 </code></pre>
+<p>Configuring the <code>BIMViewer</code> with separate places to locate its parts allows us to integrate them more flexibly into our web page.</p>
 <p>In our <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html"><code>app/index.html</code></a> page, the elements look like this:</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;div id=&quot;myViewer&quot; class=&quot;xeokit-busy-modal-backdrop&quot;&gt;
      &lt;div id=&quot;myExplorer&quot; class=&quot;active&quot;&gt;&lt;/div&gt;

@@ -4,7 +4,7 @@
 
 The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is also integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
-The viewer can be used as a stand-alone application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.
+The viewer can be used as a stand-alone JavaScript application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.
 
 To view your models with this viewer: 
 
@@ -86,11 +86,11 @@ Read the documentation below to get started.
   
 ## License
 
-xeokit-bim-viewer is bundled with the xeokit SDK, which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) dual-license, which allows free use for non-commercial purposes, with the option to buy a licence for commercial use. Please [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
+xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) for non-commercial use. See [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
   
 ## Programming API
  
-[````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) provides a complete set of methods to programmatically control it with JavaScript.
+The viewer is implemented by the [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) class, which provides a complete set of methods to programmatically control it.
  
 Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
  
@@ -100,17 +100,7 @@ In the example below, we'll create a [````BIMViewer````](https://xeokit.github.i
 
 We'll configure the ````Server```` to load that data from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
  
-The viewer's UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and an element to cover everything and block input when the viewer needs to show a modal busy-loading dialog. 
-
-We'll also configure our ````BimViewer```` with DOM elements to hold those four parts: 
-
- * ````canvasElement```` - a ````<canvas>```` for the 3D canvas, 
- * ````explorerElement```` - a ````<div>```` to contain the explorer panel, 
- * ````toolbarElement```` - a ````<div>```` to contain the toolbar, 
- * ````navCubeCanvasElement```` - a ````<canvas>```` for the NavCube, and 
- * ````busyModelBackdropElement```` - the backdrop to show while busy loading. 
- 
-Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly into our web page.
+The viewer's UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and a "backdrop" element to cover everything and block input whenever the viewer needs to show a modal busy-loading dialog. We'll also configure our ````BimViewer```` with DOM elements to hold those four parts.
   
 ````javascript
 const server = new Server({
@@ -118,14 +108,16 @@ const server = new Server({
  });
 
 const myBIMViewer = new BIMViewer(server, {
-     canvasElement: document.getElementById("myCanvas"), // WebGL canvas
-     explorerElement: document.getElementById("myExplorer"), // Explorer panel
-     toolbarElement: document.getElementById("myToolbar"), // Toolbar
-     navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
-     busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop")
+     canvasElement: document.getElementById("myCanvas"),                // The 3D WebGL canvas
+     explorerElement: document.getElementById("myExplorer"),            // Container for the explorer panel
+     toolbarElement: document.getElementById("myToolbar"),              // Container for the toolbar
+     navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),  // Canvas for the NavCube
+     busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop") // Busy modal dialog backdrop element
 });
 ````
  
+Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly into our web page.
+
 In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the elements look like this:
  
 ````html
