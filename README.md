@@ -215,7 +215,7 @@ The optional ````viewerConfigs```` section specifies configurations for the view
 
 The optional ````viewerContent```` array specifies IDs of models that the viewer will load initially, right after it's applied the configurations. 
 
-The optional ````viewerState```` section specifies how the viewer should set up the initial state of its UI, right after its loaded the initial models. See the complete list of available viewer states in [Viewer UI States](#project-viewer-configuration).
+The optional ````viewerState```` section specifies how the viewer should set up the initial state of its UI, right after its loaded the initial models. See the complete list of available viewer states in [Viewer States](#viewer-states).
 
 The ````geometry.xkt```` and ````metadata.json```` files for each model are created from an IFC file using open source CLI tools. Learn how to create those files in the [Creating  Files for Offline BIM](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM) tutorial.  
 
@@ -247,8 +247,7 @@ The table below lists the complete set of available configurations. Think of the
 
 In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the initial state of its UI, right after the project has loaded. The table below lists the available directives.  These can also be set on the viewer using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState).
 
-| Property              | Type              | Range                 | Default Value     | Description         
-              |
+| Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
 | "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
 
@@ -299,7 +298,7 @@ const myBIMViewer = new BIMViewer(server, {
  
 Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly into our web page.
 
-In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the elements look like this:
+In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the HTML elements look like this:
  
 ````html
 <div id="myViewer" class="xeokit-busy-modal-backdrop">
@@ -312,7 +311,9 @@ In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob
  <canvas id="myNavCubeCanvas"></canvas>
 ````
  
-See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css) for how we've styled these elements. See [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to its internally-created HTML.  
+See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css) for how we've styled these elements. 
+
+Also see [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to the elements it creates internally.  
  
 ### Configuring the Viewer
  
@@ -456,7 +457,7 @@ myViewer.getObjectInfo("WestRiversideHospital", "architectural", "2HaS6zNOX8xOGj
 
 If the object does not exist in the specified project and model, the method will invoke its error callback.
 
-Our file system database does happen to have info for that object, stored in [````./app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json.json).
+Our file system database does happen to have info for that object, stored in [````./app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json).
 
 Since our object info exists, we'll get a result similar to this: 
 
@@ -651,7 +652,7 @@ The [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/ma
 
 ### Modal Busy Dialog
 
-As mentioned above, the viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
+The viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI. 
 
 Within our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the main ````<div>```` is the backdrop element:
  
@@ -690,9 +691,9 @@ In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/
 
 ### Customizing Appearances of IFC Types
 
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [````src/IFCObjectDefaults/IFCObjectDefaults.js````](src/IFCObjectDefaults/IFCObjectDefaults.js).
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [````.//src/IFCObjectDefaults/ViewerIFCObjectColors.js````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js).
 
-You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
+You can add or remove configurations in that file if you need to customize the color and pickability of specific IFC types.
 
 For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
 
@@ -717,7 +718,9 @@ Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements
 
 ## xeokit Components Used in the Viewer
 
-The viewer is built on various xeokit components and plugins that are designed to accelerate the development of BIM and CAD visualization apps. The table below lists the main ones used in this viewer. 
+The viewer is built on various [xeokit SDK](http://xeokit.io) components and plugins that are designed to accelerate the development of BIM and CAD visualization apps. 
+
+The table below lists the main ones used in this viewer. 
 
 | Component              | Purpose          | 
 |:-----------------------|:------------------|
