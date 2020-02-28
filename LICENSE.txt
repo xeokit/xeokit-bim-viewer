@@ -1,7 +1,8 @@
 -------------------------------------------------------------------------
-xeokit-bim-viewer and the xeokit SDK is licensed under the Affero GPL V3
-license with the option to buy a license for commercial use. For more
-information on pricing and what is included in the xeokit SDK, see:
+xeokit-bim-viewer is part of the xeokit SDK, which is licensed under the
+Affero GPL V3 license, with the option to buy a license for commercial
+use. For more information on pricing and what is included in the
+xeokit SDK, see:
 
 https://xeokit.io/index.html#pricing
 
