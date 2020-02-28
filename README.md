@@ -40,6 +40,8 @@ Read the documentation below to get started.
 - [Features](#features)
 - [Demos](#demos)
 - [License](#license)
+- [The Viewer Application](#the-viewer-application)
+- [Model Database](#model-database)
 - [Programming API](#programming-api)
   * [Creating a Viewer](#creating-a-viewer)
   * [Configuring the Viewer](#configuring-the-viewer)
@@ -51,14 +53,16 @@ Read the documentation below to get started.
     + [Loading a Project](#loading-a-project)
     + [Loading a Model](#loading-a-model)
   * [Controlling Viewer State](#controlling-viewer-state)
-  * [Model Database](#model-database)
-- [Adding Your Own Models](#adding-your-own-models)
-    + [Loading models from a custom source](#loading-models-from-a-custom-source)
+  * [Saving and Loading BCF Viewpoints](#saving-and-loading-bcf-viewpoints)
 - [Customizing Viewer Style](#customizing-viewer-style)
   * [Modal Busy Dialog](#modal-busy-dialog)
   * [Tooltips](#tooltips)
   * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
-- [Building](#building)
+- [xeokit Components Used in the Viewer](#xeokit-components-used-in-the-viewer)
+- [Building the Viewer](#building)
+  * [Installing from NPM](#installing-from-npm)
+  * [Building the Binary](#building-the-binary)
+  * [Building the Documentation](#building-the-documentation)
 
 ## Features
 
@@ -66,14 +70,17 @@ Read the documentation below to get started.
 * Works in all major browsers, including mobile.
 * Loads models from the file system.
 * Loads multiple models.
+* Saves and loads BCF viewpoints
 * 3D and 2D viewing modes.
 * Interactively X-ray, highlight, show, hide and section objects. 
-* Tree views of object containment, layers and storeys.
+* Tree views of structure, layers and storeys.
 * Supports IFC2x3 and IFC4.
 * Customize viewer appearance with your own CSS.
 * JavaScript programming API for all viewer functions.
 
 ## Demos 
+
+Click the links below to run some demos.
 
 | Live Demo | Model Source |
 |---|---|
@@ -87,12 +94,179 @@ Read the documentation below to get started.
 ## License
 
 xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) for non-commercial use. See [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
-  
+
+## The Viewer Application
+
+The [````./app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/index.html) page provides a ready-to-use instance of xeokit-bim-viewer. We'll just call it *viewer* from now on.
+
+The viewer loads projects and models from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
+
+To view a project, load the viewer with the project's ID on the URL: 
+
+[````https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital````](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital)
+
+## Model Database
+
+**This section aims to show you how how to add your own models to the viewer application.**
+                 
+Let's examine the structure of the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, where the viewer keeps its projects and models.   
+
+Shown below is a portion of the ````./app/data```` directory. We'll describe it from the root directory downwards.
+                                                   
+Within the root, we have a directory for each project, along with a manifest of the projects in ````index.json````.
+
+Within a project directory, we have a directory for each model in the project, along with a manifest of the models in ````index.json````.
+
+Within a model directory, we have two files that comprise the model itself:
+
+* ````geometry.xkt```` - the model's geometry, formatted as ````.XKT````, which is xeokit's native binary geometry format, and 
+* ````metadata.json```` - the model's structural metadata, a JSON file containing the IFC element hierarchy.
+
+````
+.app/data/
+└── projects
+    ├── index.json
+    ├── Duplex
+    │   ├── index.json
+    │   └── models
+    │       └── design
+    │           ├── geometry.xkt
+    │           └── metadata.json
+    └── WestRiversideHospital
+          ├── index.json
+          └── models
+              ├── architecture
+              │   ├── geometry.xkt
+              │   └── metadata.json
+              ├── structure
+              │   ├── geometry.xkt
+              │   └── metadata.json
+              └── electrical
+                  ├── geometry.xkt
+                  └── metadata.json
+````
+
+The ````index.json```` at the root of ````./data```` is shown below. 
+
+Within this file, the ````id```` of each project matches the name of that project's subdirectory. 
+
+````json
+{
+  "projects": [
+    {
+      "id": "Duplex",
+      "name": "Duplex",
+      "position": [-20, 0.0, -10.0],
+      "scale": [1.0, 1.0, 1.0],
+      "rotation": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "WestRiversideHospital",
+      "name": "West Riverside Hospital",
+      "position": [20, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "rotation": [0.0, 0.0, 0.0]
+    },
+    //...
+  ]
+}
+```` 
+
+The ````index.json```` for the "WestRiversideHospital" project is shown below.
+ 
+ Within this file, the ````id```` of each model matches the name of that model's subdirectory. Each model's ````name```` is the human-readable name that's displayed in the viewers Models tab.
+
+````json
+{
+    "id": "WestRiversideHospital",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "architectural",
+            "name": "Hospital Architecture"
+        },
+        {
+            "id": "structure",
+            "name": "Hospital Structure"
+        },
+        {
+            "id": "electrical",
+            "name": "Hospital Electrical",
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [0.9, 0.9, 1.0],
+        "saoEnabled": true
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "structure",
+            "architectural"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "models"
+    }
+}
+````
+
+The optional ````viewerConfigs```` section specifies configurations for the viewer to set on itself as it loads the project. See the complete list of available viewer configurations in [Viewer Configurations](#project-viewer-configs).
+
+The optional ````viewerContent```` array specifies IDs of models that the viewer will load initially, right after it's applied the configurations. 
+
+The optional ````viewerState```` section specifies how the viewer should set up the initial state of its UI, right after its loaded the initial models. See the complete list of available viewer states in [Viewer UI States](#project-viewer-configuration).
+
+The ````geometry.xkt```` and ````metadata.json```` files for each model are created from an IFC file using open source CLI tools. Learn how to create those files in the [Creating  Files for Offline BIM](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM) tutorial.  
+
+While not essential, you can learn about the format of an ````.xkt```` geometry file in [XKT Format](https://github.com/xeokit/xeokit-sdk/wiki/XKT-Format) specification. 
+
+### Viewer Configurations
+
+The table below lists the complete set of available configurations. Think of these as user preferences. These may be provided to the viewer within project info files, as described in [Model Database](#model-database), or set programmatically on the viewer with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs), as described in [Configuring the Viewer](#configuring-the-viewer).  
+ 
+| Property              | Type              | Range                 | Default Value     | Description                    |
+|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
+| "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
+| "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
+| "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
+| "saoEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Scalable Ambient Obscurance (SAO) |
+| "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
+| "saoIntensity"        | Number            | ````[0.0...200.0]```` | ````100.0````     | SAO intensity factor |
+| "saoScale"            | Number            | ````[0.0...1000.0]````| ````500.0````     | SAO scale factor |
+| "saoKernelRadius"     | Number            | ````[0.0...200.0]```` | ````100.0````     | The maximum area that SAO takes into account when checking for possible occlusion |
+| "saoBlur"             | Boolean           |                       | ````true````      | Whether Guassian blur is enabled for SAO |
+| "saoInteractive"      | Boolean           |                       | ````true````      | When ````true````, applies SAO when moving the camera, otherwise applies it once the camera stops moving |
+| "saoInteractiveDelay" | Number            |                       | ````200````       | when "saoInteractive" is ````false````, this is the time delay in milliseconds after which SAO is applied after the camera has stopped moving |
+| "viewFitFOV"          | Number            | ````[10.0...70.0]```` | ````30````        | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view |
+| "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
+| "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
+| "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
+
+### Viewer States
+
+In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the initial state of its UI, right after the project has loaded. The table below lists the available directives.  These can also be set on the viewer using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState).
+
+| Property              | Type              | Range                 | Default Value     | Description         
+              |
+|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
+| "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
+
 ## Programming API
+
+**This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.**
+
+The viewer is implemented by the JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) class, which provides a complete set of methods to programmatically control it.
  
-The viewer is implemented by the [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) class, which provides a complete set of methods to programmatically control it.
- 
-Using these methods, we can create and configure a viewer, query what models are available, load models, interact with the 3D view, control the various tools, and even control the UI itself.
+Using these methods, we can: 
+
+ * create and configure a viewer, 
+ * query what models are available, 
+ * load projects and models, 
+ * interact with the 3D view, 
+ * save and load BCF viewpoints,
+ * control the various viewer tools, and 
+ * drive the state of the viewer's UI.
  
 ### Creating a Viewer
  
@@ -100,7 +274,14 @@ In the example below, we'll create a [````BIMViewer````](https://xeokit.github.i
 
 We'll configure the ````Server```` to load that data from the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
  
-The viewer's UI is comprised of four parts: a 3D canvas, an explorer panel containing the tree views, a toolbar, a NavCube, and a "backdrop" element to cover everything and block input whenever the viewer needs to show a modal busy-loading dialog. We'll also configure our ````BimViewer```` with DOM elements to hold those four parts.
+We'll also configure our ````BimViewer```` with DOM elements to hold the four parts of its UI, which are: 
+
+1. the 3D canvas, 
+2. the explorer panel containing the tree views, 
+3. the toolbar, 
+4. the NavCube, and 
+4. the "backdrop" element, which covers everything in the UI to prevent interaction whenever the viewer is busy loading a model. 
+
   
 ````javascript
 const server = new Server({
@@ -135,43 +316,26 @@ See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob
  
 ### Configuring the Viewer
  
-Use [BIMViewer#setConfigs()](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to configure your viewer:
+With our viewer created, let's use [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to configure it. 
+
+We'll enable Scalable Ambient Obscurance and set the canvas background color to white:
  
 ````javascript
 myBIMViewer.setConfigs({
-    "saoEnabled":        "false",
-    "saoBias":           "0.5",
-    "saoIntensity":      "0.5",
+    "saoEnabled":        "white",
     "backgroundColor":   [1.0, 1.0, 1.0]
 });
 ````
  
-The complete set of available configurations is:
- 
-| Property              | Type              | Range                 | Default Value     | Description                       |
-|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
-| "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
-| "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
-| "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
-| "saoEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Scalable Ambient Obscurance (SAO) |
-| "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
-| "saoIntensity"        | Number            | ````[0.0...200.0]```` | ````100.0````     | SAO intensity factor |
-| "saoScale"            | Number            | ````[0.0...1000.0]````| ````500.0````     | SAO scale factor |
-| "saoKernelRadius"     | Number            | ````[0.0...200.0]```` | ````100.0````     | The maximum area that SAO takes into account when checking for possible occlusion |
-| "saoBlur"             | Boolean           |                       | ````true````      | Whether Guassian blur is enabled for SAO |
-| "saoInteractive"      | Boolean           |                       | ````true````      | When ````true````, applies SAO when moving the camera, otherwise applies it once the camera stops moving |
-| "saoInteractiveDelay" | Number            |                       | ````200````       | when "saoInteractive" is ````false````, this is the time delay in milliseconds after which SAO is applied after the camera has stopped moving |
-| "viewFitFOV"          | Number            | ````[10.0...70.0]```` | ````30````        | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view |
-| "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
-| "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
-| "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
-
+See [Viewer Configurations](#viewer-configurations) for the list of available configurations.
 
 ### Querying Projects, Models and Objects
 
+With our viewer created and configured, let's find out what content is available.
+
 #### Getting Info on Available Projects
 
-Let's start off by querying what projects are available. Since we're using the default [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html), this will be the JSON in [````./app/data/projects/index.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json). We'll just log that info to the console.
+Let's query what projects are available. 
  
 ````javascript
 myBIMViewer.getProjectsInfo((projectsInfo) => {
@@ -179,9 +343,11 @@ myBIMViewer.getProjectsInfo((projectsInfo) => {
 });
 ````
  
-Internally, the viewer will call [````Server#getProjects()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects) to get that info.
+Internally, the viewer will call [````Server#getProjects()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProjects) to get the projects info.
  
-The projects info will be similar to:
+As described earlier in [Model Database](#model-database), the projects info is the JSON in [````./app/data/projects/index.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/index.json). We'll just log that info to the console.
+
+The projects info will look similar to:
  
 ````json
 {
@@ -204,17 +370,16 @@ The projects info will be similar to:
 
 #### Getting Info on a Project
 
-Now let's query some info on one of the projects.
+Now we know what projects are available, we'll get info on one of those projects.
 
 ````javascript
 myBIMViewer.getProjectInfo("WestRiversideHospital", (projectInfo) => {
      console.log(JSON.stringify(projectInfo, null, "\t"));
 });
 ````
+Internally, the viewer will call [````Server#getProject()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject) to get that project info. Like before, we'll just log it to the console.
 
 The project info will be the contents of [````./app/data/projects/WestRiversideHospital/index.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/index.json).
-
-Internally, the viewer will call [````Server#getProject()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getProject) to get that project info.
 
 The project info will be similar to:
  
@@ -239,11 +404,7 @@ The project info will be similar to:
     ],
     "viewerConfigs": {
         "backgroundColor": [0.9, 0.9, 1.0],
-        "saoEnabled": true,
-        "saoIntensity": 0.7,
-        "saoScale": 1200.0,
-        "saoInteractive": false,
-        "saoInteractiveDelay": 200
+        "saoEnabled": true
     },
     "viewerContent": {
         "modelsLoaded": [
@@ -262,26 +423,26 @@ In this project info, we have:
 * **````id````** - ID of the project,
 * **````name````** - human-readable name of the project, 
 * **````models````** - info on each model in this project,
-* **````viewerConfigs````** - viewer configurations to apply when loading the project,
-* **````viewerContent````** - which models to load immediately when loading the project, and
+* **````viewerConfigs````** - configurations for the viewer to apply when loading the project,
+* **````viewerContent````** - which models the viewer should immediately load when loading the project, and
 * **````viewerState````** - how the viewer should set up its UI after loading the project.
 
-When we load the project (in a later section), the viewer is going to pass the ````viewerConfigs```` to [BIMViewer#setConfigs()](), which we described in [Configuring the Viewer](#configuring-the-viewer). 
 
-In the ````viewerConfigs```` we're enabling the viewer's Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer tp render, so we've disabled it for the "electrical" model, which contains many long, thin wire objects that  
+When we later load the project in section [Loading a Project](#loading_a_project), the viewer is going to pass the ````viewerConfigs```` to [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-sdk/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs), which we described earlier in [Configuring the Viewer](#configuring-the-viewer). 
 
+In the ````viewerConfigs```` we're enabling the viewer's Scalable Ambient Obscurance effect, which will create ambient shadows in the crevices of our models. This is an expensive effect for the viewer to render, so we've disabled it for the "electrical" model, which contains many long, thin wire objects that don't show the SAO effect well.
 
 #### Getting Info on an Object
 
 Let's attempt to get some info on an object within one of our project's models.
 
-We say "attempt" because it's up to the [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) to try to find that info for us. 
+We say "attempt" because it's up to the [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) to try to find that info for us, which might not exist. 
 
 Internally, the viewer will call [````Server#getObjectInfo()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html#instance-method-getObjectInfo), which will attempt to load that object info from a file. 
 
-If you were to substitute ````Server```` with your own implementation, your implementation could get that info from a data store, such as a relational database, populated with metadata for all the objects in your project's models, keyed to their IDs. 
+If you were to substitute ````Server```` with your own implementation, your implementation might get that info from a data store, such as a relational database, populated with metadata for all the objects in your project's models, keyed to their IDs. 
  
-We'll go ahead and assume that our ````Server```` has that object info. 
+We'll go ahead and assume that our ````Server```` has info an an object. 
 
 ````javascript
 myViewer.getObjectInfo("WestRiversideHospital", "architectural", "2HaS6zNOX8xOGjmaNi_r6b", 
@@ -295,7 +456,7 @@ myViewer.getObjectInfo("WestRiversideHospital", "architectural", "2HaS6zNOX8xOGj
 
 If the object does not exist in the specified project and model, the method will invoke its error callback.
 
-Our file system database does happen to have info for that object, stored in [````./app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/index.json).
+Our file system database does happen to have info for that object, stored in [````./app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects/WestRiversideHospital/models/architectural/objects/2HaS6zNOX8xOGjmaNi_r6b.json.json).
 
 Since our object info exists, we'll get a result similar to this: 
 
@@ -310,7 +471,7 @@ Since our object info exists, we'll get a result similar to this:
 }
 ```` 
 
-By now, you've probably noticed that our file system database is structured to support [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) URIs, which our [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) constructs from the project, model and object IDs we supplied to the viewer's query methods.
+> By now, you've probably noticed that our file system database is structured to support [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) URIs, which our [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) constructs from the project, model and object IDs we supplied to the viewer's query methods. 
        
 ### Loading Projects and Models
  
@@ -318,7 +479,7 @@ Let's now load some of the projects and models that we queried in the previous s
 
 #### Loading a Project
 
-Let's load the project we just queried info on. 
+Let's start by loading the project we just queried info on. 
 
 ````javascript
 myBIMViewer.loadProject("WestRiversideHospital", 
@@ -330,11 +491,11 @@ myBIMViewer.loadProject("WestRiversideHospital",
     });
 ````
 
-If that succeeds, the viewer will now have two models loaded: ````"architectural"```` and ````"structure"````.
+If that succeeds, the viewer will now have two models loaded, ````"architectural"```` and ````"structure"````, since those are specified in the project info's ````viewerContent````.
 
-The viewer will also enable Scalable Ambient Obscurance, since that's specified by the ````saoEnabled```` property in the ````viewerConfigs```` section of the project info. The viewer will also set various other configs on itself, as specified in that section.
+The viewer will also enable Scalable Ambient Obscurance, since that's specified by the ````saoEnabled```` property in the ````viewerConfigs````. The viewer will also set various other configs on itself, as specified in that section.
 
-The viewer will also open its "Models" tab, thanks to the ````tabOpen```` property in the ````viewerState```` section of the project info. 
+The viewer will also open its "Models" tab, thanks to the ````tabOpen```` property in the project info's ````viewerState```` section. 
 
 We can confirm that the two models are loaded by querying the IDs of the models that are currently loaded in the viewer:
 
@@ -354,7 +515,7 @@ The result would be:
 
 With our project loaded, let's load another of its models.
 
-We could start by getting the IDs of all the models in our project, just to make sure it's there:
+We could start by getting the IDs of all the models in our project, just to make sure the model is available:
 
 ````javascript
 const modelIds = myBIMViewer.getModelIds();
@@ -386,6 +547,15 @@ If we no longer need that model, we can unload it again:
 myBIMViewer.unloadModel("electrical");
 ````
 
+When we no longer need the project, unload like so:
+
+````javascript
+myBIMViewer.unloadProject();
+````
+
+Note that we can only load one project at a time.
+
+
 ### Controlling Viewer State
 
 [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) has various methods with which we can programmatically control the state of its UI. 
@@ -414,138 +584,70 @@ myBIMViewer.flyToObject("1fOVjSd7T40PyRtVEklS6X", ()=>{ /* Done */ });
 
 TODO: Complete this section once API methods are finalized
 
-## Model Database
+### Saving and Loading BCF Viewpoints
 
-The viewer loads models from the file system by default. These are contained within the [./data](https://github.com/xeokit/xeokit-bim-viewer/tree/master/data) directory, which also contains a number of sample models to get you started. 
+[Bim Collaborative Format](https://en.wikipedia.org/wiki/BIM_Collaboration_Format) (BCF) is a format for managing issues on a BIM project. A BCF record captures the visual state of a BIM viewer, which includes the camera position, the visibility and selected states of the objects, and any section planes that are currently active. 
 
-Each model consists of an ````.XKT```` binary geometry file and a JSON metadata file which classifies its IFC elements. 
+A BCF record saved from one BIM viewer can be loaded into another viewer, to synchronize the visual states of both viewers.
 
-Models are grouped within *projects*. Each project can contain multiple models, and has a JSON ````index.json```` manifest which lists its models.
+Note that BCF viewpoints do not record which models are currently loaded. It's assumed that both the source and target viewers have the same models loaded.
 
-At the root of ````./data```` is a JSON ````index.json```` manifest that lists all the projects.
-
-The directory structure is designed to support RESTful queries, ie:
-
-
-| Query  | Path |
-|---|---|
-| Get all projects | ````GET ./data/index.json```` |
-| Get project | ````GET ./data/WestRiversideHospital/index.json````  |
-| Get model geometry | ````GET ./data/WestRiversideHospital/electrical/geometry.xkt```` |
-| Get model metadata | ````GET ./data/WestRiversideHospital/electrical/metadata.json```` |
-
-Shown below is a portion of the ````./data```` directory, showing the directory structure.
-
-````
-./data/
-└── projects
-    ├── index.json
-    ├── Duplex
-    │   ├── index.json
-    │   └── models
-    │       └── design
-    │           ├── geometry.xkt
-    │           ├── issues.json
-    │           └── metadata.json
-    └── WestRiversideHospital
-          ├── index.json
-          └── models
-              ├── electrical
-              │   ├── geometry.xkt
-              │   └── metadata.json
-              ├── fireAlarms
-              │   ├── geometry.xkt
-              │   └── metadata.json
-              ├── plumbing
-              │   ├── geometry.xkt
-              │   └── metadata.json
-              ├── sprinklers
-              │   ├── geometry.xkt
-              │   └── metadata.json
-              └── structure
-                  ├── geometry.xkt
-                  └── metadata.json
-````
-
-The ````index.json```` at the root of ````./data```` shown below. The ````id```` of each project matches the name of that project's subdirectory. 
-
-````json
-{
-  "projects": [
-    {
-      "id": "Duplex",
-      "name": "Duplex",
-      "position": [-20, 0.0, -10.0],
-      "scale": [1.0, 1.0, 1.0],
-      "rotation": [0.0, 0.0, 0.0]
-    },
-    {
-      "id": "WestRiversideHospital",
-      "name": "West Riverside Hospital",
-      "position": [20, 0.0, 0.0],
-      "scale": [1.0, 1.0, 1.0],
-      "rotation": [0.0, 0.0, 0.0]
-    },
-    //...
-  ]
-}
-```` 
-
-The ````index.json```` for the "WestRiversideHospital" project is shown below. The ````id```` of each model matches the name of that model's subdirectory, while ````name```` is the string that's displayed for the model in the viewers Models tab.
-
-````json
-{
-  "id": "WestRiversideHospital",
-  "name": "West Riverside Hospital",
-  "models": [
-    {
-      "id": "structure",
-      "name": "Hospital Structure",
-      "default": true
-    },
-    {
-      "id": "electrical",
-      "name": "Hospital Electrical"
-    },
-    {
-      "id": "sprinklers",
-      "name": "Hospital Sprinklers"
-    },
-    {
-      "id": "plumbing",
-      "name": "Hospital Plumbing"
-    },
-    {
-      "id": "fireAlarms",
-      "name": "Hospital Fire Alarms"
-    }
-  ]
-}
-````
-
-## Adding Your Own Models
-
-To add your own project to the database, you need to: 
-
-add a new project directory within ````./data````,
- * add a subdirectory within that for each model, containing each model's ````.XKT```` and metadata files,
- * add a ````index.json```` manifest of the models within the project directory, which lists the models, and
- * list your project in the ````index.json```` at the root of ````./data````.    
-
-#### Loading models from a custom source
-
-To load models from a different source than the file system, configure
+Use the [````BIMViewer#saveBCFViewpoint()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-saveBCFViewpoint) to save a JSON BCF record of the current view: 
 
 ````javascript
-
-
-
+const viewpoint = bimViewer.saveBCFViewpoint({
+    // Options - see BIMViewer#saveBCFViewpoint() documentation for details
+});
 ````
 
+Our viewpoint JSON will look similar to below. Before saving this viewpoint, we've hidden one object, selected another object, and created section plane to slice our model. The viewpoint also contains a PNG snapshot of the viewer's canvas, which we've truncated here for brevity.
+
+````
+{
+    perspective_camera: {
+        camera_view_point: { x: 0.0, y: 0.0, z: 0.0 },
+        camera_direction: { x: 1.0, y: 1.0, z: 2.0 },
+        camera_up_vector: { x: 0.0, y: 0.0, z: 1.0 },
+        field_of_view: 90.0
+    },
+    lines: [],
+    clipping_planes: [{
+        location: { x: 0.5, y: 0.5, z: 0.5 },
+        direction: { x: 1.0, y: 0.0, z: 0.0 }
+    }],
+    bitmaps: [],
+    snapshot: {
+        snapshot_type: png,
+        snapshot_data: "data:image/png;base64,......"
+    },
+    components: {
+        visibility: {
+            default_visibility: false,
+            exceptions: [{
+                ifc_guid: 4$cshxZO9AJBebsni$z9Yk,
+                originating_system: xeokit.io,
+                authoring_tool_id: xeokit/v1.0
+            }]
+       },
+        selection: [{
+           ifc_guid: "4$cshxZO9AJBebsni$z9Yk",
+        }]
+    }
+}
+````
+
+Use the [````BIMViewer#loadBCFViewpoint()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-loadBCFViewpoint) to load a JSON BCF record: 
+
+
+````javascript
+bimViewer.loadBCFViewpoint(viewpoint, {
+    // Options - see BIMViewer#loadBCFViewpoint() documentation for details
+});
+````
 
 ## Customizing Viewer Style
 
-The [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
+The [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
 
 ### Modal Busy Dialog
 
@@ -588,7 +690,7 @@ In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/
 
 ### Customizing Appearances of IFC Types
 
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [src/IFCObjectDefaults/IFCObjectDefaults.js](src/IFCObjectDefaults/IFCObjectDefaults.js).
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [````src/IFCObjectDefaults/IFCObjectDefaults.js````](src/IFCObjectDefaults/IFCObjectDefaults.js).
 
 You can add or remove configurations in that file if you need to customize the color or pickability of specific IFC types.
 
@@ -613,7 +715,23 @@ export {IFCObjectDefaults};
  
 Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have configurations in there so that we can see through them.
 
-## Building 
+## xeokit Components Used in the Viewer
+
+The viewer is built on various xeokit components and plugins that are designed to accelerate the development of BIM and CAD visualization apps. The table below lists the main ones used in this viewer. 
+
+| Component              | Purpose          | 
+|:-----------------------|:------------------|
+| [````Viewer````](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) | The WebGL-based viewer at the heart of ````BIMViewer````. |
+| [````XKTLoaderPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js~XKTLoaderPlugin.html)  | Loads model geometry and metadata. |
+| [````NavCubePlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/NavCubePlugin/NavCubePlugin.js~NavCubePlugin.html)  | Navigation cube gizmo that allows us to rotate the scene and move the camera to look at it along a selected axis or diagonal. |
+| [````TreeViewPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/TreeViewPlugin/TreeViewPlugin.js~TreeViewPlugin.html)  | Implements the Objects, Classes and Storeys tree views within the explorer panel. |
+| [````SectionPlanesPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js~SectionPlanesPlugin.html) | Manages interactive section planes, which are used to slice objects to reveal inner structures. |
+| [````BCFViewpointsPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js~BCFViewpointsPlugin.html) | Saves and loads BCF viewpoints. |
+| [````ContextMenu````](https://xeokit.github.io/xeokit-sdk/docs/class/src/extras/ContextMenu/ContextMenu.js~ContextMenu.html)  | Implements the context menus for the explorer tree views and 3D canvas. |
+ 
+## Building the Viewer
+
+### Installing from NPM
 
 To install the npm package:
 
@@ -621,13 +739,17 @@ To install the npm package:
 sudo npm install
 ````
 
-Building ES6 module in ````/dist/main.js````:
+### Building the Binary
+
+To build the ES6 module in ````/dist/main.js````:
 
 ````
 npm run build
 ````
 
-Building API documentation in ````/docs/````:
+### Building the Documentation
+
+To build the API documentation in ````/docs/````:
 
 ````
 npm run docs
