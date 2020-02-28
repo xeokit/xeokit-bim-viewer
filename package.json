@@ -30,7 +30,7 @@
     "OpenProject"
   ],
   "author": "Lindsay Kay",
-  "license": "https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt",
+  "license": "See LICENSE.txt",
   "bugs": {
     "url": "https://github.com/xeokit/xeokit-bim-viewer/issues"
   },
