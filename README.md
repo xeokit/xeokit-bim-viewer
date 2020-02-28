@@ -1,8 +1,11 @@
 # xeokit-bim-viewer
 
-**xeokit-bim-viewer** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the xeokit SDK.
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9144bfee5a4b42ae8dc2eb603aa9966c)](https://www.codacy.com/manual/lindsay-kay/xeokit-viewer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xeokit/xeokit-viewer&amp;utm_campaign=Badge_Grade)
+[![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer)
 
-The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is also integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
+**https://github.com/xeokit/xeokit-bim-viewer** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the xeokit SDK.
+
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
 The viewer can be used as a stand-alone JavaScript application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.
 
@@ -28,7 +31,6 @@ Read the documentation below to get started.
 
 ---
 
-* [Homepage](https://xeokit.github.io/xeokit-bim-viewer/)
 * [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
 * [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
 * [xeokit SDK](http://xeokit.io)
@@ -250,6 +252,19 @@ In [Model Database](#model-database) we saw how a project can specify directives
 | Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
 | "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
+
+## Embedding the Viewer
+
+TODO
+
+````html
+<iframe src="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital"></iframe>
+````
+
+````html
+<iframe src="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital#"></iframe>
+````
+
 
 ## Programming API
 
@@ -691,7 +706,9 @@ In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/
 
 ### Customizing Appearances of IFC Types
 
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [````.//src/IFCObjectDefaults/ViewerIFCObjectColors.js````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js).
+TODO: Correct this section - viewer can load from model and viewer
+
+The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file [````./src/IFCObjectDefaults/ViewerIFCObjectColors.js````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js).
 
 You can add or remove configurations in that file if you need to customize the color and pickability of specific IFC types.
 

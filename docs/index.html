@@ -36,8 +36,8 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong>xeokit-bim-viewer</strong> is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on <a href="http://xeokit.io">xeokit</a>, and is bundled as part of the xeokit SDK.</p>
-<p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject</a>,  and is also integrated within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><strong><a href="https://github.com/xeokit/xeokit-bim-viewer">https://github.com/xeokit/xeokit-bim-viewer</a></strong> is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on <a href="http://xeokit.io">xeokit</a>, and is bundled as part of the xeokit SDK.</p>
+<p>The viewer is developed by <a href="http://xeolabs.com">xeolabs</a> and <a href="https://www.openproject.org/">OpenProject</a>,  and is integrated within <a href="https://www.openproject.org/openproject-bim-10-4/">OpenProject BIM 10.4</a> and later. </p>
 <p>The viewer can be used as a stand-alone JavaScript application. In combination with open source CLI model conversion tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to convert and host your models on your own server or GitHub repository.</p>
 <p>To view your models with this viewer: </p>
 <ol>
@@ -53,7 +53,6 @@
 <p><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png" alt="Screenshot"></a></p>
 <hr>
 <ul>
-<li><a href="https://xeokit.github.io/xeokit-bim-viewer/">Homepage</a></li>
 <li><a href="https://github.com/xeokit/xeokit-bim-viewer">Source Code</a></li>
 <li><a href="https://xeokit.github.io/xeokit-bim-viewer/docs">API Docs</a></li>
 <li><a href="http://xeokit.io">xeokit SDK</a></li>
@@ -383,6 +382,11 @@
 </tr>
 </tbody>
 </table>
+<h2 id="embedding-the-viewer">Embedding the Viewer</h2><p>TODO</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;iframe src=&quot;https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital&quot;&gt;&lt;/iframe&gt;</code>
+</code></pre>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;iframe src=&quot;https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital#&quot;&gt;&lt;/iframe&gt;</code>
+</code></pre>
 <h2 id="programming-api">Programming API</h2><p><strong>This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.</strong></p>
 <p>The viewer is implemented by the JavaScript <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a> class, which provides a complete set of methods to programmatically control it.</p>
 <p>Using these methods, we can: </p>
@@ -672,7 +676,8 @@ console.log(&quot;Currently open tab: &apos;&quot; + tabId + &quot;&apos;&quot;)
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;</code>
 </code></pre>
 <p>In the <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone viewer, we&apos;re using <a href="https://github.com/atomiks/tippyjs">tippy.js</a>, which automatically creates tooltips for those elements.</p>
-<h3 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h3><p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js"><code>.//src/IFCObjectDefaults/ViewerIFCObjectColors.js</code></a>.</p>
+<h3 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h3><p>TODO: Correct this section - viewer can load from model and viewer</p>
+<p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are defined in the configuration file <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js"><code>./src/IFCObjectDefaults/ViewerIFCObjectColors.js</code></a>.</p>
 <p>You can add or remove configurations in that file if you need to customize the color and pickability of specific IFC types.</p>
 <p>For example, to ensure that <code>IfcWindow</code> and <code>IfcSpace</code> types are initially visible, transparent and pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const IFCObjectDefaults = {
