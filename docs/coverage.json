@@ -1,7 +1,7 @@
 {
-  "coverage": "40%",
-  "expectCount": 360,
-  "actualCount": 144,
+  "coverage": "32.35%",
+  "expectCount": 272,
+  "actualCount": 88,
   "files": {
     "src/BIMViewer.js": {
       "expectCount": 73,
@@ -213,44 +213,6 @@
       "actualCount": 8,
       "undocumentLines": [
         19
-      ]
-    },
-    "src/toolbar/BIMViewerOLD.js": {
-      "expectCount": 88,
-      "actualCount": 56,
-      "undocumentLines": [
-        26,
-        68,
-        98,
-        195,
-        211,
-        215,
-        221,
-        228,
-        235,
-        242,
-        247,
-        252,
-        257,
-        262,
-        267,
-        272,
-        278,
-        283,
-        288,
-        364,
-        367,
-        470,
-        472,
-        473,
-        509,
-        946,
-        994,
-        1003,
-        1040,
-        1046,
-        1052,
-        1058
       ]
     },
     "src/toolbar/FirstPersonMode.js": {

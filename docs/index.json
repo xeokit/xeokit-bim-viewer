@@ -5697,2327 +5697,6 @@
   {
     "__docId__": 292,
     "kind": "file",
-    "name": "src/toolbar/BIMViewerOLD.js",
-    "content": "import {Controller} from \"./Controller.js\";\nimport {BusyModal} from \"./BusyModal.js\";\nimport {ResetAction} from \"./toolbar/ResetAction.js\";\nimport {FitAction} from \"./toolbar/FitAction.js\";\nimport {FirstPersonMode} from \"./toolbar/FirstPersonMode.js\";\nimport {HideTool} from \"./toolbar/HideTool.js\";\nimport {SelectionTool} from \"./toolbar/SelectionTool.js\";\nimport {QueryTool} from \"./toolbar/QueryTool.js\";\nimport {SectionTool} from \"./toolbar/SectionTool.js\";\nimport {NavCubeMode} from \"./toolbar/NavCubeMode.js\";\n\nimport {ModelsExplorer} from \"./explorer/ModelsExplorer.js\";\nimport {ObjectsExplorer} from \"./explorer/ObjectsExplorer.js\";\nimport {ClassesExplorer} from \"./explorer/ClassesExplorer.js\";\nimport {StoreysExplorer} from \"./explorer/StoreysExplorer.js\";\n\nimport {Viewer} from \"@xeokit/xeokit-sdk/src/viewer/Viewer.js\";\nimport {AmbientLight} from \"@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js\";\nimport {DirLight} from \"@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js\";\nimport {BCFViewpointsPlugin} from \"@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js\";\nimport {ThreeDMode} from \"./toolbar/ThreeDMode.js\";\nimport {ObjectContextMenu} from \"./contextMenus/ObjectContextMenu.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\nimport {CanvasContextMenu} from \"./contextMenus/CanvasContextMenu.js\";\n\nconst explorerTemplate = `<div class=\"xeokit-tabs\">\n    <div class=\"xeokit-tab xeokit-modelsTab\">\n        <a class=\"xeokit-tab-btn\" href=\"#\">Models</a>\n        <div class=\"xeokit-tab-content\">\n            <div class=\"xeokit-btn-group\">\n                <button type=\"button\" class=\"xeokit-unloadAllModels xeokit-btn disabled\" data-tippy-content=\"Unload all models\">Unload all</button>\n            </div>\n            <div class=\"xeokit-models\" ></div>\n        </div>\n    </div>\n    <div class=\"xeokit-tab xeokit-objectsTab\">\n        <a class=\"xeokit-tab-btn disabled\" href=\"#\">Objects</a>\n        <div class=\"xeokit-tab-content\">\n         <div class=\"xeokit-btn-group\">\n            <button type=\"button\" class=\"xeokit-showAllObjects xeokit-btn disabled\" data-tippy-content=\"Show all objects\">Show all</button>\n            <button type=\"button\" class=\"xeokit-hideAllObjects xeokit-btn disabled\" data-tippy-content=\"Hide all objects\">Hide all</button>\n        </div>\n        <div class=\"xeokit-objects xeokit-tree-panel\" ></div>\n        </div>\n    </div>\n    <div class=\"xeokit-tab xeokit-classesTab\">\n        <a class=\"xeokit-tab-btn disabled\" href=\"#\">Classes</a>\n        <div class=\"xeokit-tab-content\">\n            <div class=\"xeokit-btn-group\">\n                <button type=\"button\" class=\"xeokit-showAllClasses xeokit-btn disabled\" data-tippy-content=\"Show all classes\">Show all</button>\n                <button type=\"button\" class=\"xeokit-hideAllClasses xeokit-btn disabled\" data-tippy-content=\"Hide all classes\">Hide all</button>\n            </div>\n            <div class=\"xeokit-classes xeokit-tree-panel\" ></div>\n        </div>\n    </div>\n     <div class=\"xeokit-tab xeokit-storeysTab\">\n        <a class=\"xeokit-tab-btn disabled\" href=\"#\">Storeys</a>\n        <div class=\"xeokit-tab-content\">\n         <div class=\"xeokit-btn-group\">\n                <button type=\"button\" class=\"xeokit-showAllStoreys xeokit-btn disabled\" data-tippy-content=\"Show all storeys\">Show all</button>\n                <button type=\"button\" class=\"xeokit-hideAllStoreys xeokit-btn disabled\" data-tippy-content=\"Hide all storeys\">Hide all</button>\n            </div>\n             <div class=\"xeokit-storeys xeokit-tree-panel\"></div>\n        </div>\n    </div>\n</div>`;\n\nconst toolbarTemplate = `<div class=\"xeokit-toolbar\">\n    <!-- Reset button -->\n    <div class=\"xeokit-btn-group\">\n        <button type=\"button\" class=\"xeokit-reset xeokit-btn fa fa-home fa-2x disabled\" data-tippy-content=\"Reset view\"></button>\n    </div>\n    <!-- 3D Mode button -->\n    <div class=\"xeokit-btn-group\" role=\"group\">\n        <button type=\"button\" class=\"xeokit-threeD xeokit-btn fa fa-cube fa-2x\" data-tippy-content=\"Toggle 2D/3D\"></button>\n    </div>\n    <!-- Fit button -->\n    <div class=\"xeokit-btn-group\" role=\"group\">\n        <button type=\"button\" class=\"xeokit-fit xeokit-btn fa fa-crop fa-2x disabled\" data-tippy-content=\"View fit\"></button>\n    </div>\n    <!-- First Person mode button -->\n    <div class=\"xeokit-btn-group\" role=\"group\">\n        <button type=\"button\" class=\"xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled\" data-tippy-content=\"First person\"></button>\n    </div>\n    <!-- Tools button group -->\n    <div class=\"xeokit-btn-group\" role=\"group\">\n        <!-- Hide tool button -->\n        <button type=\"button\" class=\"xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled\" data-tippy-content=\"Hide objects\"></button>\n        <!-- Select tool button -->\n        <button type=\"button\" class=\"xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled\" data-tippy-content=\"Select objects\"></button>\n        <!-- Query tool button -->\n        <button type=\"button\" class=\"xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled\" data-tippy-content=\"Query objects\"></button>\n        <!-- Slice tool button -->\n        <button type=\"button\" class=\"xeokit-section xeokit-btn fa fa-cut fa-2x disabled\" data-tippy-content=\"Slice objects\"></button>\n    </div>\n</div>`;\n\nfunction initTabs(containerElement) {\n\n    const tabsClass = 'xeokit-tabs';\n    const tabClass = 'xeokit-tab';\n    const tabButtonClass = 'xeokit-tab-btn';\n    const activeClass = 'active';\n\n    // Activates the chosen tab and deactivates the rest\n    function activateTab(chosenTabElement) {\n        let tabList = chosenTabElement.parentNode.querySelectorAll('.' + tabClass);\n        for (let i = 0; i < tabList.length; i++) {\n            let tabElement = tabList[i];\n            if (tabElement.isEqualNode(chosenTabElement)) {\n                tabElement.classList.add(activeClass)\n            } else {\n                tabElement.classList.remove(activeClass)\n            }\n        }\n    }\n\n    // Initialize each tabbed container\n    let tabbedContainers = containerElement.querySelectorAll('.' + tabsClass);\n    for (let i = 0; i < tabbedContainers.length; i++) {\n        let tabbedContainer = tabbedContainers[i];\n        let tabList = tabbedContainer.querySelectorAll('.' + tabClass);\n        activateTab(tabList[0]);\n        for (let i = 0; i < tabList.length; i++) {\n            let tabElement = tabList[i];\n            let tabButton = tabElement.querySelector('.' + tabButtonClass);\n            tabButton.addEventListener('click', function (event) {\n                event.preventDefault();\n                if (this.classList.contains(\"disabled\")) {\n                    return;\n                }\n                activateTab(event.target.parentNode);\n            })\n        }\n    }\n}\n\n/**\n * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).\n *\n\n *\n */\nclass BIMViewer extends Controller {\n\n    /**\n     * Constructs a BIMViewer.\n     * @param {Server} server Data access strategy.\n     * @param {*} cfg Configuration.\n     */\n    constructor(server, cfg = {}) {\n\n        if (!cfg.canvasElement) {\n            throw \"Config expected: canvasElement\";\n        }\n\n        if (!cfg.explorerElement) {\n            throw \"Config expected: explorerElement\";\n        }\n\n        if (!cfg.toolbarElement) {\n            throw \"Config expected: toolbarElement\";\n        }\n\n        if (!cfg.navCubeCanvasElement) {\n            throw \"Config expected: navCubeCanvasElement\";\n        }\n\n        const canvasElement = cfg.canvasElement;\n        const explorerElement = cfg.explorerElement;\n        const toolbarElement = cfg.toolbarElement;\n        const navCubeCanvasElement = cfg.navCubeCanvasElement;\n        const queryInfoPanelElement = cfg.queryInfoPanelElement;\n        const busyModelBackdropElement = cfg.busyModelBackdropElement;\n\n        explorerElement.oncontextmenu = (e) => {\n            e.preventDefault();\n        };\n\n        toolbarElement.oncontextmenu = (e) => {\n            e.preventDefault();\n        };\n\n        navCubeCanvasElement.oncontextmenu = (e) => {\n            e.preventDefault();\n        };\n\n        const viewer = new Viewer({\n            canvasElement: canvasElement,\n            transparent: true\n        });\n\n        super(null, cfg, server, viewer);\n\n        this._configs = {};\n\n        /**\n         * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.\n         *\n         * @type {Viewer}\n         */\n        this.viewer = viewer;\n\n        this._customizeViewer();\n        this._initCanvasContextMenus();\n        this._initConfigs();\n\n        explorerElement.innerHTML = explorerTemplate;\n        toolbarElement.innerHTML = toolbarTemplate;\n\n        this._explorerElement = explorerElement;\n\n        initTabs(explorerElement);\n\n        this._modelsExplorer = new ModelsExplorer(this, {\n            modelsTabElement: explorerElement.querySelector(\".xeokit-modelsTab\"),\n            unloadModelsButtonElement: explorerElement.querySelector(\".xeokit-unloadAllModels\"),\n            modelsElement: explorerElement.querySelector(\".xeokit-models\")\n        });\n\n        this._objectsExplorer = new ObjectsExplorer(this, {\n            objectsTabElement: explorerElement.querySelector(\".xeokit-objectsTab\"),\n            showAllObjectsButtonElement: explorerElement.querySelector(\".xeokit-showAllObjects\"),\n            hideAllObjectsButtonElement: explorerElement.querySelector(\".xeokit-hideAllObjects\"),\n            objectsElement: explorerElement.querySelector(\".xeokit-objects\")\n        });\n\n        this._classesExplorer = new ClassesExplorer(this, {\n            classesTabElement: explorerElement.querySelector(\".xeokit-classesTab\"),\n            showAllClassesButtonElement: explorerElement.querySelector(\".xeokit-showAllClasses\"),\n            hideAllClassesButtonElement: explorerElement.querySelector(\".xeokit-hideAllClasses\"),\n            classesElement: explorerElement.querySelector(\".xeokit-classes\")\n        });\n\n        this._storeysExplorer = new StoreysExplorer(this, {\n            storeysTabElement: explorerElement.querySelector(\".xeokit-storeysTab\"),\n            showAllStoreysButtonElement: explorerElement.querySelector(\".xeokit-showAllStoreys\"),\n            hideAllStoreysButtonElement: explorerElement.querySelector(\".xeokit-hideAllStoreys\"),\n            storeysElement: explorerElement.querySelector(\".xeokit-storeys\")\n        });\n\n        this._resetAction = new ResetAction(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-reset\"),\n            active: false\n        });\n\n        this._fitAction = new FitAction(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-fit\"),\n            active: false\n        });\n\n        this._threeDMode = new ThreeDMode(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-threeD\"),\n            active: false\n        });\n\n        this._firstPersonMode = new FirstPersonMode(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-firstPerson\"),\n            active: false\n        });\n\n        this._hideTool = new HideTool(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-hide\"),\n            active: false\n        });\n\n        this._selectionTool = new SelectionTool(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-select\"),\n            active: false\n        });\n\n        this._queryTool = new QueryTool(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-query\"),\n            queryInfoPanelElement: queryInfoPanelElement,\n            active: false\n        });\n\n        this._sectionTool = new SectionTool(this, {\n            buttonElement: toolbarElement.querySelector(\".xeokit-section\"),\n            active: false\n        });\n\n        this._navCubeMode = new NavCubeMode(this, {\n            navCubeCanvasElement: navCubeCanvasElement,\n            active: true\n        });\n\n        this._busyModal = new BusyModal(this, {\n            busyModalBackdropElement: busyModelBackdropElement\n        });\n\n        this._threeDMode.setActive(true);\n        this._firstPersonMode.setActive(false);\n        this._navCubeMode.setActive(true);\n\n        this._modelsExplorer.on(\"modelLoaded\", (modelId) => {\n            if (this._modelsExplorer.getNumModelsLoaded() === 1) {\n                this.setControlsEnabled(true);\n            }\n            this.fire(\"modelLoaded\", modelId);\n        });\n\n        this._modelsExplorer.on(\"modelUnloaded\", (modelId) => {\n            if (this._modelsExplorer.getNumModelsLoaded() === 0) {\n                this.setControlsEnabled(false);\n                this.openTab(\"models\");\n            }\n            this.fire(\"modelUnloaded\", modelId);\n        });\n\n        this._queryTool.on(\"queryPicked\", (event) => {\n            this.fire(\"queryPicked\", event);\n        });\n\n        this._queryTool.on(\"queryNotPicked\", () => {\n            this.fire(\"queryNotPicked\", true);\n        });\n\n        this._resetAction.on(\"reset\", () => {\n            this.fire(\"reset\", true);\n        });\n\n        this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);\n\n        explorerElement.querySelector(\".xeokit-showAllObjects\").addEventListener(\"click\", (event) => {\n            this.showAllObjects();\n            this.xrayNoObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-hideAllObjects\").addEventListener(\"click\", (event) => {\n            this.hideAllObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-showAllClasses\").addEventListener(\"click\", (event) => {\n            this.showAllObjects();\n            this.xrayNoObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-hideAllClasses\").addEventListener(\"click\", (event) => {\n            this.hideAllObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-showAllStoreys\").addEventListener(\"click\", (event) => {\n            this.showAllObjects();\n            this.xrayNoObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-hideAllStoreys\").addEventListener(\"click\", (event) => {\n            this.hideAllObjects();\n            event.preventDefault();\n        });\n\n        explorerElement.querySelector(\".xeokit-unloadAllModels\").addEventListener(\"click\", (event) => {\n            this.setControlsEnabled(false); // For quick UI feedback\n            this._modelsExplorer.unloadAllModels();\n            event.preventDefault();\n        });\n\n        this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});\n    }\n\n    _customizeViewer() {\n\n        const scene = this.viewer.scene;\n\n        scene.xrayMaterial.fill = false;\n        scene.xrayMaterial.fillAlpha = 0.1;\n        scene.xrayMaterial.fillColor = [0, 0, 0];\n        scene.xrayMaterial.edges = true;\n        scene.xrayMaterial.edgeAlpha = 0.3;\n        scene.xrayMaterial.edgeColor = [0, 0, 0];\n\n        scene.highlightMaterial.edges = true;\n        scene.highlightMaterial.edgeColor = [.5, .5, 0];\n        scene.highlightMaterial.edgeAlpha = 0.9;\n        scene.highlightMaterial.fill = true;\n        scene.highlightMaterial.fillAlpha = 0.1;\n        scene.highlightMaterial.fillColor = [1, 0, 0];\n\n        scene.clearLights();\n\n        new AmbientLight(scene, {\n            color: [0.3, 0.3, 0.3],\n            intensity: 1.0\n        });\n\n        new DirLight(scene, {\n            dir: [0.8, -0.6, -0.8],\n            color: [1.0, 1.0, 1.0],\n            intensity: 1.0,\n            space: \"world\"\n        });\n\n        new DirLight(scene, {\n            dir: [-0.8, -0.4, 0.4],\n            color: [1.0, 1.0, 1.0],\n            intensity: 1.0,\n            space: \"world\"\n        });\n\n        new DirLight(scene, {\n            dir: [0.2, -0.8, 0.8],\n            color: [0.6, 0.6, 0.6],\n            intensity: 1.0,\n            space: \"world\"\n        });\n\n        this.viewer.cameraControl.panRightClick = true;\n        this.viewer.cameraControl.panToPointer = true;\n        this.viewer.cameraControl.doublePickFlyTo = true;\n\n        // Scalable Ambient Obscurance (SAO) defaults\n\n        scene.camera.perspective.near = 0.05;\n        scene.camera.perspective.far = 3000.0;\n        scene.camera.ortho.near = 0.05;\n        scene.camera.ortho.far = 3000.0;\n\n        const sao = scene.sao;\n        sao.enabled = false;\n        sao.bias = 0.5;\n        sao.intensity = 0.5;\n        sao.scale = 1200.0;\n        sao.kernelRadius = 100;\n\n        // Only enable SAO and normal edge emphasis while camera is not moving\n\n        const timeoutDuration = 200;\n        var timer = timeoutDuration;\n        var saoEnabled = false;\n\n        const onCameraMatrix = scene.camera.on(\"matrix\", () => {\n            if (this._configs.saoInteractive) {\n                return;\n            }\n            const saoInteractiveDelay = this._configs.saoInteractiveDelay;\n            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);\n            if (saoEnabled) {\n                scene.sao.enabled = false;\n                saoEnabled = false;\n            }\n        });\n\n        const onSceneTick = scene.on(\"tick\", (e) => {\n            if (this._configs.saoInteractive) {\n                if (!saoEnabled) {\n                    scene.sao.enabled = (!!this._configs.saoEnabled);\n                    saoEnabled = true;\n                }\n                return;\n            }\n            if (saoEnabled) {\n                return;\n            }\n            timer -= e.deltaTime;\n            if (timer <= 0) {\n                if (!saoEnabled) {\n                    scene.sao.enabled = (!!this._configs.saoEnabled);\n                    saoEnabled = true;\n                }\n            }\n        });\n    }\n\n    _initCanvasContextMenus() {\n\n        this._canvasContextMenu = new CanvasContextMenu();\n        this._objectContextMenu = new ObjectContextMenu();\n\n        this.viewer.cameraControl.on(\"rightClick\", (e) => {\n\n            const event = e.event;\n\n            const hit = this.viewer.scene.pick({\n                canvasPos: [event.offsetX, event.offsetY]\n            });\n\n            if (hit && hit.entity.isObject) {\n                this._canvasContextMenu.hide();\n                this._objectContextMenu.context = {\n                    viewer: this.viewer,\n                    bimViewer: this,\n                    showObjectInExplorers: (objectId) => {\n                        this.showObjectInExplorers(objectId);\n                        const openTabId = this.getOpenTab();\n                        if (openTabId !== \"objects\" && openTabId !== \"classes\" && openTabId !== \"storeys\") {\n                            this.openTab(\"objects\");\n                        }\n                    },\n                    entity: hit.entity\n                };\n                this._objectContextMenu.show(event.pageX, event.pageY);\n            } else {\n                this._objectContextMenu.hide();\n                this._canvasContextMenu.context = {\n                    viewer: this.viewer,\n                    bimViewer: this\n                };\n                this._canvasContextMenu.show(event.pageX, event.pageY);\n            }\n        });\n    }\n\n    _initConfigs() {\n        this.setConfigs({\n            \"cameraNear\": \"0.05\",\n            \"cameraFar\": \"3000.0\",\n            \"saoEnabled\": \"false\",\n            \"saoBias\": \"0.5\",\n            \"saoIntensity\": \"0.5\",\n            \"saoScale\": \"1200.0\",\n            \"saoKernelRadius\": \"100\",\n            \"xrayContext\": true,\n            \"backgroundColor\": [1.0, 1.0, 1.0],\n            \"saoInteractive\": true,\n            \"saoInteractiveDelay\": 200,\n            \"objectColorSource\": \"model\"\n        });\n    }\n\n    /**\n     * Sets a batch of viewer configurations.\n     *\n     * Note that this method is not to be confused with {@link BIMViewer#setViewerState}, which batch-updates various states of the viewer's UI and 3D view.\n     *\n     * See [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.\n     *\n     * @param {*} viewerConfigs Map of key-value configuration pairs.\n     */\n    setConfigs(viewerConfigs) {\n        for (let name in viewerConfigs) {\n            if (viewerConfigs.hasOwnProperty(name)) {\n                const value = viewerConfigs[name];\n                this.setConfig(name, value);\n            }\n        }\n    }\n\n    /**\n     * Sets a viewer configuration.\n     *\n     * See [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.\n     *\n     * @param {String} name Configuration name.\n     * @param {*} value Configuration value.\n     */\n    setConfig(name, value) {\n\n        function parseBool(value) {\n            return ((value === true) || (value === \"true\"));\n        }\n\n        try {\n            switch (name) {\n\n                case \"backgroundColor\":\n                    const rgbColor = value;\n                    this.setBackgroundColor(rgbColor);\n                    this._configs[name] = rgbColor;\n                    break;\n\n                case \"cameraNear\":\n                    const near = parseFloat(value);\n                    this.viewer.scene.camera.perspective.near = near;\n                    this.viewer.scene.camera.ortho.near = near;\n                    this._configs[name] = near;\n                    break;\n\n                case \"cameraFar\":\n                    const far = parseFloat(value);\n                    this.viewer.scene.camera.perspective.far = far;\n                    this.viewer.scene.camera.ortho.far = far;\n                    this._configs[name] = far;\n                    break;\n\n                case \"saoEnabled\":\n                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);\n                    break;\n\n                case \"saoBias\":\n                    this.viewer.scene.sao.bias = parseFloat(value);\n                    break;\n\n                case \"saoIntensity\":\n                    this.viewer.scene.sao.intensity = parseFloat(value);\n                    break;\n\n                case \"saoScale\":\n                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);\n                    break;\n\n                case \"saoKernelRadius\":\n                    this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);\n                    break;\n\n                case \"saoBlur\":\n                    this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);\n                    break;\n\n                case \"viewFitFOV\":\n                    this.viewer.cameraFlight.fitFOV = this._configs[name] = parseFloat(value);\n                    break;\n\n                case \"viewFitDuration\":\n                    this.viewer.cameraFlight.duration = this._configs[name] = parseFloat(value);\n                    break;\n\n                case \"perspectiveFOV\":\n                    this.viewer.camera.perspective.fov = this._configs[name] = parseFloat(value);\n                    break;\n\n                case \"excludeUnclassifiedObjects\":\n                    this._configs[name] = parseBool(value);\n                    break;\n\n                case \"objectColorSource\":\n                    this.setObjectColorSource(value);\n                    this._configs[name] = value;\n                    break;\n\n                case \"xrayContext\":\n                    this._configs[name] = value;\n                    break;\n\n                case \"saoInteractive\":\n                    this._configs[\"saoInteractive\"] = parseBool(value);\n                    break;\n\n                case \"saoInteractiveDelay\":\n                    var saoInteractiveDelay = parseFloat(value);\n                    if (saoInteractiveDelay < 0) {\n                        this.error(\"setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero\");\n                        saoInteractiveDelay = 0;\n                    }\n                    this._configs[\"saoInteractiveDelay\"] = parseFloat(value);\n                    break;\n\n\n                default:\n                    this.error(\"setConfig() - unsupported configuration: '\" + name + \"'\");\n            }\n\n        } catch (e) {\n            this.error(\"setConfig() - failed to configure '\" + name + \"': \" + e);\n        }\n    }\n\n    /**\n     * Gets the value of a viewer configuration.\n     *\n     * These are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.\n     *\n     * @param {String} name Configuration name.\n     * @ereturns {*} Configuration value.\n     */\n    getConfig(name) {\n        return this._configs[name];\n    }\n\n    //------------------------------------------------------------------------------------------------------------------\n    // Content querying methods\n    //------------------------------------------------------------------------------------------------------------------\n\n    /**\n     * Gets information on all available projects.\n     *\n     * See [Getting Info on Available Projects](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-available-projects) for usage.\n     *\n     * @param {Function} done Callback invoked on success, into which the projects information JSON is passed.\n     * @param {Function} error Callback invoked on failure, into which the error message string is passed.\n     */\n    getProjectsInfo(done, error) {\n        if (!done) {\n            this.error(\"getProjectsInfo() - Argument expected: 'done'\");\n            return;\n        }\n        this.server.getProjects(done, (errorMsg) => {\n            this.error(\"getProjectsInfo() - \" + errorMsg);\n            if (error) {\n                error(errorMsg);\n            }\n        });\n    }\n\n    /**\n     * Gets information on the given project.\n     *\n     * See [Getting Info on a Project](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-a-project) for usage.\n     *\n     * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.\n     * @param {Function} done Callback invoked on success, into which the project information JSON is passed.\n     * @param {Function} error Callback invoked on failure, into which the error message string is passed.\n     */\n    getProjectInfo(projectId, done, error) {\n        if (!projectId) {\n            this.error(\"getProjectInfo() - Argument expected: projectId\");\n            return;\n        }\n        if (!done) {\n            this.error(\"getProjectInfo() - Argument expected: 'done'\");\n            return;\n        }\n        this.server.getProject(projectId,\n            done, (errorMsg) => {\n                this.error(\"getProjectInfo() - \" + errorMsg);\n                if (error) {\n                    error(errorMsg);\n                }\n            });\n    }\n\n    /**\n     * Gets information on the given object, belonging to the given model, within the given project.\n     *\n     * See [Getting Info on an Object](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-an-object) for usage.\n     *\n     * @param {String} projectId ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.\n     * @param {String} modelId ID of a model within the project. Must be the ID of one of the models in the information obtained by {@link BIMViewer#getProjectInfo}.\n     * @param {String} objectId ID of an object in the model.\n     * @param {Function} done Callback invoked on success, into which the object information JSON is passed.\n     * @param {Function} error Callback invoked on failure, into which the error message string is passed.\n     */\n    getObjectInfo(projectId, modelId, objectId, done, error) {\n        if (!projectId) {\n            this.error(\"getObjectInfo() - Argument expected: projectId\");\n            return;\n        }\n        if (!modelId) {\n            this.error(\"getObjectInfo() - Argument expected: modelId\");\n            return;\n        }\n        if (!objectId) {\n            this.error(\"getObjectInfo() - Argument expected: objectId\");\n            return;\n        }\n        if (!done) {\n            this.error(\"getProjectInfo() - Argument expected: 'done'\");\n            return;\n        }\n        this.server.getObjectInfo(projectId, modelId, objectId,\n            done,\n            (errorMsg) => {\n                if (error) {\n                    error(errorMsg);\n                }\n            });\n    }\n\n    //------------------------------------------------------------------------------------------------------------------\n    // Content loading methods\n    //------------------------------------------------------------------------------------------------------------------\n\n    /**\n     * Loads a project into the viewer.\n     *\n     * Unloads any currently loaded project and its models first. If the given project is already loaded, will unload that project first.\n     *\n     * @param {String} projectId ID of the project to load. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}.\n     * @param {Function} done Callback invoked on success.\n     * @param {Function} error Callback invoked on failure, into which the error message string is passed.\n     */\n    loadProject(projectId, done, error) {\n        if (!projectId) {\n            this.error(\"loadProject() - Argument expected: objectId\");\n            return;\n        }\n        this._modelsExplorer.loadProject(projectId,\n            () => {\n                if (done) {\n                    done();\n                }\n            }, (errorMsg) => {\n                this.error(\"loadProject() - \" + errorMsg);\n                if (error) {\n                    error(errorMsg);\n                }\n            });\n    }\n\n    /**\n     * Unloads whatever project is currently loaded.\n     */\n    unloadProject() {\n        this._modelsExplorer.unloadProject();\n        this.openTab(\"models\");\n        this.setControlsEnabled(false); // For quick UI feedback\n    }\n\n    /**\n     * Returns the ID of the currently loaded project, if any.\n     *\n     * @returns {String} The ID of the currently loaded project, otherwise ````null```` if no project is currently loaded.\n     */\n    getLoadedProjectId() {\n        return this._modelsExplorer.getLoadedProjectId();\n    }\n\n    /**\n     * Returns the IDs of the models in the currently loaded project.\n     *\n     * @returns {String[]} The IDs of the models in the currently loaded project.\n     */\n    getModelIds() {\n        return this._modelsExplorer.getModelIds();\n    }\n\n    /**\n     * Loads a model into the viewer.\n     *\n     * Assumes that the project containing the model is currently loaded.\n     *\n     * @param {String} modelId ID of the model to load. Must be the ID of one of the models in the currently loaded project.\n     * @param {Function} done Callback invoked on success.\n     * @param {Function} error Callback invoked on failure, into which the error message string is passed.\n     */\n    loadModel(modelId, done, error) {\n        if (!modelId) {\n            this.error(\"loadModel() - Argument expected: modelId\");\n            return;\n        }\n        this._modelsExplorer.loadModel(modelId,\n            () => {\n                if (done) {\n                    done();\n                }\n            }, (errorMsg) => {\n                this.error(\"loadModel() - \" + errorMsg);\n                if (error) {\n                    error(errorMsg);\n                }\n            });\n    }\n\n    /**\n     * Load all models in the currently loaded project.\n     *\n     * Doesn't reload any models that are currently loaded.\n     *\n     * @param {Function} done Callback invoked on successful loading of the models.\n     */\n    loadAllModels(done = function () {\n    }) {\n        const modelIds = this._modelsExplorer.getModelIds();\n        const loadNextModel = (i, done2) => {\n            if (i >= modelIds.length) {\n                done2();\n            } else {\n                const modelId = modelIds[i];\n                if (!this._modelsExplorer.isModelLoaded(modelId)) {\n                    this._modelsExplorer.loadModel(modelId, () => {\n                        loadNextModel(i + 1, done2);\n                    }, (errorMsg) => {\n                        this.error(\"loadAllModels() - \" + errorMsg);\n                        loadNextModel(i + 1, done2);\n                    });\n                } else {\n                    loadNextModel(i + 1, done2);\n                }\n            }\n        };\n        loadNextModel(0, done);\n    }\n\n    /**\n     * Returns the IDs of the currently loaded models, if any.\n     *\n     * @returns {String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded.\n     */\n    getLoadedModelIds() {\n        return this._modelsExplorer._getLoadedModelIds();\n    }\n\n    /**\n     * Gets if the given model is loaded.\n     *\n     * @param {String} modelId ID of the model to check. Must be the ID of one of the models in the currently loaded project.\n     * @returns {Boolean} True if the given model is loaded.\n     */\n    isModelLoaded(modelId) {\n        if (!modelId) {\n            this.error(\"unloadModel() - Argument expected: modelId\");\n            return;\n        }\n        return this._modelsExplorer.isModelLoaded(modelId);\n    }\n\n    /**\n     * Unloads a model from the viewer.\n     *\n     * Does nothing if the model is not currently loaded.\n     *\n     * @param {String} modelId ID of the model to unload.\n     */\n    unloadModel(modelId) {\n        if (!modelId) {\n            this.error(\"unloadModel() - Argument expected: modelId\");\n            return;\n        }\n        this._modelsExplorer.unloadModel(modelId);\n    }\n\n    /**\n     * Unloads all currently loaded models.\n     */\n    unloadAllModels() {\n        this._modelsExplorer.unloadAllModels();\n    }\n\n    /**\n     * Sets the viewer's background color.\n     *\n     * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.\n     */\n    setBackgroundColor(rgbColor) {\n        this.viewer.scene.canvas.canvas.style.background = \"rgba(\" + (rgbColor[0] * 255) + \",\" + (rgbColor[1] * 255) + \",\" + (rgbColor[2] * 255) + \", 1.0)\";\n    }\n\n    /**\n     * Sets where the colors for model objects will be loaded from.\n     *\n     * Options are:\n     *\n     * * \"model\" - (default) load colors from models, and\n     * * \"viewer\" - load colors from the viewer's inbuilt table of colors for IFC types.\n     *\n     * This is \"model\" by default.\n     *\n     * @param {String} source Where colors will be loaded from - \"model\" or \"viewer\".\n     */\n    setObjectColorSource(source) {\n        switch (source) {\n            case \"model\":\n                break;\n            case \"viewer\":\n                break;\n            default:\n                source = \"model\";\n                this.error(\"setObjectColorSource() - Unsupported value - accepted values are 'model' and 'viewer' - defaulting to 'model'\");\n                return;\n        }\n        this._objectColorSource = source;\n    }\n\n    /**\n     * Gets where the colors for model objects will be loaded from.\n     *\n     * This is \"model\" by default.\n     *\n     * @return {String} Where colors will be loaded from - \"model\" to get colors from the model, or \"viewer\" to get them from the viewer's built-in table of colors for IFC types.\n     */\n    getObjectColorSource() {\n        return this._objectColorSource || \"model\";\n    }\n\n    /**\n     * Updates viewer UI state according to the properties in the given object.\n     *\n     * Note that, since some updates could be animated (e.g. flying the camera to fit objects to view) this\n     * method optionally takes a callback, which it invokes after updating the UI.\n     *\n     * Also, this method is not to be confused with {@link BIMViewer#setConfigs}, which is used to batch-update various configurations and user preferences on the viewer.\n     *\n     * See [Viewer States](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer_states) for the list of states that may be batch-updated with this method.\n     *\n     * @param {Object} viewerState Specifies the viewer UI state updates.\n     * @param {Function} done Callback invoked on successful update of the viewer states.\n     */\n    setViewerState(viewerState, done = () => {\n    }) {\n        if (viewerState.tabOpen) {\n            this.openTab(viewerState.tabOpen);\n        }\n        if (viewerState.expandObjectsTree) {\n            this._objectsExplorer.expandTreeViewToDepth(viewerState.expandObjectsTree);\n        }\n        if (viewerState.expandClassesTree) {\n            this._classesExplorer.expandTreeViewToDepth(viewerState.expandClassesTree);\n        }\n        if (viewerState.expandStoreysTree) {\n            this._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);\n        }\n        this._parseSelectedStorey(viewerState, () => {\n            this._parseThreeDMode(viewerState, () => {\n                done();\n            });\n        });\n    }\n\n    _parseSelectedStorey(viewerState, done) {\n        if (viewerState.selectedStorey) {\n            this.selectStorey(viewerState.selectedStorey);\n            done();\n        } else {\n            done();\n        }\n    }\n\n    _parseThreeDMode(viewerState, done) {\n        const activateThreeDMode = (viewerState.threeDEnabled !== false);\n        this.set3DEnabled(activateThreeDMode, done);\n    }\n\n    /**\n     * Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.\n     *\n     * Also scrolls the object's node into view within each tree, then highlights it.\n     *\n     * De-highlights whatever node is currently highlighted in each of those trees.\n     *\n     * @param {String} objectId ID of the object\n     */\n    showObjectInExplorers(objectId) {\n        if (!objectId) {\n            this.error(\"showObjectInExplorers() - Argument expected: objectId\");\n            return;\n        }\n        this._objectsExplorer.showNodeInTreeView(objectId);\n        this._classesExplorer.showNodeInTreeView(objectId);\n        this._storeysExplorer.showNodeInTreeView(objectId);\n    }\n\n    /**\n     * De-highlights the object previously highlighted with {@link BIMViewer#showObjectInExplorers}.\n     *\n     * This only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.\n     *\n     * For each tab, does nothing if a node is currently highlighted.\n     */\n    unShowObjectInExplorers() {\n        this._objectsExplorer.unShowNodeInTreeView();\n        this._classesExplorer.unShowNodeInTreeView();\n        this._storeysExplorer.unShowNodeInTreeView();\n    }\n\n    setObjectsVisible(objectIds, visible) {\n        this._withObjectsInSubtree(objectIds, (entity) => {\n            entity.visible = visible;\n        });\n    }\n\n    setObjectsXRayed(objectIds, xrayed) {\n        this._withObjectsInSubtree(objectIds, (entity) => {\n            entity.xrayed = xrayed;\n        });\n    }\n\n    setObjectsSelected(objectIds, selected) {\n        this._withObjectsInSubtree(objectIds, (entity) => {\n            entity.selected = selected;\n        });\n    }\n\n    _withObjectsInSubtree(objectIds, callback) {\n        if (!objectIds) {\n            this.error(\"Argument expected: objectIds\");\n            return;\n        }\n        for (let i = 0, len = objectIds.length; i < len; i++) {\n            const objectId = objectIds[i];\n            this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n                const entity = this.viewer.scene.objects[metaObject.id];\n                if (entity) {\n                    callback(entity);\n                }\n            });\n        }\n    }\n\n    /**\n     * Shows the object with the given ID.\n\n     * @param {String} objectId ID of object to show.\n     */\n    showObject(objectId) {\n        if (!objectId) {\n            this.error(\"showObject() - Argument expected: objectId\");\n            return;\n        }\n        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n            const entity = this.viewer.scene.objects[metaObject.id];\n            if (entity) {\n                entity.visible = true;\n            }\n        });\n    }\n\n    /**\n     * Sets whether or not the given classes are visible.\n     *\n     * @param {String[]} classes Class types.\n     * @param {Boolean} visible Whether or not to show the classes.\n     */\n    setClassesVisible(classes, visible) {\n\n    }\n\n    /**\n     * Sets whether or not the given models are visible.\n     *\n     * @param {String[]} modelIds ID of the models.\n     * @param {Boolean} visible Whether or not to show the models.\n     */\n    setModelsVisible(modelIds, visible) {\n        if (!modelIds) {\n            this.error(\"setModelsVisible() - Argument expected: modelIds\");\n            return;\n        }\n        if (visible === undefined || visible === null) {\n            this.error(\"setModelsVisible() - Argument expected: visible\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        for (var i = 0, len = modelIds.length; i < len; i++) {\n            const modelId = modelIds[i];\n            const model = scene.models[modelId];\n            if (!model) {\n                this.error(\"setModelsVisible() - Model not found in viewer: '\" + modelId + \"'\");\n                continue;\n            }\n            model.visible = visible;\n        }\n    }\n\n    /**\n     * Shows all objects currently in the viewer.\n     *\n     * If any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.\n     *\n     * Likewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.\n     */\n    showAllObjects() {\n        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);\n    }\n\n    /**\n     * Shows all objects currently in the viewer, except for those with the given IDs.\n     * @param {String[]} objectIds IDs of objects to not show.\n     */\n    showAllObjectsExceptFor(objectIds) {\n        if (!objectIds) {\n            this.error(\"showAllObjectsExceptFor() - Argument expected: objectId\");\n            return;\n        }\n    }\n\n    /**\n     * Hides the object with the given ID.\n     * @param {String} objectId ID of object to hide.\n     */\n    hideObject(objectId) { // TODO\n        if (!objectId) {\n            this.error(\"hideObject() - Argument expected: objectId\");\n            return;\n        }\n    }\n\n    /**\n     * Hides all objects currently in the viewer.\n     */\n    hideAllObjects() { // TODO\n        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);\n    }\n\n    /**\n     * Hides all objects currently in the viewer, except for those with the given IDs.\n     * @param {String[]} objectIds IDs of objects to not hide.\n     */\n    hideAllObjectsExceptFor(objectIds) { // TODO\n        if (!objectIds) {\n            this.error(\"hideAllObjectsExceptFor() - Argument expected: objectId\");\n            return;\n        }\n    }\n\n    /**\n     * Flies the camera to fit the given object in view.\n     *\n     * @param {String} objectId ID of the object\n     * @param {Function} done Callback invoked on completion\n     */\n    flyToObject(objectId, done) {\n        if (!objectId) {\n            this.error(\"flyToObject() - Argument expected: objectId\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const objectIds = [];\n        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n            if (scene.objects[metaObject.id]) {\n                objectIds.push(metaObject.id);\n            }\n        });\n        if (objectIds.length === 0) {\n            this.error(\"Object not found in viewer: '\" + objectId + \"'\");\n            if (done) {\n                done();\n            }\n            return;\n        }\n        scene.setObjectsVisible(objectIds, true);\n        scene.setObjectsHighlighted(objectIds, true);\n        const aabb = scene.getAABB(objectIds);\n        viewer.cameraFlight.flyTo({\n            aabb: aabb\n        }, () => {\n            if (done) {\n                done();\n            }\n            setTimeout(function () {\n                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);\n            }, 500);\n        });\n        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);\n    }\n\n    /**\n     * Jumps the camera to fit the given object in view.\n     *\n     * @param {String} objectId ID of the object\n     */\n    jumpToObject(objectId) {\n        if (!objectId) {\n            this.error(\"jumpToObject() - Argument expected: objectId\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const objectIds = [];\n        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n            if (scene.objects[metaObject.id]) {\n                objectIds.push(metaObject.id);\n            }\n        });\n        if (objectIds.length === 0) {\n            this.error(\"Object not found in viewer: '\" + objectId + \"'\");\n            return;\n        }\n        scene.setObjectsVisible(objectIds, true);\n        const aabb = scene.getAABB(objectIds);\n        viewer.cameraFlight.jumpTo({\n            aabb: aabb\n        });\n        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);\n    }\n\n    /**\n     * Fits the given models in view.\n     *\n     * @param {String[]} modelIds ID of the models.\n     * @param {Function} [done] Callback invoked on completion. Will be animated if this is given, otherwise will be instantaneous.\n     */\n    viewFitModels(modelIds, done) {\n        if (!modelIds) {\n            this.error(\"viewFitModels() - Argument expected: modelIds\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const aabb = math.AABB3();\n        math.collapseAABB3(aabb);\n        for (var i = 0, len = modelIds.length; i < len; i++) {\n            const modelId = modelIds[i];\n            const model = scene.models[modelId];\n            if (!model) {\n                this.error(\"Model not found in viewer: '\" + modelId + \"'\");\n                continue;\n            }\n            model.visible = true;\n            model.highlighted = true;\n            math.expandAABB3(aabb, model.aabb);\n        }\n        if (done) {\n            viewer.cameraFlight.flyTo({\n                aabb: aabb\n            }, () => {\n                done();\n                setTimeout(function () {\n                    scene.setObjectsHighlighted(scene.highlightedObjectIds, false);\n                }, 500);\n            });\n        } else {\n            viewer.cameraFlight.jumpTo({\n                aabb: aabb\n            });\n            setTimeout(function () {\n                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);\n            }, 500);\n        }\n        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);\n    }\n\n    /**\n     * X-rays the object with the given ID.\n     *\n     * @param {String} objectId ID of object to x-ray.\n     */\n    xrayObject(objectId) {\n        if (!objectId) {\n            this.error(\"xrayObject() - Argument expected: objectId\");\n            return;\n        }\n        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n            const entity = this.viewer.scene.objects[metaObject.id];\n            if (entity) {\n                entity.xrayed = true;\n            }\n        });\n    }\n\n    /**\n     * X-rays all objects currently in the viewer.\n     */\n    xrayAllObjects() {\n        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);\n    }\n\n    /**\n     * X-rays all objects currently in the viewer, except for those with the given IDs.\n     * @param {String[]} objectIds IDs of objects to not x-ray.\n     */\n    xrayAllObjectsExceptFor(objectIds) { // TODO\n\n    }\n\n    /**\n     * Sets whether or not the given models are X-rayed.\n     *\n     * @param {String[]} modelIds ID of the models.\n     * @param {Boolean} xrayed Whether or not to X-ray the models.\n     */\n    setModelsXRayed(modelIds, xrayed) {\n        if (!modelIds) {\n            this.error(\"setModelsXRayed() - Argument expected: modelIds\");\n            return;\n        }\n        if (xrayed === undefined || xrayed === null) {\n            this.error(\"setModelsXRayed() - Argument expected: xrayed\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        for (var i = 0, len = modelIds.length; i < len; i++) {\n            const modelId = modelIds[i];\n            const model = scene.models[modelId];\n            if (!model) {\n                this.error(\"setModelsXRayed() - Model not found in viewer: '\" + modelId + \"'\");\n                continue;\n            }\n            model.xrayed = xrayed;\n        }\n    }\n\n    /**\n     * Un-x-rays all objects currently in the viewer.\n     */\n    xrayNoObjects() {\n        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, false);\n    }\n\n    /**\n     * Selects the objects with the given ID.\n     * @param {String} objectId ID of object to select.\n     */\n    selectObject(objectId) {\n        if (!objectId) {\n            this.error(\"selectObject() - Argument expected: objectId\");\n            return;\n        }\n        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {\n            const entity = this.viewer.scene.objects[metaObject.id];\n            if (entity) {\n                entity.selected = true;\n            }\n        });\n    }\n\n    /**\n     * Sets whether or not the given models are selected.\n     *\n     * @param {String[]} modelIds ID of the models.\n     * @param {Boolean} selected Whether or not to select the models.\n     */\n    setModelsSelected(modelIds, selected) {\n        if (!modelIds) {\n            this.error(\"setModelsSelected() - Argument expected: modelIds\");\n            return;\n        }\n        if (selected === undefined || selected === null) {\n            this.error(\"setModelsSelected() - Argument expected: selected\");\n            return;\n        }\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        for (var i = 0, len = modelIds.length; i < len; i++) {\n            const modelId = modelIds[i];\n            const model = scene.models[modelId];\n            if (!model) {\n                this.error(\"setModelsSelected() - Model not found in viewer: '\" + modelId + \"'\");\n                continue;\n            }\n            model.selected = selected;\n        }\n    }\n\n    /**\n     * Selects all objects currently in the viewer.\n     */\n    selectAllObjects() {\n        this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);\n    }\n\n    /**\n     * Selects all objects currently in the viewer, except for those with the given IDs.\n     *\n     * This causes the objects to glow with the selection color.\n     *\n     * @param {String[]} objectIds IDs of objects to not select.\n     */\n    selectAllObjectsExceptFor(objectIds) { // TODO\n\n    }\n\n    /**\n     * De-selects all objects currently in the viewer.\n     *\n     * This removes the selection color from the objects.\n     */\n    deselectAllObjects() {\n        this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);\n    }\n\n    /**\n     * Opens the specified viewer tab.\n     *\n     * The available tabs are:\n     *\n     *  * \"models\" - the Models tab, which lists the models available within the currently loaded project,\n     *  * \"objects\" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,\n     *  * \"classes\" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and\n     *  * \"storeys\" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.\n     *\n     * @param {String} tabId ID of the tab to open - see method description.\n     */\n    openTab(tabId) {\n        if (!tabId) {\n            this.error(\"openTab() - Argument expected: tabId\");\n            return;\n        }\n        const tabClass = 'xeokit-tab';\n        const activeClass = 'active';\n        let tabSelector;\n        switch (tabId) {\n            case \"models\":\n                tabSelector = \"xeokit-modelsTab\";\n                break;\n            case \"objects\":\n                tabSelector = \"xeokit-objectsTab\";\n                break;\n            case \"classes\":\n                tabSelector = \"xeokit-classesTab\";\n                break;\n            case \"storeys\":\n                tabSelector = \"xeokit-storeysTab\";\n                break;\n            default:\n                this.error(\"openTab() - tab not recognized: '\" + tabId + \"'\");\n                return;\n        }\n        let tabs = this._explorerElement.querySelectorAll(\".\" + tabClass);\n        let tab = this._explorerElement.querySelector(\".\" + tabSelector);\n        for (let i = 0; i < tabs.length; i++) {\n            let tabElement = tabs[i];\n            if (tabElement.isEqualNode(tab)) {\n                tabElement.classList.add(activeClass)\n            } else {\n                tabElement.classList.remove(activeClass)\n            }\n        }\n    }\n\n    /**\n     * Returns the ID of the currently open viewer tab.\n     *\n     * The available tabs are:\n     *\n     *  * \"models\" - the Models tab, which lists the models available within the currently loaded project,\n     *  * \"objects\" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,\n     *  * \"classes\" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and\n     *  * \"storeys\" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.\n     *  * \"none\" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.\n     */\n    getOpenTab() {\n        function hasClass(element, className) {\n            if (!element) {\n                return false;\n            }\n            return (\" \" + element.className + \" \").indexOf(\" \" + className + \" \") > -1;\n        }\n\n        const activeClass = 'active';\n        let modelsTab = this._explorerElement.querySelector(\".xeokit-modelsTab\");\n        if (hasClass(modelsTab, activeClass)) {\n            return \"models\";\n        }\n        let objectsTab = this._explorerElement.querySelector(\".xeokit-objectsTab\");\n        if (hasClass(objectsTab, activeClass)) {\n            return \"objects\";\n        }\n        let classesTab = this._explorerElement.querySelector(\".xeokit-classesTab\");\n        if (hasClass(classesTab, activeClass)) {\n            return \"classes\";\n        }\n        let storeysTab = this._explorerElement.querySelector(\".xeokit-storeysTab\");\n        if (hasClass(storeysTab, activeClass)) {\n            return \"storeys\";\n        }\n        return \"none\";\n    }\n\n    /**\n     * Switches the viewer between 2D and 3D viewing modes.\n     *\n     * @param {Boolean} enabled Set true to switch into 3D mode, else false to switch into 2D mode.\n     * @param {Function} done Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant.\n     */\n    set3DEnabled(enabled, done) {\n        if (enabled) {\n            this._threeDMode.setActive(true, done);\n        } else {\n            this._threeDMode.setActive(false, done);\n        }\n    }\n\n    /**\n     * Gets whether the viewer is in 3D or 2D viewing mode.\n     *\n     * @returns {boolean} True when in 3D mode, else false.\n     */\n    get3DEnabled() {\n        return this._threeDMode.getActive();\n    }\n\n    /**\n     * Transitions the viewer into an isolated view of the given building storey.\n     *\n     * Does nothing and logs an error if no object of the given ID is in the viewer, or if the object is not an ````IfcBuildingStorey````.\n     *\n     * @param {String} storeyObjectId ID of an ````IfcBuildingStorey```` object.\n     * @param {Function} [done] Optional callback to invoke on completion. When provided, the transition will be animated, with the camera flying into position. Otherwise, the transition will be instant, with the camera jumping into position.\n     */\n    selectStorey(storeyObjectId, done) {\n        const metaScene = this.viewer.metaScene;\n        const storeyMetaObject = metaScene.metaObjects[storeyObjectId];\n        if (!storeyMetaObject) {\n            this.error(\"selectStorey() - Object is not found: '\" + storeyObjectId + \"'\");\n            return;\n        }\n        if (storeyMetaObject.type !== \"IfcBuildingStorey\") {\n            this.error(\"selectStorey() - Object is not an IfcBuildingStorey: '\" + storeyObjectId + \"'\");\n            return;\n        }\n        this._storeysExplorer.selectStorey(storeyObjectId, done);\n    }\n\n    /**\n     * Saves viewer state to a BCF viewpoint.\n     *\n     * This does not save information about the project and model(s) that are currently loaded. When loading the viewpoint,\n     * the viewer will assume that the same project and models will be currently loaded (the BCF viewpoint specification\n     * does not contain that information).\n     *\n     * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a\n     * direction vector. Therefore, we save ````camera_direction```` as the vector from {@link Camera#eye} to {@link Camera#look}.\n     *\n     * @param {*} [options] Options for getting the viewpoint.\n     * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.\n     * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.\n     * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.\n     * @returns {*} BCF JSON viewpoint object\n     * @example\n     *\n     * const viewpoint = bimViewer.saveBCFViewpoint({\n     *     spacesVisible: false,          // Default\n     *     spaceBoundariesVisible: false, // Default\n     *     openingsVisible: false         // Default\n     * });\n     *\n     * // viewpoint will resemble the following:\n     *\n     * {\n     *     perspective_camera: {\n     *         camera_view_point: {\n     *             x: 0.0,\n     *             y: 0.0,\n     *             z: 0.0\n     *         },\n     *         camera_direction: {\n     *             x: 1.0,\n     *             y: 1.0,\n     *             z: 2.0\n     *         },\n     *         camera_up_vector: {\n     *             x: 0.0,\n     *             y: 0.0,\n     *             z: 1.0\n     *         },\n     *         field_of_view: 90.0\n     *     },\n     *     lines: [],\n     *     clipping_planes: [{\n     *         location: {\n     *             x: 0.5,\n     *             y: 0.5,\n     *             z: 0.5\n     *         },\n     *         direction: {\n     *             x: 1.0,\n     *             y: 0.0,\n     *             z: 0.0\n     *         }\n     *     }],\n     *     bitmaps: [],\n     *     snapshot: {\n     *         snapshot_type: png,\n     *         snapshot_data: \"data:image/png;base64,......\"\n     *     },\n     *     components: {\n     *         visibility: {\n     *             default_visibility: false,\n     *             exceptions: [{\n     *                 ifc_guid: 4$cshxZO9AJBebsni$z9Yk,\n     *                 originating_system: xeokit.io,\n     *                 authoring_tool_id: xeokit/v1.0\n     *             }]\n     *        },\n     *         selection: [{\n     *            ifc_guid: \"4$cshxZO9AJBebsni$z9Yk\",\n     *         }]\n     *     }\n     * }\n     */\n    saveBCFViewpoint(options) {\n        return this._bcfViewpointsPlugin.getViewpoint(options);\n    }\n\n    /**\n     * Sets viewer state to the given BCF viewpoint.\n     *\n     * This assumes that the viewer currently contains the same project and model(s) that were loaded at the time that the\n     * viewpoint was originally saved (the BCF viewpoint specification does not contain that information).\n     *\n     * Note that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a\n     * direction vector. Therefore, when loading a BCF viewpoint, we set {@link Camera#look} to the absolute position\n     * obtained by offsetting the BCF ````camera_view_point````  along ````camera_direction````.\n     *\n     * When loading a viewpoint, we also have the option to find {@link Camera#look} as the closest point of intersection\n     * (on the surface of any visible and pickable {@link Entity}) with a 3D ray fired from ````camera_view_point```` in\n     * the direction of ````camera_direction````.\n     *\n     * @param {*} bcfViewpoint  BCF JSON viewpoint object or \"reset\" / \"RESET\" to reset the viewer, which clears SectionPlanes,\n     * shows default visible entities and restores camera to initial default position.\n     * @param {*} [options] Options for setting the viewpoint.\n     * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest\n     * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.\n     * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.\n     * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.\n     */\n    loadBCFViewpoint(bcfViewpoint, options) {\n        if (!bcfViewpoint) {\n            this.error(\"loadBCFViewpoint() - Argument expected: bcfViewpoint\");\n            return;\n        }\n        this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);\n    }\n\n    /**\n     * Resets the view.\n     *\n     * This resets object appearances (visibility, selection, highlight and X-ray), sets camera to\n     * default position, and removes section planes.\n     */\n    resetView() {\n        this._resetAction.reset();\n    }\n\n    /**\n     * Enables or disables the various buttons and controls throughout the viewer.\n     *\n     * This also makes various buttons appear disabled.\n     *\n     * @param {Boolean} enabled Whether or not to disable the controls.\n     */\n    setControlsEnabled(enabled) {\n\n        // Explorer\n\n        // Models tab is always enabled\n        this._objectsExplorer.setEnabled(enabled);\n        this._classesExplorer.setEnabled(enabled);\n        this._storeysExplorer.setEnabled(enabled);\n\n        // Toolbar\n\n        this._resetAction.setEnabled(enabled);\n        this._fitAction.setEnabled(enabled);\n        this._threeDMode.setEnabled(enabled);\n        this._firstPersonMode.setEnabled(enabled);\n        this._queryTool.setEnabled(enabled);\n        this._hideTool.setEnabled(enabled);\n        this._selectionTool.setEnabled(enabled);\n        this._sectionTool.setEnabled(enabled);\n    }\n\n    /**\n     * Destroys the viewer, freeing all resources.\n     */\n    destroy() {\n        this.viewer.destroy();\n        this._bcfViewpointsPlugin.destroy();\n        this._canvasContextMenu.destroy();\n        this._objectContextMenu.destroy();\n    }\n}\n\nexport {BIMViewer};",
-    "static": true,
-    "longname": "/home/lindsay/xeolabs/xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 293,
-    "kind": "variable",
-    "name": "explorerTemplate",
-    "memberof": "src/toolbar/BIMViewerOLD.js",
-    "static": true,
-    "longname": "src/toolbar/BIMViewerOLD.js~explorerTemplate",
-    "access": "public",
-    "export": false,
-    "importPath": "@xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 26,
-    "undocument": true,
-    "type": {
-      "types": [
-        "string"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 294,
-    "kind": "variable",
-    "name": "toolbarTemplate",
-    "memberof": "src/toolbar/BIMViewerOLD.js",
-    "static": true,
-    "longname": "src/toolbar/BIMViewerOLD.js~toolbarTemplate",
-    "access": "public",
-    "export": false,
-    "importPath": "@xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 68,
-    "undocument": true,
-    "type": {
-      "types": [
-        "string"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 295,
-    "kind": "function",
-    "name": "initTabs",
-    "memberof": "src/toolbar/BIMViewerOLD.js",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/toolbar/BIMViewerOLD.js~initTabs",
-    "access": "public",
-    "export": false,
-    "importPath": "@xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 98,
-    "undocument": true,
-    "params": [
-      {
-        "name": "containerElement",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null,
-    "ignore": true
-  },
-  {
-    "__docId__": 296,
-    "kind": "class",
-    "name": "BIMViewer",
-    "memberof": "src/toolbar/BIMViewerOLD.js",
-    "static": true,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "access": "public",
-    "export": true,
-    "importPath": "@xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js",
-    "importStyle": "{BIMViewer}",
-    "description": "A BIM viewer based on the [xeokit SDK](http://xeokit.io).",
-    "lineNumber": 144,
-    "interface": false,
-    "extends": [
-      "src/toolbar/Controller.js~Controller"
-    ]
-  },
-  {
-    "__docId__": 297,
-    "kind": "constructor",
-    "name": "constructor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#constructor",
-    "access": "public",
-    "description": "Constructs a BIMViewer.",
-    "lineNumber": 151,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Server"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "server",
-        "description": "Data access strategy."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "cfg",
-        "description": "Configuration."
-      }
-    ]
-  },
-  {
-    "__docId__": 298,
-    "kind": "member",
-    "name": "_configs",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_configs",
-    "access": "private",
-    "description": null,
-    "lineNumber": 195,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "{}"
-      ]
-    }
-  },
-  {
-    "__docId__": 299,
-    "kind": "member",
-    "name": "viewer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#viewer",
-    "access": "public",
-    "description": "The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.",
-    "lineNumber": 202,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Viewer"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 300,
-    "kind": "member",
-    "name": "_explorerElement",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_explorerElement",
-    "access": "private",
-    "description": null,
-    "lineNumber": 211,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 301,
-    "kind": "member",
-    "name": "_modelsExplorer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_modelsExplorer",
-    "access": "private",
-    "description": null,
-    "lineNumber": 215,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 302,
-    "kind": "member",
-    "name": "_objectsExplorer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_objectsExplorer",
-    "access": "private",
-    "description": null,
-    "lineNumber": 221,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 303,
-    "kind": "member",
-    "name": "_classesExplorer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_classesExplorer",
-    "access": "private",
-    "description": null,
-    "lineNumber": 228,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 304,
-    "kind": "member",
-    "name": "_storeysExplorer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_storeysExplorer",
-    "access": "private",
-    "description": null,
-    "lineNumber": 235,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 305,
-    "kind": "member",
-    "name": "_resetAction",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_resetAction",
-    "access": "private",
-    "description": null,
-    "lineNumber": 242,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 306,
-    "kind": "member",
-    "name": "_fitAction",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_fitAction",
-    "access": "private",
-    "description": null,
-    "lineNumber": 247,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 307,
-    "kind": "member",
-    "name": "_threeDMode",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_threeDMode",
-    "access": "private",
-    "description": null,
-    "lineNumber": 252,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 308,
-    "kind": "member",
-    "name": "_firstPersonMode",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_firstPersonMode",
-    "access": "private",
-    "description": null,
-    "lineNumber": 257,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 309,
-    "kind": "member",
-    "name": "_hideTool",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_hideTool",
-    "access": "private",
-    "description": null,
-    "lineNumber": 262,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 310,
-    "kind": "member",
-    "name": "_selectionTool",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_selectionTool",
-    "access": "private",
-    "description": null,
-    "lineNumber": 267,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 311,
-    "kind": "member",
-    "name": "_queryTool",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_queryTool",
-    "access": "private",
-    "description": null,
-    "lineNumber": 272,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 312,
-    "kind": "member",
-    "name": "_sectionTool",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_sectionTool",
-    "access": "private",
-    "description": null,
-    "lineNumber": 278,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 313,
-    "kind": "member",
-    "name": "_navCubeMode",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_navCubeMode",
-    "access": "private",
-    "description": null,
-    "lineNumber": 283,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 314,
-    "kind": "member",
-    "name": "_busyModal",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_busyModal",
-    "access": "private",
-    "description": null,
-    "lineNumber": 288,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 315,
-    "kind": "member",
-    "name": "_bcfViewpointsPlugin",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_bcfViewpointsPlugin",
-    "access": "private",
-    "description": null,
-    "lineNumber": 364,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 316,
-    "kind": "method",
-    "name": "_customizeViewer",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_customizeViewer",
-    "access": "private",
-    "description": null,
-    "lineNumber": 367,
-    "undocument": true,
-    "ignore": true,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 317,
-    "kind": "method",
-    "name": "_initCanvasContextMenus",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_initCanvasContextMenus",
-    "access": "private",
-    "description": null,
-    "lineNumber": 470,
-    "undocument": true,
-    "ignore": true,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 318,
-    "kind": "member",
-    "name": "_canvasContextMenu",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_canvasContextMenu",
-    "access": "private",
-    "description": null,
-    "lineNumber": 472,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 319,
-    "kind": "member",
-    "name": "_objectContextMenu",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_objectContextMenu",
-    "access": "private",
-    "description": null,
-    "lineNumber": 473,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 320,
-    "kind": "method",
-    "name": "_initConfigs",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_initConfigs",
-    "access": "private",
-    "description": null,
-    "lineNumber": 509,
-    "undocument": true,
-    "ignore": true,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 321,
-    "kind": "method",
-    "name": "setConfigs",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setConfigs",
-    "access": "public",
-    "description": "Sets a batch of viewer configurations.\n\nNote that this method is not to be confused with {@link BIMViewer#setViewerState}, which batch-updates various states of the viewer's UI and 3D view.\n\nSee [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.",
-    "lineNumber": 535,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "viewerConfigs",
-        "description": "Map of key-value configuration pairs."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 322,
-    "kind": "method",
-    "name": "setConfig",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setConfig",
-    "access": "public",
-    "description": "Sets a viewer configuration.\n\nSee [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.",
-    "lineNumber": 552,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "name",
-        "description": "Configuration name."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "value",
-        "description": "Configuration value."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 323,
-    "kind": "method",
-    "name": "getConfig",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getConfig",
-    "access": "public",
-    "description": "Gets the value of a viewer configuration.\n\nThese are set with {@link BIMViewer#setConfig} and {@link BIMViewer#setConfigs}.",
-    "lineNumber": 661,
-    "unknown": [
-      {
-        "tagName": "@ereturns",
-        "tagValue": "{*} Configuration value."
-      }
-    ],
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "name",
-        "description": "Configuration name."
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 324,
-    "kind": "method",
-    "name": "getProjectsInfo",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getProjectsInfo",
-    "access": "public",
-    "description": "Gets information on all available projects.\n\nSee [Getting Info on Available Projects](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-available-projects) for usage.",
-    "lineNumber": 677,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on success, into which the projects information JSON is passed."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "error",
-        "description": "Callback invoked on failure, into which the error message string is passed."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 325,
-    "kind": "method",
-    "name": "getProjectInfo",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getProjectInfo",
-    "access": "public",
-    "description": "Gets information on the given project.\n\nSee [Getting Info on a Project](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-a-project) for usage.",
-    "lineNumber": 699,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "projectId",
-        "description": "ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on success, into which the project information JSON is passed."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "error",
-        "description": "Callback invoked on failure, into which the error message string is passed."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 326,
-    "kind": "method",
-    "name": "getObjectInfo",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getObjectInfo",
-    "access": "public",
-    "description": "Gets information on the given object, belonging to the given model, within the given project.\n\nSee [Getting Info on an Object](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-an-object) for usage.",
-    "lineNumber": 728,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "projectId",
-        "description": "ID of the project to get information on. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelId",
-        "description": "ID of a model within the project. Must be the ID of one of the models in the information obtained by {@link BIMViewer#getProjectInfo}."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of an object in the model."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on success, into which the object information JSON is passed."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "error",
-        "description": "Callback invoked on failure, into which the error message string is passed."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 327,
-    "kind": "method",
-    "name": "loadProject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#loadProject",
-    "access": "public",
-    "description": "Loads a project into the viewer.\n\nUnloads any currently loaded project and its models first. If the given project is already loaded, will unload that project first.",
-    "lineNumber": 767,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "projectId",
-        "description": "ID of the project to load. Must be the ID of one of the projects in the information obtained by {@link BIMViewer#getProjects}."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on success."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "error",
-        "description": "Callback invoked on failure, into which the error message string is passed."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 328,
-    "kind": "method",
-    "name": "unloadProject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadProject",
-    "access": "public",
-    "description": "Unloads whatever project is currently loaded.",
-    "lineNumber": 788,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 329,
-    "kind": "method",
-    "name": "getLoadedProjectId",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getLoadedProjectId",
-    "access": "public",
-    "description": "Returns the ID of the currently loaded project, if any.",
-    "lineNumber": 799,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{String} The ID of the currently loaded project, otherwise ````null```` if no project is currently loaded."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "String"
-      ],
-      "spread": false,
-      "description": "The ID of the currently loaded project, otherwise ````null```` if no project is currently loaded."
-    },
-    "params": []
-  },
-  {
-    "__docId__": 330,
-    "kind": "method",
-    "name": "getModelIds",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getModelIds",
-    "access": "public",
-    "description": "Returns the IDs of the models in the currently loaded project.",
-    "lineNumber": 808,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{String[]} The IDs of the models in the currently loaded project."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "String[]"
-      ],
-      "spread": false,
-      "description": "The IDs of the models in the currently loaded project."
-    },
-    "params": []
-  },
-  {
-    "__docId__": 331,
-    "kind": "method",
-    "name": "loadModel",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#loadModel",
-    "access": "public",
-    "description": "Loads a model into the viewer.\n\nAssumes that the project containing the model is currently loaded.",
-    "lineNumber": 821,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelId",
-        "description": "ID of the model to load. Must be the ID of one of the models in the currently loaded project."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on success."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "error",
-        "description": "Callback invoked on failure, into which the error message string is passed."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 332,
-    "kind": "method",
-    "name": "loadAllModels",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#loadAllModels",
-    "access": "public",
-    "description": "Load all models in the currently loaded project.\n\nDoesn't reload any models that are currently loaded.",
-    "lineNumber": 846,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on successful loading of the models."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 333,
-    "kind": "method",
-    "name": "getLoadedModelIds",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getLoadedModelIds",
-    "access": "public",
-    "description": "Returns the IDs of the currently loaded models, if any.",
-    "lineNumber": 874,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{String[]} The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "String[]"
-      ],
-      "spread": false,
-      "description": "The IDs of the currently loaded models, otherwise an empty array if no models are currently loaded."
-    },
-    "params": []
-  },
-  {
-    "__docId__": 334,
-    "kind": "method",
-    "name": "isModelLoaded",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#isModelLoaded",
-    "access": "public",
-    "description": "Gets if the given model is loaded.",
-    "lineNumber": 884,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{Boolean} True if the given model is loaded."
-      }
-    ],
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelId",
-        "description": "ID of the model to check. Must be the ID of one of the models in the currently loaded project."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "Boolean"
-      ],
-      "spread": false,
-      "description": "True if the given model is loaded."
-    }
-  },
-  {
-    "__docId__": 335,
-    "kind": "method",
-    "name": "unloadModel",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadModel",
-    "access": "public",
-    "description": "Unloads a model from the viewer.\n\nDoes nothing if the model is not currently loaded.",
-    "lineNumber": 899,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelId",
-        "description": "ID of the model to unload."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 336,
-    "kind": "method",
-    "name": "unloadAllModels",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadAllModels",
-    "access": "public",
-    "description": "Unloads all currently loaded models.",
-    "lineNumber": 910,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 337,
-    "kind": "method",
-    "name": "setBackgroundColor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setBackgroundColor",
-    "access": "public",
-    "description": "Sets the viewer's background color.",
-    "lineNumber": 919,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Number[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "rgbColor",
-        "description": "Three-element array of RGB values, each in range ````[0..1]````."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 338,
-    "kind": "method",
-    "name": "setObjectColorSource",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectColorSource",
-    "access": "public",
-    "description": "Sets where the colors for model objects will be loaded from.\n\nOptions are:\n\n* \"model\" - (default) load colors from models, and\n* \"viewer\" - load colors from the viewer's inbuilt table of colors for IFC types.\n\nThis is \"model\" by default.",
-    "lineNumber": 935,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "source",
-        "description": "Where colors will be loaded from - \"model\" or \"viewer\"."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 339,
-    "kind": "member",
-    "name": "_objectColorSource",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_objectColorSource",
-    "access": "private",
-    "description": null,
-    "lineNumber": 946,
-    "undocument": true,
-    "ignore": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 340,
-    "kind": "method",
-    "name": "getObjectColorSource",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getObjectColorSource",
-    "access": "public",
-    "description": "Gets where the colors for model objects will be loaded from.\n\nThis is \"model\" by default.",
-    "lineNumber": 956,
-    "return": {
-      "nullable": null,
-      "types": [
-        "String"
-      ],
-      "spread": false,
-      "description": "Where colors will be loaded from - \"model\" to get colors from the model, or \"viewer\" to get them from the viewer's built-in table of colors for IFC types."
-    },
-    "params": []
-  },
-  {
-    "__docId__": 341,
-    "kind": "method",
-    "name": "setViewerState",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setViewerState",
-    "access": "public",
-    "description": "Updates viewer UI state according to the properties in the given object.\n\nNote that, since some updates could be animated (e.g. flying the camera to fit objects to view) this\nmethod optionally takes a callback, which it invokes after updating the UI.\n\nAlso, this method is not to be confused with {@link BIMViewer#setConfigs}, which is used to batch-update various configurations and user preferences on the viewer.\n\nSee [Viewer States](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer_states) for the list of states that may be batch-updated with this method.",
-    "lineNumber": 973,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Object"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "viewerState",
-        "description": "Specifies the viewer UI state updates."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on successful update of the viewer states."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 342,
-    "kind": "method",
-    "name": "_parseSelectedStorey",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_parseSelectedStorey",
-    "access": "private",
-    "description": null,
-    "lineNumber": 994,
-    "undocument": true,
-    "ignore": true,
-    "params": [
-      {
-        "name": "viewerState",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "done",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 343,
-    "kind": "method",
-    "name": "_parseThreeDMode",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_parseThreeDMode",
-    "access": "private",
-    "description": null,
-    "lineNumber": 1003,
-    "undocument": true,
-    "ignore": true,
-    "params": [
-      {
-        "name": "viewerState",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "done",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 344,
-    "kind": "method",
-    "name": "showObjectInExplorers",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#showObjectInExplorers",
-    "access": "public",
-    "description": "Highlights the given object in the tree views within the Objects, Classes and Storeys tabs.\n\nAlso scrolls the object's node into view within each tree, then highlights it.\n\nDe-highlights whatever node is currently highlighted in each of those trees.",
-    "lineNumber": 1017,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of the object"
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 345,
-    "kind": "method",
-    "name": "unShowObjectInExplorers",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#unShowObjectInExplorers",
-    "access": "public",
-    "description": "De-highlights the object previously highlighted with {@link BIMViewer#showObjectInExplorers}.\n\nThis only de-highlights the node. If the node is currently scrolled into view, then the node will remain in view.\n\nFor each tab, does nothing if a node is currently highlighted.",
-    "lineNumber": 1034,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 346,
-    "kind": "method",
-    "name": "setObjectsVisible",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsVisible",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1040,
-    "undocument": true,
-    "params": [
-      {
-        "name": "objectIds",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "visible",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 347,
-    "kind": "method",
-    "name": "setObjectsXRayed",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsXRayed",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1046,
-    "undocument": true,
-    "params": [
-      {
-        "name": "objectIds",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "xrayed",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 348,
-    "kind": "method",
-    "name": "setObjectsSelected",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsSelected",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1052,
-    "undocument": true,
-    "params": [
-      {
-        "name": "objectIds",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "selected",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 349,
-    "kind": "method",
-    "name": "_withObjectsInSubtree",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#_withObjectsInSubtree",
-    "access": "private",
-    "description": null,
-    "lineNumber": 1058,
-    "undocument": true,
-    "ignore": true,
-    "params": [
-      {
-        "name": "objectIds",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "callback",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 350,
-    "kind": "method",
-    "name": "showObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#showObject",
-    "access": "public",
-    "description": "Shows the object with the given ID.",
-    "lineNumber": 1079,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of object to show."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 351,
-    "kind": "method",
-    "name": "setClassesVisible",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setClassesVisible",
-    "access": "public",
-    "description": "Sets whether or not the given classes are visible.",
-    "lineNumber": 1098,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "classes",
-        "description": "Class types."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "visible",
-        "description": "Whether or not to show the classes."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 352,
-    "kind": "method",
-    "name": "setModelsVisible",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsVisible",
-    "access": "public",
-    "description": "Sets whether or not the given models are visible.",
-    "lineNumber": 1108,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelIds",
-        "description": "ID of the models."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "visible",
-        "description": "Whether or not to show the models."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 353,
-    "kind": "method",
-    "name": "showAllObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#showAllObjects",
-    "access": "public",
-    "description": "Shows all objects currently in the viewer.\n\nIf any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.\n\nLikewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.",
-    "lineNumber": 1137,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 354,
-    "kind": "method",
-    "name": "showAllObjectsExceptFor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#showAllObjectsExceptFor",
-    "access": "public",
-    "description": "Shows all objects currently in the viewer, except for those with the given IDs.",
-    "lineNumber": 1145,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectIds",
-        "description": "IDs of objects to not show."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 355,
-    "kind": "method",
-    "name": "hideObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#hideObject",
-    "access": "public",
-    "description": "Hides the object with the given ID.",
-    "lineNumber": 1156,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of object to hide."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 356,
-    "kind": "method",
-    "name": "hideAllObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#hideAllObjects",
-    "access": "public",
-    "description": "Hides all objects currently in the viewer.",
-    "lineNumber": 1166,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 357,
-    "kind": "method",
-    "name": "hideAllObjectsExceptFor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#hideAllObjectsExceptFor",
-    "access": "public",
-    "description": "Hides all objects currently in the viewer, except for those with the given IDs.",
-    "lineNumber": 1174,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectIds",
-        "description": "IDs of objects to not hide."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 358,
-    "kind": "method",
-    "name": "flyToObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#flyToObject",
-    "access": "public",
-    "description": "Flies the camera to fit the given object in view.",
-    "lineNumber": 1187,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of the object"
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback invoked on completion"
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 359,
-    "kind": "method",
-    "name": "jumpToObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#jumpToObject",
-    "access": "public",
-    "description": "Jumps the camera to fit the given object in view.",
-    "lineNumber": 1228,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of the object"
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 360,
-    "kind": "method",
-    "name": "viewFitModels",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#viewFitModels",
-    "access": "public",
-    "description": "Fits the given models in view.",
-    "lineNumber": 1259,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelIds",
-        "description": "ID of the models."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "done",
-        "description": "Callback invoked on completion. Will be animated if this is given, otherwise will be instantaneous."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 361,
-    "kind": "method",
-    "name": "xrayObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayObject",
-    "access": "public",
-    "description": "X-rays the object with the given ID.",
-    "lineNumber": 1304,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of object to x-ray."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 362,
-    "kind": "method",
-    "name": "xrayAllObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayAllObjects",
-    "access": "public",
-    "description": "X-rays all objects currently in the viewer.",
-    "lineNumber": 1320,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 363,
-    "kind": "method",
-    "name": "xrayAllObjectsExceptFor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayAllObjectsExceptFor",
-    "access": "public",
-    "description": "X-rays all objects currently in the viewer, except for those with the given IDs.",
-    "lineNumber": 1328,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectIds",
-        "description": "IDs of objects to not x-ray."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 364,
-    "kind": "method",
-    "name": "setModelsXRayed",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsXRayed",
-    "access": "public",
-    "description": "Sets whether or not the given models are X-rayed.",
-    "lineNumber": 1338,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelIds",
-        "description": "ID of the models."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "xrayed",
-        "description": "Whether or not to X-ray the models."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 365,
-    "kind": "method",
-    "name": "xrayNoObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayNoObjects",
-    "access": "public",
-    "description": "Un-x-rays all objects currently in the viewer.",
-    "lineNumber": 1363,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 366,
-    "kind": "method",
-    "name": "selectObject",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#selectObject",
-    "access": "public",
-    "description": "Selects the objects with the given ID.",
-    "lineNumber": 1371,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectId",
-        "description": "ID of object to select."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 367,
-    "kind": "method",
-    "name": "setModelsSelected",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsSelected",
-    "access": "public",
-    "description": "Sets whether or not the given models are selected.",
-    "lineNumber": 1390,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "modelIds",
-        "description": "ID of the models."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "selected",
-        "description": "Whether or not to select the models."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 368,
-    "kind": "method",
-    "name": "selectAllObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#selectAllObjects",
-    "access": "public",
-    "description": "Selects all objects currently in the viewer.",
-    "lineNumber": 1415,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 369,
-    "kind": "method",
-    "name": "selectAllObjectsExceptFor",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#selectAllObjectsExceptFor",
-    "access": "public",
-    "description": "Selects all objects currently in the viewer, except for those with the given IDs.\n\nThis causes the objects to glow with the selection color.",
-    "lineNumber": 1426,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String[]"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "objectIds",
-        "description": "IDs of objects to not select."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 370,
-    "kind": "method",
-    "name": "deselectAllObjects",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#deselectAllObjects",
-    "access": "public",
-    "description": "De-selects all objects currently in the viewer.\n\nThis removes the selection color from the objects.",
-    "lineNumber": 1435,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 371,
-    "kind": "method",
-    "name": "openTab",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#openTab",
-    "access": "public",
-    "description": "Opens the specified viewer tab.\n\nThe available tabs are:\n\n * \"models\" - the Models tab, which lists the models available within the currently loaded project,\n * \"objects\" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,\n * \"classes\" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and\n * \"storeys\" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.",
-    "lineNumber": 1451,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "tabId",
-        "description": "ID of the tab to open - see method description."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 372,
-    "kind": "method",
-    "name": "getOpenTab",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#getOpenTab",
-    "access": "public",
-    "description": "Returns the ID of the currently open viewer tab.\n\nThe available tabs are:\n\n * \"models\" - the Models tab, which lists the models available within the currently loaded project,\n * \"objects\" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,\n * \"classes\" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and\n * \"storeys\" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.\n * \"none\" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.",
-    "lineNumber": 1499,
-    "params": [],
-    "return": {
-      "types": [
-        "string"
-      ]
-    }
-  },
-  {
-    "__docId__": 373,
-    "kind": "method",
-    "name": "set3DEnabled",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#set3DEnabled",
-    "access": "public",
-    "description": "Switches the viewer between 2D and 3D viewing modes.",
-    "lineNumber": 1533,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "enabled",
-        "description": "Set true to switch into 3D mode, else false to switch into 2D mode."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "done",
-        "description": "Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 374,
-    "kind": "method",
-    "name": "get3DEnabled",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#get3DEnabled",
-    "access": "public",
-    "description": "Gets whether the viewer is in 3D or 2D viewing mode.",
-    "lineNumber": 1546,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{boolean} True when in 3D mode, else false."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "boolean"
-      ],
-      "spread": false,
-      "description": "True when in 3D mode, else false."
-    },
-    "params": []
-  },
-  {
-    "__docId__": 375,
-    "kind": "method",
-    "name": "selectStorey",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#selectStorey",
-    "access": "public",
-    "description": "Transitions the viewer into an isolated view of the given building storey.\n\nDoes nothing and logs an error if no object of the given ID is in the viewer, or if the object is not an ````IfcBuildingStorey````.",
-    "lineNumber": 1558,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "String"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "storeyObjectId",
-        "description": "ID of an ````IfcBuildingStorey```` object."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Function"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "done",
-        "description": "Optional callback to invoke on completion. When provided, the transition will be animated, with the camera flying into position. Otherwise, the transition will be instant, with the camera jumping into position."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 376,
-    "kind": "method",
-    "name": "saveBCFViewpoint",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#saveBCFViewpoint",
-    "access": "public",
-    "description": "Saves viewer state to a BCF viewpoint.\n\nThis does not save information about the project and model(s) that are currently loaded. When loading the viewpoint,\nthe viewer will assume that the same project and models will be currently loaded (the BCF viewpoint specification\ndoes not contain that information).\n\nNote that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a\ndirection vector. Therefore, we save ````camera_direction```` as the vector from {@link Camera#eye} to {@link Camera#look}.",
-    "examples": [
-      "\nconst viewpoint = bimViewer.saveBCFViewpoint({\n    spacesVisible: false,          // Default\n    spaceBoundariesVisible: false, // Default\n    openingsVisible: false         // Default\n});\n\n// viewpoint will resemble the following:\n\n{\n    perspective_camera: {\n        camera_view_point: {\n            x: 0.0,\n            y: 0.0,\n            z: 0.0\n        },\n        camera_direction: {\n            x: 1.0,\n            y: 1.0,\n            z: 2.0\n        },\n        camera_up_vector: {\n            x: 0.0,\n            y: 0.0,\n            z: 1.0\n        },\n        field_of_view: 90.0\n    },\n    lines: [],\n    clipping_planes: [{\n        location: {\n            x: 0.5,\n            y: 0.5,\n            z: 0.5\n        },\n        direction: {\n            x: 1.0,\n            y: 0.0,\n            z: 0.0\n        }\n    }],\n    bitmaps: [],\n    snapshot: {\n        snapshot_type: png,\n        snapshot_data: \"data:image/png;base64,......\"\n    },\n    components: {\n        visibility: {\n            default_visibility: false,\n            exceptions: [{\n                ifc_guid: 4$cshxZO9AJBebsni$z9Yk,\n                originating_system: xeokit.io,\n                authoring_tool_id: xeokit/v1.0\n            }]\n       },\n        selection: [{\n           ifc_guid: \"4$cshxZO9AJBebsni$z9Yk\",\n        }]\n    }\n}"
-    ],
-    "lineNumber": 1649,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{*} BCF JSON viewpoint object"
-      }
-    ],
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "options",
-        "description": "Options for getting the viewpoint."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "false",
-        "defaultRaw": false,
-        "name": "options.spacesVisible",
-        "description": "Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "false",
-        "defaultRaw": false,
-        "name": "options.openingsVisible",
-        "description": "Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "false",
-        "defaultRaw": false,
-        "name": "options.spaceBoundariesVisible",
-        "description": "Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "*"
-      ],
-      "spread": false,
-      "description": "BCF JSON viewpoint object"
-    }
-  },
-  {
-    "__docId__": 377,
-    "kind": "method",
-    "name": "loadBCFViewpoint",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#loadBCFViewpoint",
-    "access": "public",
-    "description": "Sets viewer state to the given BCF viewpoint.\n\nThis assumes that the viewer currently contains the same project and model(s) that were loaded at the time that the\nviewpoint was originally saved (the BCF viewpoint specification does not contain that information).\n\nNote that xeokit's {@link Camera#look} is the **point-of-interest**, whereas the BCF ````camera_direction```` is a\ndirection vector. Therefore, when loading a BCF viewpoint, we set {@link Camera#look} to the absolute position\nobtained by offsetting the BCF ````camera_view_point````  along ````camera_direction````.\n\nWhen loading a viewpoint, we also have the option to find {@link Camera#look} as the closest point of intersection\n(on the surface of any visible and pickable {@link Entity}) with a 3D ray fired from ````camera_view_point```` in\nthe direction of ````camera_direction````.",
-    "lineNumber": 1675,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "bcfViewpoint",
-        "description": "BCF JSON viewpoint object or \"reset\" / \"RESET\" to reset the viewer, which clears SectionPlanes,\nshows default visible entities and restores camera to initial default position."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "options",
-        "description": "Options for setting the viewpoint."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "true",
-        "defaultRaw": true,
-        "name": "options.rayCast",
-        "description": "When ````true```` (default), will attempt to set {@link Camera#look} to the closest\npoint of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "options.immediate",
-        "description": "When ````true```` (default), immediately set camera position."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "options.duration",
-        "description": "Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 378,
-    "kind": "method",
-    "name": "resetView",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#resetView",
-    "access": "public",
-    "description": "Resets the view.\n\nThis resets object appearances (visibility, selection, highlight and X-ray), sets camera to\ndefault position, and removes section planes.",
-    "lineNumber": 1689,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 379,
-    "kind": "method",
-    "name": "setControlsEnabled",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#setControlsEnabled",
-    "access": "public",
-    "description": "Enables or disables the various buttons and controls throughout the viewer.\n\nThis also makes various buttons appear disabled.",
-    "lineNumber": 1700,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "enabled",
-        "description": "Whether or not to disable the controls."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 380,
-    "kind": "method",
-    "name": "destroy",
-    "memberof": "src/toolbar/BIMViewerOLD.js~BIMViewer",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/toolbar/BIMViewerOLD.js~BIMViewer#destroy",
-    "access": "public",
-    "description": "Destroys the viewer, freeing all resources.",
-    "lineNumber": 1724,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 381,
-    "kind": "file",
     "name": "src/toolbar/FirstPersonMode.js",
     "content": "import {Controller} from \"../Controller.js\";\n\n/** @private */\nclass FirstPersonMode extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n        const cameraControl = this.viewer.cameraControl;\n\n        cameraControl.firstPerson = false;\n        cameraControl.pivoting = true;\n        cameraControl.panToPointer = true;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                cameraControl.firstPerson = true;\n                cameraControl.panToPointer = true;\n                cameraControl.pivoting = false;\n            } else {\n                cameraControl.firstPerson = false;\n                cameraControl.pivoting = true;\n                cameraControl.panToPointer = true;\n            }\n            this.viewer.cameraControl.planView = false;\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (!this.getEnabled()) {\n                return;\n            }\n            const active = this.getActive();\n            this.setActive(!active);\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", ()=>{\n            this.setActive(false);\n        });\n    }\n}\n\nexport {FirstPersonMode};",
     "static": true,
@@ -8027,7 +5706,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 382,
+    "__docId__": 293,
     "kind": "class",
     "name": "FirstPersonMode",
     "memberof": "src/toolbar/FirstPersonMode.js",
@@ -8046,7 +5725,7 @@
     "ignore": true
   },
   {
-    "__docId__": 383,
+    "__docId__": 294,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/FirstPersonMode.js~FirstPersonMode",
@@ -8060,7 +5739,7 @@
     "undocument": true
   },
   {
-    "__docId__": 384,
+    "__docId__": 295,
     "kind": "file",
     "name": "src/toolbar/FitAction.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\nconst tempVec3 = math.vec3();\n\n/** @private */\nclass FitAction extends Controller {\n\n    constructor(parent, cfg={}) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (this.getEnabled()) {\n                this.fit();\n            }\n            event.preventDefault();\n        });\n    }\n\n    fit() {\n        const scene = this.viewer.scene;\n        const aabb = scene.getAABB(scene.visibleObjectIds);\n        this.viewer.cameraFlight.flyTo({\n            aabb: aabb\n        });\n        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);\n    }\n\n    set fov(fov) {\n        this.viewer.scene.cameraFlight.fitFOV = fov;\n    }\n\n    get fov() {\n        return this.viewer.scene.cameraFlight.fitFOV;\n    }\n\n    set duration(duration) {\n        this.viewer.scene.cameraFlight.duration = duration;\n    }\n\n    get duration() {\n        return this.viewer.scene.cameraFlight.duration;\n    }\n}\n\nexport {FitAction};",
@@ -8071,7 +5750,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 385,
+    "__docId__": 296,
     "kind": "variable",
     "name": "tempVec3",
     "memberof": "src/toolbar/FitAction.js",
@@ -8092,7 +5771,7 @@
     "ignore": true
   },
   {
-    "__docId__": 386,
+    "__docId__": 297,
     "kind": "class",
     "name": "FitAction",
     "memberof": "src/toolbar/FitAction.js",
@@ -8111,7 +5790,7 @@
     "ignore": true
   },
   {
-    "__docId__": 387,
+    "__docId__": 298,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8125,7 +5804,7 @@
     "undocument": true
   },
   {
-    "__docId__": 388,
+    "__docId__": 299,
     "kind": "method",
     "name": "fit",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8141,7 +5820,7 @@
     "return": null
   },
   {
-    "__docId__": 389,
+    "__docId__": 300,
     "kind": "set",
     "name": "fov",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8155,7 +5834,7 @@
     "undocument": true
   },
   {
-    "__docId__": 390,
+    "__docId__": 301,
     "kind": "get",
     "name": "fov",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8174,7 +5853,7 @@
     }
   },
   {
-    "__docId__": 391,
+    "__docId__": 302,
     "kind": "set",
     "name": "duration",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8188,7 +5867,7 @@
     "undocument": true
   },
   {
-    "__docId__": 392,
+    "__docId__": 303,
     "kind": "get",
     "name": "duration",
     "memberof": "src/toolbar/FitAction.js~FitAction",
@@ -8207,7 +5886,7 @@
     }
   },
   {
-    "__docId__": 393,
+    "__docId__": 304,
     "kind": "file",
     "name": "src/toolbar/HideTool.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\nfunction closeEnough(p, q) {\n    const CLICK_DIST = 4;\n    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);\n}\n\n/** @private */\nclass HideTool extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n                this.viewer.cameraControl.doublePickFlyTo = false;\n            } else {\n                buttonElement.classList.remove(\"active\");\n                this.viewer.cameraControl.doublePickFlyTo = true;\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (!this.getEnabled()) {\n                return;\n            }\n            const active = this.getActive();\n            this.setActive(!active);\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", () => {\n            this.setActive(false);\n        });\n\n        this._init();\n    }\n\n    _init() {\n        var entity = null;\n        this._onHover = this.viewer.cameraControl.on(\"hover\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n            entity = e.entity;\n            entity.highlighted = true;\n        });\n        this._onHoverOff = this.viewer.cameraControl.on(\"hoverOff\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n        });\n        const lastCoords = math.vec2();\n        const input = this.viewer.scene.input;\n        this._onMousedown = input.on(\"mousedown\", (coords) => {\n            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {\n                return;\n            }\n            lastCoords[0] = coords[0];\n            lastCoords[1] = coords[1];\n        });\n        this._onMouseup = input.on(\"mouseup\", (coords) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                if (!closeEnough(lastCoords, coords)) {\n                    entity = null;\n                    return;\n                }\n                entity.visible = false;\n                entity.highlighted = false;\n                entity = null;\n            }\n        });\n    }\n}\n\nexport {HideTool};",
@@ -8218,7 +5897,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 394,
+    "__docId__": 305,
     "kind": "function",
     "name": "closeEnough",
     "memberof": "src/toolbar/HideTool.js",
@@ -8255,7 +5934,7 @@
     "ignore": true
   },
   {
-    "__docId__": 395,
+    "__docId__": 306,
     "kind": "class",
     "name": "HideTool",
     "memberof": "src/toolbar/HideTool.js",
@@ -8274,7 +5953,7 @@
     "ignore": true
   },
   {
-    "__docId__": 396,
+    "__docId__": 307,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8288,7 +5967,7 @@
     "undocument": true
   },
   {
-    "__docId__": 397,
+    "__docId__": 308,
     "kind": "method",
     "name": "_init",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8305,7 +5984,7 @@
     "return": null
   },
   {
-    "__docId__": 398,
+    "__docId__": 309,
     "kind": "member",
     "name": "_onHover",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8323,7 +6002,7 @@
     }
   },
   {
-    "__docId__": 399,
+    "__docId__": 310,
     "kind": "member",
     "name": "_onHoverOff",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8341,7 +6020,7 @@
     }
   },
   {
-    "__docId__": 400,
+    "__docId__": 311,
     "kind": "member",
     "name": "_onMousedown",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8359,7 +6038,7 @@
     }
   },
   {
-    "__docId__": 401,
+    "__docId__": 312,
     "kind": "member",
     "name": "_onMouseup",
     "memberof": "src/toolbar/HideTool.js~HideTool",
@@ -8377,7 +6056,7 @@
     }
   },
   {
-    "__docId__": 402,
+    "__docId__": 313,
     "kind": "file",
     "name": "src/toolbar/NavCubeMode.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {NavCubePlugin} from \"@xeokit/xeokit-sdk/src/plugins/NavCubePlugin/NavCubePlugin.js\";\n\n/** @private */\nclass NavCubeMode extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.navCubeCanvasElement) {\n            throw \"Missing config: navCubeCanvasElement\";\n        }\n\n        const navCubeCanvasElement = cfg.navCubeCanvasElement;\n\n        this._navCube = new NavCubePlugin(this.viewer, {\n            canvasElement: navCubeCanvasElement,\n            fitVisible: true,\n            color: \"#CFCFCF\"\n        });\n\n        this._navCube.setVisible(this._active);\n\n        this.on(\"active\", (active) => {\n            this._navCube.setVisible(active);\n        });\n    }\n\n    destroy() {\n        this._navCube.destroy();\n        super.destroy();\n    }\n}\n\nexport {NavCubeMode};",
@@ -8388,7 +6067,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 403,
+    "__docId__": 314,
     "kind": "class",
     "name": "NavCubeMode",
     "memberof": "src/toolbar/NavCubeMode.js",
@@ -8407,7 +6086,7 @@
     "ignore": true
   },
   {
-    "__docId__": 404,
+    "__docId__": 315,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/NavCubeMode.js~NavCubeMode",
@@ -8421,7 +6100,7 @@
     "undocument": true
   },
   {
-    "__docId__": 405,
+    "__docId__": 316,
     "kind": "member",
     "name": "_navCube",
     "memberof": "src/toolbar/NavCubeMode.js~NavCubeMode",
@@ -8439,7 +6118,7 @@
     }
   },
   {
-    "__docId__": 406,
+    "__docId__": 317,
     "kind": "method",
     "name": "destroy",
     "memberof": "src/toolbar/NavCubeMode.js~NavCubeMode",
@@ -8455,7 +6134,7 @@
     "return": null
   },
   {
-    "__docId__": 407,
+    "__docId__": 318,
     "kind": "file",
     "name": "src/toolbar/OrthoMode.js",
     "content": "import {Controller} from \"../Controller.js\";\n\n/** @private */\nclass OrthoMode extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n        \n        this.on(\"active\", (active) => {\n            if (active) {\n                this.viewer.cameraFlight.flyTo({projection: \"ortho\", duration: 0.5}, () => {});\n            } else {\n                this.viewer.cameraFlight.flyTo({projection: \"perspective\", duration: 0.5}, () => {});\n            }\n        });\n        \n        buttonElement.addEventListener(\"click\", (event) => {\n            this.setActive(!this.getActive());\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", ()=>{\n            this.setActive(false);\n        });\n    }\n}\n\nexport {OrthoMode};",
@@ -8466,7 +6145,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 408,
+    "__docId__": 319,
     "kind": "class",
     "name": "OrthoMode",
     "memberof": "src/toolbar/OrthoMode.js",
@@ -8485,7 +6164,7 @@
     "ignore": true
   },
   {
-    "__docId__": 409,
+    "__docId__": 320,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/OrthoMode.js~OrthoMode",
@@ -8499,7 +6178,7 @@
     "undocument": true
   },
   {
-    "__docId__": 410,
+    "__docId__": 321,
     "kind": "file",
     "name": "src/toolbar/QueryTool.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\nfunction closeEnough(p, q) {\n    const CLICK_DIST = 4;\n    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);\n}\n\n/** @private */\nclass QueryTool extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (!this.getEnabled()) {\n                return;\n            }\n            const active = this.getActive();\n            this.setActive(!active);\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", ()=>{\n            this.setActive(false);\n        });\n\n        this._init();\n    }\n\n    _init() {\n        const viewer = this.viewer;\n        const cameraControl = viewer.cameraControl;\n        var entity = null;\n        this._onHover = cameraControl.on(\"hover\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n            entity = e.entity;\n            entity.highlighted = true;\n        });\n        this._onHoverOff = cameraControl.on(\"hoverOff\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n        });\n        const lastCoords = math.vec2();\n        const input = viewer.scene.input;\n        this._onMousedown = input.on(\"mousedown\", (coords) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {\n                return;\n            }\n            lastCoords[0] = coords[0];\n            lastCoords[1] = coords[1];\n        });\n        this._onMouseup = input.on(\"mouseup\", (coords) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                if (!closeEnough(lastCoords, coords)) {\n                    entity = null;\n                    return;\n                }\n                const model = entity.model;\n                if (!model) { // OK to click on entities that don't belong to models - could be a navigation gizmo or helper\n                    return;\n                }\n                const projectId = this.bimViewer.getLoadedProjectId();\n                if (!projectId) {\n                    this.error(\"Query tool: should be a project loaded - ignoring query-pick\");\n                    return;\n                }\n                const modelId = model.id;\n                const objectId = entity.id;\n                const metaObject = viewer.metaScene.metaObjects[objectId];\n                if (!metaObject) {\n                    return;\n                }\n                const objectName = metaObject.name;\n                const objectType = metaObject.type;\n                const objectQueryResult = {\n                    projectId: projectId,\n                    modelId: modelId,\n                    objectId: objectId,\n                    objectName: objectName,\n                    objectType: objectType\n                };\n                this.fire(\"queryPicked\", objectQueryResult);\n                entity = null;\n            } else {\n                this.fire(\"queryNotPicked\", false);\n            }\n        });\n    }\n}\n\nexport {QueryTool};",
@@ -8510,7 +6189,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 411,
+    "__docId__": 322,
     "kind": "function",
     "name": "closeEnough",
     "memberof": "src/toolbar/QueryTool.js",
@@ -8547,7 +6226,7 @@
     "ignore": true
   },
   {
-    "__docId__": 412,
+    "__docId__": 323,
     "kind": "class",
     "name": "QueryTool",
     "memberof": "src/toolbar/QueryTool.js",
@@ -8566,7 +6245,7 @@
     "ignore": true
   },
   {
-    "__docId__": 413,
+    "__docId__": 324,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8580,7 +6259,7 @@
     "undocument": true
   },
   {
-    "__docId__": 414,
+    "__docId__": 325,
     "kind": "method",
     "name": "_init",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8597,7 +6276,7 @@
     "return": null
   },
   {
-    "__docId__": 415,
+    "__docId__": 326,
     "kind": "member",
     "name": "_onHover",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8615,7 +6294,7 @@
     }
   },
   {
-    "__docId__": 416,
+    "__docId__": 327,
     "kind": "member",
     "name": "_onHoverOff",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8633,7 +6312,7 @@
     }
   },
   {
-    "__docId__": 417,
+    "__docId__": 328,
     "kind": "member",
     "name": "_onMousedown",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8651,7 +6330,7 @@
     }
   },
   {
-    "__docId__": 418,
+    "__docId__": 329,
     "kind": "member",
     "name": "_onMouseup",
     "memberof": "src/toolbar/QueryTool.js~QueryTool",
@@ -8669,7 +6348,7 @@
     }
   },
   {
-    "__docId__": 419,
+    "__docId__": 330,
     "kind": "file",
     "name": "src/toolbar/ResetAction.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {ModelMemento} from \"@xeokit/xeokit-sdk/src/viewer/scene/mementos/ModelMemento.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\nconst tempVec3a = math.vec3();\n\n/** @private */\nclass ResetAction extends Controller {\n\n    constructor(parent, cfg = {}) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n        const camera = this.viewer.camera;\n\n        this._modelMementos = {};\n\n        // Initial camera position - looking down negative diagonal\n\n        camera.eye = [0.577, 0.577, 0.577];\n        camera.look = [0,0,0];\n        camera.up = [-1, 1, -1];\n\n        this.bimViewer._modelsExplorer.on(\"modelLoaded\", (modelId) => {\n            this._saveModelMemento(modelId);\n        });\n\n        this.bimViewer._modelsExplorer.on(\"modelUnloaded\", (modelId) => {\n            this._destroyModelMemento(modelId);\n        });\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (this.getEnabled()) {\n                this.reset();\n            }\n            event.preventDefault();\n        });\n    }\n\n    _saveModelMemento(modelId) {\n        const metaModel = this.viewer.metaScene.metaModels[modelId];\n        if (!metaModel) {\n            return;\n        }\n        const modelMemento = new ModelMemento();\n        modelMemento.saveObjects(this.viewer.scene, metaModel, {\n            visible: true,\n            edges: true,\n            xrayed: true,\n            highlighted: true,\n            selected: true,\n            clippable: true,\n            pickable: true,\n            colorize: true,\n            opacity: false // FIXME: Restoring opacity broken by colorize fix - details at https://github.com/xeokit/xeokit-sdk/issues/239\n        });\n        this._modelMementos[modelId] = modelMemento;\n    }\n\n    _restoreModelMemento(modelId) {\n        const metaModel = this.viewer.metaScene.metaModels[modelId];\n        if (!metaModel) {\n            return;\n        }\n        const modelMemento = this._modelMementos[modelId];\n        modelMemento.restoreObjects(this.viewer.scene, metaModel);\n    }\n\n    _destroyModelMemento(modelId) {\n        delete this._modelMementos[modelId];\n    }\n\n    reset() {\n        const scene = this.viewer.scene;\n        const modelIds = scene.modelIds;\n        for (var i = 0, len = modelIds.length; i < len; i++) {\n            const modelId = modelIds[i];\n            this._restoreModelMemento(modelId);\n        }\n        this.bimViewer.unShowObjectInExplorers();\n        this.fire(\"reset\", true);\n        this._resetCamera();\n    }\n\n    _resetCamera() {\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const aabb = scene.getAABB(scene.visibleObjectIds);\n        const diag = math.getAABB3Diag(aabb);\n        const center = math.getAABB3Center(aabb, tempVec3a);\n        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight\n        const camera = scene.camera;\n        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];\n    //    const up = math.mulVec3Scalar((camera.yUp) ? [-1, 1, -1] : [-1, 1, 1], -1, []);\n        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];\n        viewer.cameraControl.pivotPos = center;\n        viewer.cameraControl.planView = false;\n        viewer.cameraFlight.flyTo({\n            look: center,\n            eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],\n            up: up,\n            orthoScale: diag * 1.3,\n            projection: \"perspective\",\n            duration: 1\n        });\n    }\n}\n\nexport {ResetAction};",
@@ -8680,7 +6359,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 420,
+    "__docId__": 331,
     "kind": "variable",
     "name": "tempVec3a",
     "memberof": "src/toolbar/ResetAction.js",
@@ -8701,7 +6380,7 @@
     "ignore": true
   },
   {
-    "__docId__": 421,
+    "__docId__": 332,
     "kind": "class",
     "name": "ResetAction",
     "memberof": "src/toolbar/ResetAction.js",
@@ -8720,7 +6399,7 @@
     "ignore": true
   },
   {
-    "__docId__": 422,
+    "__docId__": 333,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8734,7 +6413,7 @@
     "undocument": true
   },
   {
-    "__docId__": 423,
+    "__docId__": 334,
     "kind": "member",
     "name": "_modelMementos",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8752,7 +6431,7 @@
     }
   },
   {
-    "__docId__": 424,
+    "__docId__": 335,
     "kind": "method",
     "name": "_saveModelMemento",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8776,7 +6455,7 @@
     "return": null
   },
   {
-    "__docId__": 425,
+    "__docId__": 336,
     "kind": "method",
     "name": "_restoreModelMemento",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8800,7 +6479,7 @@
     "return": null
   },
   {
-    "__docId__": 426,
+    "__docId__": 337,
     "kind": "method",
     "name": "_destroyModelMemento",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8824,7 +6503,7 @@
     "return": null
   },
   {
-    "__docId__": 427,
+    "__docId__": 338,
     "kind": "method",
     "name": "reset",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8840,7 +6519,7 @@
     "return": null
   },
   {
-    "__docId__": 428,
+    "__docId__": 339,
     "kind": "method",
     "name": "_resetCamera",
     "memberof": "src/toolbar/ResetAction.js~ResetAction",
@@ -8857,7 +6536,7 @@
     "return": null
   },
   {
-    "__docId__": 429,
+    "__docId__": 340,
     "kind": "file",
     "name": "src/toolbar/SectionTool.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {SectionPlanesPlugin} from \"@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js\";\n\n/** @private */\nclass SectionTool extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {\n        });\n\n        this._sectionPlanesPlugin.setOverviewVisible(false);\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (!active) {\n                this._sectionPlanesPlugin.hideControl();\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (!this.getEnabled()) {\n                return;\n            }\n            const active = this.getActive();\n            this.setActive(!active);\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", () => {\n            this.clear();\n            this.setActive(false);\n        });\n\n        this._initSectionMode();\n    }\n\n    _initSectionMode() {\n        this._onPickedSurface = this.viewer.cameraControl.on(\"pickedSurface\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({\n                pos: e.worldPos,\n                dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]\n            });\n            this._sectionPlanesPlugin.showControl(sectionPlane.id);\n        });\n    }\n\n    clear() {\n        this._sectionPlanesPlugin.clear();\n    }\n\n    destroy() {\n        this._sectionPlanesPlugin.destroy();\n        super.destroy();\n    }\n}\n\nexport {SectionTool};",
@@ -8868,7 +6547,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 430,
+    "__docId__": 341,
     "kind": "class",
     "name": "SectionTool",
     "memberof": "src/toolbar/SectionTool.js",
@@ -8887,7 +6566,7 @@
     "ignore": true
   },
   {
-    "__docId__": 431,
+    "__docId__": 342,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8901,7 +6580,7 @@
     "undocument": true
   },
   {
-    "__docId__": 432,
+    "__docId__": 343,
     "kind": "member",
     "name": "_sectionPlanesPlugin",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8919,7 +6598,7 @@
     }
   },
   {
-    "__docId__": 433,
+    "__docId__": 344,
     "kind": "method",
     "name": "_initSectionMode",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8936,7 +6615,7 @@
     "return": null
   },
   {
-    "__docId__": 434,
+    "__docId__": 345,
     "kind": "member",
     "name": "_onPickedSurface",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8954,7 +6633,7 @@
     }
   },
   {
-    "__docId__": 435,
+    "__docId__": 346,
     "kind": "method",
     "name": "clear",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8970,7 +6649,7 @@
     "return": null
   },
   {
-    "__docId__": 436,
+    "__docId__": 347,
     "kind": "method",
     "name": "destroy",
     "memberof": "src/toolbar/SectionTool.js~SectionTool",
@@ -8986,7 +6665,7 @@
     "return": null
   },
   {
-    "__docId__": 437,
+    "__docId__": 348,
     "kind": "file",
     "name": "src/toolbar/SelectionTool.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\n\nfunction closeEnough(p, q) {\n    const CLICK_DIST = 4;\n    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);\n}\n\n/** @private */\nclass SelectionTool extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        const buttonElement = cfg.buttonElement;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                buttonElement.classList.add(\"disabled\");\n            } else {\n                buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this.on(\"active\", (active) => {\n            if (active) {\n                buttonElement.classList.add(\"active\");\n            } else {\n                buttonElement.classList.remove(\"active\");\n            }\n        });\n\n        buttonElement.addEventListener(\"click\", (event) => {\n            if (!this.getEnabled()) {\n                return;\n            }\n            const active = this.getActive();\n            this.setActive(!active);\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", () => {\n            this.setActive(false);\n        });\n\n        this._initSectionMode();\n    }\n\n    _initSectionMode() {\n        const viewer = this.viewer;\n        const cameraControl = viewer.cameraControl;\n        var entity = null;\n        this._onHover = cameraControl.on(\"hover\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n            entity = e.entity;\n            entity.highlighted = true;\n        });\n        this._onHoverOff = cameraControl.on(\"hoverOff\", (e) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                entity.highlighted = false;\n                entity = null;\n            }\n        });\n        const lastCoords = math.vec2();\n        const input = viewer.scene.input;\n        this._onMousedown = input.on(\"mousedown\", (coords) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {\n                return;\n            }\n            lastCoords[0] = coords[0];\n            lastCoords[1] = coords[1];\n        });\n        this._onMouseup = input.on(\"mouseup\", (coords) => {\n            if (!this.getActive() || !this.getEnabled()) {\n                return;\n            }\n            if (entity) {\n                if (!closeEnough(lastCoords, coords)) {\n                    entity = null;\n                    return;\n                }\n                entity.selected = !entity.selected;\n                entity = null;\n            }\n        });\n    }\n}\n\nexport {SelectionTool};",
@@ -8997,7 +6676,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 438,
+    "__docId__": 349,
     "kind": "function",
     "name": "closeEnough",
     "memberof": "src/toolbar/SelectionTool.js",
@@ -9034,7 +6713,7 @@
     "ignore": true
   },
   {
-    "__docId__": 439,
+    "__docId__": 350,
     "kind": "class",
     "name": "SelectionTool",
     "memberof": "src/toolbar/SelectionTool.js",
@@ -9053,7 +6732,7 @@
     "ignore": true
   },
   {
-    "__docId__": 440,
+    "__docId__": 351,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9067,7 +6746,7 @@
     "undocument": true
   },
   {
-    "__docId__": 441,
+    "__docId__": 352,
     "kind": "method",
     "name": "_initSectionMode",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9084,7 +6763,7 @@
     "return": null
   },
   {
-    "__docId__": 442,
+    "__docId__": 353,
     "kind": "member",
     "name": "_onHover",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9102,7 +6781,7 @@
     }
   },
   {
-    "__docId__": 443,
+    "__docId__": 354,
     "kind": "member",
     "name": "_onHoverOff",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9120,7 +6799,7 @@
     }
   },
   {
-    "__docId__": 444,
+    "__docId__": 355,
     "kind": "member",
     "name": "_onMousedown",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9138,7 +6817,7 @@
     }
   },
   {
-    "__docId__": 445,
+    "__docId__": 356,
     "kind": "member",
     "name": "_onMouseup",
     "memberof": "src/toolbar/SelectionTool.js~SelectionTool",
@@ -9156,7 +6835,7 @@
     }
   },
   {
-    "__docId__": 446,
+    "__docId__": 357,
     "kind": "file",
     "name": "src/toolbar/ThreeDMode.js",
     "content": "import {Controller} from \"../Controller.js\";\nimport {math} from \"@xeokit/xeokit-sdk/src/viewer/scene/math/math.js\";\n\nconst tempVec3a = math.vec3();\n\n/** @private */\nclass ThreeDMode extends Controller {\n\n    constructor(parent, cfg) {\n\n        super(parent, cfg);\n\n        if (!cfg.buttonElement) {\n            throw \"Missing config: buttonElement\";\n        }\n\n        this._buttonElement = cfg.buttonElement;\n\n        this._active = false;\n\n        this.on(\"enabled\", (enabled) => {\n            if (!enabled) {\n                this._buttonElement.classList.add(\"disabled\");\n            } else {\n                this._buttonElement.classList.remove(\"disabled\");\n            }\n        });\n\n        this._buttonElement.addEventListener(\"click\", (event) => {\n            this.setActive(!this.getActive(), () => { // Animated\n            });\n            event.preventDefault();\n        });\n\n        this.bimViewer.on(\"reset\", () => {\n            this.setActive(true, () => { // Animated\n            });\n        });\n    }\n\n    setActive(active, done) {\n        if (this._active === active) {\n            if (done) {\n                done();\n            }\n            return;\n        }\n        this._active = active;\n        if (active) {\n            this._buttonElement.classList.add(\"active\");\n            if (done) {\n                this._enterThreeDMode(() => {\n                    this.fire(\"active\", this._active);\n                    done();\n                });\n            } else {\n                this._enterThreeDMode();\n                this.fire(\"active\", this._active);\n            }\n        } else {\n            this._buttonElement.classList.remove(\"active\");\n            if (done) {\n                this._exitThreeDMode(() => {\n                    this.fire(\"active\", this._active);\n                    done();\n                });\n            } else {\n                this._exitThreeDMode();\n                this.fire(\"active\", this._active);\n            }\n        }\n    }\n\n    _enterThreeDMode(done) {\n\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const aabb = scene.getAABB(scene.visibleObjectIds);\n        const diag = math.getAABB3Diag(aabb);\n        const center = math.getAABB3Center(aabb, tempVec3a);\n        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight\n        const camera = scene.camera;\n        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];\n        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];\n\n        viewer.cameraControl.pivotPos = center;\n        viewer.cameraControl.planView = false;\n\n        this.bimViewer._navCubeMode.setActive(true);\n        this.viewer.cameraControl.planView = false;\n        this.bimViewer._firstPersonMode.setEnabled(true);\n        this.bimViewer._sectionTool.setEnabled(true);\n\n        if (done) {\n            viewer.cameraFlight.flyTo({\n                look: center,\n                eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],\n                up: up,\n                orthoScale: diag * 1.3,\n                projection: \"perspective\",\n                duration: 1\n            }, () => {\n                done();\n            });\n        } else {\n            viewer.cameraFlight.jumpTo({\n                look: center,\n                eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],\n                up: up,\n                orthoScale: diag * 1.3,\n                projection: \"perspective\"\n            });\n        }\n    }\n\n    _exitThreeDMode(done) {\n\n        const viewer = this.viewer;\n        const scene = viewer.scene;\n        const camera = scene.camera;\n        const aabb = scene.getAABB(scene.visibleObjectIds);\n        const look2 = math.getAABB3Center(aabb);\n        const diag = math.getAABB3Diag(aabb);\n        const fitFOV = 45; // fitFOV;\n        const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));\n        const orthoScale2 = diag * 1.3;\n        const eye2 = tempVec3a;\n\n        eye2[0] = look2[0] + (camera.worldUp[0] * sca);\n        eye2[1] = look2[1] + (camera.worldUp[1] * sca);\n        eye2[2] = look2[2] + (camera.worldUp[2] * sca);\n\n        const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);\n\n        this.bimViewer._sectionTool.setActive(false);\n        this.bimViewer._sectionTool.clear();\n        this.viewer.cameraControl.planView = true;\n        this.bimViewer._firstPersonMode.setEnabled(false);\n        this.bimViewer._firstPersonMode.setActive(false);\n        this.bimViewer._sectionTool.setEnabled(false);\n\n        if (done) {\n            viewer.cameraFlight.flyTo({\n                projection: \"ortho\",\n                eye: eye2,\n                look: look2,\n                up: up2,\n                orthoScale: orthoScale2\n            }, () => {\n                this.bimViewer._navCubeMode.setActive(false);\n            });\n        } else {\n            viewer.cameraFlight.jumpTo({\n                projection: \"ortho\",\n                eye: eye2,\n                look: look2,\n                up: up2,\n                orthoScale: orthoScale2\n            });\n            this.bimViewer._navCubeMode.setActive(false);\n        }\n    }\n}\n\nexport {ThreeDMode};",
@@ -9167,7 +6846,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 447,
+    "__docId__": 358,
     "kind": "variable",
     "name": "tempVec3a",
     "memberof": "src/toolbar/ThreeDMode.js",
@@ -9188,7 +6867,7 @@
     "ignore": true
   },
   {
-    "__docId__": 448,
+    "__docId__": 359,
     "kind": "class",
     "name": "ThreeDMode",
     "memberof": "src/toolbar/ThreeDMode.js",
@@ -9207,7 +6886,7 @@
     "ignore": true
   },
   {
-    "__docId__": 449,
+    "__docId__": 360,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
@@ -9221,7 +6900,7 @@
     "undocument": true
   },
   {
-    "__docId__": 450,
+    "__docId__": 361,
     "kind": "member",
     "name": "_buttonElement",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
@@ -9239,7 +6918,7 @@
     }
   },
   {
-    "__docId__": 451,
+    "__docId__": 362,
     "kind": "member",
     "name": "_active",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
@@ -9257,7 +6936,7 @@
     }
   },
   {
-    "__docId__": 452,
+    "__docId__": 363,
     "kind": "method",
     "name": "setActive",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
@@ -9286,7 +6965,7 @@
     "return": null
   },
   {
-    "__docId__": 454,
+    "__docId__": 365,
     "kind": "method",
     "name": "_enterThreeDMode",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
@@ -9310,7 +6989,7 @@
     "return": null
   },
   {
-    "__docId__": 455,
+    "__docId__": 366,
     "kind": "method",
     "name": "_exitThreeDMode",
     "memberof": "src/toolbar/ThreeDMode.js~ThreeDMode",
