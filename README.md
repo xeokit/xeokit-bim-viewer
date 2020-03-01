@@ -66,6 +66,8 @@ Read the documentation below to get started.
   * [Building the Binary](#building-the-binary)
   * [Building the Documentation](#building-the-documentation)
 
+---
+
 ## Features
 
 * Uses [xeokit](https://xeokit.io) for efficient model loading and rendering.
