@@ -256,20 +256,8 @@ In [Model Database](#model-database) we saw how a project can specify directives
 
 | Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
-| "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
-
-## Embedding the Viewer
-
-TODO
-
-````html
-<iframe src="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital"></iframe>
-````
-
-````html
-<iframe src="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital#"></iframe>
-````
-
+| "focusObject"         | String            |                       |                   |            |     
+| "openTab"             | String            |                       |                   |            |     
 
 ## Programming API
 

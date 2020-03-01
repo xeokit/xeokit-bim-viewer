@@ -12,12 +12,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "@xeokit/xeokit-bim-viewer/src/ifcobjectdefaults/viewerifcobjectcolors.js~viewerifcobjectcolors",
-    "variable/index.html#static-variable-ViewerIFCObjectColors",
-    "<span>ViewerIFCObjectColors</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/IFCObjectDefaults/ViewerIFCObjectColors.js</span>",
-    "variable"
-  ],
-  [
     "src/.external-ecmascript.js~array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
     "src/.external-ecmascript.js~Array",
