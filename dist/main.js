@@ -60768,7 +60768,7 @@ class BIMViewer extends Controller {
      *
      * Note that this method is not to be confused with {@link BIMViewer#setViewerState}, which batch-updates various states of the viewer's UI and 3D view.
      *
-     * See [Configuring the Viewer](https://xeokit.github.io/xeokit-bim-viewer/docs/#configuring-the-viewer) in the main documentation page for the list of available configurations.
+     * See [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.
      *
      * @param {*} viewerConfigs Map of key-value configuration pairs.
      */
@@ -60784,7 +60784,7 @@ class BIMViewer extends Controller {
     /**
      * Sets a viewer configuration.
      *
-     * See [Configuring the Viewer](https://xeokit.github.io/xeokit-bim-viewer/docs/#configuring-the-viewer) in the main documentation page for the list of available configurations.
+     * See [Viewer Configurations](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer-configurations) for the list of available configurations.
      *
      * @param {String} name Configuration name.
      * @param {*} value Configuration value.
@@ -61205,7 +61205,7 @@ class BIMViewer extends Controller {
      *
      * Also, this method is not to be confused with {@link BIMViewer#setConfigs}, which is used to batch-update various configurations and user preferences on the viewer.
      *
-     * See [Setting Viewer State](https://xeokit.github.io/xeokit-bim-viewer/docs/#setting-viewer-state) in the main documentation page for the list of states that may be batchh-updated using this method.
+     * See [Viewer States](https://xeokit.github.io/xeokit-bim-viewer/docs/#viewer_states) for the list of states that may be batch-updated with this method.
      *
      * @param {Object} viewerState Specifies the viewer UI state updates.
      * @param {Function} done Callback invoked on successful update of the viewer states.
@@ -61278,109 +61278,93 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Shows the object with the given ID.
-
-     * @param {String} objectId ID of object to show.
+     * Sets whether or not the given objects are visible.
+     *
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} visible True to set objects visible, false to set them invisible.
      */
-    showObject(objectId) {
-        if (!objectId) {
-            this.error("showObject() - Argument expected: objectId");
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.visible = true;
-            }
+    setObjectsVisible(objectIds, visible) {
+        this._withObjectsInSubtree(objectIds, (entity) => {
+            entity.visible = visible;
         });
     }
 
     /**
-     * Sets whether or not the given classes are visible.
+     * Sets the visibility of all objects.
      *
-     * @param {String[]} classes Class types.
-     * @param {Boolean} visible Whether or not to show the classes.
+     * @param {Boolean} visible True to set objects visible, false to set them invisible.
      */
-    setClassesVisible(classes, visible) {
-
-    }
-
-    /**
-     * Sets whether or not the given models are visible.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} visible Whether or not to show the models.
-     */
-    setModelsVisible(modelIds, visible) {
-        if (!modelIds) {
-            this.error("setModelsVisible() - Argument expected: modelIds");
-            return;
-        }
-        if (visible === undefined || visible === null) {
-            this.error("setModelsVisible() - Argument expected: visible");
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i < len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error("setModelsVisible() - Model not found in viewer: '" + modelId + "'");
-                continue;
-            }
-            model.visible = visible;
+    setAllObjectsVisible(visible) {
+        if (visible) {
+            this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
         }
     }
 
     /**
-     * Shows all objects currently in the viewer.
+     * Sets whether or not the given objects are X-rayed.
      *
-     * If any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.
-     *
-     * Likewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} xrayed Whether or not to X-ray the objects.
      */
-    showAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    setObjectsXRayed(objectIds, xrayed) {
+        this._withObjectsInSubtree(objectIds, (entity) => {
+            entity.xrayed = xrayed;
+        });
     }
 
     /**
-     * Shows all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not show.
+     * Sets whether or not all objects are X-rayed.
+     *
+     * @param {Boolean} xrayed Whether or not to set all objects X-rayed.
      */
-    showAllObjectsExceptFor(objectIds) {
+    setAllObjectsXRayed(xrayed) {
+        if (xrayed) {
+            this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsXRayed(this.viewer.scene.xrayedObjectIds, false);
+        }
+    }
+
+    /**
+     * Sets whether or not the given objects are selected.
+     *
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} selected Whether or not to set the objects selected.
+     */
+    setObjectsSelected(objectIds, selected) {
+        this._withObjectsInSubtree(objectIds, (entity) => {
+            entity.selected = selected;
+        });
+    }
+
+    /**
+     * Sets whether or not all objects are selected.
+     *
+     * @param {Boolean} selected Whether or not to set all objects selected.
+     */
+    setAllObjectsSelected(selected) {
+        if (selected) {
+            this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
+        }
+    }
+
+    _withObjectsInSubtree(objectIds, callback) {
         if (!objectIds) {
-            this.error("showAllObjectsExceptFor() - Argument expected: objectId");
+            this.error("Argument expected: objectIds");
             return;
         }
-    }
-
-    /**
-     * Hides the object with the given ID.
-     * @param {String} objectId ID of object to hide.
-     */
-    hideObject(objectId) { // TODO
-        if (!objectId) {
-            this.error("hideObject() - Argument expected: objectId");
-            return;
-        }
-    }
-
-    /**
-     * Hides all objects currently in the viewer.
-     */
-    hideAllObjects() { // TODO
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
-    }
-
-    /**
-     * Hides all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not hide.
-     */
-    hideAllObjectsExceptFor(objectIds) { // TODO
-        if (!objectIds) {
-            this.error("hideAllObjectsExceptFor() - Argument expected: objectId");
-            return;
+        for (let i = 0, len = objectIds.length; i < len; i++) {
+            const objectId = objectIds[i];
+            this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+                const entity = this.viewer.scene.objects[metaObject.id];
+                if (entity) {
+                    callback(entity);
+                }
+            });
         }
     }
 
@@ -61500,146 +61484,6 @@ class BIMViewer extends Controller {
             }, 500);
         }
         viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
-    }
-
-    /**
-     * X-rays the object with the given ID.
-     *
-     * @param {String} objectId ID of object to x-ray.
-     */
-    xrayObject(objectId) {
-        if (!objectId) {
-            this.error("xrayObject() - Argument expected: objectId");
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.xrayed = true;
-            }
-        });
-    }
-
-    /**
-     * X-rays all objects currently in the viewer.
-     */
-    xrayAllObjects() {
-        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
-    }
-
-    /**
-     * X-rays all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not x-ray.
-     */
-    xrayAllObjectsExceptFor(objectIds) { // TODO
-
-    }
-
-    /**
-     * Sets whether or not the given models are X-rayed.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} xrayed Whether or not to X-ray the models.
-     */
-    setModelsXRayed(modelIds, xrayed) {
-        if (!modelIds) {
-            this.error("setModelsXRayed() - Argument expected: modelIds");
-            return;
-        }
-        if (xrayed === undefined || xrayed === null) {
-            this.error("setModelsXRayed() - Argument expected: xrayed");
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i < len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error("setModelsXRayed() - Model not found in viewer: '" + modelId + "'");
-                continue;
-            }
-            model.xrayed = xrayed;
-        }
-    }
-
-    /**
-     * Un-x-rays all objects currently in the viewer.
-     */
-    xrayNoObjects() {
-        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, false);
-    }
-
-    /**
-     * Selects the objects with the given ID.
-     * @param {String} objectId ID of object to select.
-     */
-    selectObject(objectId) {
-        if (!objectId) {
-            this.error("selectObject() - Argument expected: objectId");
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.selected = true;
-            }
-        });
-    }
-
-    /**
-     * Sets whether or not the given models are selected.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} selected Whether or not to select the models.
-     */
-    setModelsSelected(modelIds, selected) {
-        if (!modelIds) {
-            this.error("setModelsSelected() - Argument expected: modelIds");
-            return;
-        }
-        if (selected === undefined || selected === null) {
-            this.error("setModelsSelected() - Argument expected: selected");
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i < len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error("setModelsSelected() - Model not found in viewer: '" + modelId + "'");
-                continue;
-            }
-            model.selected = selected;
-        }
-    }
-
-    /**
-     * Selects all objects currently in the viewer.
-     */
-    selectAllObjects() {
-        this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
-    }
-
-    /**
-     * Selects all objects currently in the viewer, except for those with the given IDs.
-     *
-     * This causes the objects to glow with the selection color.
-     *
-     * @param {String[]} objectIds IDs of objects to not select.
-     */
-    selectAllObjectsExceptFor(objectIds) { // TODO
-
-    }
-
-    /**
-     * De-selects all objects currently in the viewer.
-     *
-     * This removes the selection color from the objects.
-     */
-    deselectAllObjects() {
-        this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
     }
 
     /**
