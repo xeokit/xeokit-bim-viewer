@@ -165,8 +165,8 @@
                             console.error("Param expected for `focusObject` action: 'objectId'");
                             break;
                         }
-                        bimViewer.deselectAllObjects();
-                        bimViewer.selectObject(objectId);
+                        bimViewer.setAllObjectsSelected(false);
+                        bimViewer.setObjectsSelected([objectId], true);
                         bimViewer.flyToObject(objectId, () => {
                             // FIXME: Showing objects in tabs involves scrolling the HTML within the tabs - disable until we know how to scroll the correct DOM element. Otherwise, that function works OK
 
