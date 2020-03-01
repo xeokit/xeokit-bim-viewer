@@ -1120,7 +1120,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} xrayed Whether or not to set all objects X-rayed.
      */
     setAllObjectsXRayed(xrayed) {
-        if (visible) {
+        if (xrayed) {
             this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
         } else {
             this.viewer.scene.setObjectsXRayed(this.viewer.scene.xrayedObjectIds, false);
@@ -1145,7 +1145,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} selected Whether or not to set all objects selected.
      */
     setAllObjectsSelected(selected) {
-        if (visible) {
+        if (selected) {
             this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
         } else {
             this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
