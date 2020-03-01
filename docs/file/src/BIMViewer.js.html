@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcobjectdefaults">IFCObjectDefaults</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ViewerIFCObjectColors">ViewerIFCObjectColors</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#toolbar">toolbar</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/toolbar/BIMViewerOLD.js~BIMViewer.html">BIMViewer</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -1077,109 +1078,93 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * Shows the object with the given ID.
-
-     * @param {String} objectId ID of object to show.
+     * Sets whether or not the given objects are visible.
+     *
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} visible True to set objects visible, false to set them invisible.
      */
-    showObject(objectId) {
-        if (!objectId) {
-            this.error(&quot;showObject() - Argument expected: objectId&quot;);
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.visible = true;
-            }
+    setObjectsVisible(objectIds, visible) {
+        this._withObjectsInSubtree(objectIds, (entity) =&gt; {
+            entity.visible = visible;
         });
     }
 
     /**
-     * Sets whether or not the given classes are visible.
+     * Sets the visibility of all objects.
      *
-     * @param {String[]} classes Class types.
-     * @param {Boolean} visible Whether or not to show the classes.
+     * @param {Boolean} visible True to set objects visible, false to set them invisible.
      */
-    setClassesVisible(classes, visible) {
-
-    }
-
-    /**
-     * Sets whether or not the given models are visible.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} visible Whether or not to show the models.
-     */
-    setModelsVisible(modelIds, visible) {
-        if (!modelIds) {
-            this.error(&quot;setModelsVisible() - Argument expected: modelIds&quot;);
-            return;
-        }
-        if (visible === undefined || visible === null) {
-            this.error(&quot;setModelsVisible() - Argument expected: visible&quot;);
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error(&quot;setModelsVisible() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
-                continue;
-            }
-            model.visible = visible;
+    setAllObjectsVisible(visible) {
+        if (visible) {
+            this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
         }
     }
 
     /**
-     * Shows all objects currently in the viewer.
+     * Sets whether or not the given objects are X-rayed.
      *
-     * If any objects are currently X-rayed, they will remain X-rayed. Use {@link BIMViewer#xrayNoObjects} if you also need to undo X-ray on all objects.
-     *
-     * Likewise if any objects are currently selected, they will remain selected. Use {@link BIMViewer#deselectAllObjects} if you also need to undo selection on all objects.
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} xrayed Whether or not to X-ray the objects.
      */
-    showAllObjects() {
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.objectIds, true);
+    setObjectsXRayed(objectIds, xrayed) {
+        this._withObjectsInSubtree(objectIds, (entity) =&gt; {
+            entity.xrayed = xrayed;
+        });
     }
 
     /**
-     * Shows all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not show.
+     * Sets whether or not all objects are X-rayed.
+     *
+     * @param {Boolean} xrayed Whether or not to set all objects X-rayed.
      */
-    showAllObjectsExceptFor(objectIds) {
+    setAllObjectsXRayed(xrayed) {
+        if (visible) {
+            this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsXRayed(this.viewer.scene.xrayedObjectIds, false);
+        }
+    }
+
+    /**
+     * Sets whether or not the given objects are selected.
+     *
+     * @param {String[]} objectIds IDs of objects.
+     * @param {Boolean} selected Whether or not to set the objects selected.
+     */
+    setObjectsSelected(objectIds, selected) {
+        this._withObjectsInSubtree(objectIds, (entity) =&gt; {
+            entity.selected = selected;
+        });
+    }
+
+    /**
+     * Sets whether or not all objects are selected.
+     *
+     * @param {Boolean} selected Whether or not to set all objects selected.
+     */
+    setAllObjectsSelected(selected) {
+        if (visible) {
+            this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
+        } else {
+            this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
+        }
+    }
+
+    _withObjectsInSubtree(objectIds, callback) {
         if (!objectIds) {
-            this.error(&quot;showAllObjectsExceptFor() - Argument expected: objectId&quot;);
+            this.error(&quot;Argument expected: objectIds&quot;);
             return;
         }
-    }
-
-    /**
-     * Hides the object with the given ID.
-     * @param {String} objectId ID of object to hide.
-     */
-    hideObject(objectId) { // TODO
-        if (!objectId) {
-            this.error(&quot;hideObject() - Argument expected: objectId&quot;);
-            return;
-        }
-    }
-
-    /**
-     * Hides all objects currently in the viewer.
-     */
-    hideAllObjects() { // TODO
-        this.viewer.scene.setObjectsVisible(this.viewer.scene.visibleObjectIds, false);
-    }
-
-    /**
-     * Hides all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not hide.
-     */
-    hideAllObjectsExceptFor(objectIds) { // TODO
-        if (!objectIds) {
-            this.error(&quot;hideAllObjectsExceptFor() - Argument expected: objectId&quot;);
-            return;
+        for (let i = 0, len = objectIds.length; i &lt; len; i++) {
+            const objectId = objectIds[i];
+            this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
+                const entity = this.viewer.scene.objects[metaObject.id];
+                if (entity) {
+                    callback(entity);
+                }
+            });
         }
     }
 
@@ -1299,146 +1284,6 @@ class BIMViewer extends Controller {
             }, 500);
         }
         viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
-    }
-
-    /**
-     * X-rays the object with the given ID.
-     *
-     * @param {String} objectId ID of object to x-ray.
-     */
-    xrayObject(objectId) {
-        if (!objectId) {
-            this.error(&quot;xrayObject() - Argument expected: objectId&quot;);
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.xrayed = true;
-            }
-        });
-    }
-
-    /**
-     * X-rays all objects currently in the viewer.
-     */
-    xrayAllObjects() {
-        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, true);
-    }
-
-    /**
-     * X-rays all objects currently in the viewer, except for those with the given IDs.
-     * @param {String[]} objectIds IDs of objects to not x-ray.
-     */
-    xrayAllObjectsExceptFor(objectIds) { // TODO
-
-    }
-
-    /**
-     * Sets whether or not the given models are X-rayed.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} xrayed Whether or not to X-ray the models.
-     */
-    setModelsXRayed(modelIds, xrayed) {
-        if (!modelIds) {
-            this.error(&quot;setModelsXRayed() - Argument expected: modelIds&quot;);
-            return;
-        }
-        if (xrayed === undefined || xrayed === null) {
-            this.error(&quot;setModelsXRayed() - Argument expected: xrayed&quot;);
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error(&quot;setModelsXRayed() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
-                continue;
-            }
-            model.xrayed = xrayed;
-        }
-    }
-
-    /**
-     * Un-x-rays all objects currently in the viewer.
-     */
-    xrayNoObjects() {
-        this.viewer.scene.setObjectsXRayed(this.viewer.scene.objectIds, false);
-    }
-
-    /**
-     * Selects the objects with the given ID.
-     * @param {String} objectId ID of object to select.
-     */
-    selectObject(objectId) {
-        if (!objectId) {
-            this.error(&quot;selectObject() - Argument expected: objectId&quot;);
-            return;
-        }
-        this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
-            const entity = this.viewer.scene.objects[metaObject.id];
-            if (entity) {
-                entity.selected = true;
-            }
-        });
-    }
-
-    /**
-     * Sets whether or not the given models are selected.
-     *
-     * @param {String[]} modelIds ID of the models.
-     * @param {Boolean} selected Whether or not to select the models.
-     */
-    setModelsSelected(modelIds, selected) {
-        if (!modelIds) {
-            this.error(&quot;setModelsSelected() - Argument expected: modelIds&quot;);
-            return;
-        }
-        if (selected === undefined || selected === null) {
-            this.error(&quot;setModelsSelected() - Argument expected: selected&quot;);
-            return;
-        }
-        const viewer = this.viewer;
-        const scene = viewer.scene;
-        for (var i = 0, len = modelIds.length; i &lt; len; i++) {
-            const modelId = modelIds[i];
-            const model = scene.models[modelId];
-            if (!model) {
-                this.error(&quot;setModelsSelected() - Model not found in viewer: &apos;&quot; + modelId + &quot;&apos;&quot;);
-                continue;
-            }
-            model.selected = selected;
-        }
-    }
-
-    /**
-     * Selects all objects currently in the viewer.
-     */
-    selectAllObjects() {
-        this.viewer.scene.setObjectsSelected(this.viewer.scene.objectIds, true);
-    }
-
-    /**
-     * Selects all objects currently in the viewer, except for those with the given IDs.
-     *
-     * This causes the objects to glow with the selection color.
-     *
-     * @param {String[]} objectIds IDs of objects to not select.
-     */
-    selectAllObjectsExceptFor(objectIds) { // TODO
-
-    }
-
-    /**
-     * De-selects all objects currently in the viewer.
-     *
-     * This removes the selection color from the objects.
-     */
-    deselectAllObjects() {
-        this.viewer.scene.setObjectsSelected(this.viewer.scene.selectedObjectIds, false);
     }
 
     /**

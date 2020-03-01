@@ -6,6 +6,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-bim-viewer/src/toolbar/bimviewerold.js~bimviewer",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html",
+    "<span>BIMViewer</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/toolbar/BIMViewerOLD.js</span>",
+    "class"
+  ],
+  [
     "@xeokit/xeokit-bim-viewer/src/server/server.js~server",
     "class/src/server/Server.js~Server.html",
     "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/server/Server.js</span>",
@@ -312,12 +318,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#deselectallobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-deselectAllObjects",
-    "src/BIMViewer.js~BIMViewer#deselectAllObjects",
-    "method"
-  ],
-  [
     "src/bimviewer.js~bimviewer#destroy",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-destroy",
     "src/BIMViewer.js~BIMViewer#destroy",
@@ -390,24 +390,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#hideallobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-hideAllObjects",
-    "src/BIMViewer.js~BIMViewer#hideAllObjects",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#hideallobjectsexceptfor",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-hideAllObjectsExceptFor",
-    "src/BIMViewer.js~BIMViewer#hideAllObjectsExceptFor",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#hideobject",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-hideObject",
-    "src/BIMViewer.js~BIMViewer#hideObject",
-    "method"
-  ],
-  [
     "src/bimviewer.js~bimviewer#ismodelloaded",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-isModelLoaded",
     "src/BIMViewer.js~BIMViewer#isModelLoaded",
@@ -462,24 +444,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#selectallobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectAllObjects",
-    "src/BIMViewer.js~BIMViewer#selectAllObjects",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#selectallobjectsexceptfor",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectAllObjectsExceptFor",
-    "src/BIMViewer.js~BIMViewer#selectAllObjectsExceptFor",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#selectobject",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectObject",
-    "src/BIMViewer.js~BIMViewer#selectObject",
-    "method"
-  ],
-  [
     "src/bimviewer.js~bimviewer#selectstorey",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-selectStorey",
     "src/BIMViewer.js~BIMViewer#selectStorey",
@@ -492,15 +456,27 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#setbackgroundcolor",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setBackgroundColor",
-    "src/BIMViewer.js~BIMViewer#setBackgroundColor",
+    "src/bimviewer.js~bimviewer#setallobjectsselected",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setAllObjectsSelected",
+    "src/BIMViewer.js~BIMViewer#setAllObjectsSelected",
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#setclassesvisible",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setClassesVisible",
-    "src/BIMViewer.js~BIMViewer#setClassesVisible",
+    "src/bimviewer.js~bimviewer#setallobjectsvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setAllObjectsVisible",
+    "src/BIMViewer.js~BIMViewer#setAllObjectsVisible",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setallobjectsxrayed",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setAllObjectsXRayed",
+    "src/BIMViewer.js~BIMViewer#setAllObjectsXRayed",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setbackgroundcolor",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setBackgroundColor",
+    "src/BIMViewer.js~BIMViewer#setBackgroundColor",
     "method"
   ],
   [
@@ -522,51 +498,33 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#setmodelsselected",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsSelected",
-    "src/BIMViewer.js~BIMViewer#setModelsSelected",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#setmodelsvisible",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsVisible",
-    "src/BIMViewer.js~BIMViewer#setModelsVisible",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#setmodelsxrayed",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setModelsXRayed",
-    "src/BIMViewer.js~BIMViewer#setModelsXRayed",
-    "method"
-  ],
-  [
     "src/bimviewer.js~bimviewer#setobjectcolorsource",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectColorSource",
     "src/BIMViewer.js~BIMViewer#setObjectColorSource",
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setobjectsselected",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectsSelected",
+    "src/BIMViewer.js~BIMViewer#setObjectsSelected",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setobjectsvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectsVisible",
+    "src/BIMViewer.js~BIMViewer#setObjectsVisible",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setobjectsxrayed",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectsXRayed",
+    "src/BIMViewer.js~BIMViewer#setObjectsXRayed",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setviewerstate",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState",
     "src/BIMViewer.js~BIMViewer#setViewerState",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#showallobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showAllObjects",
-    "src/BIMViewer.js~BIMViewer#showAllObjects",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#showallobjectsexceptfor",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showAllObjectsExceptFor",
-    "src/BIMViewer.js~BIMViewer#showAllObjectsExceptFor",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#showobject",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObject",
-    "src/BIMViewer.js~BIMViewer#showObject",
     "method"
   ],
   [
@@ -610,30 +568,6 @@ window.esdocSearchIndex = [
     "class/src/BIMViewer.js~BIMViewer.html#instance-member-viewer",
     "src/BIMViewer.js~BIMViewer#viewer",
     "member"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#xrayallobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-xrayAllObjects",
-    "src/BIMViewer.js~BIMViewer#xrayAllObjects",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#xrayallobjectsexceptfor",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-xrayAllObjectsExceptFor",
-    "src/BIMViewer.js~BIMViewer#xrayAllObjectsExceptFor",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#xraynoobjects",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-xrayNoObjects",
-    "src/BIMViewer.js~BIMViewer#xrayNoObjects",
-    "method"
-  ],
-  [
-    "src/bimviewer.js~bimviewer#xrayobject",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-method-xrayObject",
-    "src/BIMViewer.js~BIMViewer#xrayObject",
-    "method"
   ],
   [
     "src/busymodal.js",
@@ -753,6 +687,360 @@ window.esdocSearchIndex = [
     "src/server/server.js~server#getprojects",
     "class/src/server/Server.js~Server.html#instance-method-getProjects",
     "src/server/Server.js~Server#getProjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js",
+    "file/src/toolbar/BIMViewerOLD.js.html",
+    "src/toolbar/BIMViewerOLD.js",
+    "file"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#constructor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-constructor-constructor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#constructor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#deselectallobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-deselectAllObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#deselectAllObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#destroy",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-destroy",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#destroy",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#flytoobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-flyToObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#flyToObject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#get3denabled",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-get3DEnabled",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#get3DEnabled",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getconfig",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getConfig",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getConfig",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getloadedmodelids",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getLoadedModelIds",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getLoadedModelIds",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getloadedprojectid",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getLoadedProjectId",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getLoadedProjectId",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getmodelids",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getModelIds",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getModelIds",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getobjectcolorsource",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getObjectColorSource",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getObjectColorSource",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getobjectinfo",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getObjectInfo",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getObjectInfo",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getopentab",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getOpenTab",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getOpenTab",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getprojectinfo",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getProjectInfo",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getProjectInfo",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#getprojectsinfo",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-getProjectsInfo",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#getProjectsInfo",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#hideallobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-hideAllObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#hideAllObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#hideallobjectsexceptfor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-hideAllObjectsExceptFor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#hideAllObjectsExceptFor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#hideobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-hideObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#hideObject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#ismodelloaded",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-isModelLoaded",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#isModelLoaded",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#jumptoobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-jumpToObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#jumpToObject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#loadallmodels",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-loadAllModels",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#loadAllModels",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#loadbcfviewpoint",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-loadBCFViewpoint",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#loadBCFViewpoint",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#loadmodel",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-loadModel",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#loadModel",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#loadproject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-loadProject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#loadProject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#opentab",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-openTab",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#openTab",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#resetview",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-resetView",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#resetView",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#savebcfviewpoint",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-saveBCFViewpoint",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#saveBCFViewpoint",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#selectallobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-selectAllObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#selectAllObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#selectallobjectsexceptfor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-selectAllObjectsExceptFor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#selectAllObjectsExceptFor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#selectobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-selectObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#selectObject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#selectstorey",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-selectStorey",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#selectStorey",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#set3denabled",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-set3DEnabled",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#set3DEnabled",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setbackgroundcolor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setBackgroundColor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setBackgroundColor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setclassesvisible",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setClassesVisible",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setClassesVisible",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setconfig",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setConfig",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setConfig",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setconfigs",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setConfigs",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setConfigs",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setcontrolsenabled",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setControlsEnabled",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setControlsEnabled",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setmodelsselected",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setModelsSelected",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsSelected",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setmodelsvisible",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setModelsVisible",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsVisible",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setmodelsxrayed",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setModelsXRayed",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setModelsXRayed",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setobjectcolorsource",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setObjectColorSource",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectColorSource",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setobjectsselected",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setObjectsSelected",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsSelected",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setobjectsvisible",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setObjectsVisible",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsVisible",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setobjectsxrayed",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setObjectsXRayed",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setObjectsXRayed",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#setviewerstate",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-setViewerState",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#setViewerState",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#showallobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-showAllObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#showAllObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#showallobjectsexceptfor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-showAllObjectsExceptFor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#showAllObjectsExceptFor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#showobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-showObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#showObject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#showobjectinexplorers",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-showObjectInExplorers",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#showObjectInExplorers",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#unshowobjectinexplorers",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-unShowObjectInExplorers",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#unShowObjectInExplorers",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#unloadallmodels",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-unloadAllModels",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadAllModels",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#unloadmodel",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-unloadModel",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadModel",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#unloadproject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-unloadProject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#unloadProject",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#viewfitmodels",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-viewFitModels",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#viewFitModels",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#viewer",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-member-viewer",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#viewer",
+    "member"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#xrayallobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-xrayAllObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayAllObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#xrayallobjectsexceptfor",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-xrayAllObjectsExceptFor",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayAllObjectsExceptFor",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#xraynoobjects",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-xrayNoObjects",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayNoObjects",
+    "method"
+  ],
+  [
+    "src/toolbar/bimviewerold.js~bimviewer#xrayobject",
+    "class/src/toolbar/BIMViewerOLD.js~BIMViewer.html#instance-method-xrayObject",
+    "src/toolbar/BIMViewerOLD.js~BIMViewer#xrayObject",
     "method"
   ],
   [
