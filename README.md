@@ -105,17 +105,17 @@ Click the links below to run some demos.
   
 ## Need Help?
 
-Everything here is well-tested and used in production, so we're confident that this solution will work well for you.
- 
-Sometimes, however, users have benefited from a short consultation, to save time getting started.  
+Everything here is well-tested and used in production, so we're confident that this solution will work well for you. Sometimes, however, users benefit from a short consultation to get started more quickly.  
 
-[xeolabs](http://xeolabs.com) can help you with:
+[xeolabs](http://xeolabs.com/contact/) can help you with:
  
 - Setting up a ````xeokit-bim-viewer```` with your models
 - Installing and running the open source model conversion tools
 - Converting the models for you, in case you need them quickly for a client demo or POC
 - Debugging issues in your models
 - Optimizing your models for best performance  
+
+[Get in touch](http://xeolabs.com/contact/) if you could use a little help getting started. 
 
 ## License
 
