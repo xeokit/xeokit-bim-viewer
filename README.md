@@ -105,7 +105,7 @@ Click the links below to run some demos.
   
 ## Need Help?
 
-Everything here is well-tested and used in production , so we're confident that this solution will work well for you.
+Everything here is well-tested and used in production, so we're confident that this solution will work well for you.
  
 Sometimes, however, users have benefited from a short consultation, to save time getting started.  
 
