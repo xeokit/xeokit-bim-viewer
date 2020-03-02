@@ -23,7 +23,9 @@ http://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConfer
 ````
 
 
-Read the documentation below to get started.
+Read the documentation below to get started. 
+
+[Need Help?](#need-help-)
 
 ---
  
@@ -41,12 +43,12 @@ Read the documentation below to get started.
 
 - [Features](#features)
 - [Demos](#demos)
+- [Need Help?](#need-help-)
 - [License](#license)
 - [The Viewer Application](#the-viewer-application)
 - [Model Database](#model-database)
   * [Viewer Configurations](#viewer-configurations)
   * [Viewer States](#viewer-states)
-- [Embedding the Viewer](#embedding-the-viewer)
 - [Programming API](#programming-api)
   * [Creating a Viewer](#creating-a-viewer)
   * [Configuring the Viewer](#configuring-the-viewer)
@@ -70,6 +72,9 @@ Read the documentation below to get started.
   * [Building the Documentation](#building-the-documentation)
 
 ---
+ 
+[Get in touch](http://xeolabs.com/contact/) if you could use a little help getting started. 
+
 
 ## Features
 
@@ -98,6 +103,20 @@ Click the links below to run some demos.
 | [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) ||
   
+## Need Help?
+
+Everything here is well-tested and used in production , so we're confident that this solution will work well for you.
+ 
+Sometimes, however, users have benefited from a short consultation, to save time getting started.  
+
+[xeolabs](http://xeolabs.com) can help you with:
+ 
+- Setting up a ````xeokit-bim-viewer```` with your models
+- Installing and running the open source model conversion tools
+- Converting the models for you, in case you need them quickly for a client demo or POC
+- Debugging issues in your models
+- Optimizing your models for best performance  
+
 ## License
 
 xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) for non-commercial use. See [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
@@ -767,3 +786,4 @@ To build the API documentation in ````/docs/````:
 ````
 npm run docs
 ````
+
