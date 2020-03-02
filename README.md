@@ -25,7 +25,7 @@ http://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConfer
 
 Read the documentation below to get started. 
 
-[Need Help?](#need-help-)
+[Need Help?](#need-help)
 
 ---
  
