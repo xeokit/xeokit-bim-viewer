@@ -3,7 +3,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9144bfee5a4b42ae8dc2eb603aa9966c)](https://www.codacy.com/manual/lindsay-kay/xeokit-viewer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xeokit/xeokit-viewer&amp;utm_campaign=Badge_Grade)
 [![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer)
 
-**xeokit-bim-viewer** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the xeokit SDK.
+**[xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer)** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the xeokit SDK.
 
 The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
@@ -11,7 +11,7 @@ The viewer can be used as a stand-alone JavaScript application. In combination w
 
 To view your models with this viewer: 
 
-1. Fork this repository.
+1. Fork the [xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer) repository on GitHub.
 1. Convert your IFC STEP files using [open source CLI tools](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM). 
 3. Add your converted models to your fork's data directory.
 4. Serve your fork using [GitHub Pages](https://pages.github.com/).
