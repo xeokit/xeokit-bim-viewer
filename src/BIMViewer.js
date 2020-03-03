@@ -323,35 +323,35 @@ class BIMViewer extends Controller {
         this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
-            this.showAllObjects();
-            this.xrayNoObjects();
+            this.setAllObjectsVisible(true);
+            this.setAllObjectsXRayed(false);
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-hideAllObjects").addEventListener("click", (event) => {
-            this.hideAllObjects();
+            this.setAllObjectsVisible(false);
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-showAllClasses").addEventListener("click", (event) => {
-            this.showAllObjects();
-            this.xrayNoObjects();
+            this.setAllObjectsVisible(true);
+            this.setAllObjectsXRayed(false);
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-hideAllClasses").addEventListener("click", (event) => {
-            this.hideAllObjects();
+            this.setAllObjectsVisible(false);
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-showAllStoreys").addEventListener("click", (event) => {
-            this.showAllObjects();
-            this.xrayNoObjects();
+            this.setAllObjectsVisible(true);
+            this.setAllObjectsXRayed(false);
             event.preventDefault();
         });
 
         explorerElement.querySelector(".xeokit-hideAllStoreys").addEventListener("click", (event) => {
-            this.hideAllObjects();
+            this.setAllObjectsVisible(false);
             event.preventDefault();
         });
 
