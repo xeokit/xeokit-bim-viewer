@@ -52755,6 +52755,7 @@ const ModelIFCObjectColors = {
  * a {@link MetaModel} corresponding to the root {@link Entity}, with a {@link MetaObject} corresponding to each
  * object {@link Entity} within the tree.
  *
+ * @private
  * @type {{String:Object}}
  */
 const ViewerIFCObjectColors = {
