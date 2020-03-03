@@ -7,10 +7,7 @@
  
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
- |  | | |
-|---|---|---|
-| [![Screenshot](https://xeokit.github.io/xeokit-bim-viewer/images/storeys.jpeg)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)  | [![Screenshot](https://xeokit.github.io/xeokit-bim-viewer/images/classes.jpeg)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)  |[![Screenshot](https://xeokit.github.io/xeokit-bim-viewer/images/sao.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)  |
-  
+
 ---
 
 **[xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer)** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the xeokit SDK.
