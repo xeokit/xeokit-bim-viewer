@@ -234,7 +234,7 @@ The ````index.json```` for the "WestRiversideHospital" project is shown below.
 }
 ````
 
-The optional ````viewerConfigs```` section specifies configurations for the viewer to set on itself as it loads the project. See the complete list of available viewer configurations in [Viewer Configurations](#project-viewer-configs).
+The optional ````viewerConfigs```` section specifies configurations for the viewer to set on itself as it loads the project. See the complete list of available viewer configurations in [Viewer Configurations](#viewer-configurations).
 
 The optional ````viewerContent```` array specifies IDs of models that the viewer will load initially, right after it's applied the configurations. 
 
@@ -268,12 +268,12 @@ The table below lists the complete set of available configurations. Think of the
 
 ### Viewer States
 
-In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the initial state of its UI, right after the project has loaded. The table below lists the available directives.  These can also be set on the viewer using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState).
+In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the initial state of its UI, right after the project has loaded. The table below lists the available directives.  These can also be set on the viewer using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState). So far, we have:
 
 | Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
-| "focusObject"         | String            |                       |                   |            |     
-| "openTab"             | String            |                       |                   |            |     
+| "focusObject"         | String            |                       |                   | ID of object to focus on        |     
+| "openTab"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
 
 ## Programming API
 
