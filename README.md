@@ -765,7 +765,7 @@ The table below lists the main ones used in this viewer.
 To install the npm package:
 
 ````
-sudo npm install
+npm i @xeokit/xeokit-bim-viewer
 ````
 
 ### Building the Binary
