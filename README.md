@@ -25,9 +25,7 @@ To view your models with this viewer:
 
 Then users can view your models in their browsers, with URLs like this:
 
-````
-http://myusername.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter
-````
+[````https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys````](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
 
 Read the documentation below to get started. 
