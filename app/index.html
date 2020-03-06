@@ -182,11 +182,12 @@
                         const objectIdArray = objectIds.split(",");
                         bimViewer.setAllObjectsSelected(false);
                         bimViewer.setObjectsSelected(objectIdArray, true);
-                        bimViewer.flyToObjects(objectIdArray, () => {
+                        bimViewer.viewFitObjects(objectIdArray, () => {
                         });
                         break;
                     case "clearFocusObjects":
                         bimViewer.setAllObjectsSelected(false);
+                        bimViewer.viewFitAll();
                         // TODO: view fit nothing?
                         break;
                     case "openTab":
