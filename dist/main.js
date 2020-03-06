@@ -12529,6 +12529,10 @@ class Node extends Component {
         for (let i = 0, len = this._children.length; i < len; i++) {
             this._children[i].colorize = colorize;
         }
+        if (this._isObject) {
+            const colorized = (!!rgb);
+            this.scene._objectColorizeUpdated(this, colorized);
+        }
     }
 
     /**
@@ -13163,6 +13167,10 @@ class Node extends Component {
             }
             if (this._highlighted) {
                 this.scene._objectHighlightedUpdated(this, false);
+            }
+            if (this._isObject) {
+                const colorized = false;
+                this.scene._objectColorizeUpdated(this, colorized);
             }
         }
         if (this._isModel) {
@@ -18805,6 +18813,8 @@ class Mesh extends Component {
             colorize[1] = 1;
             colorize[2] = 1;
         }
+        const colorized = (!!value);
+        this.scene._objectColorizeUpdated(this, colorized);
         this.glRedraw();
     }
 
@@ -19274,6 +19284,8 @@ class Mesh extends Component {
             if (this._highlighted) {
                 this.scene._objectHighlightedUpdated(this, false);
             }
+            const colorized = false;
+            this.scene._objectColorizeUpdated(this, colorized);
         }
         if (this._isModel) {
             this.scene._deregisterModel(this);
@@ -24296,6 +24308,9 @@ const Renderer = function (scene, options) {
                 }
 
                 frameCtx.backfaces = false;
+                {
+                    gl.depthMask(false);
+                }
                 if (xrayEdgesTransparentBinLen > 0) {
                     for (i = 0; i < xrayEdgesTransparentBinLen; i++) {
                         xrayEdgesTransparentBin[i].drawXRayedEdgesTransparent(frameCtx);
@@ -24319,6 +24334,7 @@ const Renderer = function (scene, options) {
                     }
                 }
                 gl.disable(gl.BLEND);
+                gl.depthMask(true);
             }
 
             if (highlightedFillOpaqueBinLen > 0 || highlightedEdgesOpaqueBinLen > 0) {
@@ -30223,6 +30239,20 @@ class Scene extends Component {
         this.selectedObjects = {};
         this._numSelectedObjects = 0;
 
+        /**
+         * Map of currently colorized {@link Entity}s that represent objects.
+         *
+         * An Entity represents an object if {@link Entity#isObject} is ````true````.
+         *
+         * Each {@link Entity} is mapped here by {@link Entity#id}.
+         *
+         * @property colorizedObjects
+         * @final
+         * @type {{String:Object}}
+         */
+        this.colorizedObjects = {};
+        this._numColorizedObjects = 0;
+
         // Cached ID arrays, lazy-rebuilt as needed when stale after map updates
 
         /**
@@ -30234,6 +30264,7 @@ class Scene extends Component {
         this._xrayedObjectIds = null;
         this._highlightedObjectIds = null;
         this._selectedObjectIds = null;
+        this._colorizedObjectIds = null;
 
         this._collidables = {}; // Components that contribute to the Scene AABB
         this._compilables = {}; // Components that require shader compilation
@@ -30758,6 +30789,17 @@ class Scene extends Component {
         this._selectedObjectIds = null; // Lazy regenerate
     }
 
+    _objectColorizeUpdated(entity, colorized) {
+        if (colorized) {
+            this.colorizedObjects[entity.id] = entity;
+            this._numColorizedObjects++;
+        } else {
+            delete this.colorizedObjects[entity.id];
+            this._numColorizedObjects--;
+        }
+        this._colorizedObjectIds = null; // Lazy regenerate
+    }
+    
     _webglContextLost() {
         //  this.loading++;
         this.canvas.spinner.processes++;
@@ -31007,6 +31049,27 @@ class Scene extends Component {
             this._selectedObjectIds = Object.keys(this.selectedObjects);
         }
         return this._selectedObjectIds;
+    }
+
+    /**
+     * Gets the number of {@link Entity}s in {@link Scene#colorizedObjects}.
+     *
+     * @type {Number}
+     */
+    get numColorizedObjects() {
+        return this._numColorizedObjects;
+    }
+
+    /**
+     * Gets the IDs of the {@link Entity}s in {@link Scene#colorizedObjects}.
+     *
+     * @type {String[]}
+     */
+    get colorizedObjectIds() {
+        if (!this._colorizedObjectIds) {
+            this._colorizedObjectIds = Object.keys(this.colorizedObjects);
+        }
+        return this._colorizedObjectIds;
     }
 
     /**
@@ -31906,6 +31969,7 @@ class Scene extends Component {
         this.xrayedObjects = null;
         this.highlightedObjects = null;
         this.selectedObjects = null;
+        this.colorizedObjects = null;
         this.sectionPlanes = null;
         this.lights = null;
         this.lightMaps = null;
@@ -31915,6 +31979,7 @@ class Scene extends Component {
         this._xrayedObjectIds = null;
         this._highlightedObjectIds = null;
         this._selectedObjectIds = null;
+        this._colorizedObjectIds = null;
         this.types = null;
         this.components = null;
         this.canvas = null;
@@ -35168,6 +35233,10 @@ class PerformanceNode {
                 this.meshes[i]._setColorize(null);
             }
         }
+        if (this._isObject) {
+            const colorized = (!!color);
+            this.scene._objectColorizeUpdated(this, colorized);
+        }
         this.model.glRedraw();
     }
 
@@ -35315,6 +35384,10 @@ class PerformanceNode {
             }
             if (this.highlighted) {
                 scene._objectHighlightedUpdated(this);
+            }
+            if (this._isObject) {
+                const colorized = false;
+                this.scene._objectColorizeUpdated(this, colorized);
             }
         }
         for (var i = 0, len = this.meshes.length; i < len; i++) {
@@ -44785,7 +44858,7 @@ const IFCObjectDefaults = {
     }
 };
 
-/* pako 1.0.10 nodeca/pako */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f();}else if(typeof define==="function"&&define.amd){define([],f);}else{var g;if(typeof window!=="undefined"){g=window;}else if(typeof global!=="undefined"){g=global;}else if(typeof self!=="undefined"){g=self;}else{g=this;}g.pako = f();}})(function(){return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t);}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/* pako 1.0.10 nodeca/pako */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f();}else if(typeof define==="function"&&define.amd){define([],f);}else {var g;if(typeof window!=="undefined"){g=window;}else if(typeof global!=="undefined"){g=global;}else if(typeof self!=="undefined"){g=self;}else {g=this;}g.pako = f();}})(function(){return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t);}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 
         var zlib_deflate = require('./zlib/deflate');
@@ -51628,10 +51701,9 @@ const decompressColor = (function () {
  * XKTLoaderPlugin and the ````xeokit-gltf-to-xkt```` tool (see below) are based on prototypes
  * by [Toni Marti](https://github.com/tmarti) at [uniZite](https://www.unizite.com/login).
  *
- * ## Creating *````.xkt````* files
+ * ## Creating *````.xkt````* files and metadata
  *
- * Use the node.js-based [xeokit-gltf-to-xkt](https://github.com/xeokit/xeokit-gltf-to-xkt) tool to
- * convert your ````glTF```` IFC files to *````.xkt````* format.
+ * See [Creating Files for Offline BIM](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM).
  *
  * ## Scene representation
  *
