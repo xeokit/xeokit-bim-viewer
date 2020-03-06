@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="../css/BIMViewer.css" type="text/css"/>
 
 
-
     <!-- App style -->
     <link rel="stylesheet" href="./css/style.css"/>
 
@@ -69,8 +68,7 @@
 
 
         // Configure our viewer
-        bimViewer.setConfigs({
-        });
+        bimViewer.setConfigs({});
 
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
@@ -174,6 +172,22 @@
                             // bimViewer.showObjectInClassesTab(objectId);
                             // bimViewer.showObjectInStoreysTab(objectId);
                         });
+                        break;
+                    case "focusObjects":
+                        const objectIds = params.objectIds;
+                        if (!objectIds) {
+                            console.error("Param expected for `focusObjects` action: 'objectIds'");
+                            break;
+                        }
+                        const objectIdArray = objectIds.split(",");
+                        bimViewer.setAllObjectsSelected(false);
+                        bimViewer.setObjectsSelected(objectIdArray, true);
+                        bimViewer.flyToObjects(objectIdArray, () => {
+                        });
+                        break;
+                    case "clearFocusObjects":
+                        bimViewer.setAllObjectsSelected(false);
+                        // TODO: view fit nothing?
                         break;
                     case "openTab":
                         const tabId = params.tabId;
