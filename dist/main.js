@@ -61417,7 +61417,7 @@ class BIMViewer extends Controller {
      * @param {String[]} objectIds IDs of the objects
      * @param {Function} done Callback invoked on completion
      */
-    flyToObjects(objectIds, done) {
+    viewFitObjects(objectIds, done) {
         if (!objectIds) {
             this.error("flyToObject() - Argument expected: objectIds");
             return;
@@ -61453,6 +61453,25 @@ class BIMViewer extends Controller {
             setTimeout(function () {
                 scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
             }, 500);
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * Flies the camera to fit all objects in view.
+     *
+     * @param {Function} done Callback invoked on completion
+     */
+    viewFitAll(done) {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = scene.getAABB();
+        viewer.cameraFlight.flyTo({
+            aabb: aabb
+        }, () => {
+            if (done) {
+                done();
+            }
         });
         viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
     }
