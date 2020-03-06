@@ -54,16 +54,37 @@
 
         iframeElement.src = iframeBaseURL;
 
-        window.selectObject = function (objectId) {
-            iframeElement.src = iframeBaseURL + "#actions=focusObject,openTab&objectId=" + objectId + "&tabId=objects";
+        const objectIdsUsed = {};
+
+        window.selectObject = function (checkbox) {
+
+            const objectId = checkbox.name;
+
+            if (checkbox.checked) {
+                objectIdsUsed[objectId] = true;
+            } else {
+                delete objectIdsUsed[objectId];
+            }
+
+            const objectIds = Object.keys(objectIdsUsed);
+
+            if (objectIds.length === 0) {
+                iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
+            } else {
+                const objectIdsParam = objectIds.join(",");
+                iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
+            }
         }
+
     }
 
 </script>
 
 <ul>
-    <li><a href="javascript:selectObject('0FazZzVxL0ZAC2Xz9Lc_VS')">Focus object "0FazZzVxL0ZAC2Xz9Lc_VS"</a></li>
-    <li><a href="javascript:selectObject('12NjfiY$5BWxO3cGvRvhMM')">Focus object "12NjfiY$5BWxO3cGvRvhMM"</a></li>
+    <li><input type="checkbox" name="0FazZzVxL0ZAC2Xz9Lc_VS" onclick="javascript:selectObject(this)">Focus object
+        "0FazZzVxL0ZAC2Xz9Lc_VS"</input></li>
+    <li><input type="checkbox" name="12NjfiY$5BWxO3cGvRvhMM" onclick="javascript:selectObject(this)">Focus object
+        "12NjfiY$5BWxO3cGvRvhMM"</input></li>
 </ul>
 <iframe id="embeddedViewer"></iframe>
 
