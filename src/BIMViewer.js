@@ -1171,6 +1171,52 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Flies the camera to fit the given objects in view.
+     *
+     * @param {String[]} objectIds IDs of the objects
+     * @param {Function} done Callback invoked on completion
+     */
+    flyToObjects(objectIds, done) {
+        if (!objectIds) {
+            this.error("flyToObject() - Argument expected: objectIds");
+            return;
+        }
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+
+        const entityIds = [];
+
+        for (var i =0, len = objectIds.length; i < len; i++) {
+            const objectId = objectIds[i];
+            this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
+                if (scene.objects[metaObject.id]) {
+                    entityIds.push(metaObject.id);
+                }
+            });
+        }
+        if (entityIds.length === 0) {
+            if (done) {
+                done();
+            }
+            return;
+        }
+        scene.setObjectsVisible(entityIds, true);
+        scene.setObjectsHighlighted(entityIds, true);
+        const aabb = scene.getAABB(entityIds);
+        viewer.cameraFlight.flyTo({
+            aabb: aabb
+        }, () => {
+            if (done) {
+                done();
+            }
+            setTimeout(function () {
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+            }, 500);
+        });
+        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
      * Jumps the camera to fit the given object in view.
      *
      * @param {String} objectId ID of the object
