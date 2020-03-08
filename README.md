@@ -12,7 +12,7 @@
 
 **[xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer)** is an open source 2D/3D BIM viewer that runs in the browser and loads models from your file system. 
 
-The viewer is built on [xeokit](http://xeokit.io), and is bundled as part of the [xeokit SDK](http://xeokit.io).
+The viewer is built on **[xeokit](http://xeokit.io)**, and is bundled as part of the **[xeokit SDK](http://xeokit.io)**.
 
 The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/),  and is integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later. 
 
