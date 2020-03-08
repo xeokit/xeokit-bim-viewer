@@ -1,5 +1,5 @@
 {
-  "id": "schependomlaan",
+  "id": "Schependomlaan_SelectedStorey",
   "name": "Schependomlaan",
   "models": [
     {
@@ -8,6 +8,7 @@
     }
   ],
   "viewerConfigs": {
+    "backgroundColor": [0,0,0],
     "cameraNear": 0.05,
     "cameraFar": 3000.0,
     "saoEnabled": true,

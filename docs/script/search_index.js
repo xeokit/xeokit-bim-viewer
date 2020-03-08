@@ -546,9 +546,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#viewfitall",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-viewFitAll",
+    "src/BIMViewer.js~BIMViewer#viewFitAll",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#viewfitmodels",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-viewFitModels",
     "src/BIMViewer.js~BIMViewer#viewFitModels",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#viewfitobjects",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-viewFitObjects",
+    "src/BIMViewer.js~BIMViewer#viewFitObjects",
     "method"
   ],
   [

@@ -1,11 +1,11 @@
 {
-  "coverage": "32.35%",
-  "expectCount": 272,
-  "actualCount": 88,
+  "coverage": "32.84%",
+  "expectCount": 274,
+  "actualCount": 90,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 73,
-      "actualCount": 44,
+      "expectCount": 75,
+      "actualCount": 46,
       "undocumentLines": [
         26,
         68,
