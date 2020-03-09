@@ -60799,11 +60799,12 @@ class BIMViewer extends Controller {
                     viewer: this.viewer,
                     bimViewer: this,
                     showObjectInExplorers: (objectId) => {
-                        this.showObjectInExplorers(objectId);
                         const openTabId = this.getOpenTab();
                         if (openTabId !== "objects" && openTabId !== "classes" && openTabId !== "storeys") {
+                            // Scroll won't work if tab not open
                             this.openTab("objects");
                         }
+                        this.showObjectInExplorers(objectId);
                     },
                     entity: hit.entity
                 };
