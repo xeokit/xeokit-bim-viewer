@@ -57,8 +57,6 @@ class ClassesExplorer extends Controller {
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
 
-        // Left-clicking on a tree node isolates that object in the 3D view
-
         this._treeView.on("nodeTitleClicked", (e) => {
             const scene = this.viewer.scene;
             const objectIds = [];
@@ -67,29 +65,16 @@ class ClassesExplorer extends Controller {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
-
-            scene.setObjectsXRayed(scene.objectIds, true);
-            scene.setObjectsVisible(scene.objectIds, true);
-            scene.setObjectsPickable(scene.objectIds, false);
-            scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-            scene.setObjectsXRayed(objectIds, false);
-            scene.setObjectsVisible(objectIds, true);
-            scene.setObjectsPickable(objectIds, true);
-
-            const aabb = scene.getAABB(objectIds);
-
-            this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-
-            this.viewer.cameraFlight.flyTo({
-                aabb: aabb,
-                duration: 0.5
-            }, () => {
-                // setTimeout(function () {
-                //     scene.setObjectsVisible(scene.xrayedObjectIds, false);
-                //     scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                // }, 500);
-            });
+            const checked = e.treeViewNode.checked;
+            if (checked) {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, false);
+                scene.setObjectsPickable(objectIds, true);
+            } else {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, true);
+                scene.setObjectsPickable(objectIds, true);
+            }
         });
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{

@@ -58,17 +58,24 @@ class StoreysExplorer extends Controller {
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
 
-        // Left-clicking on a tree node isolates that object in the 3D view
-
         this._treeView.on("nodeTitleClicked", (e) => {
+            const scene = this.viewer.scene;
             const objectIds = [];
             e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) => {
                 if (treeViewNode.objectId) {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
-            this._selectObjects(objectIds, () => {
-            });
+            const checked = e.treeViewNode.checked;
+            if (checked) {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, false);
+                scene.setObjectsPickable(objectIds, true);
+            } else {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, true);
+                scene.setObjectsPickable(objectIds, true);
+            }
         });
 
         this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{

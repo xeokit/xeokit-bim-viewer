@@ -94,6 +94,15 @@ class ModelsExplorer extends Controller {
                     this.unloadModel(modelInfo.id);
                 }
             });
+            span.addEventListener("click", () => {
+                const model = this.viewer.scene.models[modelId];
+                const modelLoaded = (!!model);
+                if (!modelLoaded) {
+                    this.loadModel(modelId);
+                } else {
+                    this.unloadModel(modelInfo.id);
+                }
+            });
             span.oncontextmenu = (e) => {
                 this._modelsContextMenu.context = {
                     bimViewer: this.bimViewer,
@@ -101,32 +110,6 @@ class ModelsExplorer extends Controller {
                     modelId: modelId
                 };
                 this._modelsContextMenu.show(e.pageX, e.pageY);
-                e.preventDefault();
-            };
-            span.onclick = (e) => {
-                const scene = this.viewer.scene;
-                const model = scene.models[modelId];
-                if (!model) {
-                    return;
-                }
-                scene.setObjectsXRayed(scene.objectIds, true);
-                scene.setObjectsVisible(scene.objectIds, true);
-                scene.setObjectsPickable(scene.objectIds, false);
-                scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-                model.xrayed = false;
-                model.visible = true;
-                model.pickable = true;
-
-                const aabb = model.aabb;
-
-                this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-
-                this.viewer.cameraFlight.flyTo({
-                    aabb: aabb,
-                    duration: 0.5
-                }, () => {
-                });
                 e.preventDefault();
             };
         }
@@ -253,8 +236,6 @@ class ModelsExplorer extends Controller {
                         model.on("loaded", () => {
                             const checkbox = document.getElementById("" + modelId);
                             checkbox.checked = true;
-                            const span = document.getElementById("span-" + modelId);
-                            span.classList.remove("disabled");
                             const scene = this.viewer.scene;
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
@@ -305,7 +286,6 @@ class ModelsExplorer extends Controller {
         const checkbox = document.getElementById("" + modelId);
         checkbox.checked = false;
         const span = document.getElementById("span-" + modelId);
-        span.classList.add("disabled");
         this._numModelsLoaded--;
         if (this._numModelsLoaded > 0) {
             this._unloadModelsButtonElement.classList.remove("disabled");
