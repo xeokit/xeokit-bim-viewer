@@ -125,39 +125,6 @@ class StoreysExplorer extends Controller {
         this._treeView.unShowNode();
     }
 
-    // selectStorey(storeyObjectId, done) {
-    //     const metaScene = this.viewer.metaScene;
-    //     const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
-    //     if (!storeyMetaObject) {
-    //         this.error("flyToStorey() - object is not found: '" + storeyObjectId + "'");
-    //         return;
-    //     }
-    //     const scene = this.viewer.scene;
-    //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
-    //     scene.setObjectsSelected(scene.selectedObjectIds, false);
-    //     if (done) {
-    //         scene.setObjectsVisible(scene.objectIds, true);
-    //         scene.setObjectsXRayed(scene.objectIds, true);
-    //         scene.setObjectsXRayed(objectIds, false);
-    //         this.viewer.cameraFlight.flyTo({
-    //             aabb: scene.getAABB(objectIds)
-    //         }, () => {
-    //             setTimeout(function () {
-    //                 scene.setObjectsVisible(scene.xrayedObjectIds, false);
-    //                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-    //             }, 500);
-    //             done();
-    //         });
-    //     } else {
-    //         scene.setObjectsVisible(scene.objectIds, false);
-    //         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-    //         scene.setObjectsVisible(objectIds, true);
-    //         this.viewer.cameraFlight.jumpTo({
-    //             aabb: scene.getAABB(objectIds)
-    //         });
-    //     }
-    // }
-
     selectStorey(storeyObjectId, done) {
         const metaScene = this.viewer.metaScene;
         const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
@@ -175,11 +142,6 @@ class StoreysExplorer extends Controller {
 
     _selectObjects(objectIds, done) {
         const scene = this.viewer.scene;
-        // scene.setObjectsVisible(scene.visibleObjectIds, false);
-        // scene.setObjectsSelected(scene.selectedObjectIds, false);
-        // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-
-
         const aabb = scene.getAABB(objectIds);
 
         this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
