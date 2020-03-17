@@ -53156,7 +53156,6 @@ class ContextMenu {
             if (!event.target.classList.contains("xeokit-context-menu-item")) {
                 this.hide();
             }
-            event.preventDefault();
         });
         if (cfg.items) {
             this.items = cfg.items;
