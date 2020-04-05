@@ -1,4 +1,5 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
+import minify from 'rollup-plugin-minify-es';
 
 export default {
     input: './index.js',
@@ -8,6 +9,7 @@ export default {
         name: 'bundle'
     },
     plugins: [
-        nodeResolve()
+        nodeResolve(),
+        minify()
     ]
 }

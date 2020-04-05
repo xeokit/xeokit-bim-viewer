@@ -40,6 +40,7 @@
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "rollup": "^1.32.1",
+    "rollup-plugin-minify-es": "^1.1.1",
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {
