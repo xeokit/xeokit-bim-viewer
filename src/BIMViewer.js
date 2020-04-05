@@ -985,6 +985,9 @@ class BIMViewer extends Controller {
         if (viewerState.expandStoreysTree) {
             this._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
         }
+        if (viewerState.setCamera) {
+            this.setCamera(viewerState.setCamera);
+        }
         this._parseSelectedStorey(viewerState, () => {
             this._parseThreeDMode(viewerState, () => {
                 done();
@@ -1187,7 +1190,7 @@ class BIMViewer extends Controller {
 
         const entityIds = [];
 
-        for (var i =0, len = objectIds.length; i < len; i++) {
+        for (var i = 0, len = objectIds.length; i < len; i++) {
             const objectId = objectIds[i];
             this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) => {
                 if (scene.objects[metaObject.id]) {
@@ -1264,6 +1267,28 @@ class BIMViewer extends Controller {
             aabb: aabb
         });
         viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * Sets the camera to the given position.
+     *
+     * @param {Number[]} [params.eye] Eye position.
+     * @param {Number[]} [params.look] Point of interest.
+     * @param {Number[]} [params.up] Direction of "up".
+     */
+    setCamera(params) {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        if (params.eye) {
+            camera.eye = params.eye;
+        }
+        if (params.look) {
+            camera.look = params.look;
+        }
+        if (params.up) {
+            camera.up = params.up;
+        }
     }
 
     /**
