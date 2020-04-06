@@ -273,7 +273,11 @@ In [Model Database](#model-database) we saw how a project can specify directives
 | Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
 | "focusObject"         | String            |                       |                   | ID of object to focus on        |     
-| "openTab"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
+| "tabOpen"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
+| "expandObjectsTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "objects" tree |
+| "expandClassesTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "classes" tree |
+| "expandStoreysTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "storeys" tree |
+| "setCamera"           | { eye: Number[], look: Number[], up: Number[] } |  | 0        | Camera position |
 
 ## Programming API
 
