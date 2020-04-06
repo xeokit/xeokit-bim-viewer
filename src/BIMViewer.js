@@ -1620,6 +1620,32 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Sets whether or not keyboard camera control is enabled.
+     *
+     * This is useful when we don't want key events over the canvas to clash with other UI elements outside the canvas.
+     *
+     * Default value is ````true````.
+     *
+     * @param {Boolean} enabled Set ````true```` to enable keyboard input.
+     */
+    setKeyboardEnabled(enabled) {
+        this.viewer.cameraControl.keyboardEnabled = enabled;
+    }
+
+    /**
+     * Gets whether keyboard camera control is enabled.
+     *
+     * This is useful when we don't want key events over the canvas to clash with other UI elements outside the canvas.
+     *
+     * Default value is ````true````.
+     *
+     * @returns {Boolean} Returns ````true```` if keyboard input is enabled.
+     */
+    getKeyboardEnabled() {
+        return  this.viewer.cameraControl.keyboardEnabled;
+    }
+
+    /**
      * Destroys the viewer, freeing all resources.
      */
     destroy() {
