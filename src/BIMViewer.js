@@ -1629,7 +1629,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} enabled Set ````true```` to enable keyboard input.
      */
     setKeyboardEnabled(enabled) {
-        this.viewer.cameraControl.keyboardEnabled = enabled;
+        this.viewer.scene.input.keyboardEnabled = enabled;
     }
 
     /**
@@ -1642,7 +1642,7 @@ class BIMViewer extends Controller {
      * @returns {Boolean} Returns ````true```` if keyboard input is enabled.
      */
     getKeyboardEnabled() {
-        return  this.viewer.cameraControl.keyboardEnabled;
+        return  this.viewer.scene.input.keyboardEnabled;
     }
 
     /**
