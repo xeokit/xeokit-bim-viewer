@@ -34133,6 +34133,9 @@ class NavCubePlugin extends Plugin {
             });
 
             this._navCubeCanvas = this._navCubeScene.canvas.canvas;
+
+            this._navCubeScene.input.keyboardEnabled = false; // Don't want keyboard input in the NavCube
+
         } catch (error) {
             this.error(error);
             return;
@@ -34541,7 +34544,7 @@ class NavCubePlugin extends Plugin {
      *
      * @param {Boolean} fitVisible Set ````true```` to fit only visible object-Entitys.
      */
-    setFitVisible(fitVisible =false) {
+    setFitVisible(fitVisible = false) {
         this._fitVisible = fitVisible;
     }
 
@@ -35649,7 +35652,7 @@ const batchingLayerScratchMemory = new BatchingLayerScratchMemory();
  */
 function getBatchingLayerScratchMemory(performanceModel) {
     performanceModel.once("destroyed", () => {
-        batchingLayerScratchMemory.clear();
+        batchingLayerScratchMemory._clear();
     });
     return batchingLayerScratchMemory;
 }
@@ -57903,7 +57906,7 @@ class CameraControl extends Component {
 
             document.addEventListener("keydown", function (e) {
 
-                if (!(self._active && self._pointerEnabled)) {
+                if (!(self._active && self._pointerEnabled) || (!scene.input.keyboardEnabled)) {
                     return;
                 }
 
@@ -59274,14 +59277,14 @@ class BCFViewpointsPlugin extends Plugin {
      * (on the surface of any visible and pickable {@link Entity}) with a 3D ray fired from ````camera_view_point```` in
      * the direction of ````camera_direction````.
      *
-     * @param {*} bcfViewpoint  BCF JSON viewpoint object or "reset" / "RESET" to reset the viewer, which clears SectionPlanes,
+     * @param {*} bcfViewpoint  BCF JSON viewpoint object,
      * shows default visible entities and restores camera to initial default position.
      * @param {*} [options] Options for setting the viewpoint.
      * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest
      * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
      * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
-     * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
-     * @param {Boolean} [options.reset] When ````true```` (default), set scene objects xrayed property to false, highlighted to false, pickable to true and opacity to 1.
+     * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}. Only applies when ````immediate```` is ````true````.
+     * @param {Boolean} [options.reset=true] When ````true```` (default), set {@link Entity#xrayed} and {@link Entity#highlighted} ````false```` on all scene objects.
      */
     setViewpoint(bcfViewpoint, options = {}) {
 
