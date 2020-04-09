@@ -524,11 +524,12 @@ class BIMViewer extends Controller {
                     viewer: this.viewer,
                     bimViewer: this,
                     showObjectInExplorers: (objectId) =&gt; {
-                        this.showObjectInExplorers(objectId);
                         const openTabId = this.getOpenTab();
                         if (openTabId !== &quot;objects&quot; &amp;&amp; openTabId !== &quot;classes&quot; &amp;&amp; openTabId !== &quot;storeys&quot;) {
+                            // Scroll won&apos;t work if tab not open
                             this.openTab(&quot;objects&quot;);
                         }
+                        this.showObjectInExplorers(objectId);
                     },
                     entity: hit.entity
                 };
@@ -1022,6 +1023,9 @@ class BIMViewer extends Controller {
         if (viewerState.expandStoreysTree) {
             this._storeysExplorer.expandTreeViewToDepth(viewerState.expandStoreysTree);
         }
+        if (viewerState.setCamera) {
+            this.setCamera(viewerState.setCamera);
+        }
         this._parseSelectedStorey(viewerState, () =&gt; {
             this._parseThreeDMode(viewerState, () =&gt; {
                 done();
@@ -1224,7 +1228,7 @@ class BIMViewer extends Controller {
 
         const entityIds = [];
 
-        for (var i =0, len = objectIds.length; i &lt; len; i++) {
+        for (var i = 0, len = objectIds.length; i &lt; len; i++) {
             const objectId = objectIds[i];
             this.viewer.metaScene.withMetaObjectsInSubtree(objectId, (metaObject) =&gt; {
                 if (scene.objects[metaObject.id]) {
@@ -1301,6 +1305,28 @@ class BIMViewer extends Controller {
             aabb: aabb
         });
         viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+    }
+
+    /**
+     * Sets the camera to the given position.
+     *
+     * @param {Number[]} [params.eye] Eye position.
+     * @param {Number[]} [params.look] Point of interest.
+     * @param {Number[]} [params.up] Direction of &quot;up&quot;.
+     */
+    setCamera(params) {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        if (params.eye) {
+            camera.eye = params.eye;
+        }
+        if (params.look) {
+            camera.look = params.look;
+        }
+        if (params.up) {
+            camera.up = params.up;
+        }
     }
 
     /**
@@ -1629,6 +1655,32 @@ class BIMViewer extends Controller {
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
+    }
+
+    /**
+     * Sets whether or not keyboard camera control is enabled.
+     *
+     * This is useful when we don&apos;t want key events over the canvas to clash with other UI elements outside the canvas.
+     *
+     * Default value is ````true````.
+     *
+     * @param {Boolean} enabled Set ````true```` to enable keyboard input.
+     */
+    setKeyboardEnabled(enabled) {
+        this.viewer.scene.input.keyboardEnabled = enabled;
+    }
+
+    /**
+     * Gets whether keyboard camera control is enabled.
+     *
+     * This is useful when we don&apos;t want key events over the canvas to clash with other UI elements outside the canvas.
+     *
+     * Default value is ````true````.
+     *
+     * @returns {Boolean} Returns ````true```` if keyboard input is enabled.
+     */
+    getKeyboardEnabled() {
+        return  this.viewer.scene.input.keyboardEnabled;
     }
 
     /**

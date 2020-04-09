@@ -330,6 +330,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getkeyboardenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getKeyboardEnabled",
+    "src/BIMViewer.js~BIMViewer#getKeyboardEnabled",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getloadedmodelids",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getLoadedModelIds",
     "src/BIMViewer.js~BIMViewer#getLoadedModelIds",
@@ -468,6 +474,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setcamera",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setCamera",
+    "src/BIMViewer.js~BIMViewer#setCamera",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setconfig",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfig",
     "src/BIMViewer.js~BIMViewer#setConfig",
@@ -483,6 +495,12 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#setcontrolsenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setControlsEnabled",
     "src/BIMViewer.js~BIMViewer#setControlsEnabled",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setkeyboardenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setKeyboardEnabled",
+    "src/BIMViewer.js~BIMViewer#setKeyboardEnabled",
     "method"
   ],
   [

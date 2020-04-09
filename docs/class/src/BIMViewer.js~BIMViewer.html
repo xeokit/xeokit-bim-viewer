@@ -283,6 +283,35 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-getKeyboardEnabled">getKeyboardEnabled</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Gets whether keyboard camera control is enabled.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-getLoadedModelIds">getLoadedModelIds</a></span></span><span class="code" data-ice="signature">(): <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span><span>[]</span></span></span>
         </p>
       </div>
@@ -950,6 +979,35 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-setCamera">setCamera</a></span></span><span class="code" data-ice="signature">()</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Sets the camera to the given position.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfig">setConfig</a></span></span><span class="code" data-ice="signature">(name: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, value: <span>*</span>)</span>
         </p>
       </div>
@@ -1015,6 +1073,35 @@
         
         
         <div data-ice="description"><p>Enables or disables the various buttons and controls throughout the viewer.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html#instance-method-setKeyboardEnabled">setKeyboardEnabled</a></span></span><span class="code" data-ice="signature">(enabled: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Sets whether or not keyboard camera control is enabled.</p>
 </div>
       </div>
     </td>
@@ -1540,7 +1627,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1599">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1651">source</a></span></span>
     </span>
   </h3>
 
@@ -1584,7 +1671,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1137">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1141">source</a></span></span>
     </span>
   </h3>
 
@@ -1652,7 +1739,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1421">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1447">source</a></span></span>
     </span>
   </h3>
 
@@ -1709,7 +1796,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber661">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber662">source</a></span></span>
     </span>
   </h3>
 
@@ -1772,6 +1859,65 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getKeyboardEnabled">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">getKeyboardEnabled</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1644">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Gets whether keyboard camera control is enabled.</p>
+<p>This is useful when we don&apos;t want key events over the canvas to clash with other UI elements outside the canvas.</p>
+<p>Default value is <code>true</code>.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns <code>true</code> if keyboard input is enabled.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-getLoadedModelIds">
     <span class="access" data-ice="access">public</span>
     
@@ -1783,7 +1929,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber874">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber875">source</a></span></span>
     </span>
   </h3>
 
@@ -1840,7 +1986,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber799">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber800">source</a></span></span>
     </span>
   </h3>
 
@@ -1897,7 +2043,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber808">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber809">source</a></span></span>
     </span>
   </h3>
 
@@ -1954,7 +2100,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber956">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber957">source</a></span></span>
     </span>
   </h3>
 
@@ -2012,7 +2158,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber728">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber729">source</a></span></span>
     </span>
   </h3>
 
@@ -2102,7 +2248,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1374">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1400">source</a></span></span>
     </span>
   </h3>
 
@@ -2166,7 +2312,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber699">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber700">source</a></span></span>
     </span>
   </h3>
 
@@ -2242,7 +2388,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber677">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber678">source</a></span></span>
     </span>
   </h3>
 
@@ -2311,7 +2457,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber884">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber885">source</a></span></span>
     </span>
   </h3>
 
@@ -2385,7 +2531,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1243">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1247">source</a></span></span>
     </span>
   </h3>
 
@@ -2446,7 +2592,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber846">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber847">source</a></span></span>
     </span>
   </h3>
 
@@ -2508,7 +2654,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1550">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1576">source</a></span></span>
     </span>
   </h3>
 
@@ -2608,7 +2754,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber821">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber822">source</a></span></span>
     </span>
   </h3>
 
@@ -2684,7 +2830,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber767">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber768">source</a></span></span>
     </span>
   </h3>
 
@@ -2760,7 +2906,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1326">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1352">source</a></span></span>
     </span>
   </h3>
 
@@ -2828,7 +2974,7 @@ point of surface intersection with a ray fired from the BCF <code>camera_view_po
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1564">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1590">source</a></span></span>
     </span>
   </h3>
 
@@ -2874,7 +3020,7 @@ default position, and removes section planes.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1524">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1550">source</a></span></span>
     </span>
   </h3>
 
@@ -3043,7 +3189,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1433">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1459">source</a></span></span>
     </span>
   </h3>
 
@@ -3112,7 +3258,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1408">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1434">source</a></span></span>
     </span>
   </h3>
 
@@ -3180,7 +3326,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1107">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1111">source</a></span></span>
     </span>
   </h3>
 
@@ -3241,7 +3387,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1057">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1061">source</a></span></span>
     </span>
   </h3>
 
@@ -3302,7 +3448,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1082">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1086">source</a></span></span>
     </span>
   </h3>
 
@@ -3363,7 +3509,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber919">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber920">source</a></span></span>
     </span>
   </h3>
 
@@ -3413,6 +3559,81 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-setCamera">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">setCamera</span><span class="code" data-ice="signature">()</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1279">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Sets the camera to the given position.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.eye</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span><span>[]</span></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Eye position.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.look</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span><span>[]</span></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Point of interest.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.up</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span><span>[]</span></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Direction of &quot;up&quot;.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-setConfig">
     <span class="access" data-ice="access">public</span>
     
@@ -3424,7 +3645,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber552">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber553">source</a></span></span>
     </span>
   </h3>
 
@@ -3493,7 +3714,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber535">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber536">source</a></span></span>
     </span>
   </h3>
 
@@ -3556,7 +3777,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1575">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1601">source</a></span></span>
     </span>
   </h3>
 
@@ -3607,6 +3828,69 @@ const viewpoint = bimViewer.saveBCFViewpoint({
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-setKeyboardEnabled">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">setKeyboardEnabled</span><span class="code" data-ice="signature">(enabled: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span>)</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1631">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Sets whether or not keyboard camera control is enabled.</p>
+<p>This is useful when we don&apos;t want key events over the canvas to clash with other UI elements outside the canvas.</p>
+<p>Default value is <code>true</code>.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">enabled</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Set <code>true</code> to enable keyboard input.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-setObjectColorSource">
     <span class="access" data-ice="access">public</span>
     
@@ -3618,7 +3902,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber935">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber936">source</a></span></span>
     </span>
   </h3>
 
@@ -3685,7 +3969,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1096">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1100">source</a></span></span>
     </span>
   </h3>
 
@@ -3753,7 +4037,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1046">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1050">source</a></span></span>
     </span>
   </h3>
 
@@ -3821,7 +4105,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1071">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1075">source</a></span></span>
     </span>
   </h3>
 
@@ -3889,7 +4173,7 @@ const viewpoint = bimViewer.saveBCFViewpoint({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber973">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber974">source</a></span></span>
     </span>
   </h3>
 
@@ -3961,7 +4245,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1017">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1021">source</a></span></span>
     </span>
   </h3>
 
@@ -4024,7 +4308,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1034">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1038">source</a></span></span>
     </span>
   </h3>
 
@@ -4070,7 +4354,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber910">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber911">source</a></span></span>
     </span>
   </h3>
 
@@ -4114,7 +4398,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber899">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber900">source</a></span></span>
     </span>
   </h3>
 
@@ -4176,7 +4460,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber788">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber789">source</a></span></span>
     </span>
   </h3>
 
@@ -4220,7 +4504,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1224">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1228">source</a></span></span>
     </span>
   </h3>
 
@@ -4281,7 +4565,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1274">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1300">source</a></span></span>
     </span>
   </h3>
 
@@ -4349,7 +4633,7 @@ method optionally takes a callback, which it invokes after updating the UI.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1179">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/BIMViewer.js.html#lineNumber1183">source</a></span></span>
     </span>
   </h3>
 

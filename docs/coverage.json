@@ -1,11 +1,11 @@
 {
-  "coverage": "32.84%",
-  "expectCount": 274,
-  "actualCount": 90,
+  "coverage": "33.45%",
+  "expectCount": 278,
+  "actualCount": 93,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 75,
-      "actualCount": 46,
+      "expectCount": 78,
+      "actualCount": 49,
       "undocumentLines": [
         26,
         68,
@@ -31,11 +31,11 @@
         470,
         472,
         473,
-        509,
-        946,
-        994,
-        1003,
-        1115
+        510,
+        947,
+        998,
+        1007,
+        1119
       ]
     },
     "src/BusyModal.js": {
@@ -100,10 +100,11 @@
       ]
     },
     "src/contextMenus/TreeViewContextMenu.js": {
-      "expectCount": 2,
+      "expectCount": 3,
       "actualCount": 1,
       "undocumentLines": [
-        8
+        4,
+        10
       ]
     },
     "src/explorer/ClassesExplorer.js": {
@@ -118,13 +119,13 @@
         34,
         42,
         49,
-        95,
-        107,
-        118,
-        130,
-        134,
-        139,
-        143
+        80,
+        92,
+        103,
+        115,
+        119,
+        124,
+        128
       ]
     },
     "src/explorer/ModelsExplorer.js": {
@@ -145,23 +146,23 @@
         49,
         63,
         73,
-        135,
-        142,
-        153,
-        162,
-        177,
-        186,
-        207,
-        211,
-        215,
-        298,
-        317,
-        326,
-        330,
-        334,
-        338,
-        342,
-        346
+        118,
+        125,
+        136,
+        145,
+        160,
+        169,
+        190,
+        194,
+        198,
+        279,
+        297,
+        306,
+        310,
+        314,
+        318,
+        322,
+        326
       ]
     },
     "src/explorer/ObjectsExplorer.js": {
@@ -176,13 +177,13 @@
         34,
         42,
         49,
-        95,
-        107,
-        118,
-        130,
-        134,
-        139,
-        143
+        80,
+        92,
+        103,
+        115,
+        119,
+        124,
+        128
       ]
     },
     "src/explorer/StoreysExplorer.js": {
@@ -197,15 +198,15 @@
         34,
         42,
         49,
-        74,
-        84,
-        96,
-        108,
-        112,
-        117,
-        154,
-        169,
-        215
+        81,
+        91,
+        103,
+        115,
+        119,
+        124,
+        128,
+        143,
+        184
       ]
     },
     "src/server/Server.js": {

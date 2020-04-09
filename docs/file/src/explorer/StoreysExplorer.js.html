@@ -96,17 +96,24 @@ class StoreysExplorer extends Controller {
             this._treeViewContextMenu.show(e.event.pageX, e.event.pageY);
         });
 
-        // Left-clicking on a tree node isolates that object in the 3D view
-
         this._treeView.on(&quot;nodeTitleClicked&quot;, (e) =&gt; {
+            const scene = this.viewer.scene;
             const objectIds = [];
             e.treeViewPlugin.withNodeTree(e.treeViewNode, (treeViewNode) =&gt; {
                 if (treeViewNode.objectId) {
                     objectIds.push(treeViewNode.objectId);
                 }
             });
-            this._selectObjects(objectIds, () =&gt; {
-            });
+            const checked = e.treeViewNode.checked;
+            if (checked) {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, false);
+                scene.setObjectsPickable(objectIds, true);
+            } else {
+                scene.setObjectsXRayed(objectIds, false);
+                scene.setObjectsVisible(objectIds, true);
+                scene.setObjectsPickable(objectIds, true);
+            }
         });
 
         this._onModelLoaded = this.viewer.scene.on(&quot;modelLoaded&quot;, (modelId) =&gt;{
@@ -156,39 +163,6 @@ class StoreysExplorer extends Controller {
         this._treeView.unShowNode();
     }
 
-    // selectStorey(storeyObjectId, done) {
-    //     const metaScene = this.viewer.metaScene;
-    //     const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
-    //     if (!storeyMetaObject) {
-    //         this.error(&quot;flyToStorey() - object is not found: &apos;&quot; + storeyObjectId + &quot;&apos;&quot;);
-    //         return;
-    //     }
-    //     const scene = this.viewer.scene;
-    //     const objectIds = storeyMetaObject.getObjectIDsInSubtree();
-    //     scene.setObjectsSelected(scene.selectedObjectIds, false);
-    //     if (done) {
-    //         scene.setObjectsVisible(scene.objectIds, true);
-    //         scene.setObjectsXRayed(scene.objectIds, true);
-    //         scene.setObjectsXRayed(objectIds, false);
-    //         this.viewer.cameraFlight.flyTo({
-    //             aabb: scene.getAABB(objectIds)
-    //         }, () =&gt; {
-    //             setTimeout(function () {
-    //                 scene.setObjectsVisible(scene.xrayedObjectIds, false);
-    //                 scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-    //             }, 500);
-    //             done();
-    //         });
-    //     } else {
-    //         scene.setObjectsVisible(scene.objectIds, false);
-    //         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-    //         scene.setObjectsVisible(objectIds, true);
-    //         this.viewer.cameraFlight.jumpTo({
-    //             aabb: scene.getAABB(objectIds)
-    //         });
-    //     }
-    // }
-
     selectStorey(storeyObjectId, done) {
         const metaScene = this.viewer.metaScene;
         const storeyMetaObject = metaScene.metaObjects[storeyObjectId];
@@ -206,11 +180,6 @@ class StoreysExplorer extends Controller {
 
     _selectObjects(objectIds, done) {
         const scene = this.viewer.scene;
-        // scene.setObjectsVisible(scene.visibleObjectIds, false);
-        // scene.setObjectsSelected(scene.selectedObjectIds, false);
-        // scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-
-
         const aabb = scene.getAABB(objectIds);
 
         this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
