@@ -368,6 +368,8 @@ class BIMViewer extends Controller {
 
         const scene = this.viewer.scene;
 
+        // Emphasis effects
+
         scene.xrayMaterial.fill = false;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
@@ -381,6 +383,8 @@ class BIMViewer extends Controller {
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        // Lighting
 
         scene.clearLights();
 
@@ -410,9 +414,15 @@ class BIMViewer extends Controller {
             space: "world"
         });
 
+        // Camera control
+
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.panToPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = true;
+
+        const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
+        document.body.appendChild(cameraPivotElement);
+        this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
         // Scalable Ambient Obscurance (SAO) defaults
 
