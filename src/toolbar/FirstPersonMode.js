@@ -13,10 +13,11 @@ class FirstPersonMode extends Controller {
 
         const buttonElement = cfg.buttonElement;
         const cameraControl = this.viewer.cameraControl;
+        const cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
 
-        cameraControl.firstPerson = false;
+        cameraControl.navMode = "orbit";
         cameraControl.pivoting = true;
-        cameraControl.panToPointer = true;
+        cameraControl.dollyToPointer = true;
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
@@ -35,16 +36,13 @@ class FirstPersonMode extends Controller {
         });
 
         this.on("active", (active) => {
+            cameraControlNavModeMediator.setFirstPersonModeActive(active);
             if (active) {
-                cameraControl.firstPerson = true;
-                cameraControl.panToPointer = true;
+                cameraControl.dollyToPointer = true;
                 cameraControl.pivoting = false;
             } else {
-                cameraControl.firstPerson = false;
                 cameraControl.pivoting = true;
-                cameraControl.panToPointer = true;
             }
-            this.viewer.cameraControl.planView = false;
         });
 
         buttonElement.addEventListener("click", (event) => {

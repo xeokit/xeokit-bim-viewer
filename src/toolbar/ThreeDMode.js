@@ -16,6 +16,8 @@ class ThreeDMode extends Controller {
 
         this._buttonElement = cfg.buttonElement;
 
+        this._cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
+
         this._active = false;
 
         this.on("enabled", (enabled) => {
@@ -84,11 +86,10 @@ class ThreeDMode extends Controller {
         const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
 
         viewer.cameraControl.pivotPos = center;
-        viewer.cameraControl.planView = false;
 
         this.bimViewer._navCubeMode.setActive(true);
-        this.viewer.cameraControl.planView = false;
         this.bimViewer._firstPersonMode.setEnabled(true);
+        this._cameraControlNavModeMediator.setThreeDModeActive(true);
         this.bimViewer._sectionTool.setEnabled(true);
 
         if (done) {
@@ -134,10 +135,10 @@ class ThreeDMode extends Controller {
 
         this.bimViewer._sectionTool.setActive(false);
         this.bimViewer._sectionTool.clear();
-        this.viewer.cameraControl.planView = true;
         this.bimViewer._firstPersonMode.setEnabled(false);
-        this.bimViewer._firstPersonMode.setActive(false);
         this.bimViewer._sectionTool.setEnabled(false);
+
+        this._cameraControlNavModeMediator.setThreeDModeActive(false);
 
         if (done) {
             viewer.cameraFlight.flyTo({

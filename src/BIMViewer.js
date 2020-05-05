@@ -249,13 +249,36 @@ class BIMViewer extends Controller {
             active: false
         });
 
+        // Allows Three-D and First Person toggle buttons to cooperatively switch
+        // CameraControl#navMode between "orbit", "firstPerson" and "planView" modes
+
+        const cameraControlNavModeMediator = new (function (viewer) {
+
+            let threeDActive = false;
+            let firstPersonActive = false;
+
+            this.setThreeDModeActive = (active) => {
+                viewer.cameraControl.navMode = active ? (firstPersonActive ? "firstPerson" : "orbit") : "planView";
+                viewer.cameraControl.pivoting = viewer.cameraControl.navMode === "orbit";
+                threeDActive = active;
+            };
+
+            this.setFirstPersonModeActive = (active) => {
+                viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
+                viewer.cameraControl.pivoting = viewer.cameraControl.navMode === "orbit";
+                firstPersonActive = active;
+            };
+        })(this.viewer);
+
         this._threeDMode = new ThreeDMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
+            cameraControlNavModeMediator: cameraControlNavModeMediator,
             active: false
         });
 
         this._firstPersonMode = new FirstPersonMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-firstPerson"),
+            cameraControlNavModeMediator: cameraControlNavModeMediator,
             active: false
         });
 
@@ -1015,7 +1038,7 @@ class BIMViewer extends Controller {
     }
 
     _parseThreeDMode(viewerState, done) {
-        const activateThreeDMode = (viewerState.threeDEnabled !== false);
+        const activateThreeDMode = (viewerState.threeDActive !== false);
         this.set3DEnabled(activateThreeDMode, done);
     }
 
@@ -1652,7 +1675,7 @@ class BIMViewer extends Controller {
      * @returns {Boolean} Returns ````true```` if keyboard input is enabled.
      */
     getKeyboardEnabled() {
-        return  this.viewer.scene.input.keyboardEnabled;
+        return this.viewer.scene.input.keyboardEnabled;
     }
 
     /**
