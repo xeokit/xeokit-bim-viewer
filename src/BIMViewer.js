@@ -252,23 +252,30 @@ class BIMViewer extends Controller {
         // Allows Three-D and First Person toggle buttons to cooperatively switch
         // CameraControl#navMode between "orbit", "firstPerson" and "planView" modes
 
-        const cameraControlNavModeMediator = new (function (viewer) {
+        const cameraControlNavModeMediator = new (function (bimViewer) {
 
             let threeDActive = false;
             let firstPersonActive = false;
 
             this.setThreeDModeActive = (active) => {
-                viewer.cameraControl.navMode = active ? (firstPersonActive ? "firstPerson" : "orbit") : "planView";
-                viewer.cameraControl.pivoting = viewer.cameraControl.navMode === "orbit";
+                if (active) {
+                    bimViewer._firstPersonMode.setActive(false);
+                    bimViewer.viewer.cameraControl.navMode = "orbit";
+                    bimViewer.viewer.cameraControl.pivoting = true;
+                } else {
+                    bimViewer._firstPersonMode.setActive(false);
+                    bimViewer.viewer.cameraControl.navMode = "planView";
+                    bimViewer.viewer.cameraControl.pivoting = false;
+                }
                 threeDActive = active;
             };
 
             this.setFirstPersonModeActive = (active) => {
-                viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
-                viewer.cameraControl.pivoting = viewer.cameraControl.navMode === "orbit";
+                bimViewer.viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
+                bimViewer.viewer.cameraControl.pivoting = bimViewer.viewer.cameraControl.navMode === "orbit";
                 firstPersonActive = active;
             };
-        })(this.viewer);
+        })(this);
 
         this._threeDMode = new ThreeDMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
