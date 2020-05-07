@@ -451,7 +451,7 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.doublePickFlyTo = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
-        this.viewer.cameraControl.dollyRate = 3.0;
+        this.viewer.cameraControl.dollyRate = 10.0;
         this.viewer.cameraControl.dollyInertia = 0.15;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
