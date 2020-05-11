@@ -1528,6 +1528,10 @@ class BIMViewer extends Controller {
      * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.
+     * @param {Boolean} [options.defaultInvisible=false] When ````true````, will save the default visibility of all objects
+     * as ````false````. This means that when we load the viewpoint again, and there are additional models loaded that
+     * were not saved in the viewpoint, those models will be hidden when we load the viewpoint, and that only the
+     * objects in the viewpoint will be visible.
      * @returns {*} BCF JSON viewpoint object
      * @example
      *
