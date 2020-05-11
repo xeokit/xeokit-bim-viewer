@@ -498,6 +498,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setfirstpersonmodeactive",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-member-setFirstPersonModeActive",
+    "src/BIMViewer.js~BIMViewer#setFirstPersonModeActive",
+    "member"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setkeyboardenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setKeyboardEnabled",
     "src/BIMViewer.js~BIMViewer#setKeyboardEnabled",
@@ -526,6 +532,12 @@ window.esdocSearchIndex = [
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setObjectsXRayed",
     "src/BIMViewer.js~BIMViewer#setObjectsXRayed",
     "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setthreedmodeactive",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-member-setThreeDModeActive",
+    "src/BIMViewer.js~BIMViewer#setThreeDModeActive",
+    "member"
   ],
   [
     "src/bimviewer.js~bimviewer#setviewerstate",

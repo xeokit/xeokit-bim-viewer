@@ -287,13 +287,43 @@ class BIMViewer extends Controller {
             active: false
         });
 
+        // Allows Three-D and First Person toggle buttons to cooperatively switch
+        // CameraControl#navMode between &quot;orbit&quot;, &quot;firstPerson&quot; and &quot;planView&quot; modes
+
+        const cameraControlNavModeMediator = new (function (bimViewer) {
+
+            let threeDActive = false;
+            let firstPersonActive = false;
+
+            this.setThreeDModeActive = (active) =&gt; {
+                if (active) {
+                    bimViewer._firstPersonMode.setActive(false);
+                    bimViewer.viewer.cameraControl.navMode = &quot;orbit&quot;;
+                    bimViewer.viewer.cameraControl.pivoting = true;
+                } else {
+                    bimViewer._firstPersonMode.setActive(false);
+                    bimViewer.viewer.cameraControl.navMode = &quot;planView&quot;;
+                    bimViewer.viewer.cameraControl.pivoting = false;
+                }
+                threeDActive = active;
+            };
+
+            this.setFirstPersonModeActive = (active) =&gt; {
+                bimViewer.viewer.cameraControl.navMode = active ? &quot;firstPerson&quot; : (threeDActive ? &quot;orbit&quot; : &quot;planView&quot;);
+                bimViewer.viewer.cameraControl.pivoting = bimViewer.viewer.cameraControl.navMode === &quot;orbit&quot;;
+                firstPersonActive = active;
+            };
+        })(this);
+
         this._threeDMode = new ThreeDMode(this, {
             buttonElement: toolbarElement.querySelector(&quot;.xeokit-threeD&quot;),
+            cameraControlNavModeMediator: cameraControlNavModeMediator,
             active: false
         });
 
         this._firstPersonMode = new FirstPersonMode(this, {
             buttonElement: toolbarElement.querySelector(&quot;.xeokit-firstPerson&quot;),
+            cameraControlNavModeMediator: cameraControlNavModeMediator,
             active: false
         });
 
@@ -406,6 +436,8 @@ class BIMViewer extends Controller {
 
         const scene = this.viewer.scene;
 
+        // Emphasis effects
+
         scene.xrayMaterial.fill = false;
         scene.xrayMaterial.fillAlpha = 0.1;
         scene.xrayMaterial.fillColor = [0, 0, 0];
@@ -419,6 +451,8 @@ class BIMViewer extends Controller {
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        // Lighting
 
         scene.clearLights();
 
@@ -448,9 +482,19 @@ class BIMViewer extends Controller {
             space: &quot;world&quot;
         });
 
+        // Camera control
+
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.panToPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = true;
+
+        // Dolly tweaks for best precision when aligning camera for BCF snapshots
+        this.viewer.cameraControl.dollyRate = 10.0;
+        this.viewer.cameraControl.dollyInertia = 0.15;
+
+        const cameraPivotElement = document.createRange().createContextualFragment(&quot;&lt;div class=&apos;xeokit-camera-pivot-marker&apos;&gt;&lt;/div&gt;&quot;).firstChild;
+        document.body.appendChild(cameraPivotElement);
+        this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
         // Scalable Ambient Obscurance (SAO) defaults
 
@@ -1043,7 +1087,7 @@ class BIMViewer extends Controller {
     }
 
     _parseThreeDMode(viewerState, done) {
-        const activateThreeDMode = (viewerState.threeDEnabled !== false);
+        const activateThreeDMode = (viewerState.threeDActive !== false);
         this.set3DEnabled(activateThreeDMode, done);
     }
 
@@ -1522,6 +1566,10 @@ class BIMViewer extends Controller {
      * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.
+     * @param {Boolean} [options.defaultInvisible=false] When ````true````, will save the default visibility of all objects
+     * as ````false````. This means that when we load the viewpoint again, and there are additional models loaded that
+     * were not saved in the viewpoint, those models will be hidden when we load the viewpoint, and that only the
+     * objects in the viewpoint will be visible.
      * @returns {*} BCF JSON viewpoint object
      * @example
      *
@@ -1680,7 +1728,7 @@ class BIMViewer extends Controller {
      * @returns {Boolean} Returns ````true```` if keyboard input is enabled.
      */
     getKeyboardEnabled() {
-        return  this.viewer.scene.input.keyboardEnabled;
+        return this.viewer.scene.input.keyboardEnabled;
     }
 
     /**
