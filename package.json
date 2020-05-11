@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "1.7.89",
+  "version": "1.7.91",
   "description": "BIM viewer built on xeokit",
   "main": "index.js",
   "directories": {
@@ -44,6 +44,6 @@
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "^0.9.998"
+    "@xeokit/xeokit-sdk": "0.9.999"
   }
 }
