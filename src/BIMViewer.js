@@ -449,7 +449,7 @@ class BIMViewer extends Controller {
         // Camera control
 
         this.viewer.cameraControl.panRightClick = true;
-        this.viewer.cameraControl.panToPointer = true;
+        this.viewer.cameraControl.followPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
