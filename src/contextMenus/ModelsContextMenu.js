@@ -49,6 +49,17 @@ class ModelsContextMenu extends ContextMenu {
                             context.bimViewer.unloadAllModels();
                         }
                     }
+                ],
+                [
+                    {
+                        title: "Clear Slices",
+                        getEnabled: function (context) {
+                            return (context.bimViewer.getNumSections() > 0);
+                        },
+                        doAction: function (context) {
+                            context.bimViewer.clearSections();
+                        }
+                    }
                 ]
             ]
         })

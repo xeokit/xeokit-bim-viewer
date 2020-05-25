@@ -76,7 +76,7 @@
     padding: 0;
     /*padding-left: 10px;*/
     height: 100%;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .xeokit-tabs::before, .xeokit-tabs::after {
@@ -537,7 +537,7 @@
 /* Busy modal dialog */
 
 .xeokit-busy-modal-backdrop {
-    position:relative;
+    position: relative;
 }
 
 .xeokit-busy-modal {
@@ -616,4 +616,47 @@
     box-shadow: 5px 5px 15px 1px #000000;
     z-index: 1000000;
     pointer-events: none;
+}
+
+.xeokit-section {
+
+}
+
+.xeokit-section-counter {
+    opacity: .55;
+    border-radius: 25px;
+    border: solid 2px black;
+    color: black;
+    padding: 1px;
+    margin: 0;
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    float: right;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.50;
+}
+
+.xeokit-section-counter.disabled {
+    color: #99A4AD;
+    border: 2px solid #6c757d !important;
+}
+
+.xeokit-section-counter.active {
+    color: #fff;
+    border-color: #ebebeb;
+}
+
+.xeokit-section-counter:hover {
+    color: #477dca;
+}
+
+.xeokit-section-counter.active:hover {
+    color: white;
+    border: 2px solid #477dca;
+}
+
+.xeokit-section-counter.disabled:hover {
+    color: #99A4AD;
 }

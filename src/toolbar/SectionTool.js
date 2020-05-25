@@ -1,5 +1,7 @@
 import {Controller} from "../Controller.js";
 import {SectionPlanesPlugin} from "@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js";
+import {SectionToolContextMenu} from "./../contextMenus/SectionToolContextMenu.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /** @private */
 class SectionTool extends Controller {
@@ -12,26 +14,40 @@ class SectionTool extends Controller {
             throw "Missing config: buttonElement";
         }
 
-        const buttonElement = cfg.buttonElement;
+        this._buttonElement = cfg.buttonElement;
+        this._counterElement = cfg.counterElement;
 
-        this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
-        });
+        this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {});
+
+        this._sectionToolContextMenu = new SectionToolContextMenu();
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
-                buttonElement.classList.add("disabled");
+                this._buttonElement.classList.add("disabled");
+                if (this._counterElement) {
+                    this._counterElement.classList.add("disabled");
+                }
             } else {
-                buttonElement.classList.remove("disabled");
+                this._buttonElement.classList.remove("disabled");
+                if (this._counterElement) {
+                    this._counterElement.classList.remove("disabled");
+                }
             }
         });
 
         this.on("active", (active) => {
             if (active) {
-                buttonElement.classList.add("active");
+                this._buttonElement.classList.add("active");
+                if (this._counterElement) {
+                    this._counterElement.classList.add("active");
+                }
             } else {
-                buttonElement.classList.remove("active");
+                this._buttonElement.classList.remove("active");
+                if (this._counterElement) {
+                    this._counterElement.classList.remove("active");
+                }
             }
         });
 
@@ -41,7 +57,7 @@ class SectionTool extends Controller {
             }
         });
 
-        buttonElement.addEventListener("click", (event) => {
+        this._buttonElement.addEventListener("click", (event) => {
             if (!this.getEnabled()) {
                 return;
             }
@@ -49,6 +65,16 @@ class SectionTool extends Controller {
             this.setActive(!active);
             event.preventDefault();
         });
+
+        this._buttonElement.oncontextmenu = (e) => {
+            this._sectionToolContextMenu.context = {
+                bimViewer: this.bimViewer,
+                viewer: this.viewer,
+                sectionTool: this
+            };
+            this._sectionToolContextMenu.show(e.pageX, e.pageY);
+            e.preventDefault();
+        };
 
         this.bimViewer.on("reset", () => {
             this.clear();
@@ -59,24 +85,52 @@ class SectionTool extends Controller {
     }
 
     _initSectionMode() {
-        this._onPickedSurface = this.viewer.cameraControl.on("pickedSurface", (e) => {
+
+        this.viewer.scene.input.on("mouseclicked", (coords) => {
+
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                pos: e.worldPos,
-                dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
+
+            const pickResult = this.viewer.scene.pick({
+                canvasPos: coords,
+                pickSurface: true  // <<------ This causes picking to find the intersection point on the entity
             });
-            this._sectionPlanesPlugin.showControl(sectionPlane.id);
+
+            if (pickResult) {
+
+                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                    pos: pickResult.worldPos,
+                    dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
+                });
+
+                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+
+                this._updateSectionPlanesCount();
+            }
         });
+
+        this._updateSectionPlanesCount();
+    }
+
+    _updateSectionPlanesCount() {
+        if (this._counterElement) {
+            this._counterElement.innerText = ("" + this.getNumSections());
+        }
+    }
+
+    getNumSections() {
+        return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
     }
 
     clear() {
         this._sectionPlanesPlugin.clear();
+        this._updateSectionPlanesCount();
     }
 
     destroy() {
         this._sectionPlanesPlugin.destroy();
+        this._sectionToolContextMenu.destroy();
         super.destroy();
     }
 }

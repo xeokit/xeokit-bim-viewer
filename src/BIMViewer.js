@@ -90,9 +90,10 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-tippy-content="Select objects"></button>
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
-        <!-- Slice tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"></button>
+        <!-- section tool button -->
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-counter"></div></button>
     </div>
+
 </div>`;
 
 function initTabs(containerElement) {
@@ -261,18 +262,18 @@ class BIMViewer extends Controller {
                 if (active) {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "orbit";
-                    bimViewer.viewer.cameraControl.pivoting = true;
+                    bimViewer.viewer.cameraControl.followPointer = true;
                 } else {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "planView";
-                    bimViewer.viewer.cameraControl.pivoting = false;
+                    bimViewer.viewer.cameraControl.followPointer = false;
                 }
                 threeDActive = active;
             };
 
             this.setFirstPersonModeActive = (active) => {
                 bimViewer.viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
-                bimViewer.viewer.cameraControl.pivoting = bimViewer.viewer.cameraControl.navMode === "orbit";
+                bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode === "orbit";
                 firstPersonActive = active;
             };
         })(this);
@@ -307,6 +308,7 @@ class BIMViewer extends Controller {
 
         this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-section"),
+            counterElement: toolbarElement.querySelector(".xeokit-section-counter"),
             active: false
         });
 
@@ -451,8 +453,8 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.doublePickFlyTo = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
-        this.viewer.cameraControl.dollyRate = 10.0;
-        this.viewer.cameraControl.dollyInertia = 0.15;
+        this.viewer.cameraControl.dollyRate = 20.0;
+        this.viewer.cameraControl.dollyInertia = 0.70;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
         document.body.appendChild(cameraPivotElement);
@@ -1691,6 +1693,26 @@ class BIMViewer extends Controller {
      */
     getKeyboardEnabled() {
         return this.viewer.scene.input.keyboardEnabled;
+    }
+
+    /**
+     * Clears sections.
+     *
+     * sections are the sliceing planes, that we use to section models in order to see interior structures.
+     */
+    clearSections() {
+        this._sectionTool.clear();
+    }
+
+    /**
+     * returns the number of sections that currently exist.
+     *
+     * sections are the sliceing planes, that we use to slice models in order to see interior structures.
+     *
+     * @returns {Number} The number of sections.
+     */
+    getNumSections() {
+        return this._sectionTool.getNumSections();
     }
 
     /**

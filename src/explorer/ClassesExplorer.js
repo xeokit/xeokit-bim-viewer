@@ -50,6 +50,7 @@ class ClassesExplorer extends Controller {
 
         this._treeView.on("contextmenu", (e) => {
             this._treeViewContextMenu.context = {
+                bimViewer: this.bimViewer,
                 viewer: e.viewer,
                 treeViewPlugin: e.treeViewPlugin,
                 treeViewNode: e.treeViewNode

@@ -91,6 +91,17 @@ class CanvasContextMenu extends ContextMenu {
                             context.bimViewer.resetView();
                         }
                     }
+                ],
+                [
+                    {
+                        title: "Clear Slices",
+                        getEnabled: function (context) {
+                            return (context.bimViewer.getNumSections() > 0);
+                        },
+                        doAction: function (context) {
+                            context.bimViewer.clearSections();
+                        }
+                    }
                 ]
             ]
         });

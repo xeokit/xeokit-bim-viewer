@@ -191,6 +191,17 @@ class ObjectContextMenu extends ContextMenu {
                             context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
                         }
                     }
+                ],
+                [
+                    {
+                        title: "Clear Slices",
+                        getEnabled: function (context) {
+                            return (context.bimViewer.getNumSections() > 0);
+                        },
+                        doAction: function (context) {
+                            context.bimViewer.clearSections();
+                        }
+                    }
                 ]
             ]
         });
