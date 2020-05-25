@@ -273,7 +273,7 @@ class BIMViewer extends Controller {
 
             this.setFirstPersonModeActive = (active) => {
                 bimViewer.viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
-                bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode === "orbit";
+                bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode !== "planView";
                 firstPersonActive = active;
             };
         })(this);
