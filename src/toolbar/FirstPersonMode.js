@@ -16,8 +16,7 @@ class FirstPersonMode extends Controller {
         const cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
 
         cameraControl.navMode = "orbit";
-        cameraControl.pivoting = true;
-        cameraControl.dollyToPointer = true;
+        cameraControl.followPointer = true;
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
@@ -38,7 +37,7 @@ class FirstPersonMode extends Controller {
         this.on("active", (active) => {
             cameraControlNavModeMediator.setFirstPersonModeActive(active);
             if (active) {
-                cameraControl.dollyToPointer = true;
+                cameraControl.followPointer = true;
                 cameraControl.pivoting = false;
             } else {
                 cameraControl.pivoting = true;
