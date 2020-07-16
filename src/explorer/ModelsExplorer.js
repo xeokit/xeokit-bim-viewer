@@ -292,6 +292,7 @@ class ModelsExplorer extends Controller {
         } else {
             this._unloadModelsButtonElement.classList.add("disabled");
         }
+        this.fire("modelUnloaded", modelId);
     }
 
     unloadAllModels() {
