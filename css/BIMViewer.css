@@ -39,6 +39,18 @@
     pointer-events: all;
 }
 
+.xeokit-btn.left-half {
+    border-right: 0 !important;
+    margin-right: 0;
+    border-radius: .25rem 0 0 .25rem;
+}
+
+.xeokit-btn.right-half {
+    border-left: 0 !important;
+    margin-left: 0;
+    border-radius: 0 .25rem .25rem 0;
+}
+
 .xeokit-btn.disabled {
     opacity: .55;
     color: #99A4AD;
@@ -495,6 +507,8 @@
     list-style: none;
     margin-left: 0;
     padding: 0;
+    margin-block-start: 0.0em !important;
+    margin-block-end: 0.2em !important;
 }
 
 .xeokit-context-menu ul li {
@@ -624,8 +638,6 @@
 
 .xeokit-section-counter {
     opacity: .55;
-    border-radius: 25px;
-    border: solid 2px black;
     color: black;
     padding: 1px;
     margin: 0;
@@ -660,3 +672,45 @@
 .xeokit-section-counter.disabled:hover {
     color: #99A4AD;
 }
+
+
+.xeokit-section-menu-button {
+    /*opacity: .55;*/
+    /*border-radius: 3px;*/
+    /*border: solid 2px black;*/
+    /*color: black;*/
+    /*padding: 1px;*/
+    /*margin: 0;*/
+    /*margin-left: 10px;*/
+    /*width: 20px;*/
+    /*height: 20px;*/
+    /*float: right;*/
+    /*font-family: 'Roboto', sans-serif;*/
+    /*font-size: 14px;*/
+    /*line-height: 1.50;*/
+}
+
+.xeokit-section-menu-button.disabled {
+    color: #99A4AD;
+    border: 2px solid #6c757d !important;
+}
+
+.xeokit-section-menu-button.active {
+    color: #fff !important;
+    background-color: #03103F !important;
+    border-color: #03103F !important;
+}
+
+.xeokit-section-menu-button:hover {
+    color: #477dca;
+}
+
+.xeokit-section-menu-button.active:hover {
+    color: white;
+    border: 2px solid #477dca;
+}
+
+.xeokit-section-menu-button.disabled:hover {
+    color: #99A4AD;
+}
+

@@ -91,7 +91,8 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
         <!-- section tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-counter"></div></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x left-half disabled" data-tippy-content="Slice objects"></button>
+        <button type="button" class="xeokit-section-menu-button xeokit-btn right-half"><span class="xeokit-section-counter">0</span><i class="fa fa-2x fa-caret-down"></i></button>
     </div>
 
 </div>`;
@@ -309,6 +310,8 @@ class BIMViewer extends Controller {
         this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-section"),
             counterElement: toolbarElement.querySelector(".xeokit-section-counter"),
+            menuButtonElement: toolbarElement.querySelector(".xeokit-section-menu-button"),
+            menuElement: toolbarElement.querySelector(".dropdown-content"),
             active: false
         });
 
@@ -1698,9 +1701,17 @@ class BIMViewer extends Controller {
     /**
      * Clears sections.
      *
-     * sections are the sliceing planes, that we use to section models in order to see interior structures.
+     * Sections are the slicing planes, that we use to section models in order to see interior structures.
      */
     clearSections() {
+        this._sectionTool.clear();
+    }
+
+
+    /**
+     * Reverses the direction of all section planes.
+     */
+    flipSections() {
         this._sectionTool.clear();
     }
 

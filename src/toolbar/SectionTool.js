@@ -14,12 +14,23 @@ class SectionTool extends Controller {
             throw "Missing config: buttonElement";
         }
 
+        if (!cfg.menuButtonElement) {
+            throw "Missing config: menuButtonElement";
+        }
+
+        if (!cfg.counterElement) {
+            throw "Missing config: counterElement";
+        }
+
         this._buttonElement = cfg.buttonElement;
         this._counterElement = cfg.counterElement;
+        this._menuButtonElement = cfg.menuButtonElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {});
 
-        this._sectionToolContextMenu = new SectionToolContextMenu();
+        this._sectionToolMenu = new SectionToolContextMenu({
+            sectionPlanesPlugin: this._sectionPlanesPlugin
+        });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
 
@@ -66,14 +77,34 @@ class SectionTool extends Controller {
             event.preventDefault();
         });
 
-        this._buttonElement.oncontextmenu = (e) => {
-            this._sectionToolContextMenu.context = {
+        this._menuButtonElement.addEventListener("click", (event) => {
+            if (!this.getEnabled()) {
+                return;
+            }
+            if (this._sectionToolMenu.shown) {
+                this._sectionToolMenu.hide();
+                return;
+            }
+            this._sectionToolMenu.context = {
                 bimViewer: this.bimViewer,
                 viewer: this.viewer,
                 sectionTool: this
             };
-            this._sectionToolContextMenu.show(e.pageX, e.pageY);
-            e.preventDefault();
+            const offset = getOffset(this._menuButtonElement);
+
+            this._sectionToolMenu.show(offset.left, offset.top);
+            event.preventDefault();
+        });
+
+        function getOffset(el) {
+            var rect = el.getBoundingClientRect(),
+                scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            return {top: rect.bottom + scrollTop - 2, left: rect.left + scrollLeft}
+        }
+
+        this._buttonElement.oncontextmenu = (event) => {
+            event.preventDefault();
         };
 
         this.bimViewer.on("reset", () => {
@@ -123,6 +154,10 @@ class SectionTool extends Controller {
         return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
     }
 
+    flipSections() {
+        this._sectionPlanesPlugin.flipSectionPlanes()
+    }
+
     clear() {
         this._sectionPlanesPlugin.clear();
         this._updateSectionPlanesCount();
@@ -130,7 +165,7 @@ class SectionTool extends Controller {
 
     destroy() {
         this._sectionPlanesPlugin.destroy();
-        this._sectionToolContextMenu.destroy();
+        this._sectionToolMenu.destroy();
         super.destroy();
     }
 }
