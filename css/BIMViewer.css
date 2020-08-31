@@ -494,6 +494,8 @@
 .xeokit-context-menu ul {
     list-style: none;
     margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
     padding: 0;
 }
 
@@ -532,6 +534,18 @@
     cursor: default;
     background: #eeeeee;
     font-weight: normal;
+}
+
+.xeokit-context-submenu {
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    display: none;
+    z-index: 300000;
+    background: rgba(255, 255, 255, 0.46);
+    border: 1px solid black;
+    border-radius: 0 6px 6px 6px !important;
+    padding: 0;
+    width: 200px;
 }
 
 /* Busy modal dialog */
@@ -623,9 +637,7 @@
 }
 
 .xeokit-section-counter {
-    opacity: .55;
-    border-radius: 25px;
-    border: solid 2px black;
+    opacity: 1.0;
     color: black;
     padding: 1px;
     margin: 0;
@@ -634,7 +646,7 @@
     height: 20px;
     float: right;
     font-family: 'Roboto', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.50;
 }
 
@@ -658,5 +670,44 @@
 }
 
 .xeokit-section-counter.disabled:hover {
+    color: #99A4AD;
+}
+
+.xeokit-section-menu-button {
+    opacity: 1.0;
+    border-radius: 5px;
+    border: 0;
+    color: black;
+    padding: 1px;
+    margin: 0;
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    float: right;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.50;
+}
+
+.xeokit-section-menu-button.disabled {
+    color: #99A4AD;
+    border: 0;
+}
+
+.xeokit-section-menu-button.active {
+    color: #fff;
+    border-color: #ebebeb;
+}
+
+.xeokit-section-menu-button:hover {
+    color: #477dca;
+}
+
+.xeokit-section-menu-button.active:hover {
+    color: white;
+    /*border: 2px solid #477dca;*/
+}
+
+.xeokit-section-menu-button.disabled:hover {
     color: #99A4AD;
 }

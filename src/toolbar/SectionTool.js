@@ -14,12 +14,19 @@ class SectionTool extends Controller {
             throw "Missing config: buttonElement";
         }
 
+        if (!cfg.menuButtonElement) {
+            throw "Missing config: menuButtonElement";
+        }
+
         this._buttonElement = cfg.buttonElement;
         this._counterElement = cfg.counterElement;
+        this._menuButtonElement = cfg.menuButtonElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {});
 
-        this._sectionToolContextMenu = new SectionToolContextMenu();
+        this._sectionToolContextMenu = new SectionToolContextMenu({
+            sectionPlanesPlugin: this._sectionPlanesPlugin
+        });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
 
@@ -29,11 +36,13 @@ class SectionTool extends Controller {
                 if (this._counterElement) {
                     this._counterElement.classList.add("disabled");
                 }
+                this._menuButtonElement.classList.add("disabled");
             } else {
                 this._buttonElement.classList.remove("disabled");
                 if (this._counterElement) {
                     this._counterElement.classList.remove("disabled");
                 }
+                this._menuButtonElement.classList.remove("disabled");
             }
         });
 
@@ -43,11 +52,13 @@ class SectionTool extends Controller {
                 if (this._counterElement) {
                     this._counterElement.classList.add("active");
                 }
+                this._menuButtonElement.classList.add("active");
             } else {
                 this._buttonElement.classList.remove("active");
                 if (this._counterElement) {
                     this._counterElement.classList.remove("active");
                 }
+                this._menuButtonElement.classList.remove("active");
             }
         });
 
@@ -66,13 +77,14 @@ class SectionTool extends Controller {
             event.preventDefault();
         });
 
-        this._buttonElement.oncontextmenu = (e) => {
+        this._menuButtonElement.onclick = (e) => {
             this._sectionToolContextMenu.context = {
                 bimViewer: this.bimViewer,
                 viewer: this.viewer,
                 sectionTool: this
             };
-            this._sectionToolContextMenu.show(e.pageX, e.pageY);
+            const rect = this._menuButtonElement.getBoundingClientRect();
+            this._sectionToolContextMenu.show(rect.left, rect.bottom - 1);
             e.preventDefault();
         };
 
@@ -126,6 +138,10 @@ class SectionTool extends Controller {
     clear() {
         this._sectionPlanesPlugin.clear();
         this._updateSectionPlanesCount();
+    }
+
+    flipSections() {
+        this._sectionPlanesPlugin.flipSectionPlanes();
     }
 
     destroy() {

@@ -56,7 +56,9 @@
             explorerElement: document.getElementById("myExplorer"), // Left panel
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
             navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
-            busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop")
+            busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop"),
+            enableEditModels: true
+
         });
 
         // Create tooltips on various HTML elements created by BIMViewer
@@ -66,13 +68,24 @@
             }
         });
 
-
         // Configure our viewer
         bimViewer.setConfigs({});
 
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
-            console.log(JSON.stringify(event, null, "\t"));
+            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
+            console.log("addModel: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("editModel", (event) => { // "Edit" selected in Models tab's context menu
+            console.log("editModel: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("deleteModel", (event) => { // "Delete" selected in Models tab's context menu
+            console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
         });
 
         //--------------------------------------------------------------------------------------------------------------
