@@ -652,7 +652,6 @@
 
 .xeokit-section-counter.disabled {
     color: #99A4AD;
-    border: 2px solid #6c757d !important;
 }
 
 .xeokit-section-counter.active {
@@ -666,7 +665,6 @@
 
 .xeokit-section-counter.active:hover {
     color: white;
-    border: 2px solid #477dca;
 }
 
 .xeokit-section-counter.disabled:hover {
@@ -710,4 +708,70 @@
 
 .xeokit-section-menu-button.disabled:hover {
     color: #99A4AD;
+}
+
+.xeokit-arrow-right {
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-style: solid;
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent black;
+}
+
+.xeokit-arrow-right.disabled {
+    color: #99A4AD !important;
+}
+
+.xeokit-arrow-right.active {
+    color: white !important;
+    border-color: transparent transparent transparent white !important;
+}
+
+.xeokit-arrow-right:hover {
+    border-color: transparent transparent transparent #477dca !important;
+}
+
+.xeokit-arrow-right.active:hover {
+    color: white;
+    border-color: transparent transparent transparent white !important;
+}
+
+.xeokit-arrow-right.disabled:hover {
+    color: #99A4AD !important;
+    border-color: transparent transparent transparent #99A4AD !important;
+}
+
+.xeokit-arrow-down {
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-style: solid;
+    border-width: 8px 8px 0 8px;
+    border-color: black transparent transparent transparent;
+}
+
+.xeokit-arrow-down.disabled {
+    color: #99A4AD !important;
+}
+
+.xeokit-arrow-down.active {
+    color: white !important;
+    border-color: white transparent transparent transparent !important;
+}
+
+.xeokit-arrow-down:hover {
+    color: white !important;
+    border-color: #477dca transparent transparent transparent !important;
+}
+
+.xeokit-arrow-down.active:hover {
+    color: white !important;
+    border-color: white transparent transparent transparent !important;
+}
+
+.xeokit-arrow-down.disabled:hover {
+    border-color: #99A4AD transparent transparent transparent !important;
 }
