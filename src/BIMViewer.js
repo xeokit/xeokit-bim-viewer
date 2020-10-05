@@ -23,13 +23,16 @@ import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 
-const explorerTemplate = `<div class="xeokit-tabs">
+function createExplorerTemplate(cfg) {
+    const explorerTemplate = `<div class="xeokit-tabs">
     <div class="xeokit-tab xeokit-modelsTab">
         <a class="xeokit-tab-btn" href="#">Models</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="Unload all models">Unload all</button>
-            </div>
+                <button type="button" class="xeokit-loadAllModels xeokit-btn disabled" data-tippy-content="Load all models">Load all</button>
+                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="Unload all models">Unload all</button>` +
+        (cfg.enableEditModels ? `<button type="button" class="xeokit-addModel xeokit-btn disabled" data-tippy-content="Add model">Add</button>` : ``) +
+        `</div>
             <div class="xeokit-models" ></div>
         </div>
     </div>
@@ -64,6 +67,8 @@ const explorerTemplate = `<div class="xeokit-tabs">
         </div>
     </div>
 </div>`;
+    return explorerTemplate;
+}
 
 const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
@@ -91,7 +96,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
         <!-- section tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-counter"></div></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button"><span class="xeokit-arrow-right xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
     </div>
 
 </div>`;
@@ -139,7 +144,6 @@ function initTabs(containerElement) {
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
  *
-
  *
  */
 class BIMViewer extends Controller {
@@ -148,6 +152,7 @@ class BIMViewer extends Controller {
      * Constructs a BIMViewer.
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
+     * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
      */
     constructor(server, cfg = {}) {
 
@@ -206,7 +211,9 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
         this._initConfigs();
 
-        explorerElement.innerHTML = explorerTemplate;
+        this._enableAddModels = !!cfg.enableAddModels;
+
+        explorerElement.innerHTML = createExplorerTemplate(cfg);
         toolbarElement.innerHTML = toolbarTemplate;
 
         this._explorerElement = explorerElement;
@@ -215,8 +222,11 @@ class BIMViewer extends Controller {
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
+            loadModelsButtonElement: explorerElement.querySelector(".xeokit-loadAllModels"), // Can be undefined
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
-            modelsElement: explorerElement.querySelector(".xeokit-models")
+            addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
+            modelsElement: explorerElement.querySelector(".xeokit-models"),
+            enableEditModels: this._enableAddModels
         });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
@@ -309,6 +319,8 @@ class BIMViewer extends Controller {
         this._sectionTool = new SectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-section"),
             counterElement: toolbarElement.querySelector(".xeokit-section-counter"),
+            menuButtonElement: toolbarElement.querySelector(".xeokit-section-menu-button"),
+            menuButtonArrowElement: toolbarElement.querySelector(".xeokit-section-menu-button-arrow"),
             active: false
         });
 
@@ -387,11 +399,24 @@ class BIMViewer extends Controller {
             event.preventDefault();
         });
 
+        explorerElement.querySelector(".xeokit-loadAllModels").addEventListener("click", (event) => {
+            this.setControlsEnabled(false); // For quick UI feedback
+            this.loadAllModels();
+            event.preventDefault();
+        });
+
         explorerElement.querySelector(".xeokit-unloadAllModels").addEventListener("click", (event) => {
             this.setControlsEnabled(false); // For quick UI feedback
             this._modelsExplorer.unloadAllModels();
             event.preventDefault();
         });
+
+        if (this._enableAddModels) {
+            explorerElement.querySelector(".xeokit-addModel").addEventListener("click", (event) => {
+                this.fire("addModel", {});
+                event.preventDefault();
+            });
+        }
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
     }
@@ -956,6 +981,40 @@ class BIMViewer extends Controller {
      */
     unloadAllModels() {
         this._modelsExplorer.unloadAllModels();
+    }
+
+    /**
+     * Edits a model.
+     *
+     * Assumes that the project containing the model is currently loaded.
+     *
+     * @param {String} modelId ID of the model to edit. Must be the ID of one of the models in the currently loaded project.
+     */
+    editModel(modelId) {
+        this.fire("editModel", {
+            modelId: modelId
+        });
+    }
+
+    /**
+     * Deletes a model.
+     *
+     * Assumes that the project containing the model is currently loaded.
+     *
+     * @param {String} modelId ID of the model to delete. Must be the ID of one of the models in the currently loaded project.
+     */
+    deleteModel(modelId) {
+        this.fire("deleteModel", {
+            modelId: modelId
+        });
+    }
+
+    /**
+     * Adds a model.
+     *
+     */
+    addModel() {
+        this.fire("addModel", {});
     }
 
     /**
@@ -1698,10 +1757,18 @@ class BIMViewer extends Controller {
     /**
      * Clears sections.
      *
-     * sections are the sliceing planes, that we use to section models in order to see interior structures.
+     * Sections are the sliceing planes, that we use to section models in order to see interior structures.
      */
     clearSections() {
         this._sectionTool.clear();
+    }
+
+
+    /**
+     * Inverts the direction of sections.
+     */
+    flipSections() {
+        this._sectionTool.flipSections();
     }
 
     /**
