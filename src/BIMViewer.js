@@ -211,6 +211,8 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
         this._initConfigs();
 
+        this._enableAddModels = !!cfg.enableAddModels;
+
         explorerElement.innerHTML = createExplorerTemplate(cfg);
         toolbarElement.innerHTML = toolbarTemplate;
 
@@ -224,7 +226,7 @@ class BIMViewer extends Controller {
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
             addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
             modelsElement: explorerElement.querySelector(".xeokit-models"),
-            enableEditModels: (!!cfg.enableEditModels)
+            enableEditModels: this._enableAddModels
         });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
@@ -409,10 +411,12 @@ class BIMViewer extends Controller {
             event.preventDefault();
         });
 
-        explorerElement.querySelector(".xeokit-addModel").addEventListener("click", (event) => {
-            this.fire("addModel", {});
-            event.preventDefault();
-        });
+        if (this._enableAddModels) {
+            explorerElement.querySelector(".xeokit-addModel").addEventListener("click", (event) => {
+                this.fire("addModel", {});
+                event.preventDefault();
+            });
+        }
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
     }

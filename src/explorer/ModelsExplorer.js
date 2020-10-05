@@ -26,6 +26,7 @@ class ModelsExplorer extends Controller {
             throw "Missing config: modelsElement";
         }
 
+        this._enableAddModels = !!cfg.enableAddModels;
         this._modelsTabElement = cfg.modelsTabElement;
         this._loadModelsButtonElement = cfg.loadModelsButtonElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
@@ -64,7 +65,9 @@ class ModelsExplorer extends Controller {
             if (this._numModelsLoaded > 0) {
                 this._unloadModelsButtonElement.classList.remove("disabled");
             }
-            this._addModelButtonElement.classList.remove("disabled");
+            if (this._enableAddModels) {
+                this._addModelButtonElement.classList.remove("disabled");
+            }
         }, (errMsg) => {
             this.error(errMsg);
             if (error) {
@@ -196,7 +199,9 @@ class ModelsExplorer extends Controller {
 
         this._loadModelsButtonElement.classList.add("disabled");
         this._unloadModelsButtonElement.classList.add("disabled");
-        this._addModelButtonElement.classList.add("disabled");
+        if (this._enableAddModels) {
+            this._addModelButtonElement.classList.add("disabled");
+        }
         const lastProjectId = this._projectId;
         this._projectId = null;
         this.fire("projectUnloaded", {
