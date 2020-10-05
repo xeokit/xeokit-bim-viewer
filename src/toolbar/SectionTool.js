@@ -4,7 +4,7 @@ import {SectionToolContextMenu} from "./../contextMenus/SectionToolContextMenu.j
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /** @private */
-class SectionTool extends Controller {
+class SectionTool extends Controller { // XX
 
     constructor(parent, cfg) {
 
@@ -14,12 +14,21 @@ class SectionTool extends Controller {
             throw "Missing config: buttonElement";
         }
 
+        if (!cfg.menuButtonElement) {
+            throw "Missing config: menuButtonElement";
+        }
+
         this._buttonElement = cfg.buttonElement;
         this._counterElement = cfg.counterElement;
+        this._menuButtonElement = cfg.menuButtonElement;
+        this._menuButtonArrowElement = cfg.menuButtonArrowElement;
 
         this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {});
 
-        this._sectionToolContextMenu = new SectionToolContextMenu();
+        this._sectionToolContextMenu = new SectionToolContextMenu({
+            sectionPlanesPlugin: this._sectionPlanesPlugin,
+            hideOnMouseDown: false
+        });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
 
@@ -29,11 +38,15 @@ class SectionTool extends Controller {
                 if (this._counterElement) {
                     this._counterElement.classList.add("disabled");
                 }
+                this._menuButtonElement.classList.add("disabled");
+                this._menuButtonArrowElement.classList.add("disabled");
             } else {
                 this._buttonElement.classList.remove("disabled");
                 if (this._counterElement) {
                     this._counterElement.classList.remove("disabled");
                 }
+                this._menuButtonElement.classList.remove("disabled");
+                this._menuButtonArrowElement.classList.remove("disabled");
             }
         });
 
@@ -43,11 +56,15 @@ class SectionTool extends Controller {
                 if (this._counterElement) {
                     this._counterElement.classList.add("active");
                 }
+                this._menuButtonElement.classList.add("active");
+                this._menuButtonArrowElement.classList.add("active");
             } else {
                 this._buttonElement.classList.remove("active");
                 if (this._counterElement) {
                     this._counterElement.classList.remove("active");
                 }
+                this._menuButtonElement.classList.remove("active");
+                this._menuButtonArrowElement.classList.remove("active");
             }
         });
 
@@ -57,24 +74,54 @@ class SectionTool extends Controller {
             }
         });
 
-        this._buttonElement.addEventListener("click", (event) => {
+        this._buttonElement.addEventListener("click", (e) => {
             if (!this.getEnabled()) {
+                return;
+            }
+            if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
                 return;
             }
             const active = this.getActive();
             this.setActive(!active);
-            event.preventDefault();
+            e.preventDefault();
         });
 
-        this._buttonElement.oncontextmenu = (e) => {
-            this._sectionToolContextMenu.context = {
-                bimViewer: this.bimViewer,
-                viewer: this.viewer,
-                sectionTool: this
-            };
-            this._sectionToolContextMenu.show(e.pageX, e.pageY);
-            e.preventDefault();
-        };
+        document.addEventListener("mousedown", (e) => {
+
+            if (e.target.classList.contains("xeokit-context-menu-item")) {
+                // Allow click on menu item
+                return;
+            }
+
+            if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
+                e.preventDefault();
+                if (this._sectionToolContextMenu.shown) {
+                    this._sectionToolContextMenu.hide();
+                } else {
+                    this._sectionToolContextMenu.context = {
+                        bimViewer: this.bimViewer,
+                        viewer: this.viewer,
+                        sectionTool: this
+                    };
+
+                    const rect = this._menuButtonElement.getBoundingClientRect();
+
+                    this._sectionToolContextMenu.show(rect.left, rect.bottom + 5);
+                }
+            } else {
+                this._sectionToolContextMenu.hide();
+            }
+        });
+
+        this._sectionToolContextMenu.on("shown", () => {
+            this._menuButtonArrowElement.classList.remove("xeokit-arrow-right");
+            this._menuButtonArrowElement.classList.add("xeokit-arrow-down");
+        });
+
+        this._sectionToolContextMenu.on("hidden", () => {
+            this._menuButtonArrowElement.classList.remove("xeokit-arrow-down");
+            this._menuButtonArrowElement.classList.add("xeokit-arrow-right");
+        });
 
         this.bimViewer.on("reset", () => {
             this.clear();
@@ -104,6 +151,10 @@ class SectionTool extends Controller {
                     dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
                 });
 
+                sectionPlane.on("destroyed", () => {
+                    this._updateSectionPlanesCount();
+                });
+
                 this._sectionPlanesPlugin.showControl(sectionPlane.id);
 
                 this._updateSectionPlanesCount();
@@ -126,6 +177,10 @@ class SectionTool extends Controller {
     clear() {
         this._sectionPlanesPlugin.clear();
         this._updateSectionPlanesCount();
+    }
+
+    flipSections() {
+        this._sectionPlanesPlugin.flipSectionPlanes();
     }
 
     destroy() {
