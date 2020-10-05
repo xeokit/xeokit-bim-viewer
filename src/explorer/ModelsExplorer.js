@@ -26,8 +26,11 @@ class ModelsExplorer extends Controller {
             throw "Missing config: modelsElement";
         }
 
+        this._enableAddModels = !!cfg.enableAddModels;
         this._modelsTabElement = cfg.modelsTabElement;
+        this._loadModelsButtonElement = cfg.loadModelsButtonElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
+        this._addModelButtonElement = cfg.addModelButtonElement;
         this._modelsElement = cfg.modelsElement;
         this._modelsTabButtonElement = this._modelsTabElement.querySelector(".xeokit-tab-btn");
 
@@ -39,9 +42,12 @@ class ModelsExplorer extends Controller {
             objectDefaults: ModelIFCObjectColors
         });
 
-        this._modelsContextMenu = new ModelsContextMenu();
+        this._modelsContextMenu = new ModelsContextMenu({
+            enableEditModels: cfg.enableEditModels
+        });
 
         this._modelsInfo = {};
+        this._numModels = 0;
         this._numModelsLoaded = 0;
         this._projectId = null;
     }
@@ -51,7 +57,17 @@ class ModelsExplorer extends Controller {
             this.unloadProject();
             this._projectId = projectId;
             this._modelsInfo = {};
+            this._numModels = 0;
             this._parseProject(projectInfo, done);
+            if (this._numModelsLoaded < this._numModels) {
+                this._loadModelsButtonElement.classList.remove("disabled");
+            }
+            if (this._numModelsLoaded > 0) {
+                this._unloadModelsButtonElement.classList.remove("disabled");
+            }
+            if (this._enableAddModels) {
+                this._addModelButtonElement.classList.remove("disabled");
+            }
         }, (errMsg) => {
             this.error(errMsg);
             if (error) {
@@ -74,6 +90,7 @@ class ModelsExplorer extends Controller {
         var html = "";
         const modelsInfo = projectInfo.models || [];
         this._modelsInfo = {};
+        this._numModels = modelsInfo.length;
         for (let i = 0, len = modelsInfo.length; i < len; i++) {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
@@ -150,7 +167,7 @@ class ModelsExplorer extends Controller {
         const modelId = modelsLoaded.pop();
         this.loadModel(modelId,
             () => { // Done
-            this._loadNextModel(modelsLoaded, done);
+                this._loadNextModel(modelsLoaded, done);
             },
             () => { // Error - recover and attempt to load next model
                 this._loadNextModel(modelsLoaded, done);
@@ -163,7 +180,7 @@ class ModelsExplorer extends Controller {
             done();
             return;
         }
-       this.bimViewer.setViewerState(viewerState, done);
+        this.bimViewer.setViewerState(viewerState, done);
     }
 
     unloadProject() {
@@ -179,7 +196,12 @@ class ModelsExplorer extends Controller {
         }
         this._modelsElement.innerHTML = "";
         this._numModelsLoaded = 0;
+
+        this._loadModelsButtonElement.classList.add("disabled");
         this._unloadModelsButtonElement.classList.add("disabled");
+        if (this._enableAddModels) {
+            this._addModelButtonElement.classList.add("disabled");
+        }
         const lastProjectId = this._projectId;
         this._projectId = null;
         this.fire("projectUnloaded", {
@@ -240,6 +262,11 @@ class ModelsExplorer extends Controller {
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
                             this._unloadModelsButtonElement.classList.remove("disabled");
+                            if (this._numModelsLoaded < this._numModels) {
+                                this._loadModelsButtonElement.classList.remove("disabled");
+                            } else {
+                                this._loadModelsButtonElement.classList.add("disabled");
+                            }
                             if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
@@ -291,6 +318,11 @@ class ModelsExplorer extends Controller {
             this._unloadModelsButtonElement.classList.remove("disabled");
         } else {
             this._unloadModelsButtonElement.classList.add("disabled");
+        }
+        if (this._numModelsLoaded < this._numModels) {
+            this._loadModelsButtonElement.classList.remove("disabled");
+        } else {
+            this._loadModelsButtonElement.classList.add("disabled");
         }
         this.fire("modelUnloaded", modelId);
     }
