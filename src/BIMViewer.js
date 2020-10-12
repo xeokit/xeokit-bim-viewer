@@ -211,7 +211,7 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
         this._initConfigs();
 
-        this._enableAddModels = !!cfg.enableAddModels;
+        this._enableAddModels = !!cfg.enableEditModels;
 
         explorerElement.innerHTML = createExplorerTemplate(cfg);
         toolbarElement.innerHTML = toolbarTemplate;

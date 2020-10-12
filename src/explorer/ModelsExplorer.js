@@ -26,7 +26,7 @@ class ModelsExplorer extends Controller {
             throw "Missing config: modelsElement";
         }
 
-        this._enableAddModels = !!cfg.enableAddModels;
+        this._enableAddModels = !!cfg.enableEditModels;
         this._modelsTabElement = cfg.modelsTabElement;
         this._loadModelsButtonElement = cfg.loadModelsButtonElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
