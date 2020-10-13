@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "description": "BIM viewer built on xeokit",
   "main": "index.js",
   "directories": {
