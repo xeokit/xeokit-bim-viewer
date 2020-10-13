@@ -114,13 +114,13 @@ class SectionTool extends Controller { // XX
         });
 
         this._sectionToolContextMenu.on("shown", () => {
-            this._menuButtonArrowElement.classList.remove("xeokit-arrow-right");
-            this._menuButtonArrowElement.classList.add("xeokit-arrow-down");
+            this._menuButtonArrowElement.classList.remove("xeokit-arrow-down");
+            this._menuButtonArrowElement.classList.add("xeokit-arrow-up");
         });
 
         this._sectionToolContextMenu.on("hidden", () => {
-            this._menuButtonArrowElement.classList.remove("xeokit-arrow-down");
-            this._menuButtonArrowElement.classList.add("xeokit-arrow-right");
+            this._menuButtonArrowElement.classList.remove("xeokit-arrow-up");
+            this._menuButtonArrowElement.classList.add("xeokit-arrow-down");
         });
 
         this.bimViewer.on("reset", () => {
