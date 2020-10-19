@@ -478,8 +478,9 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.doublePickFlyTo = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
-        this.viewer.cameraControl.dollyRate = 20.0;
-        this.viewer.cameraControl.dollyInertia = 0.70;
+        this.viewer.cameraControl.keyboardDollyRate = 100.0;
+        this.viewer.cameraControl.mouseWheelDollyRate = 100.0;
+        this.viewer.cameraControl.dollyInertia = 0.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
         document.body.appendChild(cameraPivotElement);
@@ -711,7 +712,6 @@ class BIMViewer extends Controller {
                     }
                     this._configs["saoInteractiveDelay"] = parseFloat(value);
                     break;
-
 
                 default:
                     this.error("setConfig() - unsupported configuration: '" + name + "'");
