@@ -38,15 +38,6 @@ class ModelsContextMenu extends ContextMenu {
 
             items.push([
                 {
-                    title: "Add",
-                    getEnabled: function (context) {
-                        return true;
-                    },
-                    doAction: function (context) {
-                        context.bimViewer.addModel();
-                    }
-                },
-                {
                     title: "Edit",
                     getEnabled: function (context) {
                         return true;
