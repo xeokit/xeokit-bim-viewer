@@ -63,6 +63,9 @@ class QueryTool extends Controller {
                 entity.highlighted = false;
                 entity = null;
             }
+            if (!e.entity || !e.entity.isObject) {
+                return;
+            }
             entity = e.entity;
             entity.highlighted = true;
         });
