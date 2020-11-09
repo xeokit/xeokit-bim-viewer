@@ -1,41 +1,51 @@
 {
-  "id": "ManyModels",
-  "name": "Many Models",
-  "models": [
-    {
-      "id": "Schependomlaan",
-      "name": "Schependomlaan",
-      "position": [
-        -100,
-        0,
-        0
-      ],
-      "saoEnabled": true
+    "id": "ManyModels",
+    "name": "Many Models",
+    "models": [
+        {
+            "id": "Schependomlaan",
+            "name": "Schependomlaan",
+            "position": [
+                -100,
+                0,
+                0
+            ],
+            "saoEnabled": true
+        },
+        {
+            "id": "OTCConferenceCenter",
+            "name": "OTC Conference Center",
+            "position": [
+                100,
+                0,
+                0
+            ],
+            "saoEnabled": false
+        },
+        {
+            "id": "MAPFullPrecision",
+            "name": "Model with Full Precision",
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "cameraNear": "0.05",
+        "cameraFar": "3000.0",
+        "saoEnabled": "true",
+        "saoBias": "0.5",
+        "saoIntensity": "0.5",
+        "saoScale": "1200.0",
+        "saoKernelRadius": "100"
     },
-    {
-      "id": "OTCConferenceCenter",
-      "name": "OTC Conference Center",
-      "position": [
-        100,
-        0,
-        0
-      ],
-      "saoEnabled": false
+    "viewerContent": {
+        "modelsLoaded": [
+            "Schependomlaan",
+            "OTCConferenceCenter"
+        ]
     }
-  ],
-  "viewerConfigs": {
-    "cameraNear": "0.05",
-    "cameraFar": "3000.0",
-    "saoEnabled": "true",
-    "saoBias": "0.5",
-    "saoIntensity": "0.5",
-    "saoScale": "1200.0",
-    "saoKernelRadius": "100"
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "Schependomlaan",
-      "OTCConferenceCenter"
-    ]
-  }
 }

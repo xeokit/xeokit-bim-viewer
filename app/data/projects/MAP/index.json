@@ -1,0 +1,58 @@
+{
+    "id": "MAP",
+    "name": "MAP",
+    "models": [
+        {
+            "id": "MAPFullPrecision",
+            "name": "Model with Full Precision",
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "saoEnabled": false
+        },
+        {
+            "id": "MAPJitter",
+            "name": "Model with Jitter",
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "cameraNear": "0.05",
+        "cameraFar": "3000.0"
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "MAPFullPrecision"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "objects",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1,
+        "setCamera": {
+            "eye": [
+                1842072.0004422595,
+                36.787413105361736,
+                -5173313.014714716
+            ],
+            "look": [
+                1842022.2889441466,
+                10.494778407372536,
+                -5173301.847852232
+            ],
+            "up": [
+                -0.4474339881582741,
+                0.8886511377283971,
+                0.10050861482881593
+            ]
+        }
+    }
+}
