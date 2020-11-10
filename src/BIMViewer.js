@@ -22,6 +22,7 @@ import {ThreeDMode} from "./toolbar/ThreeDMode.js";
 import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
+import {OrthoMode} from "./toolbar/OrthoMode.js";
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs">
@@ -75,16 +76,14 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     <div class="xeokit-btn-group">
         <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled" data-tippy-content="Reset view"></button>
     </div>
-    <!-- 3D Mode button -->
     <div class="xeokit-btn-group" role="group">
+        <!-- 3D Mode button -->
         <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
-    </div>
-    <!-- Fit button -->
-    <div class="xeokit-btn-group" role="group">
-        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="View fit"></button>
-    </div>
-    <!-- First Person mode button -->
-    <div class="xeokit-btn-group" role="group">
+        <!-- Perspective/Ortho Mode button -->
+        <button type="button" class="xeokit-ortho xeokit-btn fa fa-th fa-2x" data-tippy-content="Toggle Perspective/Ortho"></button>
+        <!-- Fit button -->
+        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="View fit"></button>   
+        <!-- First Person mode button -->
         <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled" data-tippy-content="First person"></button>
     </div>
     <!-- Tools button group -->
@@ -272,18 +271,18 @@ class BIMViewer extends Controller {
                 if (active) {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "orbit";
-                    bimViewer.viewer.cameraControl.followPointer = true;
+                    //  bimViewer.viewer.cameraControl.followPointer = true;
                 } else {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "planView";
-                    bimViewer.viewer.cameraControl.followPointer = false;
+                    //  bimViewer.viewer.cameraControl.followPointer = false;
                 }
                 threeDActive = active;
             };
 
             this.setFirstPersonModeActive = (active) => {
                 bimViewer.viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
-                bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode !== "planView";
+                //bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode !== "planView";
                 firstPersonActive = active;
             };
         })(this);
@@ -291,6 +290,11 @@ class BIMViewer extends Controller {
         this._threeDMode = new ThreeDMode(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-threeD"),
             cameraControlNavModeMediator: cameraControlNavModeMediator,
+            active: false
+        });
+
+        this._orthoMode = new OrthoMode(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-ortho"),
             active: false
         });
 
@@ -478,9 +482,12 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.doublePickFlyTo = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
+
         this.viewer.cameraControl.keyboardDollyRate = 100.0;
         this.viewer.cameraControl.mouseWheelDollyRate = 100.0;
-        this.viewer.cameraControl.dollyInertia = 0.0;
+        this.viewer.cameraControl.dollyInertia = 0;
+        this.viewer.cameraControl.dollyMinSpeed = 0.01;
+        this.viewer.cameraControl.dollyProximityThreshold = 30.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
         document.body.appendChild(cameraPivotElement);
@@ -488,15 +495,15 @@ class BIMViewer extends Controller {
 
         // Scalable Ambient Obscurance (SAO) defaults
 
-        scene.camera.perspective.near = 0.05;
+        scene.camera.perspective.near = 0.01;
         scene.camera.perspective.far = 3000.0;
-        scene.camera.ortho.near = 0.05;
+        scene.camera.ortho.near = 0.01;
         scene.camera.ortho.far = 3000.0;
 
         const sao = scene.sao;
         sao.enabled = false;
         sao.bias = 0.5;
-        sao.intensity = 0.5;
+        sao.intensity = 0.2;
         sao.scale = 1200.0;
         sao.kernelRadius = 100;
 
@@ -1537,11 +1544,7 @@ class BIMViewer extends Controller {
      * @param {Function} done Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant.
      */
     set3DEnabled(enabled, done) {
-        if (enabled) {
-            this._threeDMode.setActive(true, done);
-        } else {
-            this._threeDMode.setActive(false, done);
-        }
+        this._threeDMode.setActive(enabled, done);
     }
 
     /**
@@ -1551,6 +1554,30 @@ class BIMViewer extends Controller {
      */
     get3DEnabled() {
         return this._threeDMode.getActive();
+    }
+
+
+    /**
+     * Sets whether the viewer is in orthographic viewing mode.
+     *
+     * The viewer is either in orthographic mode or perspective mode. The viewer is in perspective mode by default.
+     *
+     * @param {Boolean} enabled Set true to switch into ortho mode, else false to switch into perspective mode.
+     * @param {Function} done Callback to invoke when switch complete. Supplying this callback causes an animated transition. Otherwise, the transition will be instant.
+     */
+    setOrthoEnabled(enabled, done) {
+        this._orthoMode.setActive(enabled, done);
+    }
+
+    /**
+     * Gets whether the viewer is in orthographic viewing mode.
+     *
+     * The viewer is either in orthographic mode or perspective mode. The viewer is in perspective mode by default.
+     *
+     * @returns {boolean} True when in ortho mode, else false when in perspective mode.
+     */
+    getOrthoEnabled() {
+        return this._orthoMode.getActive();
     }
 
     /**
@@ -1721,6 +1748,7 @@ class BIMViewer extends Controller {
         this._resetAction.setEnabled(enabled);
         this._fitAction.setEnabled(enabled);
         this._threeDMode.setEnabled(enabled);
+        this._orthoMode.setEnabled(enabled);
         this._firstPersonMode.setEnabled(enabled);
         this._queryTool.setEnabled(enabled);
         this._hideTool.setEnabled(enabled);

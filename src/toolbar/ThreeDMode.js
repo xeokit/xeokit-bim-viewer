@@ -98,7 +98,6 @@ class ThreeDMode extends Controller {
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
                 orthoScale: diag * 1.3,
-                projection: "perspective",
                 duration: 1
             }, () => {
                 done();
@@ -108,8 +107,7 @@ class ThreeDMode extends Controller {
                 look: center,
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
-                orthoScale: diag * 1.3,
-                projection: "perspective"
+                orthoScale: diag * 1.3
             });
         }
     }
@@ -142,7 +140,6 @@ class ThreeDMode extends Controller {
 
         if (done) {
             viewer.cameraFlight.flyTo({
-                projection: "ortho",
                 eye: eye2,
                 look: look2,
                 up: up2,
@@ -152,7 +149,6 @@ class ThreeDMode extends Controller {
             });
         } else {
             viewer.cameraFlight.jumpTo({
-                projection: "ortho",
                 eye: eye2,
                 look: look2,
                 up: up2,

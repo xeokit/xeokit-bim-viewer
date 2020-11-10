@@ -1,4 +1,5 @@
 import {Controller} from "../Controller.js";
+import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /** @private */
 class OrthoMode extends Controller {
@@ -11,33 +12,17 @@ class OrthoMode extends Controller {
             throw "Missing config: buttonElement";
         }
 
-        const buttonElement = cfg.buttonElement;
+        this._buttonElement = cfg.buttonElement;
 
         this.on("enabled", (enabled) => {
             if (!enabled) {
-                buttonElement.classList.add("disabled");
+                this._buttonElement.classList.add("disabled");
             } else {
-                buttonElement.classList.remove("disabled");
+                this._buttonElement.classList.remove("disabled");
             }
         });
 
-        this.on("active", (active) => {
-            if (active) {
-                buttonElement.classList.add("active");
-            } else {
-                buttonElement.classList.remove("active");
-            }
-        });
-        
-        this.on("active", (active) => {
-            if (active) {
-                this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, () => {});
-            } else {
-                this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, () => {});
-            }
-        });
-        
-        buttonElement.addEventListener("click", (event) => {
+        this._buttonElement.addEventListener("click", (event) => {
             this.setActive(!this.getActive());
             event.preventDefault();
         });
@@ -45,6 +30,47 @@ class OrthoMode extends Controller {
         this.bimViewer.on("reset", ()=>{
             this.setActive(false);
         });
+    }
+
+    setActive(active, done) {
+        if (this._active === active) {
+            if (done) {
+                done();
+            }
+            return;
+        }
+        this._active = active;
+        if (active) {
+            this._buttonElement.classList.add("active");
+            if (done) {
+                this._enterOrthoMode(() => {
+                    this.fire("active", this._active);
+                    done();
+                });
+            } else {
+                this._enterOrthoMode();
+                this.fire("active", this._active);
+            }
+        } else {
+            this._buttonElement.classList.remove("active");
+            if (done) {
+                this._exitOrthoMode(() => {
+                    this.fire("active", this._active);
+                    done();
+                });
+            } else {
+                this._exitOrthoMode();
+                this.fire("active", this._active);
+            }
+        }
+    }
+
+    _enterOrthoMode(done) {
+        this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, done);
+    }
+
+    _exitOrthoMode(done) {
+        this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, done);
     }
 }
 
