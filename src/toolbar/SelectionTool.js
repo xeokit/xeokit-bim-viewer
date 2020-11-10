@@ -33,6 +33,8 @@ class SelectionTool extends Controller {
                 buttonElement.classList.add("active");
             } else {
                 buttonElement.classList.remove("active");
+                const scene = this.viewer.scene;
+                scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
             }
         });
 
