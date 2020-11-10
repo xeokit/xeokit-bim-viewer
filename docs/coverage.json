@@ -1,43 +1,45 @@
 {
-  "coverage": "33.09%",
-  "expectCount": 281,
-  "actualCount": 93,
+  "coverage": "31.76%",
+  "expectCount": 318,
+  "actualCount": 101,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 80,
-      "actualCount": 49,
+      "expectCount": 90,
+      "actualCount": 57,
       "undocumentLines": [
-        26,
-        68,
-        98,
-        195,
-        211,
-        215,
-        221,
-        228,
-        235,
-        242,
-        247,
-        260,
-        273,
-        280,
-        286,
-        292,
-        297,
-        302,
-        308,
-        313,
-        318,
-        394,
-        397,
-        514,
-        516,
-        517,
-        554,
-        991,
-        1042,
-        1051,
-        1163
+        27,
+        74,
+        103,
+        200,
+        213,
+        218,
+        222,
+        231,
+        238,
+        245,
+        252,
+        257,
+        270,
+        283,
+        290,
+        296,
+        301,
+        307,
+        312,
+        317,
+        323,
+        331,
+        336,
+        425,
+        428,
+        549,
+        551,
+        552,
+        589,
+        1059,
+        1110,
+        1119,
+        1231
       ]
     },
     "src/BusyModal.js": {
@@ -91,7 +93,7 @@
       "expectCount": 2,
       "actualCount": 1,
       "undocumentLines": [
-        7
+        10
       ]
     },
     "src/contextMenus/ObjectContextMenu.js": {
@@ -99,6 +101,23 @@
       "actualCount": 1,
       "undocumentLines": [
         8
+      ]
+    },
+    "src/contextMenus/SectionToolContextMenu.js": {
+      "expectCount": 11,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        6,
+        8,
+        10,
+        18,
+        19,
+        21,
+        25,
+        32,
+        109,
+        135
       ]
     },
     "src/contextMenus/TreeViewContextMenu.js": {
@@ -121,17 +140,17 @@
         34,
         42,
         49,
-        80,
-        92,
-        103,
-        115,
-        119,
-        124,
-        128
+        81,
+        93,
+        104,
+        116,
+        120,
+        125,
+        129
       ]
     },
     "src/explorer/ModelsExplorer.js": {
-      "expectCount": 33,
+      "expectCount": 37,
       "actualCount": 2,
       "undocumentLines": [
         8,
@@ -140,31 +159,35 @@
         30,
         31,
         32,
-        38,
-        42,
-        44,
+        33,
+        34,
+        35,
+        41,
         45,
-        46,
         49,
-        63,
-        73,
-        118,
-        125,
-        136,
-        145,
-        160,
-        169,
-        190,
-        194,
-        198,
-        279,
-        297,
+        50,
+        51,
+        52,
+        55,
+        79,
+        89,
+        135,
+        142,
+        153,
+        162,
+        177,
+        186,
+        212,
+        216,
+        220,
         306,
-        310,
-        314,
-        318,
-        322,
-        326
+        330,
+        339,
+        343,
+        347,
+        351,
+        355,
+        359
       ]
     },
     "src/explorer/ObjectsExplorer.js": {
@@ -179,13 +202,13 @@
         34,
         42,
         49,
-        80,
-        92,
-        103,
-        115,
-        119,
-        124,
-        128
+        81,
+        93,
+        104,
+        116,
+        120,
+        125,
+        129
       ]
     },
     "src/explorer/StoreysExplorer.js": {
@@ -200,15 +223,15 @@
         34,
         42,
         49,
-        81,
-        91,
-        103,
-        115,
-        119,
-        124,
-        128,
-        143,
-        184
+        82,
+        92,
+        104,
+        116,
+        120,
+        125,
+        129,
+        144,
+        185
       ]
     },
     "src/server/Server.js": {
@@ -246,9 +269,9 @@
         12,
         56,
         58,
-        69,
-        80,
-        87
+        72,
+        83,
+        90
       ]
     },
     "src/toolbar/NavCubeMode.js": {
@@ -261,10 +284,15 @@
       ]
     },
     "src/toolbar/OrthoMode.js": {
-      "expectCount": 2,
+      "expectCount": 7,
       "actualCount": 1,
       "undocumentLines": [
-        6
+        7,
+        15,
+        35,
+        42,
+        68,
+        72
       ]
     },
     "src/toolbar/QueryTool.js": {
@@ -275,9 +303,9 @@
         12,
         54,
         58,
-        69,
-        80,
-        90
+        72,
+        83,
+        93
       ]
     },
     "src/toolbar/ResetAction.js": {
@@ -295,15 +323,22 @@
       ]
     },
     "src/toolbar/SectionTool.js": {
-      "expectCount": 7,
+      "expectCount": 14,
       "actualCount": 1,
       "undocumentLines": [
-        7,
-        17,
-        61,
-        62,
-        74,
-        78
+        9,
+        21,
+        22,
+        23,
+        24,
+        26,
+        28,
+        134,
+        167,
+        173,
+        177,
+        182,
+        186
       ]
     },
     "src/toolbar/SelectionTool.js": {
@@ -312,11 +347,11 @@
       "undocumentLines": [
         5,
         13,
-        55,
-        59,
-        70,
-        81,
-        91
+        57,
+        61,
+        75,
+        86,
+        96
       ]
     },
     "src/toolbar/ThreeDMode.js": {
@@ -330,7 +365,7 @@
         21,
         43,
         76,
-        117
+        115
       ]
     }
   }

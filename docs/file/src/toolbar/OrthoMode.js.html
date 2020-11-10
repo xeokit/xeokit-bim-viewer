@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -37,6 +38,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/OrthoMode.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 
 /** @private */
 class OrthoMode extends Controller {
@@ -49,33 +51,17 @@ class OrthoMode extends Controller {
             throw &quot;Missing config: buttonElement&quot;;
         }
 
-        const buttonElement = cfg.buttonElement;
+        this._buttonElement = cfg.buttonElement;
 
         this.on(&quot;enabled&quot;, (enabled) =&gt; {
             if (!enabled) {
-                buttonElement.classList.add(&quot;disabled&quot;);
+                this._buttonElement.classList.add(&quot;disabled&quot;);
             } else {
-                buttonElement.classList.remove(&quot;disabled&quot;);
+                this._buttonElement.classList.remove(&quot;disabled&quot;);
             }
         });
 
-        this.on(&quot;active&quot;, (active) =&gt; {
-            if (active) {
-                buttonElement.classList.add(&quot;active&quot;);
-            } else {
-                buttonElement.classList.remove(&quot;active&quot;);
-            }
-        });
-        
-        this.on(&quot;active&quot;, (active) =&gt; {
-            if (active) {
-                this.viewer.cameraFlight.flyTo({projection: &quot;ortho&quot;, duration: 0.5}, () =&gt; {});
-            } else {
-                this.viewer.cameraFlight.flyTo({projection: &quot;perspective&quot;, duration: 0.5}, () =&gt; {});
-            }
-        });
-        
-        buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
+        this._buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
             this.setActive(!this.getActive());
             event.preventDefault();
         });
@@ -83,6 +69,47 @@ class OrthoMode extends Controller {
         this.bimViewer.on(&quot;reset&quot;, ()=&gt;{
             this.setActive(false);
         });
+    }
+
+    setActive(active, done) {
+        if (this._active === active) {
+            if (done) {
+                done();
+            }
+            return;
+        }
+        this._active = active;
+        if (active) {
+            this._buttonElement.classList.add(&quot;active&quot;);
+            if (done) {
+                this._enterOrthoMode(() =&gt; {
+                    this.fire(&quot;active&quot;, this._active);
+                    done();
+                });
+            } else {
+                this._enterOrthoMode();
+                this.fire(&quot;active&quot;, this._active);
+            }
+        } else {
+            this._buttonElement.classList.remove(&quot;active&quot;);
+            if (done) {
+                this._exitOrthoMode(() =&gt; {
+                    this.fire(&quot;active&quot;, this._active);
+                    done();
+                });
+            } else {
+                this._exitOrthoMode();
+                this.fire(&quot;active&quot;, this._active);
+            }
+        }
+    }
+
+    _enterOrthoMode(done) {
+        this.viewer.cameraFlight.flyTo({projection: &quot;ortho&quot;, duration: 0.5}, done);
+    }
+
+    _exitOrthoMode(done) {
+        this.viewer.cameraFlight.flyTo({projection: &quot;perspective&quot;, duration: 0.5}, done);
     }
 }
 

@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -64,8 +65,11 @@ class ModelsExplorer extends Controller {
             throw &quot;Missing config: modelsElement&quot;;
         }
 
+        this._enableAddModels = !!cfg.enableEditModels;
         this._modelsTabElement = cfg.modelsTabElement;
+        this._loadModelsButtonElement = cfg.loadModelsButtonElement;
         this._unloadModelsButtonElement = cfg.unloadModelsButtonElement;
+        this._addModelButtonElement = cfg.addModelButtonElement;
         this._modelsElement = cfg.modelsElement;
         this._modelsTabButtonElement = this._modelsTabElement.querySelector(&quot;.xeokit-tab-btn&quot;);
 
@@ -77,9 +81,12 @@ class ModelsExplorer extends Controller {
             objectDefaults: ModelIFCObjectColors
         });
 
-        this._modelsContextMenu = new ModelsContextMenu();
+        this._modelsContextMenu = new ModelsContextMenu({
+            enableEditModels: cfg.enableEditModels
+        });
 
         this._modelsInfo = {};
+        this._numModels = 0;
         this._numModelsLoaded = 0;
         this._projectId = null;
     }
@@ -89,7 +96,17 @@ class ModelsExplorer extends Controller {
             this.unloadProject();
             this._projectId = projectId;
             this._modelsInfo = {};
+            this._numModels = 0;
             this._parseProject(projectInfo, done);
+            if (this._numModelsLoaded &lt; this._numModels) {
+                this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+            }
+            if (this._numModelsLoaded &gt; 0) {
+                this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+            }
+            if (this._enableAddModels) {
+                this._addModelButtonElement.classList.remove(&quot;disabled&quot;);
+            }
         }, (errMsg) =&gt; {
             this.error(errMsg);
             if (error) {
@@ -112,6 +129,7 @@ class ModelsExplorer extends Controller {
         var html = &quot;&quot;;
         const modelsInfo = projectInfo.models || [];
         this._modelsInfo = {};
+        this._numModels = modelsInfo.length;
         for (let i = 0, len = modelsInfo.length; i &lt; len; i++) {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
@@ -188,7 +206,7 @@ class ModelsExplorer extends Controller {
         const modelId = modelsLoaded.pop();
         this.loadModel(modelId,
             () =&gt; { // Done
-            this._loadNextModel(modelsLoaded, done);
+                this._loadNextModel(modelsLoaded, done);
             },
             () =&gt; { // Error - recover and attempt to load next model
                 this._loadNextModel(modelsLoaded, done);
@@ -201,7 +219,7 @@ class ModelsExplorer extends Controller {
             done();
             return;
         }
-       this.bimViewer.setViewerState(viewerState, done);
+        this.bimViewer.setViewerState(viewerState, done);
     }
 
     unloadProject() {
@@ -217,7 +235,12 @@ class ModelsExplorer extends Controller {
         }
         this._modelsElement.innerHTML = &quot;&quot;;
         this._numModelsLoaded = 0;
+
+        this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
         this._unloadModelsButtonElement.classList.add(&quot;disabled&quot;);
+        if (this._enableAddModels) {
+            this._addModelButtonElement.classList.add(&quot;disabled&quot;);
+        }
         const lastProjectId = this._projectId;
         this._projectId = null;
         this.fire(&quot;projectUnloaded&quot;, {
@@ -278,6 +301,11 @@ class ModelsExplorer extends Controller {
                             const aabb = scene.getAABB(scene.visibleObjectIds);
                             this._numModelsLoaded++;
                             this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+                            if (this._numModelsLoaded &lt; this._numModels) {
+                                this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+                            } else {
+                                this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
+                            }
                             if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
                                 this.viewer.cameraFlight.jumpTo({
                                     aabb: aabb
@@ -330,6 +358,12 @@ class ModelsExplorer extends Controller {
         } else {
             this._unloadModelsButtonElement.classList.add(&quot;disabled&quot;);
         }
+        if (this._numModelsLoaded &lt; this._numModels) {
+            this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+        } else {
+            this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
+        }
+        this.fire(&quot;modelUnloaded&quot;, modelId);
     }
 
     unloadAllModels() {

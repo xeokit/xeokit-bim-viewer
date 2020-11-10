@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -38,9 +39,11 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/SectionTool.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {SectionPlanesPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js&quot;;
+import {SectionToolContextMenu} from &quot;./../contextMenus/SectionToolContextMenu.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 
 /** @private */
-class SectionTool extends Controller {
+class SectionTool extends Controller { // XX
 
     constructor(parent, cfg) {
 
@@ -50,26 +53,57 @@ class SectionTool extends Controller {
             throw &quot;Missing config: buttonElement&quot;;
         }
 
-        const buttonElement = cfg.buttonElement;
+        if (!cfg.menuButtonElement) {
+            throw &quot;Missing config: menuButtonElement&quot;;
+        }
 
-        this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {
+        this._buttonElement = cfg.buttonElement;
+        this._counterElement = cfg.counterElement;
+        this._menuButtonElement = cfg.menuButtonElement;
+        this._menuButtonArrowElement = cfg.menuButtonArrowElement;
+
+        this._sectionPlanesPlugin = new SectionPlanesPlugin(this.viewer, {});
+
+        this._sectionToolContextMenu = new SectionToolContextMenu({
+            sectionPlanesPlugin: this._sectionPlanesPlugin,
+            hideOnMouseDown: false
         });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
 
         this.on(&quot;enabled&quot;, (enabled) =&gt; {
             if (!enabled) {
-                buttonElement.classList.add(&quot;disabled&quot;);
+                this._buttonElement.classList.add(&quot;disabled&quot;);
+                if (this._counterElement) {
+                    this._counterElement.classList.add(&quot;disabled&quot;);
+                }
+                this._menuButtonElement.classList.add(&quot;disabled&quot;);
+                this._menuButtonArrowElement.classList.add(&quot;disabled&quot;);
             } else {
-                buttonElement.classList.remove(&quot;disabled&quot;);
+                this._buttonElement.classList.remove(&quot;disabled&quot;);
+                if (this._counterElement) {
+                    this._counterElement.classList.remove(&quot;disabled&quot;);
+                }
+                this._menuButtonElement.classList.remove(&quot;disabled&quot;);
+                this._menuButtonArrowElement.classList.remove(&quot;disabled&quot;);
             }
         });
 
         this.on(&quot;active&quot;, (active) =&gt; {
             if (active) {
-                buttonElement.classList.add(&quot;active&quot;);
+                this._buttonElement.classList.add(&quot;active&quot;);
+                if (this._counterElement) {
+                    this._counterElement.classList.add(&quot;active&quot;);
+                }
+                this._menuButtonElement.classList.add(&quot;active&quot;);
+                this._menuButtonArrowElement.classList.add(&quot;active&quot;);
             } else {
-                buttonElement.classList.remove(&quot;active&quot;);
+                this._buttonElement.classList.remove(&quot;active&quot;);
+                if (this._counterElement) {
+                    this._counterElement.classList.remove(&quot;active&quot;);
+                }
+                this._menuButtonElement.classList.remove(&quot;active&quot;);
+                this._menuButtonArrowElement.classList.remove(&quot;active&quot;);
             }
         });
 
@@ -79,13 +113,53 @@ class SectionTool extends Controller {
             }
         });
 
-        buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
+        this._buttonElement.addEventListener(&quot;click&quot;, (e) =&gt; {
             if (!this.getEnabled()) {
+                return;
+            }
+            if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
                 return;
             }
             const active = this.getActive();
             this.setActive(!active);
-            event.preventDefault();
+            e.preventDefault();
+        });
+
+        document.addEventListener(&quot;mousedown&quot;, (e) =&gt; {
+
+            if (e.target.classList.contains(&quot;xeokit-context-menu-item&quot;)) {
+                // Allow click on menu item
+                return;
+            }
+
+            if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
+                e.preventDefault();
+                if (this._sectionToolContextMenu.shown) {
+                    this._sectionToolContextMenu.hide();
+                } else {
+                    this._sectionToolContextMenu.context = {
+                        bimViewer: this.bimViewer,
+                        viewer: this.viewer,
+                        sectionTool: this
+                    };
+
+                    const rect = this._menuButtonElement.getBoundingClientRect();
+
+                    this._sectionToolContextMenu.show(rect.left, rect.bottom + 5);
+                }
+            } else {
+                this._sectionToolContextMenu.hide();
+            }
+        });
+
+        this._sectionToolContextMenu.on(&quot;shown&quot;, () =&gt; {
+            this._menuButtonArrowElement.classList.remove(&quot;xeokit-arrow-down&quot;);
+            this._menuButtonArrowElement.classList.add(&quot;xeokit-arrow-up&quot;);
+        });
+
+        this._sectionToolContextMenu.on(&quot;hidden&quot;, () =&gt; {
+            this._menuButtonArrowElement.classList.remove(&quot;xeokit-arrow-up&quot;);
+            this._menuButtonArrowElement.classList.add(&quot;xeokit-arrow-down&quot;);
         });
 
         this.bimViewer.on(&quot;reset&quot;, () =&gt; {
@@ -97,24 +171,60 @@ class SectionTool extends Controller {
     }
 
     _initSectionMode() {
-        this._onPickedSurface = this.viewer.cameraControl.on(&quot;pickedSurface&quot;, (e) =&gt; {
+
+        this.viewer.scene.input.on(&quot;mouseclicked&quot;, (coords) =&gt; {
+
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                pos: e.worldPos,
-                dir: [-e.worldNormal[0], -e.worldNormal[1], -e.worldNormal[2]]
+
+            const pickResult = this.viewer.scene.pick({
+                canvasPos: coords,
+                pickSurface: true  // &lt;&lt;------ This causes picking to find the intersection point on the entity
             });
-            this._sectionPlanesPlugin.showControl(sectionPlane.id);
+
+            if (pickResult) {
+
+                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                    pos: pickResult.worldPos,
+                    dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
+                });
+
+                sectionPlane.on(&quot;destroyed&quot;, () =&gt; {
+                    this._updateSectionPlanesCount();
+                });
+
+                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+
+                this._updateSectionPlanesCount();
+            }
         });
+
+        this._updateSectionPlanesCount();
+    }
+
+    _updateSectionPlanesCount() {
+        if (this._counterElement) {
+            this._counterElement.innerText = (&quot;&quot; + this.getNumSections());
+        }
+    }
+
+    getNumSections() {
+        return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
     }
 
     clear() {
         this._sectionPlanesPlugin.clear();
+        this._updateSectionPlanesCount();
+    }
+
+    flipSections() {
+        this._sectionPlanesPlugin.flipSectionPlanes();
     }
 
     destroy() {
         this._sectionPlanesPlugin.destroy();
+        this._sectionToolContextMenu.destroy();
         super.destroy();
     }
 }

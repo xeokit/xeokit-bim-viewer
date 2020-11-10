@@ -6,6 +6,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-bim-viewer/src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu",
+    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html",
+    "<span>SectionToolContextMenu</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/contextMenus/SectionToolContextMenu.js</span>",
+    "class"
+  ],
+  [
     "@xeokit/xeokit-bim-viewer/src/server/server.js~server",
     "class/src/server/Server.js~Server.html",
     "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/server/Server.js</span>",
@@ -300,15 +306,45 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/bimviewer.js~bimviewer#addmodel",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-addModel",
+    "src/BIMViewer.js~BIMViewer#addModel",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#clearsections",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-clearSections",
+    "src/BIMViewer.js~BIMViewer#clearSections",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#constructor",
     "class/src/BIMViewer.js~BIMViewer.html#instance-constructor-constructor",
     "src/BIMViewer.js~BIMViewer#constructor",
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#deletemodel",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-deleteModel",
+    "src/BIMViewer.js~BIMViewer#deleteModel",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#destroy",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-destroy",
     "src/BIMViewer.js~BIMViewer#destroy",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#editmodel",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-editModel",
+    "src/BIMViewer.js~BIMViewer#editModel",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#flipsections",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-flipSections",
+    "src/BIMViewer.js~BIMViewer#flipSections",
     "method"
   ],
   [
@@ -354,6 +390,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getnumsections",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getNumSections",
+    "src/BIMViewer.js~BIMViewer#getNumSections",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getobjectcolorsource",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getObjectColorSource",
     "src/BIMViewer.js~BIMViewer#getObjectColorSource",
@@ -369,6 +411,12 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#getopentab",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getOpenTab",
     "src/BIMViewer.js~BIMViewer#getOpenTab",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#getorthoenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getOrthoEnabled",
+    "src/BIMViewer.js~BIMViewer#getOrthoEnabled",
     "method"
   ],
   [
@@ -534,6 +582,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#setorthoenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setOrthoEnabled",
+    "src/BIMViewer.js~BIMViewer#setOrthoEnabled",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#setthreedmodeactive",
     "class/src/BIMViewer.js~BIMViewer.html#instance-member-setThreeDModeActive",
     "src/BIMViewer.js~BIMViewer#setThreeDModeActive",
@@ -640,6 +694,30 @@ window.esdocSearchIndex = [
     "file/src/contextMenus/ObjectContextMenu.js.html",
     "src/contextMenus/ObjectContextMenu.js",
     "file"
+  ],
+  [
+    "src/contextmenus/sectiontoolcontextmenu.js",
+    "file/src/contextMenus/SectionToolContextMenu.js.html",
+    "src/contextMenus/SectionToolContextMenu.js",
+    "file"
+  ],
+  [
+    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#constructor",
+    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-constructor-constructor",
+    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#constructor",
+    "method"
+  ],
+  [
+    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#destroy",
+    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-method-destroy",
+    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#destroy",
+    "method"
+  ],
+  [
+    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#items",
+    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-member-items",
+    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#items",
+    "member"
   ],
   [
     "src/contextmenus/treeviewcontextmenu.js",

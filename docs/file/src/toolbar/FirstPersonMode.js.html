@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -54,8 +55,7 @@ class FirstPersonMode extends Controller {
         const cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
 
         cameraControl.navMode = &quot;orbit&quot;;
-        cameraControl.pivoting = true;
-        cameraControl.dollyToPointer = true;
+        cameraControl.followPointer = true;
 
         this.on(&quot;enabled&quot;, (enabled) =&gt; {
             if (!enabled) {
@@ -76,7 +76,7 @@ class FirstPersonMode extends Controller {
         this.on(&quot;active&quot;, (active) =&gt; {
             cameraControlNavModeMediator.setFirstPersonModeActive(active);
             if (active) {
-                cameraControl.dollyToPointer = true;
+                cameraControl.followPointer = true;
                 cameraControl.pivoting = false;
             } else {
                 cameraControl.pivoting = true;
