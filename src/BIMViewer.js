@@ -342,7 +342,7 @@ class BIMViewer extends Controller {
         this._navCubeMode.setActive(true);
 
         this._modelsExplorer.on("modelLoaded", (modelId) => {
-            if (this._modelsExplorer.getNumModelsLoaded() === 1) {
+            if (this._modelsExplorer.getNumModelsLoaded() > 0) {
                 this.setControlsEnabled(true);
             }
             this.fire("modelLoaded", modelId);
