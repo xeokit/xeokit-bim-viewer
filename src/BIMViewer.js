@@ -486,7 +486,7 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.keyboardDollyRate = 100.0;
         this.viewer.cameraControl.mouseWheelDollyRate = 100.0;
         this.viewer.cameraControl.dollyInertia = 0;
-        this.viewer.cameraControl.dollyMinSpeed = 0.01;
+        this.viewer.cameraControl.dollyMinSpeed = 0.04;
         this.viewer.cameraControl.dollyProximityThreshold = 30.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
