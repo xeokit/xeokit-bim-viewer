@@ -88,6 +88,7 @@ Read the documentation below to get started.
 * 3D and 2D viewing modes.
 * Interactively X-ray, highlight, show, hide and section objects. 
 * Tree views of structure, layers and storeys.
+* Full-precision geometry.
 * Supports IFC2x3 and IFC4.
 * Customize viewer appearance with your own CSS.
 * JavaScript programming API for all viewer functions.
