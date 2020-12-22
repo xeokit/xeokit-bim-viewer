@@ -33,7 +33,7 @@ Read the documentation below to get started.
 
 [Need Help?](#need-help)
 
----
+--- 
 
 * [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
 * [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
@@ -787,4 +787,5 @@ To build the API documentation in ````/docs/````:
 ````
 npm run docs
 ````
+
 
