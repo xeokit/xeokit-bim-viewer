@@ -33,7 +33,7 @@ function startConnect() {
         onSuccess: onConnect,
         useSSL: true
     });
-    
+
     console.info(client)
     }
 
@@ -46,7 +46,7 @@ function startConnect() {
         //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
 
         // Subscribe to the requested topic
-        
+
         console.log("subscribing");
         const  channel = "rwth/color/#" ;
         client.subscribe(channel);
@@ -96,7 +96,7 @@ function startConnect() {
                 // });
                 };
         //document.getElementById("messages").innerHTML += '<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>';
-        
+
 
 //        color = message.payloadString.getJSON["color"];
 //        console.log(color);
@@ -108,9 +108,9 @@ function startConnect() {
     client.disconnect();
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
-   
+
     function init() {
-        
+
         startConnect();
         const iframeBaseURL = "./../app/index.html?projectId=Systhema&modelId=170133_Asvest_20200131";
         let iframeElement = document.getElementById("embeddedViewer");
@@ -118,21 +118,21 @@ function startConnect() {
             throw "IFRAME not found";
         }
         iframeElement.src = iframeBaseURL;
-    
+
         const objectIdsUsed = {};
 
         window.changeColorByMQTT = function (checkbox) {
 
                 console.log(checkbox)
                 viewer = iframeElement.contentWindow.bimViewer.viewer;
-                
+
                 console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
 
                 //var obj = viewer.scene.components[entity.id];
                 var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
                 var res= obj.colorize = [1,0,0] ;
                 for (selObj in viewer.scene.selectedObjects ){
-                   
+
                     console.log(selObj, obj);
 
                     viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
@@ -172,7 +172,6 @@ function startConnect() {
 
 /*
         scene.input.on("mouseclicked", function (coords) {
-
             var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
                             console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
                         }
@@ -181,4 +180,4 @@ function startConnect() {
             }
         });
 */
-    }
+    } 
