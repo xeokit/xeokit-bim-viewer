@@ -21,7 +21,8 @@
     "viewFitDuration": 0.5,
     "viewFitFOV": 45,
     "perspectiveFOV": 55,
-    "objectColorSource": "model"
+    "objectColorSource": "model",
+    "smartPivot": "true"
   },
   "viewerContent": {
     "modelsLoaded": [

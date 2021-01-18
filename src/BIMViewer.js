@@ -480,6 +480,7 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.followPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = true;
+        this.viewer.cameraControl.smartPivot = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
 
@@ -590,6 +591,7 @@ class BIMViewer extends Controller {
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
+            "smartPivot": "true",
             "saoEnabled": "false",
             "saoBias": "0.5",
             "saoIntensity": "0.5",
@@ -656,6 +658,10 @@ class BIMViewer extends Controller {
                     this.viewer.scene.camera.perspective.far = far;
                     this.viewer.scene.camera.ortho.far = far;
                     this._configs[name] = far;
+                    break;
+
+                case "smartPivot":
+                    this.viewer.cameraControl.smartPivot = this._configs[name] = parseBool(value);
                     break;
 
                 case "saoEnabled":
@@ -1797,6 +1803,13 @@ class BIMViewer extends Controller {
      */
     flipSections() {
         this._sectionTool.flipSections();
+    }
+
+    /**
+     * Hides the section edition control, if currently shown.
+     */
+    hideSectionEditControl() {
+        this._sectionTool.hideControl();
     }
 
     /**
