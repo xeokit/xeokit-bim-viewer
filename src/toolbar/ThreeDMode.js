@@ -29,6 +29,7 @@ class ThreeDMode extends Controller {
         });
 
         this._buttonElement.addEventListener("click", (event) => {
+            this.bimViewer._sectionTool.hideControl();
             this.setActive(!this.getActive(), () => { // Animated
             });
             event.preventDefault();
@@ -132,9 +133,7 @@ class ThreeDMode extends Controller {
         const up2 = math.mulVec3Scalar(camera.worldForward, -1, []);
 
         this.bimViewer._sectionTool.setActive(false);
-        this.bimViewer._sectionTool.clear();
         this.bimViewer._firstPersonMode.setEnabled(false);
-        this.bimViewer._sectionTool.setEnabled(false);
 
         this._cameraControlNavModeMediator.setThreeDModeActive(false);
 
