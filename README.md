@@ -253,6 +253,7 @@ The table below lists the complete set of available configurations. Think of the
 | "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
 | "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
 | "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
+| "smartPivot"          | Boolean           |                       | ````true````      | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.  |
 | "saoEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Scalable Ambient Obscurance (SAO) |
 | "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
 | "saoIntensity"        | Number            | ````[0.0...200.0]```` | ````100.0````     | SAO intensity factor |
