@@ -14,13 +14,13 @@
     },
     {
       "id": "20FpTZCqJy2vhVJYtjuIce",
-      "name": "Gelände",
+      "name": "Site",
       "type": "IfcSite",
       "parent": "344O7vICcwH8qAEnwJDjSU"
     },
     {
       "id": "00tMo7QcxqWdIGvc4sMN2A",
-      "name": "Gebäude",
+      "name": "Building",
       "type": "IfcBuilding",
       "parent": "20FpTZCqJy2vhVJYtjuIce"
     },
@@ -176,7 +176,7 @@
     },
     {
       "id": "2F0V3QPDDFMRTpJqxqPeZR",
-      "name": "1. Geschoss",
+      "name": "Surrounding",
       "type": "IfcBuildingStorey",
       "parent": "00tMo7QcxqWdIGvc4sMN2A"
     },
@@ -188,169 +188,169 @@
     },
     {
       "id": "3BI7AanRz5EArnBpql1LQn",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2eJ8w7pSf6DBWBLglcAJRX",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "00wI6lIvjF0h__IUgb2eEL",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2KmIbuDh10mODelS9eTUZJ",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2Z48VUalHBkwGOZtcuUbpZ",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "1A6QmDfFvEHex_4EDzbARm",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2ue243QJ5BNwsmHUwr9oyb",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0KoctRAHj92OLe8cC02S_l",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "1eutXpuZb6LPHGx97ctLK2",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "1EQCQsANf9Z9_e2Dsl0g9j",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "3Od9jnwdf0TR0LmiTIyVd6",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "1srZ$VSon1bAk4iU2r3XLt",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2rlM0L$gb6ZBjgKYNv_Smg",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "3hMi4$30b8VPcRRTxVRmCo",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2lRNVBRZn0ix4ABFEBC19d",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0HlY9juKj41u9SGIe6eVSV",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "3hMnRxF_5F_RahWAxLhGbf",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "3ENVRqOff83v8avOZC4OXM",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "3nSH2OCED6kwU4cvJoJodj",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0cJOqCZpz5TvuhKLFgva9j",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0m0E_5rpTD8elGyLUtT9Cu",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "16xkFwdAH1EfpcumHuCUiv",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0HUuhGE2T1AwI8Uq__xEyQ",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2oLEjbUHD5jfj1XItNqh8I",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2WagPJNRr2GfUScKCdYRwW",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "0WPXNjJJT87gGyeQAwXdNR",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "2_sSGc9nn6QhIlwyOIO5Uc",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },
     {
       "id": "1gvXMuhKz7AQQVk4Cw6Ln8",
-      "name": "CRE - 004",
+      "name": "Column",
       "type": "IfcColumn",
       "parent": "2F0V3QPDDFMRTpJqxqPeZR"
     },

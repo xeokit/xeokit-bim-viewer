@@ -46,12 +46,13 @@ function startConnect() {
         // Print output for the user in the messages div
         //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
 
-        // Subscribe to the requested topic
+        // Subscribe to the requested topics
 
         console.log("subscribing");
-        const  channel = "rwth/color/#" ;
+        const  channel = "rwth/SHMviewer/#" ;
         client.subscribe(channel);
         console.log ("subscribed to "+channel);
+
     }
 
     // Called when the client loses its connection
@@ -64,23 +65,48 @@ function startConnect() {
         console.log("connection lost")
     }
 
+
 // Called when a message arrives
     function onMessageArrived(message) {
-        console.log(message.payloadString)
+        
+        //JSON object with two values extracted to elementID/selObj and color 
+        
+        console.log(message.payloadString);
+        let msg = JSON.parse(message.payloadString);
+        //console.log(msg);
+        let selObj = msg.elementID;
+        let color = msg.color;
+        console.log(selObj);
+        console.log(color);
 
+        //access the metaObjects array
+        
         let iframeElement = document.getElementById("embeddedViewer");
-        let color = JSON.parse(message.payloadString);
-        console.log(color["color"]);
-        console.log(JSON.parse( message.payloadString));
-        console.log(iframeElement);
+        //console.log(iframeElement);
         let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-        console.log("selected Objects:\r"+ viewer.scene.selectedObjects);
-        for (let selObj in viewer.scene.selectedObjects ){
-                console.log(selObj);
-                viewer.scene.selectedObjects[selObj].colorize = color["color"];
-                viewer.scene.selectedObjects[selObj].colorize = color["color"];
-                const objectIds = viewer.metaScene.getObjectIDsInSubtree(selObj);
-                viewer.scene.selectedObjects[selObj].selected = false; 
+        console.log("selected Object:\r"+ selObj); 
+        let metaObjects = viewer.metaScene.metaObjects;
+        console.log (metaObjects);
+        let ObjectList = Object.entries(metaObjects);
+        console.log (ObjectList);
+        let myItem = metaObjects[String(selObj)];
+        console.log(myItem);
+
+
+        //console.log(project);
+        //project.getElementById(selObj).style.color = color;
+        //*console.log("selected Objects:\r"+ viewer.scene.selectedObjects);
+        //viewer.scene.myItem.colorize = color; 
+        //viewer.scene.myItem.colorize = color;
+        myItem.colorize = color;
+        console.log("test")
+        // *original* for (let selObj in viewer.scene.selectedObjects ){
+                //* console.log(selObj);
+                //* viewer.scene.selectedObjects[selObj].colorize = color["color"]; -> in case of problems insert ["color"] again
+                //* viewer.scene.selectedObjects[selObj].colorize = color["color"];
+                //* const objectIds = viewer.metaScene.getObjectIDsInSubtree(selObj);
+                //* viewer.scene.selectedObjects[selObj].selected = false; 
+                
                 // const dmax = math.lenVec3(dir);
                 // let d = 0;
 
@@ -95,7 +121,7 @@ function startConnect() {
                 //     }
                 //     scene.setObjectsOffset(objectIds, math.mulVec3Scalar([1,9,1], (d / dmax), []));
                 // });
-                };
+                //* };
         //document.getElementById("messages").innerHTML += '<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>';
 
 

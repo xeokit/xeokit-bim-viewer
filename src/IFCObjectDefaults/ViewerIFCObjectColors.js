@@ -177,7 +177,7 @@ const ViewerIFCObjectColors = {
     },
 
     IfcSite: {
-        colorize: [0.137255, 0.403922, 0.870588]
+        colorize: [0.437255, 0.803922, 0.270588]
     },
 
     IfcMember: {

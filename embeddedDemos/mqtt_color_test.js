@@ -66,21 +66,89 @@ function startConnect() {
 
 // Called when a message arrives
     function onMessageArrived(message) {
-        console.log(message.payloadString)
 
+        function init() {
+
+            const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
+            let iframeElement = document.getElementById("embeddedViewer");
+            if (!iframeElement) {
+                throw "IFRAME not found";
+            }
+            iframeElement.src = iframeBaseURL;
+    
+            const objectIdsUsed = {};
+    
+            window.changeColorByMQTT = function (checkbox) {
+    
+                    console.log(checkbox)
+                    viewer = iframeElement.contentWindow.bimViewer.viewer;
+    
+                    console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
+    
+                    //var obj = viewer.scene.components[entity.id];
+                    var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
+                    var res= obj.colorize = [1,0,0] ;
+                    for (selObj in viewer.scene.selectedObjects ){
+    
+                        console.log(selObj, obj);
+    
+                        viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
+                        viewer.scene.selectedObjects[selObj].selected = false; 
+                    };
+                    //teapotMesh.visible = false; -->
+                 //   material = new PhongMaterial(scene, {
+                 //       id: "myMaterial",
+                 //       diffuse: [0.2, 0.2, 1.0]
+                 //   })
+                 //   var teapotMaterial = viewer.scene.components["myMaterial"];
+                    var material = obj.material;
+                  //  teapotMesh.material = teapotMaterial;
+                    ///material.diffuse = [1,0,0]; // Change to red
+                    //obj.material = material;
+                    obj.meshes[0]._color=[1,0,0,0];
+            }
+            window.selectObject = function (checkbox) {
+    
+                const objectId = checkbox.name;
+    
+                if (checkbox.checked) {
+                    objectIdsUsed[objectId] = true;
+                } else {
+                    delete objectIdsUsed[objectId];
+                }
+    
+                const objectIds = Object.keys(objectIdsUsed);
+    
+                if (objectIds.length === 0) {
+                    iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
+                } else {
+                    const objectIdsParam = objectIds.join(",");
+                    iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
+                }
+            }
+            
+            
+        
+        }    //let color = JSON.parse(message.payloadString);
+        //console.log(color["color"]);
+        console.log(message.payloadString);
+        let msg = JSON.parse(message.payloadString);
+        //console.log(msg);
+        let selObj = msg.elementID;
+        let color = msg.color;
+        console.log(selObj);
+        console.log(color);
         let iframeElement = document.getElementById("embeddedViewer");
-        let color = JSON.parse(message.payloadString);
-        console.log(color["color"]);
-        console.log(JSON.parse( message.payloadString));
-        console.log(iframeElement);
+        //console.log(iframeElement);
         let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-        console.log("selected Objects:\r"+ viewer.scene.selectedObjects);
-        for (let selObj in viewer.scene.selectedObjects ){
-                console.log(selObj);
-                viewer.scene.selectedObjects[selObj].colorize = color["color"];
-                viewer.scene.selectedObjects[selObj].colorize = color["color"];
-                const objectIds = viewer.metaScene.getObjectIDsInSubtree(selObj);
-                viewer.scene.selectedObjects[selObj].selected = false; 
+        //console.log("selected Objects:\r"+ viewer.scene.selectedObjects);
+        //for (let selObj in viewer.scene.selectedObjects ){
+                //console.log (viewer.scene.selectedObjects[selObj].colorize);
+                viewer.scene.selectedObjects[selObj].colorize = color;
+                //viewer.scene.selectedObjects[selObj].colorize = color;
+                //viewer.scene.selectedObjects[selObj].colorize = color["color"];
+                //const objectIds = viewer.metaScene.getObjectIDsInSusbtree(selObj);
+                //viewer.scene.selectedObjects[selObj].selected = false; 
                 // const dmax = math.lenVec3(dir);
                 // let d = 0;
 
@@ -95,7 +163,7 @@ function startConnect() {
                 //     }
                 //     scene.setObjectsOffset(objectIds, math.mulVec3Scalar([1,9,1], (d / dmax), []));
                 // });
-                };
+                //};
         //document.getElementById("messages").innerHTML += '<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>';
 
 
