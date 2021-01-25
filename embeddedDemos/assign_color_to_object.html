@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>SHM Object-Viewer - OnePiece</title>
-    <script src="show_some_information-Gary.js" type="text/javascript"></script>
+    <script src="show_some_information-Gray.js?v=1" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript"></script>
-    <script src="assign_color.js" type="text/javascript"></script>
+    <script src="assign_color.js?v=1" type="text/javascript"></script>
     <style>
 
         html, body {
@@ -41,11 +41,14 @@
     </style>
 
 </head>
-<body onload="init()">
+<body onload="html_init()">
     
 </body>
 <script>
-
+function html_init(){
+    init();
+    show_some_information_init();
+}
 </script>
 
 <ul>
