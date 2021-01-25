@@ -22,19 +22,19 @@ function show_some_information_init() {
         });
 
         viewer.scene.input.on("mousedown", e => {
+            flag = true;
+
+        });
+
+        viewer.scene.input.on("mouseup", e => {
 
             if (id === ultrasonicSensor || id === depthSensor0 || id === depthSensor1 || id === depthSensor2) {
                 id = 0;
                 flag = false;
-                alert("this is a sensor",function (){
-                    flag = true;
-                });
+                alert("this is a sensor");
             }
             console.log(id);
         });
 
-        viewer.cameraControl.on("hoverOff", (e) => {
-            id = 0;
-        });
     }
 }
