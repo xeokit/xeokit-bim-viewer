@@ -10,7 +10,7 @@
     "viewerConfigs": {
         "cameraNear": "0.05",
         "cameraFar": "3000.0",
-        "saoEnabled": "true",
+        "saoEnabled": "false",
         "saoBias": "0.5",
         "saoIntensity": "0.7",
         "saoScale": "1200.0",
