@@ -10,13 +10,13 @@
     "viewerConfigs": {
         "cameraNear": "0.05",
         "cameraFar": "3000.0",
-        "saoEnabled": "false",
+        "saoEnabled": "true",
         "saoBias": "0.5",
         "saoIntensity": "0.7",
         "saoScale": "1200.0",
         "saoKernelRadius": "100",
-        "saoInteractive": true,
-        "saoInteractiveDelay": 150
+        "saoInteractive": false,
+        "saoInteractiveDelay": 250
     },
     "viewerContent": {
         "modelsLoaded": [
