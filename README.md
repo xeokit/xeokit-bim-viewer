@@ -105,18 +105,10 @@ Click the links below to run some demos.
 | [Schependomlaan](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
-  
-## Need Help?
-
-Everything here is tested and used in production, so we're confident it will work well for you. 
-
-Sometimes, however, users may benefit from a few hours consultation to get started more quickly. 
-
-[Get in touch](http://xeolabs.com/contact/) if you could use a little help setting up your  ````xeokit-bim-viewer```` with your models. 
 
 ## License
 
-xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) for non-commercial use. See [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
+xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io). See [Pricing](https://xeokit.io/index.html#pricing) for licensing options.
 
 ## The Viewer Application
 
