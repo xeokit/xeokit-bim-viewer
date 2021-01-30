@@ -31,7 +31,7 @@ function show_some_information_init() {
 function update_info(message) {
     console.log(message);
 
-    if (message.sensor_ID === current_sensor_ID) {
+    if (message.sensorID === current_sensor_ID) {
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();
