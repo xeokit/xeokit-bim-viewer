@@ -45,5 +45,6 @@
   },
   "dependencies": {
     "@xeokit/xeokit-sdk": "1.5.22"
-  }
+  },
+  "type": "module"
 }

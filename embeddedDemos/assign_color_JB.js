@@ -85,9 +85,9 @@ function startConnect() {
             //access the metaObjects array
             
             let iframeElement = document.getElementById("embeddedViewer");
-            //console.log(iframeElement);
+            console.log(iframeElement);
             let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-            console.log("selected Object:\r"+ selObj); 
+            console.log(viewer); 
             let metaObjects = viewer.metaScene.metaObjects;
             console.log (metaObjects);
             let ObjectList = Object.entries(metaObjects);
@@ -113,75 +113,75 @@ function startDisconnect() {
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
 
-    function init() {
+function init() {
 
-        startConnect();
-        const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
-        let iframeElement = document.getElementById("embeddedViewer");
-        if (!iframeElement) {
-            throw "IFRAME not found";
+    startConnect();
+    const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
+    let iframeElement = document.getElementById("embeddedViewer");
+    if (!iframeElement) {
+        throw "IFRAME not found";
+    }
+    iframeElement.src = iframeBaseURL;
+
+    const objectIdsUsed = {};
+
+    window.changeColorByMQTT = function (checkbox) {
+
+            console.log(checkbox)
+            viewer = iframeElement.contentWindow.bimViewer.viewer;
+
+            console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
+
+            //var obj = viewer.scene.components[entity.id];
+            var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
+            var res= obj.colorize = [1,0,0] ;
+            for (selObj in viewer.scene.selectedObjects ){
+
+                console.log(selObj, obj);
+
+                viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
+                viewer.scene.selectedObjects[selObj].selected = false; 
+            };
+            //teapotMesh.visible = false; -->
+            //   material = new PhongMaterial(scene, {
+            //       id: "myMaterial",
+            //       diffuse: [0.2, 0.2, 1.0]
+            //   })
+            //   var teapotMaterial = viewer.scene.components["myMaterial"];
+            var material = obj.material;
+            //  teapotMesh.material = teapotMaterial;
+            ///material.diffuse = [1,0,0]; // Change to red
+            //obj.material = material;
+            obj.meshes[0]._color=[1,0,0,0];
+    }
+    window.selectObject = function (checkbox) {
+
+        const objectId = checkbox.name;
+
+        if (checkbox.checked) {
+            objectIdsUsed[objectId] = true;
+        } else {
+            delete objectIdsUsed[objectId];
         }
-        iframeElement.src = iframeBaseURL;
 
-        const objectIdsUsed = {};
+        const objectIds = Object.keys(objectIdsUsed);
 
-        window.changeColorByMQTT = function (checkbox) {
-
-                console.log(checkbox)
-                viewer = iframeElement.contentWindow.bimViewer.viewer;
-
-                console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
-
-                //var obj = viewer.scene.components[entity.id];
-                var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
-                var res= obj.colorize = [1,0,0] ;
-                for (selObj in viewer.scene.selectedObjects ){
-
-                    console.log(selObj, obj);
-
-                    viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
-                    viewer.scene.selectedObjects[selObj].selected = false; 
-                };
-                //teapotMesh.visible = false; -->
-             //   material = new PhongMaterial(scene, {
-             //       id: "myMaterial",
-             //       diffuse: [0.2, 0.2, 1.0]
-             //   })
-             //   var teapotMaterial = viewer.scene.components["myMaterial"];
-                var material = obj.material;
-              //  teapotMesh.material = teapotMaterial;
-                ///material.diffuse = [1,0,0]; // Change to red
-                //obj.material = material;
-                obj.meshes[0]._color=[1,0,0,0];
+        if (objectIds.length === 0) {
+            iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
+        } else {
+            const objectIdsParam = objectIds.join(",");
+            iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
         }
-        window.selectObject = function (checkbox) {
-
-            const objectId = checkbox.name;
-
-            if (checkbox.checked) {
-                objectIdsUsed[objectId] = true;
-            } else {
-                delete objectIdsUsed[objectId];
-            }
-
-            const objectIds = Object.keys(objectIdsUsed);
-
-            if (objectIds.length === 0) {
-                iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
-            } else {
-                const objectIdsParam = objectIds.join(",");
-                iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
-            }
-        }
+    }
 
 /*
-        scene.input.on("mouseclicked", function (coords) {
-            var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
-                            console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
-                        }
+    scene.input.on("mouseclicked", function (coords) {
+        var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
+                        console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
                     }
                 }
             }
-        });
+        }
+    });
 */
-    } 
+} 
