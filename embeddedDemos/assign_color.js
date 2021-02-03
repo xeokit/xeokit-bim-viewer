@@ -11,10 +11,73 @@ const host = 'broker.emqx.io';
 const port = '8084';
 // Initialize new Paho client connection
 let client = new Paho.MQTT.Client(host, Number(port), clientID);
+var csvContent; 
 
 
 
+function csvFile(){
 
+    //get my constants 
+    let iframeElement = document.getElementById("embeddedViewer");
+    let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+    let metaObjects = viewer.metaScene.metaObjects;
+    
+    //access certain parts of metaObjects (skip the second level)
+    const allObjects = Object.values(metaObjects);
+    var objArray = [["Type", "Name", "Id"]];
+    var allTypes = [];
+    var allNames = [];
+    var allIds = [];
+    allObjects.forEach(function(element){
+        //element is the variable for each object 
+        var newLength = objArray.push([element.type, element.name, element.id]);
+        var newType = allTypes.push([element.type]);
+        var newName = allNames.push([element.name]);
+        var newId = allIds.push([element.id])
+    });
+    
+    allTypes = allTypes.flat(1);
+    allNames = allNames.flat(1);
+    allIds = allIds.flat(1);
+    var yxArray = [allTypes, allNames, allIds]; // might not be needed
+    console.log(objArray);
+    console.log(yxArray); 
+    //console.log(allTypes);
+    //console.log(allNames);
+    //console.log(allIds);
+    //let newObjArray = objArray.unshift(["Type", "Name", "Id"]);
+    
+    const rows = objArray;
+    csvContent = "data:text/csv;charset=utf-8, \n";
+
+    rows.forEach(function(rowArray) {
+        let row = rowArray.join(",");
+        csvContent += row + "\r\n";
+    });
+    //console.log(csvContent);
+    
+
+    /*
+    function myExport (csvContent){
+        return csvContent
+    };
+
+    // create csv 
+    const items = objArray;
+    const replacer = (key, value) => value === null ? '' : value; // specify my null value here
+    const header = Object.keys(items[0]);
+    const csv = [
+        header.join(','), //header row first
+        ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer).replace(/\\"/g, '""')).join(','))
+    ].join('\r\n');
+    
+    console.log(csv);
+
+    csv.unshift(fields.join(',')); // add header column
+     csv = csv.join('\r\n');
+    console.log(csv);
+    */
+}
 
 function startConnect() {
 // Generate a random client ID
@@ -48,6 +111,8 @@ function startConnect() {
 
         // Subscribe to the requested topics
 
+        
+
         console.log("subscribing");
         const  channel = "rwth/SHMviewer/#" ;
         client.subscribe(channel);
@@ -67,43 +132,77 @@ function startConnect() {
             console.log(responseObject.errorMessage);
         }
     }
-
+ 
 
 // Called when a message arrives
     function onMessageArrived(message) {
         
         //JSON object with two values extracted to elementID/selObj and color 
-        try {
-            console.log(message.payloadString);
-            let msg = JSON.parse(message.payloadString);
-             //console.log(msg);
-            let selObj = msg.elementID;
-            let color = msg.color;
-            console.log(selObj);
-            console.log(color);
-
-            //access the metaObjects array
         
-            let iframeElement = document.getElementById("embeddedViewer");
-            //console.log(iframeElement);
-            let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-            console.log("selected Object:\r"+ selObj); 
-            let metaObjects = viewer.metaScene.metaObjects;
-            console.log (metaObjects);
-            let ObjectList = Object.entries(metaObjects);
-            console.log (ObjectList);
-            let myItem = metaObjects[String(selObj)];
-            console.log(myItem.id);
-            let entity = viewer.scene.objects[myItem.id];
+        console.log(message.payloadString);
+        let msg = JSON.parse(message.payloadString);
+            //console.log(msg);
+        let sensor = msg.sensorID;
+        let color = msg.color;
+        console.log(sensor);
+        console.log(color);
+
+        //access the metaObjects array
+        // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
+        let csvarray = [];
+        let client = new XMLHttpRequest();
+        client.open('GET', '/embeddedDemos/sensorOverview.csv');
+        client.onreadystatechange = function() {
+            let rows = client.responseText.split('\r\n');
+            for(let i = 0; i < rows.length; i++){
+                csvarray.push(rows[i].split(';'));
+            }
+        }
+        client.send();
+
+        // temporary solution, as the forEach function doesn't recognize my actual array
+        let selObj = "sensor not connected";
+        let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "USR02"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "USL02"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "R002"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "R001"]];
+        //console.log(myarray);
+        
+        myarray.forEach(function(element){
+        //console.log(element[3]);
+        if (element.includes(sensor)){
+            selObj = element[2];
+            //console.log(selObj);
+        }
+        });
+        console.log(selObj);
+
+        /*
+        let selObj = "sensor not connected";
+        csvarray.forEach(function(element){
+            if (element.includes(sensor)){
+              selObj = element;
+              console.log(selObj);
+            }
+          });
+        console.log(selObj);
+        */
 
 
-            entity.colorize = color;
-            console.log("test")
-        }
-        catch (error)
-        {
-            console.log(error);
-        }
+        let iframeElement = document.getElementById("embeddedViewer");
+        //console.log(iframeElement);
+        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+        //console.log("selected sensor:\r"+ sensor); 
+        let metaObjects = viewer.metaScene.metaObjects;
+        //console.log (metaObjects);
+        //console.log (csvContent);
+        let ObjectList = Object.entries(metaObjects);
+        console.log (ObjectList); // not working well
+        let myItem = metaObjects[String(selObj)];
+        console.log(myItem.id); // breaks the script
+        let entity = viewer.scene.objects[myItem.id];
+
+
+        entity.colorize = color;
+        console.log("test")
+       
 
     }
 
@@ -113,75 +212,116 @@ function startDisconnect() {
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
 
-    function init() {
 
-        startConnect();
+// starts an interval event to monitor the load status of the model
+
+
+function loadMonitor(){
+    var countInterval = 0;
+    var loaderInt = window.setInterval( function(){
+        countInterval = countInterval + 1; //alternative: countIntervall++
         const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
         let iframeElement = document.getElementById("embeddedViewer");
         if (!iframeElement) {
             throw "IFRAME not found";
         }
-        iframeElement.src = iframeBaseURL;
+    
+        let viewer = iframeElement.contentWindow.bimViewer; 
+        // is the model loaded?
+        if (viewer.isModelLoaded("design")){
+            console.log("loading completed");
+            // attention: Hard coded model name!!! ('design'), please change for other models or make parameter for function
+            //console.log(`model loaded is ${viewer.isModelLoaded("design")} ${window.loadMonitorID}`);
+            
+            // remove the interval 
+            window.clearInterval(loaderInt);
+            console.log(`model loaded`);
 
-        const objectIdsUsed = {};
-
-        window.changeColorByMQTT = function (checkbox) {
-
-                console.log(checkbox)
-                viewer = iframeElement.contentWindow.bimViewer.viewer;
-
-                console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
-
-                //var obj = viewer.scene.components[entity.id];
-                var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
-                var res= obj.colorize = [1,0,0] ;
-                for (selObj in viewer.scene.selectedObjects ){
-
-                    console.log(selObj, obj);
-
-                    viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
-                    viewer.scene.selectedObjects[selObj].selected = false; 
-                };
-                //teapotMesh.visible = false; -->
-             //   material = new PhongMaterial(scene, {
-             //       id: "myMaterial",
-             //       diffuse: [0.2, 0.2, 1.0]
-             //   })
-             //   var teapotMaterial = viewer.scene.components["myMaterial"];
-                var material = obj.material;
-              //  teapotMesh.material = teapotMaterial;
-                ///material.diffuse = [1,0,0]; // Change to red
-                //obj.material = material;
-                obj.meshes[0]._color=[1,0,0,0];
+            csvFile();
+            console.log("csv created") //tests for successful csvFile() execution
+                            
+        } else if (countInterval === 5){
+            window.clearInterval(loaderInt)
+            console.log("loading failed") 
+        } else {
+            console.log('waiting to load model....')
         }
-        window.selectObject = function (checkbox) {
+    }, 1000);
+}   
 
-            const objectId = checkbox.name;
 
-            if (checkbox.checked) {
-                objectIdsUsed[objectId] = true;
-            } else {
-                delete objectIdsUsed[objectId];
-            }
+function init() {
 
-            const objectIds = Object.keys(objectIdsUsed);
+    loadMonitor ();
+    
 
-            if (objectIds.length === 0) {
-                iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
-            } else {
-                const objectIdsParam = objectIds.join(",");
-                iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
-            }
+    startConnect();
+    const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
+    let iframeElement = document.getElementById("embeddedViewer");
+    if (!iframeElement) {
+        throw "IFRAME not found";
+    }
+    iframeElement.src = iframeBaseURL;
+
+    const objectIdsUsed = {};
+
+    window.changeColorByMQTT = function (checkbox) {
+
+            console.log(checkbox)
+            viewer = iframeElement.contentWindow.bimViewer.viewer;
+
+            console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
+
+            //var obj = viewer.scene.components[entity.id];
+            var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
+            var res= obj.colorize = [1,0,0] ;
+            for (selObj in viewer.scene.selectedObjects ){
+
+                console.log(selObj, obj);
+
+                viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
+                viewer.scene.selectedObjects[selObj].selected = false; 
+            };
+            //teapotMesh.visible = false; -->
+            //   material = new PhongMaterial(scene, {
+            //       id: "myMaterial",
+            //       diffuse: [0.2, 0.2, 1.0]
+            //   })
+            //   var teapotMaterial = viewer.scene.components["myMaterial"];
+            var material = obj.material;
+            //  teapotMesh.material = teapotMaterial;
+            ///material.diffuse = [1,0,0]; // Change to red
+            //obj.material = material;
+            obj.meshes[0]._color=[1,0,0,0];
+    }
+    window.selectObject = function (checkbox) {
+
+        const objectId = checkbox.name;
+
+        if (checkbox.checked) {
+            objectIdsUsed[objectId] = true;
+        } else {
+            delete objectIdsUsed[objectId];
         }
+
+        const objectIds = Object.keys(objectIdsUsed);
+
+        if (objectIds.length === 0) {
+            iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
+        } else {
+            const objectIdsParam = objectIds.join(",");
+            iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
+        }
+    }
 
 /*
-        scene.input.on("mouseclicked", function (coords) {
-            var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
-                            console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
-                        }
+    scene.input.on("mouseclicked", function (coords) {
+        var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
+                        console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
                     }
                 }
             }
-        });
+        }
+    });
 */
-    } 
+} 
