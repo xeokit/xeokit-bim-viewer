@@ -11,76 +11,73 @@ const host = 'broker.emqx.io';
 const port = '8084';
 // Initialize new Paho client connection
 let client = new Paho.MQTT.Client(host, Number(port), clientID);
+var csvContent; 
 
-console.log("test no func");
 
-/*function myFuncTine(){
-    console.log("test");    
-    // get metaObjects
+
+function csvFile(){
+
+    //get my constants 
+    let iframeElement = document.getElementById("embeddedViewer");
+    let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+    let metaObjects = viewer.metaScene.metaObjects;
+    
+    //access certain parts of metaObjects (skip the second level)
+    const allObjects = Object.values(metaObjects);
+    var objArray = [["Type", "Name", "Id"]];
+    var allTypes = [];
+    var allNames = [];
+    var allIds = [];
+    allObjects.forEach(function(element){
+        //element is the variable for each object 
+        var newLength = objArray.push([element.type, element.name, element.id]);
+        var newType = allTypes.push([element.type]);
+        var newName = allNames.push([element.name]);
+        var newId = allIds.push([element.id])
+    });
+    
+    allTypes = allTypes.flat(1);
+    allNames = allNames.flat(1);
+    allIds = allIds.flat(1);
+    var yxArray = [allTypes, allNames, allIds]; // might not be needed
+    console.log(objArray);
+    console.log(yxArray); 
+    //console.log(allTypes);
+    //console.log(allNames);
+    //console.log(allIds);
+    //let newObjArray = objArray.unshift(["Type", "Name", "Id"]);
+    
+    const rows = objArray;
+    csvContent = "data:text/csv;charset=utf-8, \n";
+
+    rows.forEach(function(rowArray) {
+        let row = rowArray.join(",");
+        csvContent += row + "\r\n";
+    });
+    //console.log(csvContent);
+    
+
+    /*
+    function myExport (csvContent){
+        return csvContent
+    };
 
     // create csv 
-    let json = metaObjects.items;
-    let fields = Object.keys(json[0]);
-    let replacer = function(key, value) { return value === null ? '' : value };
-    let csv = json.map(function(row){
-        return fields.map(function(fieldName){
-            return JSON.stringify(row[fieldName], replacer)
-        }).join(',')
-    });
+    const items = objArray;
+    const replacer = (key, value) => value === null ? '' : value; // specify my null value here
+    const header = Object.keys(items[0]);
+    const csv = [
+        header.join(','), //header row first
+        ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer).replace(/\\"/g, '""')).join(','))
+    ].join('\r\n');
+    
+    console.log(csv);
+
     csv.unshift(fields.join(',')); // add header column
      csv = csv.join('\r\n');
     console.log(csv);
-
-    // get csv file back
-    let csvarray = [];
-    let client = new XMLHttpRequest();
-    client.open('GET', '/docs/Test.csv');
-    client.onreadystatechange = function() {
-        let rows = client.responseText.split('\n');
-        for(let i = 0; i < rows.length; i++){
-            csvarray.push(rows[i].split(','));
-        }
-    }
-    client.send();
-    console.log(csvarray);
-}*/
-
-/*
---- faulty interval function from prof---
-
-function loadMonitor() {
-    return window.setInterval( function() {
-        // try{
-        const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
-        let iframeElement = document.getElementById("embeddedViewer");
-        if (!iframeElement) {
-            throw "IFRAME not found";
-        }
-       
-        let viewer = iframeElement.contentWindow.bimViewer;
-        // is the model loaded?
-        if (viewer.isModelLoaded("design")){
-            console.log("loading completed");
-            // attention: Hard coded model name!!! ('design'), please change for other models or make parameter for function
-            console.log(`model loaded is ${viewer.isModelLoaded("design")} ${window.loadMonitorID}`);
-            csvFile();
-            // console.log(`model loaded is ${viewer.isModelLoaded("design")} ${window.loadMonitorID}`)
-
-            // remove the interval 
-            window.clearInterval(window.loadMonitorID)    
-        }
-        else
-        {
-            console.log('waiting to load model....')
-        }
-        // }
-        // catch {
-        
-        // }
-    }, 3000 );
-};
-------------------
-*/
+    */
+}
 
 function startConnect() {
 // Generate a random client ID
@@ -114,6 +111,8 @@ function startConnect() {
 
         // Subscribe to the requested topics
 
+        
+
         console.log("subscribing");
         const  channel = "rwth/SHMviewer/#" ;
         client.subscribe(channel);
@@ -133,93 +132,77 @@ function startConnect() {
             console.log(responseObject.errorMessage);
         }
     }
-
+ 
 
 // Called when a message arrives
     function onMessageArrived(message) {
         
-        //will try setting those to const and put the "create csv" part earlier in the script, maybe with my own function
-        let iframeElement = document.getElementById("embeddedViewer");
-        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-        let metaObjects = viewer.metaScene.metaObjects;
-        console.log(metaObjects["id", "name", "type"]);
-/*
-        // create csv 
-        const items = metaObjects["id", "name", "type"];
-        const replacer = (key, value) => value === null ? '' : value; // specify my null value here
-        const header = Object.keys(items[0]);
-        const csv = [
-            header.join(','), //header row first
-            ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer).replace(/\\"/g, '""')).join(','))
-        ].join('\r\n');
+        //JSON object with two values extracted to elementID/selObj and color 
         
-        console.log(csv);
+        console.log(message.payloadString);
+        let msg = JSON.parse(message.payloadString);
+            //console.log(msg);
+        let sensor = msg.sensorID;
+        let color = msg.color;
+        console.log(sensor);
+        console.log(color);
 
-        csv.unshift(fields.join(',')); // add header column
-         csv = csv.join('\r\n');
-        console.log(csv);
-        // need to save csv somewhere?
-        
-        // in Excel(?): add the sensorID collumn  
-        
-        // get csv file (replace Test.csv with Objects.csv) -> this part is already tested and works
+        //access the metaObjects array
+        // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
         let csvarray = [];
         let client = new XMLHttpRequest();
-        client.open('GET', '/docs/Test.csv');
+        client.open('GET', '/embeddedDemos/sensorOverview.csv');
         client.onreadystatechange = function() {
-            let rows = client.responseText.split('\n');
+            let rows = client.responseText.split('\r\n');
             for(let i = 0; i < rows.length; i++){
-                csvarray.push(rows[i].split(','));
+                csvarray.push(rows[i].split(';'));
             }
         }
         client.send();
-        console.log(csvarray);  */
 
-        // (where message has to arrive latest)
-        //JSON object with two values extracted to sensorID and color 
+        // temporary solution, as the forEach function doesn't recognize my actual array
+        let selObj = "sensor not connected";
+        let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "1"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "3"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "4"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "2"]];
+        //console.log(myarray);
         
-            console.log(message.payloadString);
-            let msg = JSON.parse(message.payloadString);
-             //console.log(msg);
-            let sensor = msg.sensorID;
-            let color = msg.color;
-            console.log(sensor);
-            console.log(color);
+        myarray.forEach(function(element){
+        //console.log(element[3]);
+        if (element.includes(sensor)){
+            selObj = element[2];
+            //console.log(selObj);https://teams.microsoft.com/l/meetup-join/19:5edeb9de96ad41e0b56e5297692e0ae9@thread.tacv2/1612339346815?context=%7B%22Tid%22:%220ce775f2-67de-4cd2-ba67-819a417e447f%22,%22Oid%22:%2280f33d89-e0f2-4d35-9144-f7b446789b60%22%7D
+        }
+        });
+        console.log(selObj);
 
-            //get element from sensor -> only for testing until real swap! 
-            function Exchange (sensor){
-                return sensor === USL01 ? "2_BxCgw6zEARAkB6iaS_fp" 
-                    : sensor === R001 ? "0In9GSkUj0kAjvuqTrNojT"
-                    : console.log("no sensor connected");
+        /*
+        let selObj = "sensor not connected";
+        csvarray.forEach(function(element){
+            if (element.includes(sensor)){
+              selObj = element;
+              console.log(selObj);
             }
-            
-            let selObjTest = Exchange(sensor);
-            console.log(selObjTest);
-            
-            // extended exchange from sensorID to elementID
-            // find position of certain sensorID
-            let index = csvarray.indexOf(sensor);
-            console.log(index)
-            // find elementID at same position 
-            // if the index is a number that gives the placement of the whole inner object:
-            let selObj = csvarray.index.elementID
-            console.log(selObj)
-        
-            //console.log(iframeElement);
-            
-            console.log("selected Object:\r"+ selObj); 
-            
-            console.log (metaObjects);
-            let ObjectList = Object.entries(metaObjects);
-            console.log (ObjectList);
-            let myItem = metaObjects[String(selObj)];
-            console.log(myItem.id);
-            let entity = viewer.scene.objects[myItem.id];
+          });
+        console.log(selObj);
+        */
 
 
-            entity.colorize = color;
-            console.log("test")
-        
+        let iframeElement = document.getElementById("embeddedViewer");
+        //console.log(iframeElement);
+        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+        //console.log("selected sensor:\r"+ sensor); 
+        let metaObjects = viewer.metaScene.metaObjects;
+        //console.log (metaObjects);
+        //console.log (csvContent);
+        let ObjectList = Object.entries(metaObjects);
+        console.log (ObjectList); // not working well
+        let myItem = metaObjects[String(selObj)];
+        console.log(myItem.id); // breaks the script
+        let entity = viewer.scene.objects[myItem.id];
+
+
+        entity.colorize = color;
+        console.log("test")
+       
 
     }
 
@@ -229,75 +212,116 @@ function startDisconnect() {
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
 
-    function init() {
 
-        startConnect();
+// starts an interval event to monitor the load status of the model
+
+
+function loadMonitor(){
+    var countInterval = 0;
+    var loaderInt = window.setInterval( function(){
+        countInterval = countInterval + 1; //alternative: countIntervall++
         const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
         let iframeElement = document.getElementById("embeddedViewer");
         if (!iframeElement) {
             throw "IFRAME not found";
         }
-        iframeElement.src = iframeBaseURL;
+    
+        let viewer = iframeElement.contentWindow.bimViewer; 
+        // is the model loaded?
+        if (viewer.isModelLoaded("design")){
+            console.log("loading completed");
+            // attention: Hard coded model name!!! ('design'), please change for other models or make parameter for function
+            //console.log(`model loaded is ${viewer.isModelLoaded("design")} ${window.loadMonitorID}`);
+            
+            // remove the interval 
+            window.clearInterval(loaderInt);
+            console.log(`model loaded`);
 
-        const objectIdsUsed = {};
-
-        window.changeColorByMQTT = function (checkbox) {
-
-                console.log(checkbox)
-                viewer = iframeElement.contentWindow.bimViewer.viewer;
-
-                console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
-
-                //var obj = viewer.scene.components[entity.id];
-                var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
-                var res= obj.colorize = [1,0,0] ;
-                for (selObj in viewer.scene.selectedObjects ){
-
-                    console.log(selObj, obj);
-
-                    viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
-                    viewer.scene.selectedObjects[selObj].selected = false; 
-                };
-                //teapotMesh.visible = false; -->
-             //   material = new PhongMaterial(scene, {
-             //       id: "myMaterial",
-             //       diffuse: [0.2, 0.2, 1.0]
-             //   })
-             //   var teapotMaterial = viewer.scene.components["myMaterial"];
-                var material = obj.material;
-              //  teapotMesh.material = teapotMaterial;
-                ///material.diffuse = [1,0,0]; // Change to red
-                //obj.material = material;
-                obj.meshes[0]._color=[1,0,0,0];
+            csvFile();
+            console.log("csv created") //tests for successful csvFile() execution
+                            
+        } else if (countInterval === 5){
+            window.clearInterval(loaderInt)
+            console.log("loading failed") 
+        } else {
+            console.log('waiting to load model....')
         }
-        window.selectObject = function (checkbox) {
+    }, 1000);
+}   
 
-            const objectId = checkbox.name;
 
-            if (checkbox.checked) {
-                objectIdsUsed[objectId] = true;
-            } else {
-                delete objectIdsUsed[objectId];
-            }
+function init() {
 
-            const objectIds = Object.keys(objectIdsUsed);
+    loadMonitor ();
+    
 
-            if (objectIds.length === 0) {
-                iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
-            } else {
-                const objectIdsParam = objectIds.join(",");
-                iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
-            }
+    startConnect();
+    const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
+    let iframeElement = document.getElementById("embeddedViewer");
+    if (!iframeElement) {
+        throw "IFRAME not found";
+    }
+    iframeElement.src = iframeBaseURL;
+
+    const objectIdsUsed = {};
+
+    window.changeColorByMQTT = function (checkbox) {
+
+            console.log(checkbox)
+            viewer = iframeElement.contentWindow.bimViewer.viewer;
+
+            console.log(viewer.metaScene.metaObjects["12NjfiY$5BWxO3cGvRvhMM"])
+
+            //var obj = viewer.scene.components[entity.id];
+            var obj = viewer.scene.objects["12NjfiY$5BWxO3cGvRvhMM"];
+            var res= obj.colorize = [1,0,0] ;
+            for (selObj in viewer.scene.selectedObjects ){
+
+                console.log(selObj, obj);
+
+                viewer.scene.selectedObjects[selObj].colorize = [1,0,0];
+                viewer.scene.selectedObjects[selObj].selected = false; 
+            };
+            //teapotMesh.visible = false; -->
+            //   material = new PhongMaterial(scene, {
+            //       id: "myMaterial",
+            //       diffuse: [0.2, 0.2, 1.0]
+            //   })
+            //   var teapotMaterial = viewer.scene.components["myMaterial"];
+            var material = obj.material;
+            //  teapotMesh.material = teapotMaterial;
+            ///material.diffuse = [1,0,0]; // Change to red
+            //obj.material = material;
+            obj.meshes[0]._color=[1,0,0,0];
+    }
+    window.selectObject = function (checkbox) {
+
+        const objectId = checkbox.name;
+
+        if (checkbox.checked) {
+            objectIdsUsed[objectId] = true;
+        } else {
+            delete objectIdsUsed[objectId];
         }
+
+        const objectIds = Object.keys(objectIdsUsed);
+
+        if (objectIds.length === 0) {
+            iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
+        } else {
+            const objectIdsParam = objectIds.join(",");
+            iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
+        }
+    }
 
 /*
-        scene.input.on("mouseclicked", function (coords) {
-            var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
-                            console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
-                        }
+    scene.input.on("mouseclicked", function (coords) {
+        var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
+                        console.log(JSON.stringify(metaObject.getJSON(), null, "\t"));
                     }
                 }
             }
-        });
+        }
+    });
 */
-    } 
+} 
