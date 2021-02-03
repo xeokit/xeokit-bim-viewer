@@ -11,11 +11,18 @@ const host = 'broker.emqx.io';
 const port = '8084';
 // Initialize new Paho client connection
 let client = new Paho.MQTT.Client(host, Number(port), clientID);
+
+const  colorChan = "OnePiece/SHMviewer/color" ;
+const  detailChan = "OnePiece/SHMviewer/detail" ;
+const  msgChan = "OnePiece/SHMviewer/msg" ;
+
+let message_from_mqtt = "fortest"; //--> from Gary, necessary?
+
 var csvContent; 
 
 
 
-function csvFile(){
+function idStructure(){
 
     //get my constants 
     let iframeElement = document.getElementById("embeddedViewer");
@@ -114,9 +121,13 @@ function startConnect() {
         
 
         console.log("subscribing");
-        const  channel = "rwth/SHMviewer/#" ;
-        client.subscribe(channel);
-        console.log ("subscribed to "+channel);
+        client.subscribe(colorChan);
+        console.log ("subscribed to "+colorChan);
+        client.subscribe(detailChan);
+        console.log ("subscribed to "+detailChan);
+        client.subscribe(msgChan);
+        console.log ("subscribed to "+msgChan);
+
 
     }
 
@@ -134,75 +145,68 @@ function startConnect() {
     }
  
 
-// Called when a message arrives
+    // Called when a message arrives
     function onMessageArrived(message) {
-        
-        //JSON object with two values extracted to elementID/selObj and color 
-        
-        console.log(message.payloadString);
+         
+        console.log(message);
+        let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
+        let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
         let msg = JSON.parse(message.payloadString);
-            //console.log(msg);
-        let sensor = msg.sensorID;
-        let color = msg.color;
-        console.log(sensor);
-        console.log(color);
+        console.log(message.payloadString);
 
-        //access the metaObjects array
-        // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
-        let csvarray = [];
-        let client = new XMLHttpRequest();
-        client.open('GET', '/embeddedDemos/sensorOverview.csv');
-        client.onreadystatechange = function() {
-            let rows = client.responseText.split('\r\n');
-            for(let i = 0; i < rows.length; i++){
-                csvarray.push(rows[i].split(';'));
+        //sort message to channels
+        if (message.destinationName.match(detailMsg)!==null) {
+            console.log("message for detail");
+            update_info(msg);
+        } else if(message.destinationName.match(colorMsg)!==null){
+            console.log("message for color");
+            let sensor = msg.sensorID;
+            let color = msg.color;
+            console.log(sensor);
+            console.log(color);
+            //access the metaObjects array
+            // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
+            let csvarray = [];
+            let client = new XMLHttpRequest();
+            client.open('GET', '/embeddedDemos/sensorOverview.csv');
+            client.onreadystatechange = function() {
+                let rows = client.responseText.split('\r\n');
+                for(let i = 0; i < rows.length; i++){
+                    csvarray.push(rows[i].split(';'));
+                }
             }
-        }
-        client.send();
+            client.send();
 
-        // temporary solution, as the forEach function doesn't recognize my actual array
-        let selObj = "sensor not connected";
-        let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "1"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "3"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "4"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "2"]];
-        //console.log(myarray);
-        
-        myarray.forEach(function(element){
-        //console.log(element[3]);
-        if (element.includes(sensor)){
-            selObj = element[2];
-            //console.log(selObj);https://teams.microsoft.com/l/meetup-join/19:5edeb9de96ad41e0b56e5297692e0ae9@thread.tacv2/1612339346815?context=%7B%22Tid%22:%220ce775f2-67de-4cd2-ba67-819a417e447f%22,%22Oid%22:%2280f33d89-e0f2-4d35-9144-f7b446789b60%22%7D
-        }
-        });
-        console.log(selObj);
-
-        /*
-        let selObj = "sensor not connected";
-        csvarray.forEach(function(element){
+            // temporary solution, as the forEach function doesn't recognize my actual array
+            let selObj = "sensor not connected";
+            let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "USR02"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "USL02"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "R002"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "R001"]];
+            //console.log(myarray);
+            
+            myarray.forEach(function(element){
+            //console.log(element[3]);
             if (element.includes(sensor)){
-              selObj = element;
-              console.log(selObj);
+                selObj = element[2];
+                //console.log(selObj);
             }
-          });
-        console.log(selObj);
-        */
+            });
+            console.log(selObj);
 
+            let iframeElement = document.getElementById("embeddedViewer");
+            let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+            let metaObjects = viewer.metaScene.metaObjects;
+            let ObjectList = Object.entries(metaObjects);
+            console.log (ObjectList); 
+            let myItem = metaObjects[String(selObj)];
+            console.log(myItem.id); 
+            let entity = viewer.scene.objects[myItem.id];
 
-        let iframeElement = document.getElementById("embeddedViewer");
-        //console.log(iframeElement);
-        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-        //console.log("selected sensor:\r"+ sensor); 
-        let metaObjects = viewer.metaScene.metaObjects;
-        //console.log (metaObjects);
-        //console.log (csvContent);
-        let ObjectList = Object.entries(metaObjects);
-        console.log (ObjectList); // not working well
-        let myItem = metaObjects[String(selObj)];
-        console.log(myItem.id); // breaks the script
-        let entity = viewer.scene.objects[myItem.id];
-
-
-        entity.colorize = color;
-        console.log("test")
+            entity.colorize = color;
+            console.log("success")
        
+
+        } else{
+            console.log("sent to message channel")
+        }
 
     }
 
@@ -214,8 +218,6 @@ function startDisconnect() {
 
 
 // starts an interval event to monitor the load status of the model
-
-
 function loadMonitor(){
     var countInterval = 0;
     var loaderInt = window.setInterval( function(){
@@ -237,8 +239,8 @@ function loadMonitor(){
             window.clearInterval(loaderInt);
             console.log(`model loaded`);
 
-            csvFile();
-            console.log("csv created") //tests for successful csvFile() execution
+            idStructure();
+            console.log("csv created") //tests for successful idStructure() execution
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
