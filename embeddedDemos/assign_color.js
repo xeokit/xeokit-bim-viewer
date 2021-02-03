@@ -162,14 +162,14 @@ function startConnect() {
 
         // temporary solution, as the forEach function doesn't recognize my actual array
         let selObj = "sensor not connected";
-        let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "USR02"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "USL02"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "R002"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "R001"]];
+        let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "1"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "3"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "4"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "2"]];
         //console.log(myarray);
         
         myarray.forEach(function(element){
         //console.log(element[3]);
         if (element.includes(sensor)){
             selObj = element[2];
-            //console.log(selObj);
+            //console.log(selObj);https://teams.microsoft.com/l/meetup-join/19:5edeb9de96ad41e0b56e5297692e0ae9@thread.tacv2/1612339346815?context=%7B%22Tid%22:%220ce775f2-67de-4cd2-ba67-819a417e447f%22,%22Oid%22:%2280f33d89-e0f2-4d35-9144-f7b446789b60%22%7D
         }
         });
         console.log(selObj);
