@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>SHM Object-Viewer - OnePiece</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript"></script>
     <script src="detailed_info.js" type="text/javascript"></script>
     <script src="assign_color.js" type="text/javascript"></script>
@@ -11,6 +12,7 @@
 <!--
   from garys file: 
       <style>
+
 
         html, body {
             height: 100%;
@@ -52,6 +54,7 @@
         "12NjfiY$5BWxO3cGvRvhMM"</input></li>
     0
 </ul>
+
 
 <div>
     <div style="display: inline-block; vertical-align: top ;width: 80%">
@@ -138,6 +141,18 @@
 </ul>-->
 <iframe id="embeddedViewer"></iframe>
 
+
+<div>
+    <div style="display: inline-block; vertical-align: top ;width: 80%">
+        <iframe id="embeddedViewer"></iframe>
+    </div>
+    <div id="div_info", style="background: white; border-style: solid;border-left-width: 10px ;border-color:white; display: inline-block; width: 18%;vertical-align: top;">
+        <div id="information" , style="background: white ; height: 560px;background: white; overflow:auto ; font-size: small"></div>
+        <button style="width: 100%;height: 30px" onclick="clear_div_info()">clear</button>
+        </divinline-block>
+    </div>
+</div>
 </body>
+
 </html>
 

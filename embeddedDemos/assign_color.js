@@ -3,14 +3,13 @@
 let current_r = 0;
 let current_g = 0;
 let current_b = 0;
-let color = [1,0,1];
+let color = [1, 0, 1];
 
 
 const clientID = "clientID-" + parseInt(Math.random() * 100);
 const host = 'broker.emqx.io';
 const port = '8084';
-// Initialize new Paho client connection
-let client = new Paho.MQTT.Client(host, Number(port), clientID);
+
 
 const  colorChan = "OnePiece/SHMviewer/color" ;
 const  detailChan = "OnePiece/SHMviewer/detail" ;
@@ -86,6 +85,7 @@ function idStructure(){
     */
 }
 
+
 function startConnect() {
 // Generate a random client ID
 
@@ -93,30 +93,31 @@ function startConnect() {
     //host = document.getElementById("host").value; -->
     // port = document.getElementById("port").value; -->
     console.log("connecting")
- 
+
 
     // Set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
     // Connect the client, if successful, call onConnect function
-    client.connect({ 
+    client.connect({
         onSuccess: onConnect,
         useSSL: true
     });
 
     console.info(client)
-    }
+}
 
-    // Called when the client connects
-    function onConnect() {
-        // Fetch the MQTT topic from the form
-        //topic = document.getElementById("topic").value;
+// Called when the client connects
+function onConnect() {
+    // Fetch the MQTT topic from the form
+    //topic = document.getElementById("topic").value;
 
-        // Print output for the user in the messages div
-        //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
+    // Print output for the user in the messages div
+    //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
 
-        // Subscribe to the requested topics
+    // Subscribe to the requested topics
+
 
         
 
@@ -129,20 +130,27 @@ function startConnect() {
         console.log ("subscribed to "+msgChan);
 
 
-    }
+   
+    client.subscribe(channel_color);
+    console.log("subscribed to " + channel_color);
 
-    // Called when the client loses its connection
-    function onConnectionLost(responseObject) {
+    client.subscribe(channel_info);
+    console.log("subscribed to " + channel_info);
+
+}
+
+// Called when the client loses its connection
+function onConnectionLost(responseObject) {
     //    <!-- document.getElementById("messages").innerHTML += '<span>ERROR: Connection lost</span><br/>';
     //    if (responseObject.errorCode !== 0) {
     //       document.getElementById("messages").innerHTML += '<span>ERROR: ' + + responseObject.errorMessage + '</span><br/>';
     //   } -->
 
-        console.log("connection lost")
-        if (responseObject.errorCode !== 0) {
-            console.log(responseObject.errorMessage);
-        }
+    console.log("connection lost")
+    if (responseObject.errorCode !== 0) {
+        console.log(responseObject.errorMessage);
     }
+
  
 
     // Called when a message arrives
@@ -161,10 +169,12 @@ function startConnect() {
         } else if(message.destinationName.match(colorMsg)!==null){
             console.log("message for color");
             let sensor = msg.sensorID;
+
             let color = msg.color;
             console.log(sensor);
             console.log(color);
             //access the metaObjects array
+
             // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
             let csvarray = [];
             let client = new XMLHttpRequest();
@@ -196,25 +206,30 @@ function startConnect() {
             let metaObjects = viewer.metaScene.metaObjects;
             let ObjectList = Object.entries(metaObjects);
             console.log (ObjectList); 
+
             let myItem = metaObjects[String(selObj)];
             console.log(myItem.id); 
             let entity = viewer.scene.objects[myItem.id];
 
             entity.colorize = color;
+
             console.log("success")
        
 
         } else{
             console.log("sent to message channel")
-        }
 
+        }
     }
+
+}
 
 // Called when the disconnection button is pressed
 function startDisconnect() {
     client.disconnect();
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
+
 
 
 // starts an interval event to monitor the load status of the model
@@ -308,6 +323,7 @@ function init() {
 
         const objectIds = Object.keys(objectIdsUsed);
 
+
         if (objectIds.length === 0) {
             iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
         } else {
@@ -315,6 +331,7 @@ function init() {
             iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
         }
     }
+
 
 /*
     scene.input.on("mouseclicked", function (coords) {
@@ -327,3 +344,4 @@ function init() {
     });
 */
 } 
+
