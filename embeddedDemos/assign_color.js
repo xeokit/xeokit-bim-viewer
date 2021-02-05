@@ -31,13 +31,13 @@ function idStructure(){
     
     //access certain parts of metaObjects (skip the second level)
     const allObjects = Object.values(metaObjects);
-    var objArray = [["Type", "Name", "Id"]];
+    var objArray = [["Type", "Name", "Id"]]; //add description
     var allTypes = [];
     var allNames = [];
     var allIds = [];
     allObjects.forEach(function(element){
         //element is the variable for each object 
-        var newLength = objArray.push([element.type, element.name, element.id]);
+        var newLength = objArray.push([element.type, element.name, element.id]); //add description
         var newType = allTypes.push([element.type]);
         var newName = allNames.push([element.name]);
         var newId = allIds.push([element.id])
@@ -46,7 +46,7 @@ function idStructure(){
     allTypes = allTypes.flat(1);
     allNames = allNames.flat(1);
     allIds = allIds.flat(1);
-    var yxArray = [allTypes, allNames, allIds]; // might not be needed
+    var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
     console.log(objArray);
     console.log(yxArray); 
     //console.log(allTypes);
@@ -189,6 +189,12 @@ function startConnect() {
                 //console.log(selObj);
             }
             });
+
+            // permanent solution: 
+            /*
+            let selObj = "sensor not connected"; //--> do I want to keep this?
+            
+            */
             console.log(selObj);
 
             let iframeElement = document.getElementById("embeddedViewer");
@@ -201,7 +207,7 @@ function startConnect() {
             let entity = viewer.scene.objects[myItem.id];
 
             entity.colorize = color;
-            console.log("success")
+            console.log("success") //--> just for practice
        
 
         } else{
@@ -266,7 +272,7 @@ function init() {
     iframeElement.src = iframeBaseURL;
 
     const objectIdsUsed = {};
-
+    
     window.changeColorByMQTT = function (checkbox) {
 
             console.log(checkbox)

@@ -1,10 +1,13 @@
 "use strict";
 
-const ultrasonicSensor = "1bjALNe19BcO68YoPIpOu_";
-const depthSensor0 = "0nv5bie5r4AhhkrCbVL$Wn";
-const depthSensor1 = "25s0jSmSH4whopLALj9wxv";
-const depthSensor2 = "2oJVCaCyn2xPl5kA2E22TU";
+const ultrasonicSensorR = "USR02";
+const ultrasonicSensorL = "USL02";
+const depthSensor2 = "R002";
+const depthSensor1 = "R001";
 
+let sensor = "no connection";
+let tempArray = [["1bjALNe19BcO68YoPIpOu_", "USR02"], ["0nv5bie5r4AhhkrCbVL$Wn", "USL02"], ["25s0jSmSH4whopLALj9wxv", "R002"], ["2oJVCaCyn2xPl5kA2E22TU", "R001"]];
+let messageID = "";
 let current_sensor_ID = "";
 
 function show_some_information_init() {
@@ -17,9 +20,15 @@ function show_some_information_init() {
         viewer.cameraControl.on("hover", (e) => {
             id = e.entity.id;
         });
-
+        
+        tempArray.forEach(function(element){
+            if (element.includes(id)){
+                sensor = element[1];
+            }
+        });
+        
         viewer.scene.input.on("mouseup", e => {
-            if (id === ultrasonicSensor || id === depthSensor0 || id === depthSensor1 || id === depthSensor2) {
+            if (sensor === ultrasonicSensorR || sensor === ultrasonicSensorR || sensor === depthSensor1 || sensor === depthSensor2) {
                 current_sensor_ID = id;
             }
             console.log(id);
@@ -31,7 +40,12 @@ function show_some_information_init() {
 function update_info(message) {
     console.log(message);
 
-    if (message.sensor_ID === current_sensor_ID) {
+    tempArray.forEach(function(element){
+        if (element.includes(message.sensorID)){
+            messageID = element[0]
+        }
+    });
+    if (message.sensorID === current_sensor_ID) {
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();
