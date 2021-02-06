@@ -23,7 +23,7 @@ var csvContent;
 
 
 function idStructure(){
-
+    //currently not used here
     //get my constants 
     let iframeElement = document.getElementById("embeddedViewer");
     let  viewer = iframeElement.contentWindow.bimViewer.viewer;
@@ -174,46 +174,54 @@ function onConnectionLost(responseObject) {
             let color = msg.color;
             console.log(sensor);
             console.log(color);
-            //access the metaObjects array
-
-            // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
-            let csvarray = [];
-            let client = new XMLHttpRequest();
-            client.open('GET', '/embeddedDemos/sensorOverview.csv');
-            client.onreadystatechange = function() {
-                let rows = client.responseText.split('\r\n');
-                for(let i = 0; i < rows.length; i++){
-                    csvarray.push(rows[i].split(';'));
-                }
-            }
-            client.send();
-
-            // temporary solution, as the forEach function doesn't recognize my actual array
-            let selObj = "sensor not connected";
-            let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "USR02"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "USL02"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "R002"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "R001"]];
-            //console.log(myarray);
-            
-            myarray.forEach(function(element){
-            //console.log(element[3]);
-            if (element.includes(sensor)){
-                selObj = element[2];
-                //console.log(selObj);
-            }
-            });
-
-            // permanent solution: 
-            /*
-            let selObj = "sensor not connected"; //--> do I want to keep this?
-            
-            */
-            console.log(selObj);
-
+            //access the metadata
             let iframeElement = document.getElementById("embeddedViewer");
             let  viewer = iframeElement.contentWindow.bimViewer.viewer;
             let metaObjects = viewer.metaScene.metaObjects;
             let ObjectList = Object.entries(metaObjects);
             console.log (ObjectList); 
 
+            let selObj = "sensor not connected";
+            const allObjects = Object.values(metaObjects);
+            var objArray = [];
+            //var allTypes = [];
+            //var allNames = [];
+            //var allIds = [];
+            allObjects.forEach(function(element){
+                //element is the variable for each object 
+                var newLength = objArray.push([element.type, element.name, element.id]); //add description
+                //var newType = allTypes.push([element.type]);
+                //var newName = allNames.push([element.name]);
+                //var newId = allIds.push([element.id])
+            });
+            
+            //allTypes = allTypes.flat(1);
+            //allNames = allNames.flat(1);
+            //allIds = allIds.flat(1);
+            //var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
+            console.log(objArray);
+            //console.log(yxArray); 
+            
+            // replace sensorID with objID 
+            //if sensor string includes US, replace with cw; else: replace R with W  ---> only works for our version! (maybe create a catalogue with more possible sensor types?)
+            let objId;
+            if (sensor.includes("US")){
+                objId = sensor.replace("US", "CW");
+            } else {
+                objId = sensor.replace("R0", "W0")
+            };
+
+
+            //pick object by name and give id
+            objArray.forEach(function(element){
+            //console.log(element[3]);
+            if (element.includes(objId)){
+                selObj = element[2];
+                //console.log(selObj);
+            }
+            });
+
+            console.log(selObj);
             let myItem = metaObjects[String(selObj)];
             console.log(myItem.id); 
             let entity = viewer.scene.objects[myItem.id];
@@ -260,8 +268,8 @@ function loadMonitor(){
             window.clearInterval(loaderInt);
             console.log(`model loaded`);
 
-            idStructure();
-            console.log("csv created") //tests for successful idStructure() execution
+            //idStructure();
+            //console.log("csv created") //tests for successful idStructure() execution
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)

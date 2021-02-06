@@ -9,3 +9,8 @@ csvarray.forEach(function(element){
   }
 });
 console.log(selObj);
+
+let arrayAdder = [];
+let newLength = arrayAdder.push(orange);
+console.log(arrayAdder);
+console.log(newLength)
