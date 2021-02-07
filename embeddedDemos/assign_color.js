@@ -22,7 +22,7 @@ var csvContent;
 
 
 
-function idStructure(){
+function idStructure(){  // CURRENTLY NOT USED
 
     //get my constants 
     let iframeElement = document.getElementById("embeddedViewer");
@@ -106,109 +106,126 @@ function startConnect() {
     });
 
     console.info(client)
+}
+
+// Called when the client connects
+function onConnect() {
+    // Fetch the MQTT topic from the form
+    //topic = document.getElementById("topic").value;
+
+    // Print output for the user in the messages div
+    //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
+
+    // Subscribe to the requested topics
+
+    
+
+    console.log("subscribing");
+    client.subscribe(colorChan);
+    console.log ("subscribed to "+colorChan);
+    client.subscribe(detailChan);
+    console.log ("subscribed to "+detailChan);
+    client.subscribe(msgChan);
+    console.log ("subscribed to "+msgChan);
+
+
+}
+
+// Called when the client loses its connection
+function onConnectionLost(responseObject) {
+//    <!-- document.getElementById("messages").innerHTML += '<span>ERROR: Connection lost</span><br/>';
+//    if (responseObject.errorCode !== 0) {
+//       document.getElementById("messages").innerHTML += '<span>ERROR: ' + + responseObject.errorMessage + '</span><br/>';
+//   } -->
+
+    console.log("connection lost")
+    if (responseObject.errorCode !== 0) {
+        console.log(responseObject.errorMessage);
     }
-
-    // Called when the client connects
-    function onConnect() {
-        // Fetch the MQTT topic from the form
-        //topic = document.getElementById("topic").value;
-
-        // Print output for the user in the messages div
-        //document.getElementById("messages").innerHTML += '<span>Subscribing to: ' + topic + '</span><br/>';
-
-        // Subscribe to the requested topics
-
-        
-
-        console.log("subscribing");
-        client.subscribe(colorChan);
-        console.log ("subscribed to "+colorChan);
-        client.subscribe(detailChan);
-        console.log ("subscribed to "+detailChan);
-        client.subscribe(msgChan);
-        console.log ("subscribed to "+msgChan);
-
-
-    }
-
-    // Called when the client loses its connection
-    function onConnectionLost(responseObject) {
-    //    <!-- document.getElementById("messages").innerHTML += '<span>ERROR: Connection lost</span><br/>';
-    //    if (responseObject.errorCode !== 0) {
-    //       document.getElementById("messages").innerHTML += '<span>ERROR: ' + + responseObject.errorMessage + '</span><br/>';
-    //   } -->
-
-        console.log("connection lost")
-        if (responseObject.errorCode !== 0) {
-            console.log(responseObject.errorMessage);
-        }
-    }
+}
  
 
-    // Called when a message arrives
-    function onMessageArrived(message) {
-         
+// Called when a message arrives
+function onMessageArrived(message) {
+        
+    let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
+    let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
+    let msg = JSON.parse(message.payloadString);
+    console.log(message.payloadString);
+
+    //sort message to channels
+    if (message.destinationName.match(detailMsg)!==null) {
+        console.log("message for detail");
         console.log(message);
-        let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
-        let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
-        let msg = JSON.parse(message.payloadString);
-        console.log(message.payloadString);
+        update_info(msg);
+    } else if(message.destinationName.match(colorMsg)!==null){
+        console.log("message for color");
+        let sensorID = msg.sensorID;
+        let color = msg.color;
+        console.log(sensorID);
+        console.log(color);
 
-        //sort message to channels
-        if (message.destinationName.match(detailMsg)!==null) {
-            console.log("message for detail");
-            update_info(msg);
-        } else if(message.destinationName.match(colorMsg)!==null){
-            console.log("message for color");
-            let sensor = msg.sensorID;
-            let color = msg.color;
-            console.log(sensor);
-            console.log(color);
-            //access the metaObjects array
-            // get csv file back (replace Test.csv with Objects.csv) -> this part is already tested and works
-            let csvarray = [];
-            let client = new XMLHttpRequest();
-            client.open('GET', '/embeddedDemos/sensorOverview.csv');
-            client.onreadystatechange = function() {
-                let rows = client.responseText.split('\r\n');
-                for(let i = 0; i < rows.length; i++){
-                    csvarray.push(rows[i].split(';'));
-                }
-            }
-            client.send();
+        //access the metadata
+        let iframeElement = document.getElementById("embeddedViewer");
+        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+        let metaObjects = viewer.metaScene.metaObjects;
+        let ObjectList = Object.entries(metaObjects);
+        console.log (ObjectList); 
 
-            // temporary solution, as the forEach function doesn't recognize my actual array
-            let selObj = "sensor not connected";
-            let myarray = [["IfcBuildingElementProxy", "Umlauf", "2cyTtvWGvF_v0CQVLse3zn", "USR02"], ["IfcBuildingElementProxy", "Umlauf", "1RtZu2Lh57kP81ZZ59rWcW", "USL02"], ["IfcBuildingElementProxy", "Water", "2UFCi7SOP2WBqIi4NDVGdu", "R002"], ["IfcBuildingElementProxy", "Water", "0In9GSkUj0kAjvuqTrNojT", "R001"]];
-            //console.log(myarray);
-            
-            myarray.forEach(function(element){
-            //console.log(element[3]);
-            if (element.includes(sensor)){
-                selObj = element[2];
-                //console.log(selObj);
-            }
-            });
-            console.log(selObj);
+        let selObj = "sensor not connected";
+        const allObjects = Object.values(metaObjects);
+        var objArray = [];
+        //var allTypes = [];
+        //var allNames = [];
+        //var allIds = [];
+        allObjects.forEach(function(element){
+            //element is the variable for each object 
+            var newLength = objArray.push([element.type, element.name, element.id]); //add description
+            //var newType = allTypes.push([element.type]);
+            //var newName = allNames.push([element.name]);
+            //var newId = allIds.push([element.id])
+        });
 
-            let iframeElement = document.getElementById("embeddedViewer");
-            let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-            let metaObjects = viewer.metaScene.metaObjects;
-            let ObjectList = Object.entries(metaObjects);
-            console.log (ObjectList); 
-            let myItem = metaObjects[String(selObj)];
-            console.log(myItem.id); 
-            let entity = viewer.scene.objects[myItem.id];
+        //allTypes = allTypes.flat(1);
+        //allNames = allNames.flat(1);
+        //allIds = allIds.flat(1);
+        //var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
+        console.log(objArray);
+        //console.log(yxArray); 
 
-            entity.colorize = color;
-            console.log("success")
-       
+        // replace sensorID with objID 
+        //if sensor string includes US, replace with cw; else: replace R with W  ---> only works for our version! (maybe create a catalogue with more possible sensor types?)
+        let objId;
+        if (sensorID.includes("US")){
+            objId = sensorID.replace("US", "CW");
+        } else {
+            objId = sensorID.replace("R0", "W0")
+        };
 
-        } else{
-            console.log("sent to message channel")
+
+        //pick object by name and give id
+        objArray.forEach(function(element){
+        //console.log(element[3]);
+        if (element.includes(objId)){
+            selObj = element[2];
+            //console.log(selObj);
         }
+        });
 
+        console.log(selObj);
+        let myItem = metaObjects[String(selObj)];
+        //console.log(myItem.id); 
+        let entity = viewer.scene.objects[myItem.id];
+
+        entity.colorize = color;
+        //console.log("success") //--> just for practice
+    
+
+    } else{
+        console.log("sent to message channel")
     }
+
+}
 
 // Called when the disconnection button is pressed
 function startDisconnect() {
@@ -239,8 +256,8 @@ function loadMonitor(){
             window.clearInterval(loaderInt);
             console.log(`model loaded`);
 
-            idStructure();
-            console.log("csv created") //tests for successful idStructure() execution
+            //idStructure();
+            //console.log("csv created") //tests for successful idStructure() execution
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
