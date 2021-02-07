@@ -8,6 +8,7 @@ csvarray.forEach(function(element){
     //console.log(selObj);
   }
 });
+
 console.log(selObj);
 
 let arrayAdder = [];

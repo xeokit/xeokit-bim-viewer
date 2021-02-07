@@ -22,8 +22,10 @@ var csvContent;
 
 
 
-function idStructure(){
-    //currently not used here
+
+function idStructure(){  // CURRENTLY NOT USED
+
+
     //get my constants 
     let iframeElement = document.getElementById("embeddedViewer");
     let  viewer = iframeElement.contentWindow.bimViewer.viewer;
@@ -31,13 +33,17 @@ function idStructure(){
     
     //access certain parts of metaObjects (skip the second level)
     const allObjects = Object.values(metaObjects);
-    var objArray = [["Type", "Name", "Id"]]; //add description
+
+    var objArray = [["Type", "Name", "Id"]];
+
     var allTypes = [];
     var allNames = [];
     var allIds = [];
     allObjects.forEach(function(element){
         //element is the variable for each object 
-        var newLength = objArray.push([element.type, element.name, element.id]); //add description
+
+        var newLength = objArray.push([element.type, element.name, element.id]);
+
         var newType = allTypes.push([element.type]);
         var newName = allNames.push([element.name]);
         var newId = allIds.push([element.id])
@@ -46,7 +52,9 @@ function idStructure(){
     allTypes = allTypes.flat(1);
     allNames = allNames.flat(1);
     allIds = allIds.flat(1);
-    var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
+
+    var yxArray = [allTypes, allNames, allIds]; // might not be needed
+
     console.log(objArray);
     console.log(yxArray); 
     //console.log(allTypes);
@@ -86,7 +94,6 @@ function idStructure(){
     */
 }
 
-
 function startConnect() {
 // Generate a random client ID
 
@@ -95,13 +102,14 @@ function startConnect() {
     // port = document.getElementById("port").value; -->
     console.log("connecting")
 
-
     // Set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
     // Connect the client, if successful, call onConnect function
-    client.connect({
+
+    client.connect({ 
+
         onSuccess: onConnect,
         useSSL: true
     });
@@ -120,122 +128,111 @@ function onConnect() {
     // Subscribe to the requested topics
 
 
-        
 
-        console.log("subscribing");
-        client.subscribe(colorChan);
-        console.log ("subscribed to "+colorChan);
-        client.subscribe(detailChan);
-        console.log ("subscribed to "+detailChan);
-        client.subscribe(msgChan);
-        console.log ("subscribed to "+msgChan);
-
-
-   
-    client.subscribe(channel_color);
-    console.log("subscribed to " + channel_color);
-
-    client.subscribe(channel_info);
-    console.log("subscribed to " + channel_info);
+    console.log("subscribing");
+    client.subscribe(colorChan);
+    console.log ("subscribed to "+colorChan);
+    client.subscribe(detailChan);
+    console.log ("subscribed to "+detailChan);
+    client.subscribe(msgChan);
+    console.log ("subscribed to "+msgChan);
 
 }
 
 // Called when the client loses its connection
 function onConnectionLost(responseObject) {
-    //    <!-- document.getElementById("messages").innerHTML += '<span>ERROR: Connection lost</span><br/>';
-    //    if (responseObject.errorCode !== 0) {
-    //       document.getElementById("messages").innerHTML += '<span>ERROR: ' + + responseObject.errorMessage + '</span><br/>';
-    //   } -->
+//    <!-- document.getElementById("messages").innerHTML += '<span>ERROR: Connection lost</span><br/>';
+//    if (responseObject.errorCode !== 0) {
+//       document.getElementById("messages").innerHTML += '<span>ERROR: ' + + responseObject.errorMessage + '</span><br/>';
+//   } -->
 
     console.log("connection lost")
     if (responseObject.errorCode !== 0) {
         console.log(responseObject.errorMessage);
     }
-
+}
  
 
-    // Called when a message arrives
-    function onMessageArrived(message) {
-         
+// Called when a message arrives
+function onMessageArrived(message) {
+        
+    let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
+    let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
+    let msg = JSON.parse(message.payloadString);
+    console.log(message.payloadString);
+
+    //sort message to channels
+    if (message.destinationName.match(detailMsg)!==null) {
+        console.log("message for detail");
         console.log(message);
-        let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
-        let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
-        let msg = JSON.parse(message.payloadString);
-        console.log(message.payloadString);
+        update_info(msg);
+    } else if(message.destinationName.match(colorMsg)!==null){
+        console.log("message for color");
+        let sensorID = msg.sensorID;
+        let color = msg.color;
+        console.log(sensorID);
+        console.log(color);
 
-        //sort message to channels
-        if (message.destinationName.match(detailMsg)!==null) {
-            console.log("message for detail");
-            update_info(msg);
-        } else if(message.destinationName.match(colorMsg)!==null){
-            console.log("message for color");
-            let sensor = msg.sensorID;
+        //access the metadata
+        let iframeElement = document.getElementById("embeddedViewer");
+        let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+        let metaObjects = viewer.metaScene.metaObjects;
+        let ObjectList = Object.entries(metaObjects);
+        console.log (ObjectList); 
 
-            let color = msg.color;
-            console.log(sensor);
-            console.log(color);
-            //access the metadata
-            let iframeElement = document.getElementById("embeddedViewer");
-            let  viewer = iframeElement.contentWindow.bimViewer.viewer;
-            let metaObjects = viewer.metaScene.metaObjects;
-            let ObjectList = Object.entries(metaObjects);
-            console.log (ObjectList); 
+        let selObj = "sensor not connected";
+        const allObjects = Object.values(metaObjects);
+        var objArray = [];
+        //var allTypes = [];
+        //var allNames = [];
+        //var allIds = [];
+        allObjects.forEach(function(element){
+            //element is the variable for each object 
+            var newLength = objArray.push([element.type, element.name, element.id]); //add description
+            //var newType = allTypes.push([element.type]);
+            //var newName = allNames.push([element.name]);
+            //var newId = allIds.push([element.id])
+        });
 
-            let selObj = "sensor not connected";
-            const allObjects = Object.values(metaObjects);
-            var objArray = [];
-            //var allTypes = [];
-            //var allNames = [];
-            //var allIds = [];
-            allObjects.forEach(function(element){
-                //element is the variable for each object 
-                var newLength = objArray.push([element.type, element.name, element.id]); //add description
-                //var newType = allTypes.push([element.type]);
-                //var newName = allNames.push([element.name]);
-                //var newId = allIds.push([element.id])
-            });
-            
-            //allTypes = allTypes.flat(1);
-            //allNames = allNames.flat(1);
-            //allIds = allIds.flat(1);
-            //var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
-            console.log(objArray);
-            //console.log(yxArray); 
-            
-            // replace sensorID with objID 
-            //if sensor string includes US, replace with cw; else: replace R with W  ---> only works for our version! (maybe create a catalogue with more possible sensor types?)
-            let objId;
-            if (sensor.includes("US")){
-                objId = sensor.replace("US", "CW");
-            } else {
-                objId = sensor.replace("R0", "W0")
-            };
+        //allTypes = allTypes.flat(1);
+        //allNames = allNames.flat(1);
+        //allIds = allIds.flat(1);
+        //var yxArray = [allTypes, allNames, allIds]; // option to use this array and pick through index -> yxArray.Types[pos] with pos defined 
+        console.log(objArray);
+        //console.log(yxArray); 
+
+        // replace sensorID with objID 
+        //if sensor string includes US, replace with cw; else: replace R with W  ---> only works for our version! (maybe create a catalogue with more possible sensor types?)
+        let objId;
+        if (sensorID.includes("US")){
+            objId = sensorID.replace("US", "CW");
+        } else {
+            objId = sensorID.replace("R0", "W0")
+        };
 
 
-            //pick object by name and give id
-            objArray.forEach(function(element){
-            //console.log(element[3]);
-            if (element.includes(objId)){
-                selObj = element[2];
-                //console.log(selObj);
-            }
-            });
-
-            console.log(selObj);
-            let myItem = metaObjects[String(selObj)];
-            console.log(myItem.id); 
-            let entity = viewer.scene.objects[myItem.id];
-
-            entity.colorize = color;
-            console.log("success") //--> just for practice
-       
-
-        } else{
-            console.log("sent to message channel")
-
+        //pick object by name and give id
+        objArray.forEach(function(element){
+        //console.log(element[3]);
+        if (element.includes(objId)){
+            selObj = element[2];
+            //console.log(selObj);
         }
-    }
+        });
 
+        console.log(selObj);
+        let myItem = metaObjects[String(selObj)];
+        //console.log(myItem.id); 
+        let entity = viewer.scene.objects[myItem.id];
+
+        entity.colorize = color;
+        //console.log("success") //--> just for practice
+    
+
+    } else{
+        console.log("sent to message channel")
+
+    }
 }
 
 // Called when the disconnection button is pressed
@@ -243,8 +240,6 @@ function startDisconnect() {
     client.disconnect();
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
-
-
 
 // starts an interval event to monitor the load status of the model
 function loadMonitor(){
@@ -295,7 +290,6 @@ function init() {
     iframeElement.src = iframeBaseURL;
 
     const objectIdsUsed = {};
-    
     window.changeColorByMQTT = function (checkbox) {
 
             console.log(checkbox)
@@ -337,7 +331,6 @@ function init() {
 
         const objectIds = Object.keys(objectIdsUsed);
 
-
         if (objectIds.length === 0) {
             iframeElement.src = iframeBaseURL + "#actions=clearFocusObjects";
         } else {
@@ -345,8 +338,6 @@ function init() {
             iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
         }
     }
-
-
 /*
     scene.input.on("mouseclicked", function (coords) {
         var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
@@ -357,5 +348,4 @@ function init() {
         }
     });
 */
-} 
 

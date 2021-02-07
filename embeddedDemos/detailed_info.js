@@ -8,21 +8,19 @@ let sensorName; //metadata name
 //let sensorId; //metadata id
 let selSensor // hovered id recognized as sensor 
 let id = null; // id of selected/ hovered object (not just sensors)
-let sensor; // Names send by Michael, elements of "allSensors"
+let sensorID; // Names send by Michael, elements of "allSensors"
 let messageID = "";
-
-// should those be in functions?
-let iframe = document.getElementById('embeddedViewer');
-let viewer = iframe.contentWindow.bimViewer.viewer;
-let metaObjects = viewer.metaScene.metaObjects;
-//let ObjectList = Object.entries(metaObjects); // --> neccessary?
-const allObjects = Object.values(metaObjects);
 var objArray = [];
-
 
 function show_some_information_init() {
 
-    
+
+    let iframe = document.getElementById('embeddedViewer');
+    let viewer = iframe.contentWindow.bimViewer.viewer;
+    let metaObjects = viewer.metaScene.metaObjects;
+    //let ObjectList = Object.entries(metaObjects); // --> neccessary?
+    const allObjects = Object.values(metaObjects);
+
     allObjects.forEach(function(element){
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
@@ -41,7 +39,9 @@ function show_some_information_init() {
             }
         });
         
-        //filter sensors from other objects
+
+        //filter sensors from other objects --> the allSensors array builds up with arriving messages
+
         viewer.scene.input.on("mouseup", e => {
             if (allSensors.includes(sensorName)) {
                 selSensor = id;
@@ -54,9 +54,23 @@ function show_some_information_init() {
 
 function update_info(message) {
     console.log(message);
-    // add sensor name to the pool of sensors (to enable the hovering in other function)
-    let newSensorName = allSensors.push(message.sensorID);
 
+    sensorID = message.sensorID;
+    console.log(message.sensorID);
+
+
+    let iframe = document.getElementById('embeddedViewer');
+    let viewer = iframe.contentWindow.bimViewer.viewer;
+    let metaObjects = viewer.metaScene.metaObjects;
+    //let ObjectList = Object.entries(metaObjects); // --> neccessary?
+    const allObjects = Object.values(metaObjects);
+
+    // add sensor name to the pool of sensors (to enable the hovering in other function)
+    if (!allSensors.includes(sensorID)){
+        let newSensorName = allSensors.push(sensorID);
+    }
+    console.log(allSensors);
+    console.log(allObjects);
     allObjects.forEach(function(element){
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
@@ -66,7 +80,7 @@ function update_info(message) {
             messageID = element[0]
         }
     });
-    if (message.sensorID === current_sensor_ID) {
+    if (message.sensorID === selSensor) {
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();
