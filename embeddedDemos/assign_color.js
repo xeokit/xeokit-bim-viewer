@@ -22,7 +22,9 @@ var csvContent;
 
 
 
+
 function idStructure(){  // CURRENTLY NOT USED
+
 
     //get my constants 
     let iframeElement = document.getElementById("embeddedViewer");
@@ -31,13 +33,17 @@ function idStructure(){  // CURRENTLY NOT USED
     
     //access certain parts of metaObjects (skip the second level)
     const allObjects = Object.values(metaObjects);
+
     var objArray = [["Type", "Name", "Id"]];
+
     var allTypes = [];
     var allNames = [];
     var allIds = [];
     allObjects.forEach(function(element){
         //element is the variable for each object 
+
         var newLength = objArray.push([element.type, element.name, element.id]);
+
         var newType = allTypes.push([element.type]);
         var newName = allNames.push([element.name]);
         var newId = allIds.push([element.id])
@@ -46,7 +52,9 @@ function idStructure(){  // CURRENTLY NOT USED
     allTypes = allTypes.flat(1);
     allNames = allNames.flat(1);
     allIds = allIds.flat(1);
+
     var yxArray = [allTypes, allNames, allIds]; // might not be needed
+
     console.log(objArray);
     console.log(yxArray); 
     //console.log(allTypes);
@@ -93,14 +101,15 @@ function startConnect() {
     //host = document.getElementById("host").value; -->
     // port = document.getElementById("port").value; -->
     console.log("connecting")
- 
 
     // Set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
     // Connect the client, if successful, call onConnect function
+
     client.connect({ 
+
         onSuccess: onConnect,
         useSSL: true
     });
@@ -118,7 +127,7 @@ function onConnect() {
 
     // Subscribe to the requested topics
 
-    
+
 
     console.log("subscribing");
     client.subscribe(colorChan);
@@ -127,7 +136,6 @@ function onConnect() {
     console.log ("subscribed to "+detailChan);
     client.subscribe(msgChan);
     console.log ("subscribed to "+msgChan);
-
 
 }
 
@@ -223,8 +231,8 @@ function onMessageArrived(message) {
 
     } else{
         console.log("sent to message channel")
-    }
 
+    }
 }
 
 // Called when the disconnection button is pressed
@@ -232,7 +240,6 @@ function startDisconnect() {
     client.disconnect();
     document.getElementById("messages").innerHTML += '<span>Disconnected</span><br/>';
 }
-
 
 // starts an interval event to monitor the load status of the model
 function loadMonitor(){
@@ -283,7 +290,6 @@ function init() {
     iframeElement.src = iframeBaseURL;
 
     const objectIdsUsed = {};
-
     window.changeColorByMQTT = function (checkbox) {
 
             console.log(checkbox)
@@ -332,7 +338,6 @@ function init() {
             iframeElement.src = iframeBaseURL + "#actions=focusObjects,openTab&objectIds=" + objectIdsParam + "&tabId=objects";
         }
     }
-
 /*
     scene.input.on("mouseclicked", function (coords) {
         var hit = scene.pick({ canvasPos: coords }); if (hit) { var entity = hit.entity; var metaObject = viewer.metaScene.metaObjects[entity.id]; if (metaObject) { console.log(JSON.stringify(metaObject.getJSON(), null, "\t")); } else { const parent = entity.parent; if (parent) { metaObject = viewer.metaScene.metaObjects[parent.id]; if (metaObject) {
@@ -343,4 +348,4 @@ function init() {
         }
     });
 */
-} 
+

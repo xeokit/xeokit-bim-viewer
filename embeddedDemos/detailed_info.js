@@ -10,11 +10,10 @@ let selSensor // hovered id recognized as sensor
 let id = null; // id of selected/ hovered object (not just sensors)
 let sensorID; // Names send by Michael, elements of "allSensors"
 let messageID = "";
-
 var objArray = [];
 
-
 function show_some_information_init() {
+
 
     let iframe = document.getElementById('embeddedViewer');
     let viewer = iframe.contentWindow.bimViewer.viewer;
@@ -40,7 +39,9 @@ function show_some_information_init() {
             }
         });
         
+
         //filter sensors from other objects --> the allSensors array builds up with arriving messages
+
         viewer.scene.input.on("mouseup", e => {
             if (allSensors.includes(sensorName)) {
                 selSensor = id;
@@ -53,6 +54,7 @@ function show_some_information_init() {
 
 function update_info(message) {
     console.log(message);
+
     sensorID = message.sensorID;
     console.log(message.sensorID);
 
