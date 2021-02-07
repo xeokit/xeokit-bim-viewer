@@ -41,7 +41,6 @@ class HideTool extends Controller {
             if (!this.getEnabled()) {
                 return;
             }
-            this.bimViewer._sectionTool.hideControl();
             const active = this.getActive();
             this.setActive(!active);
             event.preventDefault();

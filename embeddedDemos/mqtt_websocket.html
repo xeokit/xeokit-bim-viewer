@@ -1,0 +1,27 @@
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>mqtt-demo: A simple web application that can subscribe to topics from an MQTT broker over websockets</title>
+      <link rel="stylesheet" href="style.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript"></script>
+      <script src="mqtt.js" type="text/javascript"></script>
+   </head>
+   <body>
+      <div class="wrapper">
+         <h1>mqtt-demo</h1>
+         <form id="connection-information-form">
+            <b>Hostname or IP Address:</b> 
+            <!-- <input id="host" type="text" name="host" value="test.mosquitto.org"><br> -->
+            <input id="host" type="text" name="host" value="broker.emqx.io"><br>
+            <b>Port:</b>
+            <!-- for publication on https use SSL on port 8084 with client that supports it-->
+            <input id="port" type="text" name="port" value="8084"><br>
+            <b>Topic:</b>
+            <input id="topic" type="text" name="topic" value="rwth/color/#"><br><br>
+            <input type="button" onclick="startConnect()" value="Connect">
+            <input type="button" onclick="startDisconnect()" value="Disconnect">
+         </form>
+         <div id="messages"></div>
+      </div>
+   </body>
+</html>

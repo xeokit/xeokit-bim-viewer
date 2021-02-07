@@ -183,10 +183,6 @@ class SectionTool extends Controller { // XX
         this._sectionPlanesPlugin.flipSectionPlanes();
     }
 
-    hideControl() {
-        this._sectionPlanesPlugin.hideControl();
-    }
-
     destroy() {
         this._sectionPlanesPlugin.destroy();
         this._sectionToolContextMenu.destroy();

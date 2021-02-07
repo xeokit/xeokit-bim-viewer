@@ -33,7 +33,7 @@ Read the documentation below to get started.
 
 [Need Help?](#need-help)
 
---- 
+---
 
 * [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
 * [API Docs](https://xeokit.github.io/xeokit-bim-viewer/docs)
@@ -105,10 +105,18 @@ Click the links below to run some demos.
 | [Schependomlaan](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
+  
+## Need Help?
+
+Everything here is tested and used in production, so we're confident it will work well for you. 
+
+Sometimes, however, users may benefit from a few hours consultation to get started more quickly. 
+
+[Get in touch](http://xeolabs.com/contact/) if you could use a little help setting up your  ````xeokit-bim-viewer```` with your models. 
 
 ## License
 
-xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io). See [Pricing](https://xeokit.io/index.html#pricing) for licensing options.
+xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is provided under an [Affero GPL V3](https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt) for non-commercial use. See [Pricing](https://xeokit.io/index.html#pricing) for commercial licensing options.
 
 ## The Viewer Application
 
@@ -245,7 +253,6 @@ The table below lists the complete set of available configurations. Think of the
 | "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
 | "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
 | "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
-| "smartPivot"          | Boolean           |                       | ````true````      | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.  |
 | "saoEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Scalable Ambient Obscurance (SAO) |
 | "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
 | "saoIntensity"        | Number            | ````[0.0...200.0]```` | ````100.0````     | SAO intensity factor |
@@ -780,5 +787,4 @@ To build the API documentation in ````/docs/````:
 ````
 npm run docs
 ````
-
 

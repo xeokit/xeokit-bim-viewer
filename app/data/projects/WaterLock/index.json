@@ -21,8 +21,7 @@
     "viewFitDuration": 0.5,
     "viewFitFOV": 45,
     "perspectiveFOV": 55,
-    "objectColorSource": "model",
-    "smartPivot": "true"
+    "objectColorSource": "viewer"
   },
   "viewerContent": {
     "modelsLoaded": [
@@ -32,9 +31,6 @@
   "viewerState": {
     "viewCubeEnabled": true,
     "threeDEnabled": true,
-    "tabOpen": "classes",
-    "expandObjectsTree": 3,
-    "expandClassesTree": 1,
-    "expandStoreysTree": 2
+    "tabOpen": "models"
   }
 }
