@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script defer src="script.js"></script>
             
+
 </head>
 <body onload="init()">
     <img
@@ -53,45 +54,48 @@
         </div>
       </div>
       <div id="overlay"></div>  
-
      
 <!--<ul>
 Gary's body section
 </ul>-->
-<ul>
 
-  <li><input type="checkbox" name="12NjfiY$5BWxO3cGvRvhMM" onclick="javascript:changeColorByMQTT(this)">Change Color
-      by MQTT
-      "12NjfiY$5BWxO3cGvRvhMM"</input></li>
-  0
-</ul>
-<div>
-  <div style="display: inline-block; vertical-align: top ;width: 80%">
-      <iframe id="embeddedViewer"></iframe>
+
+<div style="margin: 0; border-width: 0;background: white">
+  <div style="display: inline-block; vertical-align: top ;width: 80%;margin: 0;border-width: 0">
+      <iframe id="embeddedViewer" style="margin: 0;border-width: 0"></iframe>
   </div>
-  <div id="div_info", style="background: white; border-style: solid;border-left-width: 10px ;border-color:white; display: inline-block; width: 18%;vertical-align: top;">
-      <div id="information" , style="background: white ; height: 560px;background: white; overflow:auto ; font-size: small"></div>
+  <div id="div_info" ,
+       style="margin :0; background: white; border-style: solid;border-left-width: 10px ;border-color:white; display: inline-block; width: 19%;vertical-align: top;">
+      <div id="information" ,
+           style="background: white ;background: white; overflow:auto ; font-size: small"></div>
       <button style="width: 100%;height: 30px" onclick="clear_div_info()">clear</button>
-      </divinline-block>
   </div>
 </div>
+
+ 
 </body>
 <script>
+  window.onload = html_init();
   function html_init() {
-        init();
-        show_some_information_init();
-        document.getElementById("embeddedViewer").style.height = ""+document.body.clientHeight+"px";
-        document.getElementById("div_info").style.height = ""+document.body.clientHeight+"px";
-        document.getElementById("information").style.height = ""+(document.body.clientHeight-40)+"px";
 
-    }
+      let height_head = document.getElementById("head").clientHeight;
+      console.log(height_head);
+      document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
+      document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
+      document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
+      init();
+      show_some_information_init();
+  }
+
 </script>
+
 <!--<ul>
     
     <li><input type="checkbox" name="12NjfiY$5BWxO3cGvRvhMM" onclick="javascript:changeColorByMQTT(this)">Change Color by MQTT
         "12NjfiY$5BWxO3cGvRvhMM"</input></li>0
 </ul>-->
 <iframe id="embeddedViewer"></iframe>
+
 </body>
 </html>
 
