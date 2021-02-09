@@ -11,7 +11,7 @@
             
 
 </head>
-<body onload="init()">
+<body onload="html_init()"> <!--<ul> before my changes: init() </ul>-->
     <img
     src="/images/teamlogo2.PNG"
     alt="Teamlogo"
@@ -75,16 +75,17 @@ Gary's body section
  
 </body>
 <script>
-  window.onload = html_init();
+  window.onload = html_init(); // this the problem? html_init being called before being defined / window.onload not called?
   function html_init() {
-
+      init();
+      show_some_information_init();// both were below
       let height_head = document.getElementById("head").clientHeight;
       console.log(height_head);
       document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
       document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
       document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
-      init();
-      show_some_information_init();
+      //init();
+      //show_some_information_init();
   }
 
 </script>

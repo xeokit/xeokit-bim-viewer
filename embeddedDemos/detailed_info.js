@@ -4,7 +4,7 @@
 // BUT: sensorID is a key in the message from Node-RED, so not changable to "name"
 
 let allSensors = []; // fill with Names when message arrives (can't show info otherwise anyways)
-let sensorName; //metadata name
+let objName; //metadata name
 //let sensorId; //metadata id
 let selSensor // hovered id recognized as sensor 
 let id = null; // id of selected/ hovered object (not just sensors)
@@ -35,7 +35,7 @@ function show_some_information_init() {
         // get name by id
         objArray.forEach(function(element){
             if (element.includes(id)){
-                sensorName = element[1];
+                objName = element[1];
             }
         });
         
@@ -43,17 +43,18 @@ function show_some_information_init() {
         //filter sensors from other objects --> the allSensors array builds up with arriving messages
 
         viewer.scene.input.on("mouseup", e => {
-            if (allSensors.includes(sensorName)) {
+            if (allSensors.includes(objName)) {
                 selSensor = id;
             }
-            console.log(id);
+            console.log("sensorId: " + id);
         });
 
     }
 }
 
 function update_info(message) {
-    console.log(message);
+    //message here is not the same as in on message arrived!
+    console.log(message); // loggs as a JS object
 
     sensorID = message.sensorID;
     console.log(message.sensorID);
@@ -70,7 +71,7 @@ function update_info(message) {
         let newSensorName = allSensors.push(sensorID);
     }
     console.log(allSensors);
-    console.log(allObjects);
+    //console.log(allObjects);
     allObjects.forEach(function(element){
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
