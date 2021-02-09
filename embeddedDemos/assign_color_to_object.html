@@ -11,7 +11,7 @@
             
 
 </head>
-<body onload="html_init()"> <!--<ul> before my changes: init() </ul>-->
+<body onload="init()"> <!--<ul> using html_init() is not the solution here </ul>-->
     <img
     src="/images/teamlogo2.PNG"
     alt="Teamlogo"
@@ -21,7 +21,7 @@
     style="color:rgb(37, 46, 142)";
     />
     <font size="4">
-        Structure Health Monitoring of Waterlock
+      Structural Health Viewer
     </font>
     
 
@@ -77,15 +77,15 @@ Gary's body section
 <script>
   window.onload = html_init(); // this the problem? html_init being called before being defined / window.onload not called?
   function html_init() {
-      init();
-      show_some_information_init();// both were below
+      //init();
+      //show_some_information_init();// either here or below
       let height_head = document.getElementById("head").clientHeight;
       console.log(height_head);
       document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
       document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
       document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
-      //init();
-      //show_some_information_init();
+      init();
+      show_some_information_init();
   }
 
 </script>
