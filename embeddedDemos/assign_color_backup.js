@@ -18,9 +18,7 @@ const  msgChan = "OnePiece/SHMviewer/msg" ;
 
 let message_from_mqtt = "fortest"; //--> from Gary, necessary?
 
-var csvContent; 
-
-
+//var csvContent; 
 
 
 function idStructure(){  // CURRENTLY NOT USED
@@ -36,31 +34,30 @@ function idStructure(){  // CURRENTLY NOT USED
 
     var objArray = [["Type", "Name", "Id"]];
 
-    var allTypes = [];
-    var allNames = [];
-    var allIds = [];
+    //var allTypes = [];
+    //var allNames = [];
+    //var allIds = [];
     allObjects.forEach(function(element){
         //element is the variable for each object 
 
         var newLength = objArray.push([element.type, element.name, element.id]);
 
-        var newType = allTypes.push([element.type]);
-        var newName = allNames.push([element.name]);
-        var newId = allIds.push([element.id])
+        //var newType = allTypes.push([element.type]);
+        //var newName = allNames.push([element.name]);
+        //var newId = allIds.push([element.id])
     });
-    
+    /*
     allTypes = allTypes.flat(1);
     allNames = allNames.flat(1);
     allIds = allIds.flat(1);
 
     var yxArray = [allTypes, allNames, allIds]; // might not be needed
-
     console.log(objArray);
     console.log(yxArray); 
-    //console.log(allTypes);
-    //console.log(allNames);
-    //console.log(allIds);
-    //let newObjArray = objArray.unshift(["Type", "Name", "Id"]);
+    console.log(allTypes);
+    console.log(allNames);
+    console.log(allIds);
+    let newObjArray = objArray.unshift(["Type", "Name", "Id"]);
     
     const rows = objArray;
     csvContent = "data:text/csv;charset=utf-8, \n";
@@ -69,29 +66,66 @@ function idStructure(){  // CURRENTLY NOT USED
         let row = rowArray.join(",");
         csvContent += row + "\r\n";
     });
-    //console.log(csvContent);
-    
-
-    /*
-    function myExport (csvContent){
-        return csvContent
-    };
-
-    // create csv 
-    const items = objArray;
-    const replacer = (key, value) => value === null ? '' : value; // specify my null value here
-    const header = Object.keys(items[0]);
-    const csv = [
-        header.join(','), //header row first
-        ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer).replace(/\\"/g, '""')).join(','))
-    ].join('\r\n');
-    
-    console.log(csv);
-
-    csv.unshift(fields.join(',')); // add header column
-     csv = csv.join('\r\n');
-    console.log(csv);
     */
+   return objArray
+}
+
+
+function changeDefaultColors(objArray){
+    //change the id based assigning to a type based one!!
+    let iframeElement = document.getElementById("embeddedViewer");
+    //console.log(iframeElement);
+    let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+    //console.log (viewer.scene.objects);
+    objArray = idStructure();
+    //console.log(objArray);
+    let siteId = [];
+    let wallId = [];
+    let waterId = [];
+    objArray.forEach(function(element){
+        if (element[0] === "IfcSite"){
+            let newSite = siteId.push(element[2]);
+        }
+    });
+    objArray.forEach(function(element){
+        if(element[0] === "IfcWall" || element[0] ===  "IfcWallStandardCase" || element[0] === "IfcColumn"){
+            let newWall = wallId.push(element[2]);
+        }
+    });
+    objArray.forEach(function(element){
+        if(element[1]=== "Water" || element[1].includes("W00")){
+            let newWater = waterId.push(element[2]);
+        }
+    });
+
+    siteId.forEach(function(element){
+        try{
+            viewer.scene.objects[element].colorize = [0.12, 0.35, 0.05];
+        } catch{
+
+        }
+    });
+
+    wallId.forEach(function(element){
+        try{
+            viewer.scene.objects[element].colorize = [0.4, 0.4, 0.4]; 
+        } catch{
+
+        }
+    });
+
+    waterId.forEach(function(element){
+        try{
+            viewer.scene.objects[element].colorize = [0.05, 0.1, 0.4]; 
+        } catch{
+
+        };
+        try{
+            viewer.scene.objects[element].opacity = 0.7;
+        } catch{
+
+        }
+    })
 }
 
 function startConnect() {
@@ -262,9 +296,17 @@ function loadMonitor(){
             // remove the interval 
             window.clearInterval(loaderInt);
             console.log(`model loaded`);
-
+            
             //idStructure();
+            changeDefaultColors();
+            
             //console.log("csv created") //tests for successful idStructure() execution
+            let height_head = document.getElementById("thehead").clientHeight;
+            console.log(height_head);
+            // document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
+            // document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
+            // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
+            show_some_information_init();
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
@@ -282,6 +324,8 @@ function init() {
     
 
     startConnect();
+
+    
     const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
     let iframeElement = document.getElementById("embeddedViewer");
     if (!iframeElement) {
