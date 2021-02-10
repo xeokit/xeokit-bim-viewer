@@ -192,18 +192,23 @@ function onMessageArrived(message) {
         
     let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
     let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
-    let msg = JSON.parse(message.payloadString);
-    console.log(message.payloadString);
+    
 
     //sort message to channels
     if (message.destinationName.match(detailMsg)!==null) {
         console.log("message for detail");
         console.log(message);
+        let msg = JSON.parse(message.payloadString);
         update_info(msg);
     } else if(message.destinationName.match(colorMsg)!==null){
         console.log("message for color");
-        let sensorID = msg.sensorID;
-        let color = msg.color;
+        let msg = message.payloadString;
+        console.log(message.payloadString);
+        console.log(msg);
+        let msgContent = JSON.parse(message.payloadString);
+        console.log(msgContent);
+        let sensorID = msgContent.sensorID;
+        let color = msgContent.color;
         console.log(sensorID);
         console.log(color);
 
