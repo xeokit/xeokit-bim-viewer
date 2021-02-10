@@ -22,8 +22,7 @@ function startConnect() {
     // Fetch the hostname/IP address and port number from the form
     //host = document.getElementById("host").value; -->
     // port = document.getElementById("port").value; -->
-    console.log("connecting")
- 
+    
 
     // Set callback handlers
    // client.onConnectionLost = onConnectionLost;

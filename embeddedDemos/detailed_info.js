@@ -14,6 +14,8 @@ var objArray = [];
 
 function show_some_information_init() {
 
+    console.log("init info")
+    
 
     let iframe = document.getElementById('embeddedViewer');
     let viewer = iframe.contentWindow.bimViewer.viewer;
@@ -26,7 +28,12 @@ function show_some_information_init() {
         
     });
 
-    iframe.onload = function () {
+    viewer.cameraControl.on("hover", (e) => {
+        id = e.entity.id;
+        // console.log(e)
+    });
+    // iframe.onload = function () {
+        console.log("iframe onlaod")
         //get id of selected object
         viewer.cameraControl.on("hover", (e) => {
             id = e.entity.id;
@@ -48,8 +55,8 @@ function show_some_information_init() {
             }
             console.log("sensorId: " + id);
         });
-
-    }
+ 
+    // }
 }
 
 function update_info(message) {

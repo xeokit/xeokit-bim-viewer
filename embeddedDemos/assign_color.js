@@ -21,7 +21,7 @@ let message_from_mqtt = "fortest"; //--> from Gary, necessary?
 //var csvContent; 
 
 
-function idStructure(){  // CURRENTLY NOT USED
+function idStructure(){ 
 
 
     //get my constants 
@@ -301,6 +301,12 @@ function loadMonitor(){
             changeDefaultColors();
             
             //console.log("csv created") //tests for successful idStructure() execution
+            let height_head = document.getElementById("thehead").clientHeight;
+            console.log(height_head);
+            // document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
+            // document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
+            // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
+            show_some_information_init();
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
@@ -318,6 +324,8 @@ function init() {
     
 
     startConnect();
+
+    
     const iframeBaseURL = "./../app/index.html?projectId=WaterLock";
     let iframeElement = document.getElementById("embeddedViewer");
     if (!iframeElement) {
