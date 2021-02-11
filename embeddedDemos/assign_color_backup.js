@@ -97,33 +97,26 @@ function changeDefaultColors(objArray){
             let newWater = waterId.push(element[2]);
         }
     });
-
     siteId.forEach(function(element){
         try{
             viewer.scene.objects[element].colorize = [0.12, 0.35, 0.05];
         } catch{
-
         }
     });
-
     wallId.forEach(function(element){
         try{
             viewer.scene.objects[element].colorize = [0.4, 0.4, 0.4]; 
         } catch{
-
         }
     });
-
     waterId.forEach(function(element){
         try{
             viewer.scene.objects[element].colorize = [0.05, 0.1, 0.4]; 
         } catch{
-
         };
         try{
             viewer.scene.objects[element].opacity = 0.7;
         } catch{
-
         }
     })
 }

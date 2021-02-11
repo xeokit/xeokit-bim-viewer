@@ -5,13 +5,13 @@
     <title>SHM Object-Viewer - OnePiece</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript"></script>
     <script src="assign_color_backup.js" type="text/javascript"></script>
-    <script src="detailed_info.js" type="text/javascript"></script> <!--<ul> prof removed the ?v=2, not sure if intentional </ul>-->
+    <script src="detailed_info.js" type="text/javascript"></script> <!-- prof removed the ?v=2, not sure if intentional -->
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script defer src="script.js"></script>
+    <script defer src="modal.js"></script>
             
 
 </head>
-<body onload="init()"> <!--<ul> using html_init() is not the solution here </ul>-->
+<body onload="init()"> <!-- using html_init() is not the solution here -->
     <img
     src="/images/teamlogo2.PNG"
     alt="Teamlogo"
@@ -31,12 +31,12 @@
           <li>
             <a href="#">Sensors</a>
             <ul>
-              <li><a href="#" data-modal-target="#modal">SensorID#1</a></li> <!--<ul> should be parametric (with the actual names) and have a use </ul>-->
+              <li><a href="#" data-modal-target="#modal">SensorID#1</a></li> <!-- should be parametric (with the actual names) and have a use -->
               <li><a href="#" data-modal-target="#modal">SensorID#2</a></li>
               <li><a href="#" data-modal-target="#modal">SensorID#3</a></li>
             </ul>
           </li>
-          <li><a href="#">Waterlevel</a></li>
+          <li><a href="#">Waterlevel</a></li><!-- doesn't make sense to have-->
           <li><a href="#">Contact</a></li>
         </ul>
       </nav>

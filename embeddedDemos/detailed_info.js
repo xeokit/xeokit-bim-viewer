@@ -11,12 +11,29 @@ let id = null; // id of selected/ hovered object (not just sensors)
 let sensorID; // Names send by Michael, elements of "allSensors"
 let messageID = "";
 var objArray = [];
+var modalButton = true;
+
+function listAllSensors() {
+    //create the list of all sensors by searching for names (same as in assign color by filtering for first two letters and additionally under a certain character amount)
+    objArray = idStructure()
+    objArray.forEach(function(element){
+        if (element[1].includes("R00") && element[1].length < 7 ){
+            var newSensorName = allSensors.push(element[1])
+        }
+    })
+    objArray.forEach(function(element){
+        if (element[1].includes("US") && element[1].length < 7 ){
+            var newSensorName = allSensors.push(element[1])
+        }
+    })
+    return allSensors
+}
 
 function show_some_information_init() {
 
     console.log("init info")
-    
-
+    allSensors = listAllSensors()
+    console.log(allSensors);
     let iframe = document.getElementById('embeddedViewer');
     let viewer = iframe.contentWindow.bimViewer.viewer;
     let metaObjects = viewer.metaScene.metaObjects;
@@ -27,38 +44,45 @@ function show_some_information_init() {
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
     });
-
+    /*
     viewer.cameraControl.on("hover", (e) => {
         id = e.entity.id;
         // console.log(e)
-    });
+    }); */
     // iframe.onload = function () {
-        console.log("iframe onlaod")
-        //get id of selected object
-        viewer.cameraControl.on("hover", (e) => {
-            id = e.entity.id;
-        });
-        
-        // get name by id
+    console.log("iframe onlaod")
+    //get id of selected object
+    viewer.cameraControl.on("hover", (e) => {
+        id = e.entity.id;
+    });
+    
+    //filter sensors from other objects --> the allSensors array builds up with arriving messages
+
+    // activated on clicking an object (activation and recognition of the sensor id and name works works) BUT does so with every object on every kind of mouseclick
+    viewer.scene.input.on("mouseup", e => {
         objArray.forEach(function(element){
-            if (element.includes(id)){
+            if (element[2] === id){
                 objName = element[1];
             }
         });
-        
+        if (allSensors.includes(objName)) {
+            selSensor = id;
+            console.log("Name: " + objName);
+            console.log("ID: " + selSensor);
+            // now activate the modal in modal.js
+            modalButton = true
+        }
 
-        //filter sensors from other objects --> the allSensors array builds up with arriving messages
-
-        viewer.scene.input.on("mouseup", e => {
-            if (allSensors.includes(objName)) {
-                selSensor = id;
-            }
-            console.log("sensorId: " + id);
-        });
+    });
  
     // }
 }
 
+function activateModal(modalButton){
+    return modalButton
+}
+
+//called when message arrives at /detail
 function update_info(message) {
     //message here is not the same as in on message arrived!
     console.log(message); // loggs as a JS object
@@ -74,10 +98,10 @@ function update_info(message) {
     const allObjects = Object.values(metaObjects);
 
     // add sensor name to the pool of sensors (to enable the hovering in other function)
-    if (!allSensors.includes(sensorID)){
+    /*if (!allSensors.includes(sensorID)){
         let newSensorName = allSensors.push(sensorID);
     }
-    console.log(allSensors);
+    console.log(allSensors);*/
     //console.log(allObjects);
     allObjects.forEach(function(element){
         var newLength = objArray.push([element.type, element.name, element.id]); 
