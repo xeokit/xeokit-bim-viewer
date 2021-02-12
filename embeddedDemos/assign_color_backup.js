@@ -300,6 +300,7 @@ function loadMonitor(){
             // document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
             // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
             show_some_information_init();
+            htmlWindow();
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)

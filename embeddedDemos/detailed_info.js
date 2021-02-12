@@ -56,7 +56,7 @@ function show_some_information_init() {
         id = e.entity.id;
     });
     
-    //filter sensors from other objects --> the allSensors array builds up with arriving messages
+    //filter sensors from other objects 
 
     // activated on clicking an object (activation and recognition of the sensor id and name works works) BUT does so with every object on every kind of mouseclick
     viewer.scene.input.on("mouseup", e => {
@@ -77,7 +77,7 @@ function show_some_information_init() {
  
     // }
 }
-
+//experiment
 function activateModal(modalButton){
     return modalButton
 }
@@ -108,11 +108,13 @@ function update_info(message) {
         
     });
     objArray.forEach(function(element){
-        if (element.includes(message.sensorID)){
-            messageID = element[0]
+        if (element.includes(sensorID)){
+            messageID = element[2]
         }
     });
-    if (message.sensorID === selSensor) {
+    console.log(selSensor); //to get those equal -> click sensor, then wait for message to arrive for this sensor
+    console.log(messageID);
+    if (messageID === selSensor) {
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();

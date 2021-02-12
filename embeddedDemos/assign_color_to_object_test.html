@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>SHM Object-Viewer - OnePiece</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript"></script>
-    <script src="assign_color_backup.js" type="text/javascript"></script>
-    <script src="detailed_info.js" type="text/javascript"></script> <!-- prof removed the ?v=2, not sure if intentional -->
+    <script src="assign_color_backup.js?v=1" type="text/javascript"></script>
+    <script src="detailed_info.js?v=2" type="text/javascript"></script> <!-- prof removed the ?v=2, not sure if intentional -->
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script defer src="modal.js"></script>
             
@@ -76,6 +76,11 @@ Gary's body section
 <iframe id="embeddedViewer"></iframe>
 </body>
 <script>
+  function htmlWindow(){
+    document.getElementById("embeddedViewer").style.height = ""+document.body.clientHeight+"px";
+    document.getElementById("div_info").style.height = ""+document.body.clientHeight+"px";
+    document.getElementById("information").style.height = ""+(document.body.clientHeight-40)+"px";
+  }
   /*window.onload = html_init(); // this the problem? html_init being called before being defined / window.onload not called?
   function html_init() {
       //init();
