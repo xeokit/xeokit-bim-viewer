@@ -173,3 +173,47 @@ nav ul li ul li a:hover {
   pointer-events: none;
 }
 /* Popup modal*/
+
+/* White info window*/
+
+.box1 {
+  margin: 0;
+  border-width: 0;
+  background: white;
+}
+
+.box2 {
+  display: inline-block;
+  vertical-align: top;
+  width: 80%;
+  margin: 0;
+  border-width: 0;
+}
+
+.embeddedViewer {
+  margin: 0;
+  border-width: 0;
+}
+
+.div_info {
+  margin: 0;
+  background: white;
+  border-style: solid;
+  border-left-width: 10px;
+  border-color: white;
+  display: inline-block;
+  width: 19%;
+  vertical-align: top;
+}
+
+.information{
+  background: white;
+  overflow: auto;
+  font-size: small;
+}
+
+.div_info .clear_button {
+  width: 100%;
+  height: 30px;
+}
+/* White info window*/

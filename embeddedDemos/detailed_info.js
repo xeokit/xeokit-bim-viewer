@@ -12,6 +12,7 @@ let sensorID; // Names send by Michael, elements of "allSensors"
 let messageID = "";
 var objArray = [];
 var modalButton = true;
+let storage = {};
 
 function listAllSensors() {
     //create the list of all sensors by searching for names (same as in assign color by filtering for first two letters and additionally under a certain character amount)
@@ -115,6 +116,7 @@ function update_info(message) {
     console.log(selSensor); //to get those equal -> click sensor, then wait for message to arrive for this sensor
     console.log(messageID);
     if (messageID === selSensor) {
+        console.log("same");
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();
@@ -141,4 +143,25 @@ function clear_div_info(){
     while (div_info.firstChild) {
         div_info.removeChild(div_info.firstChild);
     }
+}
+
+function collectInfo(message){
+    //collect info from messages
+    
+    if (Object.keys(storage).length === 0){
+        for (var i = 0; i < allSensors.length; i++ ){
+            storage[allSensors[i]] = [] //--> creates object of arrays with sensor names as keys
+        }
+        console.log("storage can be filled now")
+    }
+
+    // IMPORTANT?: the order is changed, object in alphabetical order unlike allSensors array!
+    sensorID = message.sensorID;
+
+    storage[sensorID].push([new Date(), message.depth, message.standard]); // adds new info at the end
+    if (storage[sensorID].length > 6){
+        //delete oldest entry
+        let tooOld = storage[sensorID].shift()
+    }
+    console.log(storage)
 }

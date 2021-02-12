@@ -187,12 +187,13 @@ function onMessageArrived(message) {
     let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
     let msg = JSON.parse(message.payloadString);
     console.log(message.payloadString);
-
+    
     //sort message to channels
     if (message.destinationName.match(detailMsg)!==null) {
         console.log("message for detail");
         console.log(message);
         update_info(msg);
+        collectInfo(msg)
     } else if(message.destinationName.match(colorMsg)!==null){
         console.log("message for color");
         let sensorID = msg.sensorID;
@@ -301,6 +302,7 @@ function loadMonitor(){
             // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
             show_some_information_init();
             htmlWindow();
+
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
