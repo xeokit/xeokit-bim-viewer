@@ -30,10 +30,45 @@ function listAllSensors() {
     return allSensors
 }
 
+function createModals(){
+    //create modals from each sensor, later add content
+    //append in modal_group
+    allSensors = listAllSensors();
+    let mod_group = document.getElementById("modal_group")
+    let div_overlay = document.createElement("div")
+    div_overlay.setAttribute('id', "overlay");
+    allSensors.forEach(function(element){
+        let div_mod = document.createElement("div");
+        div_mod.setAttribute('class', "modal"); 
+        div_mod.setAttribute('id', "modal-"+element);
+        let div_head = document.createElement("div"); 
+        div_head.setAttribute('class', "header"); 
+        let div_title = document.createElement("div");
+        div_title.setAttribute('class', "title"); 
+        let title = document.createTextNode("Current Status of Sensor " + element)
+        let but_close = document.createElement("button");
+        but_close.setAttribute('class', "close-button"); 
+        but_close.setAttribute('data-close-button', " ");
+        but_close.innerHTML = '&times;'
+        let div_body = document.createElement("div");
+        div_body.setAttribute('class', "modal-body"); 
+
+        //bind together
+        mod_group.appendChild(div_mod);
+        mod_group.appendChild(div_overlay); // --> neccessary?
+        div_mod.appendChild(div_head);
+        div_head.appendChild(div_title);
+        div_title.appendChild(title);
+        div_head.appendChild(but_close);
+        div_mod.appendChild(div_body);
+    })
+
+}
+
 function show_some_information_init() {
 
     console.log("init info")
-    allSensors = listAllSensors()
+    //allSensors = listAllSensors()
     console.log(allSensors);
     let iframe = document.getElementById('embeddedViewer');
     let viewer = iframe.contentWindow.bimViewer.viewer;
@@ -45,6 +80,20 @@ function show_some_information_init() {
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
     });
+
+    // add sensors to the dropdown
+    let navSensors = document.getElementById("allSensors")
+    allSensors.forEach(function(element){
+        let li_sensor = document.createElement("li");
+        let a_sensor = document.createElement("a");
+        // fill a with the list content:  href="#" data-modal-target="#modal">SensorID#1
+        a_sensor.textContent = element;
+        a_sensor.setAttribute('href', "#"); 
+        a_sensor.setAttribute('data-modal-target', "open_" + element); // could create seperate modal links here!
+        li_sensor.appendChild(a_sensor);
+        navSensors.appendChild(li_sensor)
+    })
+
     /*
     viewer.cameraControl.on("hover", (e) => {
         id = e.entity.id;

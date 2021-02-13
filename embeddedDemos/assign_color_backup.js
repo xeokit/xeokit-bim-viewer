@@ -299,6 +299,7 @@ function loadMonitor(){
             // document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
             // document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
             // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
+            createModals();
             show_some_information_init();
             htmlWindow();
 

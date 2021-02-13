@@ -1,4 +1,4 @@
-const openModalButtons = document.querySelectorAll('[data-modal-target]')
+const openModalButtons = document.querySelectorAll('[data-modal-target]') // has to get the sensor names somehow to work individually
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
 const overlay = document.getElementById('overlay')
 
@@ -6,20 +6,11 @@ const overlay = document.getElementById('overlay')
 openModalButtons.forEach(button =>{
     button.addEventListener('click', () =>{
         const modal = document.querySelector(button.dataset.modalTarget)
-         openModal(modal)
+        openModal(modal)
     })
 
 })
 
-let modalButton = activateModal();
-function myfunk(){
-    if (modalButton === true){
-        const modal = document.querySelector(button.dataset.modalTarget);
-        openModal(modal)
-    }
-    console.log(modalButton)
-}
-myfunk
 
 closeModalButtons.forEach(button =>{
     button.addEventListener('click', () =>{

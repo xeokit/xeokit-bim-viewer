@@ -136,7 +136,7 @@ nav ul li ul li a:hover {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.modal-header {
+.header {
   padding: 10px 15px;
   display: flex;
   justify-content: space-between;
@@ -144,12 +144,12 @@ nav ul li ul li a:hover {
   border-bottom: 1px solid black;
 }
 
-.modal-header .title {
+.header .title {
   font-size: 1.25rem;
   font-weight: bold;
 }
 
-.modal-header .close-button {
+.header .close-button {
   cursor: pointer;
   border: none;
   outline: none;
