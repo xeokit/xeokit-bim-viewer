@@ -176,44 +176,39 @@ nav ul li ul li a:hover {
 
 /* White info window*/
 
-.box1 {
-  margin: 0;
-  border-width: 0;
-  background: white;
+.main {
+  vertical-align: top;
+  height: 100%;
 }
 
-.box2 {
-  display: inline-block;
+.window {
+  float: left;
   vertical-align: top;
   width: 80%;
-  margin: 0;
-  border-width: 0;
+  margin-right: 20%;
 }
 
-.embeddedViewer {
-  margin: 0;
-  border-width: 0;
+.sidebar {
+  float:right;
+  height: 100%;
+  width: 20%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  padding-top: 40px;
+  background-color: white;
 }
 
-.div_info {
-  margin: 0;
-  background: white;
-  border-style: solid;
-  border-left-width: 10px;
-  border-color: white;
-  display: inline-block;
-  width: 19%;
-  vertical-align: top;
+.sidebar .information_content {
+  background: white ; 
+  height: 560px;
+  background: white; 
+  overflow:auto ; 
+  font-size: small
 }
 
-.information{
-  background: white;
-  overflow: auto;
-  font-size: small;
-}
-
-.div_info .clear_button {
+.sidebar .clear_button {
   width: 100%;
   height: 30px;
 }
-/* White info window*/
+/*White info window*/

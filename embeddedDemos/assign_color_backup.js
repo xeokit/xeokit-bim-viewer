@@ -191,9 +191,8 @@ function onMessageArrived(message) {
     //sort message to channels
     if (message.destinationName.match(detailMsg)!==null) {
         console.log("message for detail");
-        console.log(message);
+        //console.log(message);
         update_info(msg);
-        collectInfo(msg)
     } else if(message.destinationName.match(colorMsg)!==null){
         console.log("message for color");
         let sensorID = msg.sensorID;

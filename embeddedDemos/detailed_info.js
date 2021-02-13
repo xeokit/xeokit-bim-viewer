@@ -73,6 +73,7 @@ function show_some_information_init() {
             // now activate the modal in modal.js
             modalButton = true
         }
+        console.log(storage)
 
     });
  
@@ -85,6 +86,70 @@ function activateModal(modalButton){
 
 //called when message arrives at /detail
 function update_info(message) {
+
+    //collect info from messages --> PROBLEM: the output reacts to clicking in former function AND receiving a message here, makes the processing appear longer
+    
+    if (Object.keys(storage).length === 0){
+        for (var i = 0; i < allSensors.length; i++ ){
+            storage[allSensors[i]] = [] //--> creates object of arrays with sensor names as keys
+        }
+        console.log("storage can be filled now")
+    }
+
+    let d = new Date();
+    let curr_min = d.getMinutes();
+    let curr_hour = d.getHours();
+    let curr_date = d.getDate();
+    let curr_month = d.getMonth() + 1;
+    let curr_year = d.getFullYear();
+    let date = (curr_year + "-" + curr_month + "-" + curr_date + "  " + curr_hour + ":" + curr_min)
+
+    // IMPORTANT?: the order is changed, object in alphabetical order unlike allSensors array!
+    sensorID = message.sensorID;
+    
+    storage[sensorID].push([date, message.depth, message.standard]); // adds new info at the end
+    if (storage[sensorID].length > 6){
+        //delete oldest entry
+        let tooOld = storage[sensorID].shift()
+    }
+
+    console.log(storage)
+
+    if (Object.keys(storage).includes(objName)){ 
+        let div_info = document.getElementById("information");
+        //create p element with a for loop
+        for (var u = 0; u < storage[objName].length; u++ ){ //u is the array with date, value and status
+            let p_info = document.createElement("P");
+            for (var v = 0; v < storage[objName][u].length; v++){
+                let text = document.createTextNode(storage[objName][u][v]); //how to add keys here?
+                let br = document.createElement("br");
+                p_info.appendChild(text);
+                p_info.appendChild(br);
+            }
+            div_info.appendChild(p_info);
+            div_info.scrollTop = div_info.scrollHeight;
+        }
+
+    }
+    /*
+    //change this one to output only the most recent value in modal
+    if (Object.keys(storage).includes(objName)){ 
+        let sensorModal = document.getElementById("modal-body");
+        //create p element with a for loop
+        var w = storage[objName].length - 1;  //get most recent values index
+        let p_modal = document.createElement("P");
+        for (var x = 0; x < storage[objName][w].length; x++){
+            let text = document.createTextNode(storage[objName][w][x]); //how to add keys here? add them earlier?
+            let br = document.createElement("br");
+            p_modal.appendChild(text);
+            p_modal.appendChild(br);
+        }
+        sensorModal.appendChild(p_modal);
+        sensorModal.scrollTop = sensorModal.scrollHeight;
+        
+    }
+    */
+    
     //message here is not the same as in on message arrived!
     console.log(message); // loggs as a JS object
 
@@ -98,16 +163,12 @@ function update_info(message) {
     //let ObjectList = Object.entries(metaObjects); // --> neccessary?
     const allObjects = Object.values(metaObjects);
 
-    // add sensor name to the pool of sensors (to enable the hovering in other function)
-    /*if (!allSensors.includes(sensorID)){
-        let newSensorName = allSensors.push(sensorID);
-    }
-    console.log(allSensors);*/
-    //console.log(allObjects);
+    /*
     allObjects.forEach(function(element){
         var newLength = objArray.push([element.type, element.name, element.id]); 
-        
     });
+    */
+   /*
     objArray.forEach(function(element){
         if (element.includes(sensorID)){
             messageID = element[2]
@@ -116,7 +177,6 @@ function update_info(message) {
     console.log(selSensor); //to get those equal -> click sensor, then wait for message to arrive for this sensor
     console.log(messageID);
     if (messageID === selSensor) {
-        console.log("same");
         let div_info = document.getElementById("information");
         let p_info = document.createElement("P");
         let time = new Date().toISOString();
@@ -135,6 +195,7 @@ function update_info(message) {
         div_info.appendChild(p_info);
         div_info.scrollTop = div_info.scrollHeight;
     }
+    */
 }
 
 function clear_div_info(){
@@ -143,25 +204,4 @@ function clear_div_info(){
     while (div_info.firstChild) {
         div_info.removeChild(div_info.firstChild);
     }
-}
-
-function collectInfo(message){
-    //collect info from messages
-    
-    if (Object.keys(storage).length === 0){
-        for (var i = 0; i < allSensors.length; i++ ){
-            storage[allSensors[i]] = [] //--> creates object of arrays with sensor names as keys
-        }
-        console.log("storage can be filled now")
-    }
-
-    // IMPORTANT?: the order is changed, object in alphabetical order unlike allSensors array!
-    sensorID = message.sensorID;
-
-    storage[sensorID].push([new Date(), message.depth, message.standard]); // adds new info at the end
-    if (storage[sensorID].length > 6){
-        //delete oldest entry
-        let tooOld = storage[sensorID].shift()
-    }
-    console.log(storage)
 }
