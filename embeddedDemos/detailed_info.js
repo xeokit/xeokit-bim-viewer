@@ -39,7 +39,7 @@ function createModals(){
     div_overlay.setAttribute('id', "overlay");
     allSensors.forEach(function(element){
         let div_mod = document.createElement("div");
-        div_mod.setAttribute('class', "modal"); 
+        div_mod.setAttribute('class', "modal active"); // only active for testing!
         div_mod.setAttribute('id', "modal-"+element);
         let div_head = document.createElement("div"); 
         div_head.setAttribute('class', "header"); 
@@ -52,6 +52,7 @@ function createModals(){
         but_close.innerHTML = '&times;'
         let div_body = document.createElement("div");
         div_body.setAttribute('class', "modal-body"); 
+        div_body.setAttribute('id', "body-" + element);
 
         //bind together
         mod_group.appendChild(div_mod);
@@ -61,6 +62,18 @@ function createModals(){
         div_title.appendChild(title);
         div_head.appendChild(but_close);
         div_mod.appendChild(div_body);
+
+        // add the pre-message text 
+        let info_value = document.createTextNode("Value: "+"---");
+        let info_status = document.createTextNode("Status: " + "---");
+        let info_date = document.createTextNode("Time: " + "---")
+        let br1 = document.createElement("br");
+        let br2 = document.createElement("br");
+        div_body.appendChild(info_value);
+        div_body.appendChild(br1);
+        div_body.appendChild(info_status);
+        div_body.appendChild(br2);
+        div_body.appendChild(info_date);
     })
 
 }
@@ -92,6 +105,7 @@ function show_some_information_init() {
         a_sensor.setAttribute('data-modal-target', "open_" + element); // could create seperate modal links here!
         li_sensor.appendChild(a_sensor);
         navSensors.appendChild(li_sensor)
+        console.log("created dropdown item " + element)
     })
 
     /*
@@ -122,9 +136,10 @@ function show_some_information_init() {
             // now activate the modal in modal.js
             modalButton = true
         }
-        console.log(storage)
+        
 
     });
+    console.log(storage)
  
     // }
 }
@@ -136,6 +151,7 @@ function activateModal(modalButton){
 //called when message arrives at /detail
 function update_info(message) {
 
+    sensorID = message.sensorID;
     //collect info from messages --> PROBLEM: the output reacts to clicking in former function AND receiving a message here, makes the processing appear longer
     
     if (Object.keys(storage).length === 0){
@@ -153,10 +169,15 @@ function update_info(message) {
     let curr_year = d.getFullYear();
     let date = (curr_year + "-" + curr_month + "-" + curr_date + "  " + curr_hour + ":" + curr_min)
 
+    // replace old modal content with new one
+    var bod = document.getElementById("body-"+sensorID)
+    bod.childNodes[0].nodeValue = "Value: "+message.value;
+    bod.childNodes[1].nodeValue = "Status: "+message.standard;
+    bod.childNodes[2].nodeValue = "Time: "+date;
+
     // IMPORTANT?: the order is changed, object in alphabetical order unlike allSensors array!
-    sensorID = message.sensorID;
     
-    storage[sensorID].push([date, message.depth, message.standard]); // adds new info at the end
+    storage[sensorID].push([date, message.value, message.standard]); // adds new info at the end
     if (storage[sensorID].length > 6){
         //delete oldest entry
         let tooOld = storage[sensorID].shift()

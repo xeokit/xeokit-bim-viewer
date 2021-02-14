@@ -1,14 +1,23 @@
-.right {
-  width: 50px;
+.logo {
+  height: 60px;
   border-radius: 10px;
   float: right;
+  padding-top: 10px;
+  padding-right: 10px;
 }
+
 p.headline {
+  position: absolute;
+  top: 0;
+  width: 100%;
   font-weight: bold;
   float: right;
-  margin-right: 420px;
-  margin-top: 10px
+  color:rgb(37, 46, 142);
+  margin-top: 10px;
+  text-align: center;
+  font-size: large;
 }
+
 .sensor {
   width: 70px;
   border-radius: 20px;
@@ -60,7 +69,7 @@ body {
 
 nav {
   width: 100%;
-  height: 60px;
+  height: 70px;
   background-color: #fff;
 }
 
@@ -91,7 +100,7 @@ nav ul li a {
   text-decoration: none;
 }
 nav ul li ul {
-  display: none;
+  display: block;
   position: absolute;
   background-color: #fff;
   padding: 7px;
@@ -178,37 +187,42 @@ nav ul li ul li a:hover {
 
 .main {
   vertical-align: top;
-  height: 100%;
+  height: 800px;
 }
 
-.window {
+.main .window {
+  position: absolute;
   float: left;
   vertical-align: top;
   width: 80%;
-  margin-right: 20%;
+  margin-bottom: 0px;
 }
 
 .sidebar {
+  position: absolute;
   float:right;
-  height: 100%;
+  vertical-align: top;
+  margin-top: 0px;
   width: 20%;
   position: fixed;
   right: 0;
   top: 0;
   padding-top: 40px;
+  padding-left: 10px;
   background-color: white;
 }
 
 .sidebar .information_content {
   background: white ; 
   height: 560px;
-  background: white; 
   overflow:auto ; 
   font-size: small
 }
 
 .sidebar .clear_button {
-  width: 100%;
-  height: 30px;
+  position: absolute;
+  width: 95%;
+  height: 60px;
+  bottom: 60px;
 }
 /*White info window*/
