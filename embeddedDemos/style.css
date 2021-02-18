@@ -53,8 +53,9 @@ body {
 }
 
 iframe {
-  width: 100%;
-  height: 725px;
+  width: 80%;
+  border: 0px;
+  height: 95vh;
 }
 
 * {
@@ -100,7 +101,7 @@ nav ul li a {
   text-decoration: none;
 }
 nav ul li ul {
-  display: block;
+  display: none;
   position: absolute;
   background-color: #fff;
   padding: 7px;
@@ -110,7 +111,7 @@ nav ul li:hover ul {
 }
 
 nav ul li ul li {
-  width: 145px;
+  width: 120px;
 }
 nav ul li ul li a {
   padding: 8px 7px;
@@ -187,22 +188,15 @@ nav ul li ul li a:hover {
 
 .main {
   vertical-align: top;
-  height: 800px;
-}
-
-.main .window {
-  position: absolute;
-  float: left;
-  vertical-align: top;
-  width: 80%;
-  margin-bottom: 0px;
+  height: 100vh;
 }
 
 .sidebar {
   position: absolute;
   float:right;
   vertical-align: top;
-  margin-top: 0px;
+  margin-top: 70px;
+  height: 95vh;
   width: 20%;
   position: fixed;
   right: 0;
@@ -222,7 +216,7 @@ nav ul li ul li a:hover {
 .sidebar .clear_button {
   position: absolute;
   width: 95%;
-  height: 60px;
-  bottom: 60px;
+  height: 40px;
+  bottom: 35px;
 }
 /*White info window*/

@@ -301,7 +301,7 @@ function loadMonitor(){
             // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
             createModals();
             show_some_information_init();
-            htmlWindow();
+            //htmlWindow();
 
                             
         } else if (countInterval === 5){

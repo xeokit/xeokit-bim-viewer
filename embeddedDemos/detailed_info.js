@@ -39,7 +39,7 @@ function createModals(){
     div_overlay.setAttribute('id', "overlay");
     allSensors.forEach(function(element){
         let div_mod = document.createElement("div");
-        div_mod.setAttribute('class', "modal active"); // only active for testing!
+        div_mod.setAttribute('class', "modal"); // only active for testing!
         div_mod.setAttribute('id', "modal-"+element);
         let div_head = document.createElement("div"); 
         div_head.setAttribute('class', "header"); 
@@ -76,6 +76,8 @@ function createModals(){
         div_body.appendChild(info_date);
     })
 
+
+
 }
 
 function show_some_information_init() {
@@ -102,11 +104,46 @@ function show_some_information_init() {
         // fill a with the list content:  href="#" data-modal-target="#modal">SensorID#1
         a_sensor.textContent = element;
         a_sensor.setAttribute('href', "#"); 
-        a_sensor.setAttribute('data-modal-target', "open_" + element); // could create seperate modal links here!
+        a_sensor.setAttribute('data-modal-target', "open_" + element);
+        a_sensor.setAttribute('id', "id_" + element) // could create seperate modal links here!
         li_sensor.appendChild(a_sensor);
         navSensors.appendChild(li_sensor)
         console.log("created dropdown item " + element)
     })
+
+    //open and close buttons
+    const overlay = document.getElementById('overlay')
+    allSensors.forEach(function(element){
+        let openModalButton = document.getElementById("id_" + element)
+        openModalButton.addEventListener('click', () =>{
+            let modal = document.querySelector(button.dataset.modalTarget)
+            console.log("clicked on " + element)
+            openModal(modal)
+        })
+
+    });
+    const closeModalButtons = document.querySelectorAll('[data-close-button]')
+
+
+    closeModalButtons.forEach(button =>{
+        button.addEventListener('click', () =>{
+            const modal = button.closest('.modal')
+            closeModal(modal)
+        })
+
+    })
+
+    function openModal(modal){
+        if (modal==null) return
+        modal.classList.add('active')
+        overlay.classList.add('active')
+    }
+
+    function closeModal(modal){
+        if (modal==null) return
+        modal.classList.remove('active')
+        overlay.classList.remove('active')
+    }
 
     /*
     viewer.cameraControl.on("hover", (e) => {
@@ -134,7 +171,7 @@ function show_some_information_init() {
             console.log("Name: " + objName);
             console.log("ID: " + selSensor);
             // now activate the modal in modal.js
-            modalButton = true
+
         }
         
 
@@ -142,10 +179,6 @@ function show_some_information_init() {
     console.log(storage)
  
     // }
-}
-//experiment
-function activateModal(modalButton){
-    return modalButton
 }
 
 //called when message arrives at /detail
@@ -191,12 +224,14 @@ function update_info(message) {
         for (var u = 0; u < storage[objName].length; u++ ){ //u is the array with date, value and status
             let p_info = document.createElement("P");
             for (var v = 0; v < storage[objName][u].length; v++){
-                let text = document.createTextNode(storage[objName][u][v]); //how to add keys here?
+                let text = document.createTextNode(storage[objName][u][v]); //how to add keys here? (key + whats already there)
                 let br = document.createElement("br");
                 p_info.appendChild(text);
                 p_info.appendChild(br);
             }
             div_info.appendChild(p_info);
+            let msg_seperator = document.createElement("br");
+            div_info.appendChild(msg_seperator);
             div_info.scrollTop = div_info.scrollHeight;
         }
 
