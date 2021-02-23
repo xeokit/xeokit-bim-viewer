@@ -76,8 +76,6 @@ function createModals(){
         div_body.appendChild(info_date);
     })
 
-
-
 }
 
 function show_some_information_init() {
@@ -103,12 +101,12 @@ function show_some_information_init() {
         let a_sensor = document.createElement("a");
         // fill a with the list content:  href="#" data-modal-target="#modal">SensorID#1
         a_sensor.textContent = element;
-        a_sensor.setAttribute('href', "#"); 
-        a_sensor.setAttribute('data-modal-target', "open_" + element);
+        a_sensor.setAttribute('href', "#modal-"+ element); 
+        a_sensor.setAttribute('data-modal-target', "#modal-" + element);
         a_sensor.setAttribute('id', "id_" + element) // could create seperate modal links here!
         li_sensor.appendChild(a_sensor);
         navSensors.appendChild(li_sensor)
-        console.log("created dropdown item " + element)
+        //console.log("created dropdown item " + element)
     })
 
     //open and close buttons
@@ -220,6 +218,15 @@ function update_info(message) {
 
     if (Object.keys(storage).includes(objName)){ 
         let div_info = document.getElementById("information");
+        // add headline
+        let info_title = document.createElement("P");
+        let gapA = document.createElement("br");
+        let gapB = document.createElement("br");
+        let title_text = document.createTextNode("Recent changes of Sensor "+objName);
+        info_title.appendChild(title_text)
+        info_title.appendChild(gapA);
+        div_info.appendChild(info_title);
+        div_info.appendChild(gapB);
         //create p element with a for loop
         for (var u = 0; u < storage[objName].length; u++ ){ //u is the array with date, value and status
             let p_info = document.createElement("P");
@@ -233,74 +240,20 @@ function update_info(message) {
             let msg_seperator = document.createElement("br");
             div_info.appendChild(msg_seperator);
             div_info.scrollTop = div_info.scrollHeight;
-        }
-
+        }   
     }
-    /*
-    //change this one to output only the most recent value in modal
-    if (Object.keys(storage).includes(objName)){ 
-        let sensorModal = document.getElementById("modal-body");
-        //create p element with a for loop
-        var w = storage[objName].length - 1;  //get most recent values index
-        let p_modal = document.createElement("P");
-        for (var x = 0; x < storage[objName][w].length; x++){
-            let text = document.createTextNode(storage[objName][w][x]); //how to add keys here? add them earlier?
-            let br = document.createElement("br");
-            p_modal.appendChild(text);
-            p_modal.appendChild(br);
-        }
-        sensorModal.appendChild(p_modal);
-        sensorModal.scrollTop = sensorModal.scrollHeight;
-        
-    }
-    */
-    
+  
     //message here is not the same as in on message arrived!
     console.log(message); // loggs as a JS object
 
     sensorID = message.sensorID;
     console.log(message.sensorID);
 
-
     let iframe = document.getElementById('embeddedViewer');
     let viewer = iframe.contentWindow.bimViewer.viewer;
     let metaObjects = viewer.metaScene.metaObjects;
     //let ObjectList = Object.entries(metaObjects); // --> neccessary?
     const allObjects = Object.values(metaObjects);
-
-    /*
-    allObjects.forEach(function(element){
-        var newLength = objArray.push([element.type, element.name, element.id]); 
-    });
-    */
-   /*
-    objArray.forEach(function(element){
-        if (element.includes(sensorID)){
-            messageID = element[2]
-        }
-    });
-    console.log(selSensor); //to get those equal -> click sensor, then wait for message to arrive for this sensor
-    console.log(messageID);
-    if (messageID === selSensor) {
-        let div_info = document.getElementById("information");
-        let p_info = document.createElement("P");
-        let time = new Date().toISOString();
-        let text = document.createTextNode("" + time);
-        let br = document.createElement("br");
-        p_info.appendChild(text);
-        p_info.appendChild(br);
-
-        Object.keys(message).forEach(function (key) {
-            let text = document.createTextNode("  "+key + ": " + message[key]);
-            let br = document.createElement("br");
-            p_info.appendChild(text);
-            p_info.appendChild(br);
-
-        });
-        div_info.appendChild(p_info);
-        div_info.scrollTop = div_info.scrollHeight;
-    }
-    */
 }
 
 function clear_div_info(){

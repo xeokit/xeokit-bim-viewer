@@ -23,11 +23,11 @@
 .xeokit-btn {
     position: relative;
     flex: 1 1 auto;
-    color: #03103F;
+    color: #1d55a0;
     background-color: white;
     text-align: center;
     vertical-align: middle;
-    border: 2px solid #1d2453;
+    border: 2px solid #1d55a0;
     padding: .375rem .75rem;
     border-radius: .25rem;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -47,8 +47,8 @@
 
 .xeokit-btn.active {
     color: #fff;
-    background-color: #03103F;
-    border-color: #03103F;
+    background-color: #1d55a0;
+    border-color: #1d55a0;
 }
 
 .xeokit-btn:hover {
@@ -115,13 +115,13 @@
 }
 
 .xeokit-tabs .xeokit-tab.active .xeokit-tab-btn {
-    background-color: #03103F;
+    background-color: #1d55a0;
 }
 
 @media (min-width: 40em) {
     .xeokit-tabs .xeokit-tab.active .xeokit-tab-btn {
         background-color: transparent;
-        border-bottom: #CFCFCF solid 3px;
+        border-bottom: white solid 3px;
         margin-bottom: -1px;
     }
 }
@@ -133,8 +133,8 @@
 .xeokit-tabs .xeokit-tab-btn {
     font-size: 16px;
     background-color: transparent;
-    border-top: 2px solid #dcdcdc;
-    color: #CFCFCF;
+    border-top: 2px solid white;
+    color: white;
     display: block;
     font-weight: bold;
     padding: 0.75em 5px;
@@ -163,7 +163,7 @@
 }
 
 .xeokit-tabs .xeokit-tab-content {
-    background: #03103F;
+    background: #1d55a0;
     display: none;
     padding-top: 2em;
     padding-left: 0;
@@ -189,11 +189,11 @@
     font-weight: normal;
     position: relative;
     flex: 1 1 auto;
-    color: #CFCFCF;
+    color: white;
     background-color: transparent;
     text-align: center;
     vertical-align: middle;
-    border: 2px solid #CFCFCF;
+    border: 2px solid white;
     padding: .75rem .75rem;
     margin: 0 5px 10px 0;
     border-radius: .35rem;
@@ -232,7 +232,7 @@
 .xeokit-modelsTab .xeokit-form-check span {
     display: inline-block;
     color: #ffff;
-    background-color: #03103F;
+    background-color: #1d55a0;
     padding-left: 3px;
     width: calc(100% - 30px);
     vertical-align: middle;
@@ -240,7 +240,7 @@
 
 .xeokit-modelsTab .xeokit-form-check span.disabled {
     color: #99A4AD;
-    background-color: #03103F;
+    background-color: #1d55a0;
 }
 
 .xeokit-modelsTab .xeokit-form-check span:hover {
@@ -252,7 +252,7 @@
 
 .xeokit-modelsTab .xeokit-form-check span.disabled:hover {
     color: #99A4AD;
-    background-color: #03103F;
+    background-color: #1d55a0;
     cursor: default;
 }
 
@@ -563,7 +563,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(3, 16, 63, 0.4);
+    background-color: #1d55a0;
 }
 
 .xeokit-busy-modal-content {
@@ -638,7 +638,7 @@
 
 .xeokit-section-counter {
     opacity: 1.0;
-    color: black;
+    color: #1d55a0;
     padding: 1px;
     margin: 0;
     margin-left: 10px;
@@ -660,7 +660,7 @@
 }
 
 .xeokit-section-counter:hover {
-    color: #477dca;
+    color: #1d55a0;
 }
 
 .xeokit-section-counter.active:hover {
@@ -675,7 +675,7 @@
     opacity: 1.0;
     border-radius: 5px;
     border: 0;
-    color: black;
+    color:#1d55a0;
     padding: 1px;
     margin: 0;
     margin-left: 10px;
@@ -747,7 +747,7 @@
     vertical-align: middle;
     border-style: solid;
     border-width: 8px 8px 0 8px;
-    border-color: black transparent transparent transparent  !important;
+    border-color: #1d55a0 transparent transparent transparent  !important;
 }
 
 .xeokit-arrow-down.disabled {

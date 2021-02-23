@@ -25,11 +25,11 @@ body {
 }
 
 #myExplorer {
-    min-width: 400px;
-    max-width: 400px;
+    min-width: 350px;
+    max-width: 350px;
     height: 100%;
     margin-left: -400px;
-    background: #03103F;
+    background: #1d55a0;
     color: #fff;
     transition: all 0.3s;
     padding: 0;
@@ -43,7 +43,7 @@ body {
 
 #myExplorer .explorer-toolbar {
     padding: 0;
-    background: #03103F;
+    background: #1d55a0;
 }
 
 #myExplorer ul.components {
@@ -68,7 +68,7 @@ body {
 
 #myExplorer ul li.active > a, a[aria-expanded="true"] {
     color: #fff;
-    background: #03103F;
+    background: #1d55a0;
 }
 
 #myExplorer input[type="checkbox"] {
@@ -82,7 +82,7 @@ body {
 }
 
 #myContent {
-    width: calc(100% - 400px);
+    width: calc(100% - 350px);
     height: 100%;
     background: #f2f2f2;
 }
@@ -106,6 +106,8 @@ body {
     pointer-events: all;
     margin: 0;
     position: relative;
+    border-bottom: #1d55a0;
+    border-width: 1px;
 }
 
 #myNavCubeCanvas {

@@ -21,7 +21,7 @@ let message_from_mqtt = "fortest"; //--> from Gary, necessary?
 //var csvContent; 
 
 
-function idStructure(){ 
+function idStructure(){  // CURRENTLY NOT USED
 
 
     //get my constants 
@@ -74,8 +74,11 @@ function idStructure(){
 function changeDefaultColors(objArray){
     //change the id based assigning to a type based one!!
     let iframeElement = document.getElementById("embeddedViewer");
+    //console.log(iframeElement);
     let  viewer = iframeElement.contentWindow.bimViewer.viewer;
+    //console.log (viewer.scene.objects);
     objArray = idStructure();
+    //console.log(objArray);
     let siteId = [];
     let wallId = [];
     let waterId = [];
@@ -182,16 +185,19 @@ function onMessageArrived(message) {
         
     let detailMsg = new RegExp(detailChan.substring(0, detailChan.length - 1)+"*");
     let colorMsg = new RegExp(colorChan.substring(0, colorChan.length - 1)+"*");
+    //let msg = JSON.parse(message.payloadString); // for testing
+    //console.log(message.payloadString); //for testing
     
-
     //sort message to channels
     if (message.destinationName.match(detailMsg)!==null) {
         console.log("message for detail");
-        console.log(message);
-        let msg = JSON.parse(message.payloadString);
+        //console.log(message);
+        let msg = JSON.parse(message.payloadString); //for node red
         update_info(msg);
     } else if(message.destinationName.match(colorMsg)!==null){
         console.log("message for color");
+        // for node red:
+               
         let msg = message.payloadString;
         console.log(message.payloadString);
         console.log(msg);
@@ -199,6 +205,9 @@ function onMessageArrived(message) {
         console.log(msgContent);
         let sensorID = msgContent.sensorID;
         let color = msgContent.color;
+        // until here
+        //let sensorID = msg.sensorID; //for testing
+        //let color = msg.color; //for testing
         console.log(sensorID);
         console.log(color);
 
@@ -301,7 +310,10 @@ function loadMonitor(){
             // document.getElementById("embeddedViewer").style.height = "" + document.body.clientHeight - height_head + "px";
             // document.getElementById("div_info").style.height = "" + document.body.clientHeight - height_head + "px";
             // document.getElementById("information").style.height = "" + (document.body.clientHeight - height_head - 40) + "px";
+            createModals();
             show_some_information_init();
+            //htmlWindow();
+
                             
         } else if (countInterval === 5){
             window.clearInterval(loaderInt)
