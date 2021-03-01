@@ -93,7 +93,7 @@ function show_some_information_init() {
         var newLength = objArray.push([element.type, element.name, element.id]); 
         
     });
-
+   
     // add sensors to the dropdown
     let navSensors = document.getElementById("allSensors")
     allSensors.forEach(function(element){
@@ -108,13 +108,16 @@ function show_some_information_init() {
         navSensors.appendChild(li_sensor)
         //console.log("created dropdown item " + element)
     })
+    console.log(navSensors);
 
     //open and close buttons
     const overlay = document.getElementById('overlay')
     allSensors.forEach(function(element){
         let openModalButton = document.getElementById("id_" + element)
-        openModalButton.addEventListener('click', () =>{
-            let modal = document.querySelector(button.dataset.modalTarget)
+        console.log(openModalButton);
+        openModalButton.addEventListener("click", () =>{
+            let modal = document.querySelector(openModalButton.dataset.modalTarget)
+            console.log(modal);
             console.log("clicked on " + element)
             openModal(modal)
         })
@@ -157,7 +160,7 @@ function show_some_information_init() {
     
     //filter sensors from other objects 
 
-    // activated on clicking an object (activation and recognition of the sensor id and name works works) BUT does so with every object on every kind of mouseclick
+    // activated on clicking an object (activation and recognition of the sensor id and name works works) 
     viewer.scene.input.on("mouseup", e => {
         objArray.forEach(function(element){
             if (element[2] === id){
@@ -203,8 +206,8 @@ function update_info(message) {
     // replace old modal content with new one
     var bod = document.getElementById("body-"+sensorID)
     bod.childNodes[0].nodeValue = "Value: "+message.value;
-    bod.childNodes[1].nodeValue = "Status: "+message.standard;
-    bod.childNodes[2].nodeValue = "Time: "+date;
+    bod.childNodes[2].nodeValue = "Status: "+message.standard;
+    bod.childNodes[4].nodeValue = "Time: "+date;
 
     // IMPORTANT?: the order is changed, object in alphabetical order unlike allSensors array!
     
