@@ -121,17 +121,14 @@ function show_some_information_init() {
             console.log("clicked on " + element)
             openModal(modal)
         })
-
     });
     const closeModalButtons = document.querySelectorAll('[data-close-button]')
-
 
     closeModalButtons.forEach(button =>{
         button.addEventListener('click', () =>{
             const modal = button.closest('.modal')
             closeModal(modal)
         })
-
     })
 
     function openModal(modal){
