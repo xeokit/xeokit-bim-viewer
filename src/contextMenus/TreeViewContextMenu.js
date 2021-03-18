@@ -13,37 +13,6 @@ class TreeViewContextMenu extends ContextMenu {
             items: [
                 [
                     {
-                        title: "Isolate",
-                        doAction: function (context) {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const objectIds = [];
-                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
-                                if (treeViewNode.objectId) {
-                                    objectIds.push(treeViewNode.objectId);
-                                }
-                            });
-                            const aabb = scene.getAABB(objectIds);
-
-                            viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-
-                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                            scene.setObjectsVisible(scene.objectIds, false);
-                            scene.setObjectsPickable(scene.objectIds, false);
-                            scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-                            scene.setObjectsVisible(objectIds, true);
-                            scene.setObjectsPickable(objectIds, true);
-
-                            viewer.cameraFlight.flyTo({
-                                aabb: aabb
-                            }, () => {
-                            });
-                        }
-                    }
-                ],
-                [
-                    {
                         title: "View Fit",
                         doAction: function (context) {
                             const viewer = context.viewer;
@@ -79,6 +48,37 @@ class TreeViewContextMenu extends ContextMenu {
                                 duration: 0.5
                             });
                             viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
+                        }
+                    }
+                ],
+                [
+                    {
+                        title: "Isolate",
+                        doAction: function (context) {
+                            const viewer = context.viewer;
+                            const scene = viewer.scene;
+                            const objectIds = [];
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
+                                if (treeViewNode.objectId) {
+                                    objectIds.push(treeViewNode.objectId);
+                                }
+                            });
+                            const aabb = scene.getAABB(objectIds);
+
+                            viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
+                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                            scene.setObjectsVisible(scene.visibleObjectIds, false);
+                           // scene.setObjectsPickable(scene.objectIds, false);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+                            scene.setObjectsVisible(objectIds, true);
+                           // scene.setObjectsPickable(objectIds, true);
+
+                            viewer.cameraFlight.flyTo({
+                                aabb: aabb
+                            }, () => {
+                            });
                         }
                     }
                 ],
