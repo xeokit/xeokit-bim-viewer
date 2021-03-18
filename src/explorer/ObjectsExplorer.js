@@ -1,9 +1,6 @@
 import {Controller} from "../Controller.js";
 import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-
-const tempVec3 = math.vec3();
 
 /** @private */
 class ObjectsExplorer extends Controller {
