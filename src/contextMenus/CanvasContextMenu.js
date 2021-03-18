@@ -11,6 +11,21 @@ class CanvasContextMenu extends ContextMenu {
             items: [
                 [
                     {
+                        title: "View Fit All",
+                        doAction: function (context) {
+                            const viewer = context.viewer;
+                            const scene = viewer.scene;
+                            const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                            viewer.cameraFlight.flyTo({
+                                aabb: sceneAABB,
+                                duration: 0.5
+                            });
+                            viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
+                        }
+                    }
+                ],
+                [
+                    {
                         title: "Hide All",
                         getEnabled: function (context) {
                             return (context.viewer.scene.numVisibleObjects > 0);
@@ -29,21 +44,6 @@ class CanvasContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                        }
-                    }
-                ],
-                [
-                    {
-                        title: "View Fit All",
-                        doAction: function (context) {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const sceneAABB = scene.getAABB(scene.visibleObjectIds);
-                            viewer.cameraFlight.flyTo({
-                                aabb: sceneAABB,
-                                duration: 0.5
-                            });
-                            viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
                         }
                     }
                 ],
