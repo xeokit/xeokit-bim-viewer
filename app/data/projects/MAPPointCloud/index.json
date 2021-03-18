@@ -5,6 +5,11 @@
         {
             "id": "MAPPointCloud",
             "name": "Point Cloud Scan",
+            "rotation": [
+                0,
+                90,
+                0
+            ],
             "saoEnabled": false
         }
     ],
@@ -24,19 +29,19 @@
         "expandStoreysTree": 1,
         "setCamera": {
             "eye": [
-                -33.39,
-                19.86,
-                16.48
+                33.87,
+                25.24,
+                39.81
             ],
             "look": [
-                8.29,
-                8.28,
-                0.31
+                24.38,
+                4.06,
+                -4.31
             ],
             "up": [
-                0.23,
-                0.96,
-                -0.09
+                -0.08,
+                0.9,
+                -0.41
             ]
         }
     }
