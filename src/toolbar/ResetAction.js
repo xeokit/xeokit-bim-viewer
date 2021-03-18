@@ -72,7 +72,7 @@ class ResetAction extends Controller {
             selected: true,
             clippable: true,
             pickable: true,
-            colorize: true,
+            colorize: false, // We don't colorize objects yet - also messes up point clouds
             opacity: false // FIXME: Restoring opacity broken by colorize fix - details at https://github.com/xeokit/xeokit-sdk/issues/239
         });
         this._modelMementos[modelId] = modelMemento;
