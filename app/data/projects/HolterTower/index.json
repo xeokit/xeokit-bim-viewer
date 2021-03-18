@@ -11,5 +11,11 @@
     "modelsLoaded": [
       "design"
     ]
+  },
+  "viewerState": {
+    "tabOpen": "classes",
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
   }
 }

@@ -46,7 +46,10 @@
     "saoKernelRadius": "100",
     "xrayContext": true,
     "saoInteractive": false,
-    "saoInteractiveDelay": 200
+    "saoInteractiveDelay": 500,
+    "edgesEnabled": "true",
+    "edgesInteractive": false,
+    "edgesInteractiveDelay": 500
   },
   "viewerContent": {
     "modelsLoaded": [

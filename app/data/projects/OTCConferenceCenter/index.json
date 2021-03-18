@@ -16,7 +16,7 @@
         "saoScale": "1200.0",
         "saoKernelRadius": "100",
         "saoInteractive": false,
-        "saoInteractiveDelay": 250
+        "saoInteractiveDelay": 500
     },
     "viewerContent": {
         "modelsLoaded": [

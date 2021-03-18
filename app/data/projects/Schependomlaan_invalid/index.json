@@ -1,0 +1,39 @@
+{
+  "id": "schependomlaan_invalid",
+  "name": "Schependomlaan Invalid",
+  "models": [
+    {
+      "id": "design",
+      "name": "Schependomlaan Design"
+    }
+  ],
+  "viewerConfigs": {
+    "cameraNear": 0.05,
+    "cameraFar": 3000.0,
+    "saoEnabled": true,
+    "saoBias": 0.5,
+    "saoIntensity": 0.7,
+    "saoScale": 1200.0,
+    "saoKernelRadius": 100,
+    "saoBlur": true,
+    "saoInteractive": true,
+    "saoInteractiveDelay": 200,
+    "viewFitDuration": 0.5,
+    "viewFitFOV": 45,
+    "perspectiveFOV": 55,
+    "objectColorSource": "viewer"
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "design"
+    ]
+  },
+  "viewerState": {
+    "viewCubeEnabled": true,
+    "threeDEnabled": true,
+    "tabOpen": "classes",
+    "expandObjectsTree": 1,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
+  }
+}

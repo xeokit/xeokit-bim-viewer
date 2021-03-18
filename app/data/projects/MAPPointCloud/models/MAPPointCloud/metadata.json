@@ -1,0 +1,16 @@
+{
+    "id": "1601",
+    "projectId": "3toKckUfH2jBmd$7uhJHa6",
+    "author": "",
+    "createdAt": "2017-01-19T01:36:20",
+    "schema": "na",
+    "creatingApplication": "xeokit-gltf-to-xkt 1.0.0",
+    "metaObjects": [
+        {
+            "id": "test.ply",
+            "name": "Point Cloud",
+            "type": "XKTPointCloud",
+            "parent": null
+        }
+    ]
+}
