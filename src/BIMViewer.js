@@ -439,47 +439,43 @@ class BIMViewer extends Controller {
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
         scene.highlightMaterial.edges = true;
-        scene.highlightMaterial.edgeColor = [.5, .5, 0];
+        scene.highlightMaterial.edgeColor = [1, 1, 0];
         scene.highlightMaterial.edgeAlpha = 0.9;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        //------------------------------------------------------------------------------------------------------------------
+        // Configure points material
+        //------------------------------------------------------------------------------------------------------------------
+
+        scene.pointsMaterial.pointSize = 2;
+        scene.pointsMaterial.roundPoints = true;
+        scene.pointsMaterial.perspectivePoints = true;
+        scene.pointsMaterial.minPerspectivePointSize = 2;
+        scene.pointsMaterial.maxPerspectivePointSize = 4;
 
         // Lighting
 
         scene.clearLights();
 
         new AmbientLight(scene, {
-            color: [0.3, 0.3, 0.3],
-            intensity: 1.0
+            color: [1.0, 1.0, 1.0],
+            intensity: 0.9
         });
 
         new DirLight(scene, {
-            dir: [0.8, -0.6, -0.8],
+            dir: [0.8, -1.0, -0.8],
             color: [1.0, 1.0, 1.0],
             intensity: 1.0,
-            space: "world"
-        });
-
-        new DirLight(scene, {
-            dir: [-0.8, -0.4, 0.4],
-            color: [1.0, 1.0, 1.0],
-            intensity: 1.0,
-            space: "world"
-        });
-
-        new DirLight(scene, {
-            dir: [0.2, -0.8, 0.8],
-            color: [0.6, 0.6, 0.6],
-            intensity: 1.0,
-            space: "world"
+            space: "view"
         });
 
         // Camera control
 
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.followPointer = true;
-        this.viewer.cameraControl.doublePickFlyTo = true;
+        this.viewer.cameraControl.doublePickFlyTo = false;
         this.viewer.cameraControl.smartPivot = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
@@ -510,23 +506,34 @@ class BIMViewer extends Controller {
 
         // Only enable SAO and normal edge emphasis while camera is not moving
 
-        const timeoutDuration = 200;
-        var timer = timeoutDuration;
-        var saoEnabled = false;
+        this._initInteractiveSAO();
+        this._initInteractiveEdges();
+    }
 
-        const onCameraMatrix = scene.camera.on("matrix", () => {
+    _initInteractiveSAO() {
+
+        const scene = this.viewer.scene;
+
+        const timeoutDuration = 500;
+        let timer = timeoutDuration;
+        let saoEnabled = false;
+
+        const disableSAOAndResetTimer = () => {
             if (this._configs.saoInteractive) {
                 return;
             }
             const saoInteractiveDelay = this._configs.saoInteractiveDelay;
-            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);
+            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : timeoutDuration);
             if (saoEnabled) {
                 scene.sao.enabled = false;
                 saoEnabled = false;
             }
-        });
+        };
 
-        const onSceneTick = scene.on("tick", (e) => {
+        scene.camera.on("viewMatrix", disableSAOAndResetTimer);
+        scene.camera.on("projMatrix", disableSAOAndResetTimer);
+
+        scene.on("tick", (e) => {
             if (this._configs.saoInteractive) {
                 if (!saoEnabled) {
                     scene.sao.enabled = (!!this._configs.saoEnabled);
@@ -542,6 +549,50 @@ class BIMViewer extends Controller {
                 if (!saoEnabled) {
                     scene.sao.enabled = (!!this._configs.saoEnabled);
                     saoEnabled = true;
+                }
+            }
+        });
+    }
+
+    _initInteractiveEdges() {
+
+        const scene = this.viewer.scene;
+
+        const timeoutDuration = 500;
+        let timer = timeoutDuration;
+        let edgesEnabled = false;
+
+        const disableEdgesAndResetTimer = () => {
+            if (this._configs.edgesInteractive) {
+                return;
+            }
+            const edgesInteractiveDelay = this._configs.edgesInteractiveDelay;
+            timer = ((edgesInteractiveDelay !== null && edgesInteractiveDelay !== undefined) ? this._configs.edgesInteractiveDelay : timeoutDuration);
+            if (edgesEnabled) {
+                scene.edgeMaterial.edges = false;
+                edgesEnabled = false;
+            }
+        }
+
+        scene.camera.on("viewMatrix", disableEdgesAndResetTimer);
+        scene.camera.on("projMatrix", disableEdgesAndResetTimer);
+
+        scene.on("tick", (e) => {
+            if (this._configs.edgesInteractive) {
+                if (!edgesEnabled) {
+                    scene.edgeMaterial.edges = (this._configs.edgesEnabled);
+                    edgesEnabled = true;
+                }
+                return;
+            }
+            if (edgesEnabled) {
+                return;
+            }
+            timer -= e.deltaTime;
+            if (timer <= 0) {
+                if (!edgesEnabled) {
+                    scene.edgeMaterial.edges = (!!this._configs.edgesEnabled);
+                    edgesEnabled = true;
                 }
             }
         });
@@ -597,10 +648,13 @@ class BIMViewer extends Controller {
             "saoIntensity": "0.5",
             "saoScale": "1200.0",
             "saoKernelRadius": "100",
+            "edgesEnabled": true,
             "xrayContext": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "saoInteractive": true,
-            "saoInteractiveDelay": 200,
+            "saoInteractiveDelay": 500,
+            "edgesInteractive": true,
+            "edgesInteractiveDelay": 500,
             "objectColorSource": "model"
         });
     }
@@ -688,6 +742,10 @@ class BIMViewer extends Controller {
                     this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);
                     break;
 
+                case "edgesEnabled":
+                    this.viewer.scene.edgeMaterial.edges = this._configs[name] = parseBool(value);
+                    break;
+
                 case "viewFitFOV":
                     this.viewer.cameraFlight.fitFOV = this._configs[name] = parseFloat(value);
                     break;
@@ -724,6 +782,19 @@ class BIMViewer extends Controller {
                         saoInteractiveDelay = 0;
                     }
                     this._configs["saoInteractiveDelay"] = parseFloat(value);
+                    break;
+
+                case "edgesInteractive":
+                    this._configs["edgesInteractive"] = parseBool(value);
+                    break;
+
+                case "edgesInteractiveDelay":
+                    var edgesInteractiveDelay = parseFloat(value);
+                    if (edgesInteractiveDelay < 0) {
+                        this.error("setConfig() - edgesInteractiveDelay cannot be less than zero - clamping to zero");
+                        edgesInteractiveDelay = 0;
+                    }
+                    this._configs["edgesInteractiveDelay"] = parseFloat(value);
                     break;
 
                 default:
