@@ -1,45 +1,46 @@
 {
-  "coverage": "31.76%",
-  "expectCount": 318,
-  "actualCount": 101,
+  "coverage": "33.33%",
+  "expectCount": 306,
+  "actualCount": 102,
   "files": {
     "src/BIMViewer.js": {
-      "expectCount": 90,
-      "actualCount": 57,
+      "expectCount": 92,
+      "actualCount": 58,
       "undocumentLines": [
-        27,
-        74,
-        103,
-        200,
-        213,
-        218,
-        222,
-        231,
-        238,
-        245,
-        252,
-        257,
-        270,
-        283,
-        290,
-        296,
-        301,
-        307,
-        312,
-        317,
-        323,
-        331,
-        336,
-        425,
+        28,
+        75,
+        104,
+        203,
+        216,
+        221,
+        225,
+        234,
+        241,
+        248,
+        255,
+        260,
+        273,
+        286,
+        293,
+        299,
+        304,
+        310,
+        315,
+        320,
+        326,
+        334,
+        339,
         428,
-        549,
-        551,
-        552,
-        589,
-        1059,
-        1110,
-        1119,
-        1231
+        430,
+        433,
+        519,
+        521,
+        522,
+        559,
+        1024,
+        1075,
+        1084,
+        1196
       ]
     },
     "src/BusyModal.js": {
@@ -180,35 +181,34 @@
         212,
         216,
         220,
-        306,
-        330,
-        339,
-        343,
-        347,
-        351,
-        355,
-        359
+        309,
+        333,
+        342,
+        346,
+        350,
+        354,
+        358,
+        362
       ]
     },
     "src/explorer/ObjectsExplorer.js": {
-      "expectCount": 16,
+      "expectCount": 15,
       "actualCount": 1,
       "undocumentLines": [
-        6,
-        11,
+        8,
+        28,
+        29,
+        30,
         31,
-        32,
-        33,
-        34,
-        42,
-        49,
-        81,
-        93,
-        104,
-        116,
-        120,
-        125,
-        129
+        39,
+        46,
+        78,
+        90,
+        101,
+        113,
+        117,
+        122,
+        126
       ]
     },
     "src/explorer/StoreysExplorer.js": {
@@ -262,16 +262,11 @@
       ]
     },
     "src/toolbar/HideTool.js": {
-      "expectCount": 8,
+      "expectCount": 3,
       "actualCount": 1,
       "undocumentLines": [
-        4,
-        12,
-        56,
-        58,
-        72,
-        83,
-        90
+        6,
+        28
       ]
     },
     "src/toolbar/NavCubeMode.js": {
@@ -296,16 +291,12 @@
       ]
     },
     "src/toolbar/QueryTool.js": {
-      "expectCount": 8,
+      "expectCount": 4,
       "actualCount": 1,
       "undocumentLines": [
-        4,
-        12,
-        54,
-        58,
-        72,
-        83,
-        93
+        6,
+        29,
+        61
       ]
     },
     "src/toolbar/ResetAction.js": {
@@ -323,7 +314,7 @@
       ]
     },
     "src/toolbar/SectionTool.js": {
-      "expectCount": 14,
+      "expectCount": 15,
       "actualCount": 1,
       "undocumentLines": [
         9,
@@ -338,20 +329,16 @@
         173,
         177,
         182,
-        186
+        186,
+        190
       ]
     },
     "src/toolbar/SelectionTool.js": {
-      "expectCount": 8,
+      "expectCount": 3,
       "actualCount": 1,
       "undocumentLines": [
-        5,
-        13,
-        57,
-        61,
-        75,
-        86,
-        96
+        6,
+        27
       ]
     },
     "src/toolbar/ThreeDMode.js": {
@@ -363,9 +350,9 @@
         17,
         19,
         21,
-        43,
-        76,
-        115
+        44,
+        77,
+        116
       ]
     }
   }

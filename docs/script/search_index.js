@@ -432,6 +432,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#hidesectioneditcontrol",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-hideSectionEditControl",
+    "src/BIMViewer.js~BIMViewer#hideSectionEditControl",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#ismodelloaded",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-isModelLoaded",
     "src/BIMViewer.js~BIMViewer#isModelLoaded",

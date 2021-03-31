@@ -52,37 +52,6 @@ class TreeViewContextMenu extends ContextMenu {
             items: [
                 [
                     {
-                        title: &quot;Isolate&quot;,
-                        doAction: function (context) {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const objectIds = [];
-                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
-                                if (treeViewNode.objectId) {
-                                    objectIds.push(treeViewNode.objectId);
-                                }
-                            });
-                            const aabb = scene.getAABB(objectIds);
-
-                            viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-
-                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                            scene.setObjectsVisible(scene.objectIds, false);
-                            scene.setObjectsPickable(scene.objectIds, false);
-                            scene.setObjectsSelected(scene.selectedObjectIds, false);
-
-                            scene.setObjectsVisible(objectIds, true);
-                            scene.setObjectsPickable(objectIds, true);
-
-                            viewer.cameraFlight.flyTo({
-                                aabb: aabb
-                            }, () =&gt; {
-                            });
-                        }
-                    }
-                ],
-                [
-                    {
                         title: &quot;View Fit&quot;,
                         doAction: function (context) {
                             const viewer = context.viewer;
@@ -123,6 +92,37 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
+                        title: &quot;Isolate&quot;,
+                        doAction: function (context) {
+                            const viewer = context.viewer;
+                            const scene = viewer.scene;
+                            const objectIds = [];
+                            context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
+                                if (treeViewNode.objectId) {
+                                    objectIds.push(treeViewNode.objectId);
+                                }
+                            });
+                            const aabb = scene.getAABB(objectIds);
+
+                            viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+
+                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                            scene.setObjectsVisible(scene.visibleObjectIds, false);
+                           // scene.setObjectsPickable(scene.objectIds, false);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
+
+                            scene.setObjectsVisible(objectIds, true);
+                           // scene.setObjectsPickable(objectIds, true);
+
+                            viewer.cameraFlight.flyTo({
+                                aabb: aabb
+                            }, () =&gt; {
+                            });
+                        }
+                    }
+                ],
+                [
+                    {
                         title: &quot;Hide&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
@@ -142,7 +142,6 @@ class TreeViewContextMenu extends ContextMenu {
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
                             scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
                                     const entity = scene.objects[treeViewNode.objectId];
@@ -221,6 +220,7 @@ class TreeViewContextMenu extends ContextMenu {
                                 if (treeViewNode.objectId) {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
+                                        entity.selected = false;
                                         entity.xrayed = true;
                                         entity.visible = true;
                                         entity.pickable = false;
@@ -250,7 +250,7 @@ class TreeViewContextMenu extends ContextMenu {
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
                                     const entity = scene.objects[treeViewNode.objectId];
@@ -268,6 +268,7 @@ class TreeViewContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
                             scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },

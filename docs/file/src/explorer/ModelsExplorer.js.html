@@ -292,7 +292,10 @@ class ModelsExplorer extends Controller {
                             rotation: modelInfo.rotation,
                             matrix: modelInfo.matrix,
                             edges: (modelInfo.edges !== false),
-                            saoEnabled: modelInfo.saoEnabled
+                            saoEnabled: modelInfo.saoEnabled,
+                            pbrEnabled: modelInfo.pbrEnabled,
+                            backfaces: modelInfo.backfaces,
+                            excludeTypes: [&quot;IfcSpace&quot;]
                         });
                         model.on(&quot;loaded&quot;, () =&gt; {
                             const checkbox = document.getElementById(&quot;&quot; + modelId);

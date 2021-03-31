@@ -116,6 +116,8 @@
 <li>3D and 2D viewing modes.</li>
 <li>Interactively X-ray, highlight, show, hide and section objects. </li>
 <li>Tree views of structure, layers and storeys.</li>
+<li>Full-precision geometry.</li>
+<li>Point clouds.</li>
 <li>Supports IFC2x3 and IFC4.</li>
 <li>Customize viewer appearance with your own CSS.</li>
 <li>JavaScript programming API for all viewer functions.</li>
@@ -129,6 +131,14 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=MAP">Double-Precision Model</a></td>
+<td><a href="https://bimdata.io">BIMData</a></td>
+</tr>
+<tr>
+<td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=MAPPointCloud">Point Cloud</a></td>
+<td><a href="https://bimdata.io">BIMData</a></td>
+</tr>
 <tr>
 <td><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys">OTC Conference Center</a></td>
 <td><a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301">Details</a></td>
@@ -155,10 +165,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="need-help-">Need Help?</h2><p>Everything here is tested and used in production, so we&apos;re confident it will work well for you. </p>
-<p>Sometimes, however, users may benefit from a few hours consultation to get started more quickly. </p>
-<p><a href="http://xeolabs.com/contact/">Get in touch</a> if you could use a little help setting up your  <code>xeokit-bim-viewer</code> with your models. </p>
-<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled within the <a href="http://xeokit.io">xeokit SDK</a>, which is provided under an <a href="https://github.com/xeokit/xeokit-sdk/blob/master/LICENSE.txt">Affero GPL V3</a> for non-commercial use. See <a href="https://xeokit.io/index.html#pricing">Pricing</a> for commercial licensing options.</p>
+<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled within the <a href="http://xeokit.io">xeokit SDK</a>. See <a href="https://xeokit.io/index.html#pricing">Pricing</a> for licensing options.</p>
 <h2 id="the-viewer-application">The Viewer Application</h2><p>The <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/index.html"><code>./app/index.html</code></a> page provides a ready-to-use instance of xeokit-bim-viewer. We&apos;ll just call it <em>viewer</em> from now on.</p>
 <p>The viewer loads projects and models from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory.</p>
 <p>To view a project, load the viewer with the project&apos;s ID on the URL: </p>
@@ -290,6 +297,13 @@
 <td style="text-align:left">Distance to the far clipping plane</td>
 </tr>
 <tr>
+<td style="text-align:left">&quot;smartPivot&quot;</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>true</code></td>
+<td style="text-align:left">Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.</td>
+</tr>
+<tr>
 <td style="text-align:left">&quot;saoEnabled&quot;</td>
 <td style="text-align:left">Boolean</td>
 <td style="text-align:left"></td>
@@ -332,18 +346,11 @@
 <td style="text-align:left">Whether Guassian blur is enabled for SAO</td>
 </tr>
 <tr>
-<td style="text-align:left">&quot;saoInteractive&quot;</td>
+<td style="text-align:left">&quot;edgesEnabled&quot;</td>
 <td style="text-align:left">Boolean</td>
 <td style="text-align:left"></td>
 <td style="text-align:left"><code>true</code></td>
-<td style="text-align:left">When <code>true</code>, applies SAO when moving the camera, otherwise applies it once the camera stops moving</td>
-</tr>
-<tr>
-<td style="text-align:left">&quot;saoInteractiveDelay&quot;</td>
-<td style="text-align:left">Number</td>
-<td style="text-align:left"></td>
-<td style="text-align:left"><code>200</code></td>
-<td style="text-align:left">when &quot;saoInteractive&quot; is <code>false</code>, this is the time delay in milliseconds after which SAO is applied after the camera has stopped moving</td>
+<td style="text-align:left">Whether or not to enhance edges on objects</td>
 </tr>
 <tr>
 <td style="text-align:left">&quot;viewFitFOV&quot;</td>

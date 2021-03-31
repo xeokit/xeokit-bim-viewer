@@ -62,6 +62,7 @@ import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
 import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 import {OrthoMode} from &quot;./toolbar/OrthoMode.js&quot;;
+import {FastNavPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/FastNavPlugin/FastNavPlugin.js&quot;;
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;
@@ -231,7 +232,9 @@ class BIMViewer extends Controller {
 
         const viewer = new Viewer({
             canvasElement: canvasElement,
-            transparent: true
+            transparent: true,
+            saoEnabled: true,
+            pbrEnabled: true
         });
 
         super(null, cfg, server, viewer);
@@ -381,7 +384,7 @@ class BIMViewer extends Controller {
         this._navCubeMode.setActive(true);
 
         this._modelsExplorer.on(&quot;modelLoaded&quot;, (modelId) =&gt; {
-            if (this._modelsExplorer.getNumModelsLoaded() === 1) {
+            if (this._modelsExplorer.getNumModelsLoaded() &gt; 0) {
                 this.setControlsEnabled(true);
             }
             this.fire(&quot;modelLoaded&quot;, modelId);
@@ -462,6 +465,8 @@ class BIMViewer extends Controller {
         }
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
+
+        this._fastNavPlugin = new FastNavPlugin(viewer);
     }
 
     _customizeViewer() {
@@ -471,46 +476,49 @@ class BIMViewer extends Controller {
         // Emphasis effects
 
         scene.xrayMaterial.fill = false;
-        scene.xrayMaterial.fillAlpha = 0.1;
+        scene.xrayMaterial.fillAlpha = 0.3;
         scene.xrayMaterial.fillColor = [0, 0, 0];
         scene.xrayMaterial.edges = true;
-        scene.xrayMaterial.edgeAlpha = 0.3;
+        scene.xrayMaterial.edgeAlpha = 0.1;
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
         scene.highlightMaterial.edges = true;
-        scene.highlightMaterial.edgeColor = [.5, .5, 0];
+        scene.highlightMaterial.edgeColor = [1, 1, 0];
         scene.highlightMaterial.edgeAlpha = 0.9;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        //------------------------------------------------------------------------------------------------------------------
+        // Configure points material
+        //------------------------------------------------------------------------------------------------------------------
+
+        scene.pointsMaterial.pointSize = 1;
+        scene.pointsMaterial.roundPoints = true;
+        scene.pointsMaterial.perspectivePoints = true;
+        scene.pointsMaterial.minPerspectivePointSize = 2;
+        scene.pointsMaterial.maxPerspectivePointSize = 4;
 
         // Lighting
 
         scene.clearLights();
 
         new AmbientLight(scene, {
-            color: [0.3, 0.3, 0.3],
-            intensity: 1.0
+            color: [0.9, 0.9, 0.9],
+            intensity: 0.7
         });
 
         new DirLight(scene, {
-            dir: [0.8, -0.6, -0.8],
-            color: [1.0, 1.0, 1.0],
-            intensity: 1.0,
+            dir: [0.8, -.5, -0.5],
+            color: [0.67, 0.67, 1.0],
+            intensity: 0.7,
             space: &quot;world&quot;
         });
 
         new DirLight(scene, {
-            dir: [-0.8, -0.4, 0.4],
-            color: [1.0, 1.0, 1.0],
-            intensity: 1.0,
-            space: &quot;world&quot;
-        });
-
-        new DirLight(scene, {
-            dir: [0.2, -0.8, 0.8],
-            color: [0.6, 0.6, 0.6],
-            intensity: 1.0,
+            dir: [-0.8, -1.0, 0.5],
+            color: [1, 1, .9],
+            intensity: 0.9,
             space: &quot;world&quot;
         });
 
@@ -518,71 +526,33 @@ class BIMViewer extends Controller {
 
         this.viewer.cameraControl.panRightClick = true;
         this.viewer.cameraControl.followPointer = true;
-        this.viewer.cameraControl.doublePickFlyTo = true;
+        this.viewer.cameraControl.doublePickFlyTo = false;
+        this.viewer.cameraControl.smartPivot = true;
 
         // Dolly tweaks for best precision when aligning camera for BCF snapshots
 
         this.viewer.cameraControl.keyboardDollyRate = 100.0;
         this.viewer.cameraControl.mouseWheelDollyRate = 100.0;
         this.viewer.cameraControl.dollyInertia = 0;
-        this.viewer.cameraControl.dollyMinSpeed = 0.01;
+        this.viewer.cameraControl.dollyMinSpeed = 0.04;
         this.viewer.cameraControl.dollyProximityThreshold = 30.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment(&quot;&lt;div class=&apos;xeokit-camera-pivot-marker&apos;&gt;&lt;/div&gt;&quot;).firstChild;
         document.body.appendChild(cameraPivotElement);
         this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
-        // Scalable Ambient Obscurance (SAO) defaults
-
         scene.camera.perspective.near = 0.01;
         scene.camera.perspective.far = 3000.0;
         scene.camera.ortho.near = 0.01;
         scene.camera.ortho.far = 3000.0;
 
+        // Scalable Ambient Obscurance (SAO) defaults
+        // Since SAO is non-interactive, set to higher-quality
+
         const sao = scene.sao;
-        sao.enabled = false;
-        sao.bias = 0.5;
-        sao.intensity = 0.2;
-        sao.scale = 1200.0;
-        sao.kernelRadius = 100;
-
-        // Only enable SAO and normal edge emphasis while camera is not moving
-
-        const timeoutDuration = 200;
-        var timer = timeoutDuration;
-        var saoEnabled = false;
-
-        const onCameraMatrix = scene.camera.on(&quot;matrix&quot;, () =&gt; {
-            if (this._configs.saoInteractive) {
-                return;
-            }
-            const saoInteractiveDelay = this._configs.saoInteractiveDelay;
-            timer = ((saoInteractiveDelay !== null &amp;&amp; saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : 200);
-            if (saoEnabled) {
-                scene.sao.enabled = false;
-                saoEnabled = false;
-            }
-        });
-
-        const onSceneTick = scene.on(&quot;tick&quot;, (e) =&gt; {
-            if (this._configs.saoInteractive) {
-                if (!saoEnabled) {
-                    scene.sao.enabled = (!!this._configs.saoEnabled);
-                    saoEnabled = true;
-                }
-                return;
-            }
-            if (saoEnabled) {
-                return;
-            }
-            timer -= e.deltaTime;
-            if (timer &lt;= 0) {
-                if (!saoEnabled) {
-                    scene.sao.enabled = (!!this._configs.saoEnabled);
-                    saoEnabled = true;
-                }
-            }
-        });
+        sao.enabled = true;
+        sao.numSamples = 50;
+        sao.kernelRadius = 200;
     }
 
     _initCanvasContextMenus() {
@@ -629,15 +599,15 @@ class BIMViewer extends Controller {
         this.setConfigs({
             &quot;cameraNear&quot;: &quot;0.05&quot;,
             &quot;cameraFar&quot;: &quot;3000.0&quot;,
+            &quot;smartPivot&quot;: &quot;true&quot;,
             &quot;saoEnabled&quot;: &quot;false&quot;,
             &quot;saoBias&quot;: &quot;0.5&quot;,
-            &quot;saoIntensity&quot;: &quot;0.5&quot;,
-            &quot;saoScale&quot;: &quot;1200.0&quot;,
+            &quot;saoIntensity&quot;: &quot;0.2&quot;,
+            &quot;saoNumSamples&quot;: &quot;40&quot;,
             &quot;saoKernelRadius&quot;: &quot;100&quot;,
+            &quot;edgesEnabled&quot;: true,
             &quot;xrayContext&quot;: true,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
-            &quot;saoInteractive&quot;: true,
-            &quot;saoInteractiveDelay&quot;: 200,
             &quot;objectColorSource&quot;: &quot;model&quot;
         });
     }
@@ -697,6 +667,10 @@ class BIMViewer extends Controller {
                     this._configs[name] = far;
                     break;
 
+                case &quot;smartPivot&quot;:
+                    this.viewer.cameraControl.smartPivot = this._configs[name] = parseBool(value);
+                    break;
+
                 case &quot;saoEnabled&quot;:
                     this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
                     break;
@@ -709,16 +683,20 @@ class BIMViewer extends Controller {
                     this.viewer.scene.sao.intensity = parseFloat(value);
                     break;
 
-                case &quot;saoScale&quot;:
-                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);
-                    break;
-
                 case &quot;saoKernelRadius&quot;:
                     this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);
                     break;
 
+                case &quot;saoNumSamples&quot;:
+                    this.viewer.scene.sao.numSamples = this._configs[name] = parseFloat(value);
+                    break;
+
                 case &quot;saoBlur&quot;:
                     this.viewer.scene.sao.blur = this._configs[name] = parseBool(value);
+                    break;
+
+                case &quot;edgesEnabled&quot;:
+                    this.viewer.scene.edgeMaterial.edges = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;viewFitFOV&quot;:
@@ -744,19 +722,6 @@ class BIMViewer extends Controller {
 
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
-                    break;
-
-                case &quot;saoInteractive&quot;:
-                    this._configs[&quot;saoInteractive&quot;] = parseBool(value);
-                    break;
-
-                case &quot;saoInteractiveDelay&quot;:
-                    var saoInteractiveDelay = parseFloat(value);
-                    if (saoInteractiveDelay &lt; 0) {
-                        this.error(&quot;setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero&quot;);
-                        saoInteractiveDelay = 0;
-                    }
-                    this._configs[&quot;saoInteractiveDelay&quot;] = parseFloat(value);
                     break;
 
                 default:
@@ -1836,6 +1801,13 @@ class BIMViewer extends Controller {
      */
     flipSections() {
         this._sectionTool.flipSections();
+    }
+
+    /**
+     * Hides the section edition control, if currently shown.
+     */
+    hideSectionEditControl() {
+        this._sectionTool.hideControl();
     }
 
     /**
