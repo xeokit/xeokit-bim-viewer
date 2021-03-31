@@ -23,6 +23,7 @@ import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
+import {FastNavPlugin} from "@xeokit/xeokit-sdk/src/plugins/FastNavPlugin/FastNavPlugin.js";
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs">
@@ -192,7 +193,9 @@ class BIMViewer extends Controller {
 
         const viewer = new Viewer({
             canvasElement: canvasElement,
-            transparent: true
+            transparent: true,
+            saoEnabled: true,
+            pbrEnabled: true
         });
 
         super(null, cfg, server, viewer);
@@ -423,6 +426,8 @@ class BIMViewer extends Controller {
         }
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
+
+        this._fastNavPlugin = new FastNavPlugin(viewer);
     }
 
     _customizeViewer() {
@@ -432,10 +437,10 @@ class BIMViewer extends Controller {
         // Emphasis effects
 
         scene.xrayMaterial.fill = false;
-        scene.xrayMaterial.fillAlpha = 0.1;
+        scene.xrayMaterial.fillAlpha = 0.3;
         scene.xrayMaterial.fillColor = [0, 0, 0];
         scene.xrayMaterial.edges = true;
-        scene.xrayMaterial.edgeAlpha = 0.3;
+        scene.xrayMaterial.edgeAlpha = 0.1;
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
         scene.highlightMaterial.edges = true;
@@ -449,7 +454,7 @@ class BIMViewer extends Controller {
         // Configure points material
         //------------------------------------------------------------------------------------------------------------------
 
-        scene.pointsMaterial.pointSize = 2;
+        scene.pointsMaterial.pointSize = 1;
         scene.pointsMaterial.roundPoints = true;
         scene.pointsMaterial.perspectivePoints = true;
         scene.pointsMaterial.minPerspectivePointSize = 2;
@@ -460,15 +465,22 @@ class BIMViewer extends Controller {
         scene.clearLights();
 
         new AmbientLight(scene, {
-            color: [1.0, 1.0, 1.0],
-            intensity: 0.9
+            color: [0.9, 0.9, 0.9],
+            intensity: 0.7
         });
 
         new DirLight(scene, {
-            dir: [0.8, -1.0, -0.8],
-            color: [1.0, 1.0, 1.0],
-            intensity: 1.0,
-            space: "view"
+            dir: [0.8, -.5, -0.5],
+            color: [0.67, 0.67, 1.0],
+            intensity: 0.7,
+            space: "world"
+        });
+
+        new DirLight(scene, {
+            dir: [-0.8, -1.0, 0.5],
+            color: [1, 1, .9],
+            intensity: 0.9,
+            space: "world"
         });
 
         // Camera control
@@ -490,112 +502,18 @@ class BIMViewer extends Controller {
         document.body.appendChild(cameraPivotElement);
         this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
-        // Scalable Ambient Obscurance (SAO) defaults
-
         scene.camera.perspective.near = 0.01;
         scene.camera.perspective.far = 3000.0;
         scene.camera.ortho.near = 0.01;
         scene.camera.ortho.far = 3000.0;
 
+        // Scalable Ambient Obscurance (SAO) defaults
+        // Since SAO is non-interactive, set to higher-quality
+
         const sao = scene.sao;
-        sao.enabled = false;
-        sao.bias = 0.5;
-        sao.intensity = 0.2;
-        sao.scale = 1200.0;
-        sao.kernelRadius = 100;
-
-        // Only enable SAO and normal edge emphasis while camera is not moving
-
-        this._initInteractiveSAO();
-        this._initInteractiveEdges();
-    }
-
-    _initInteractiveSAO() {
-
-        const scene = this.viewer.scene;
-
-        const timeoutDuration = 500;
-        let timer = timeoutDuration;
-        let saoEnabled = false;
-
-        const disableSAOAndResetTimer = () => {
-            if (this._configs.saoInteractive) {
-                return;
-            }
-            const saoInteractiveDelay = this._configs.saoInteractiveDelay;
-            timer = ((saoInteractiveDelay !== null && saoInteractiveDelay !== undefined) ? this._configs.saoInteractiveDelay : timeoutDuration);
-            if (saoEnabled) {
-                scene.sao.enabled = false;
-                saoEnabled = false;
-            }
-        };
-
-        scene.camera.on("viewMatrix", disableSAOAndResetTimer);
-        scene.camera.on("projMatrix", disableSAOAndResetTimer);
-
-        scene.on("tick", (e) => {
-            if (this._configs.saoInteractive) {
-                if (!saoEnabled) {
-                    scene.sao.enabled = (!!this._configs.saoEnabled);
-                    saoEnabled = true;
-                }
-                return;
-            }
-            if (saoEnabled) {
-                return;
-            }
-            timer -= e.deltaTime;
-            if (timer <= 0) {
-                if (!saoEnabled) {
-                    scene.sao.enabled = (!!this._configs.saoEnabled);
-                    saoEnabled = true;
-                }
-            }
-        });
-    }
-
-    _initInteractiveEdges() {
-
-        const scene = this.viewer.scene;
-
-        const timeoutDuration = 500;
-        let timer = timeoutDuration;
-        let edgesEnabled = false;
-
-        const disableEdgesAndResetTimer = () => {
-            if (this._configs.edgesInteractive) {
-                return;
-            }
-            const edgesInteractiveDelay = this._configs.edgesInteractiveDelay;
-            timer = ((edgesInteractiveDelay !== null && edgesInteractiveDelay !== undefined) ? this._configs.edgesInteractiveDelay : timeoutDuration);
-            if (edgesEnabled) {
-                scene.edgeMaterial.edges = false;
-                edgesEnabled = false;
-            }
-        }
-
-        scene.camera.on("viewMatrix", disableEdgesAndResetTimer);
-        scene.camera.on("projMatrix", disableEdgesAndResetTimer);
-
-        scene.on("tick", (e) => {
-            if (this._configs.edgesInteractive) {
-                if (!edgesEnabled) {
-                    scene.edgeMaterial.edges = (this._configs.edgesEnabled);
-                    edgesEnabled = true;
-                }
-                return;
-            }
-            if (edgesEnabled) {
-                return;
-            }
-            timer -= e.deltaTime;
-            if (timer <= 0) {
-                if (!edgesEnabled) {
-                    scene.edgeMaterial.edges = (!!this._configs.edgesEnabled);
-                    edgesEnabled = true;
-                }
-            }
-        });
+        sao.enabled = true;
+        sao.numSamples = 50;
+        sao.kernelRadius = 200;
     }
 
     _initCanvasContextMenus() {
@@ -645,16 +563,12 @@ class BIMViewer extends Controller {
             "smartPivot": "true",
             "saoEnabled": "false",
             "saoBias": "0.5",
-            "saoIntensity": "0.5",
-            "saoScale": "1200.0",
+            "saoIntensity": "0.2",
+            "saoNumSamples": "40",
             "saoKernelRadius": "100",
             "edgesEnabled": true,
             "xrayContext": true,
             "backgroundColor": [1.0, 1.0, 1.0],
-            "saoInteractive": true,
-            "saoInteractiveDelay": 500,
-            "edgesInteractive": true,
-            "edgesInteractiveDelay": 500,
             "objectColorSource": "model"
         });
     }
@@ -730,12 +644,12 @@ class BIMViewer extends Controller {
                     this.viewer.scene.sao.intensity = parseFloat(value);
                     break;
 
-                case "saoScale":
-                    this.viewer.scene.sao.scale = this._configs[name] = parseFloat(value);
-                    break;
-
                 case "saoKernelRadius":
                     this.viewer.scene.sao.kernelRadius = this._configs[name] = parseFloat(value);
+                    break;
+
+                case "saoNumSamples":
+                    this.viewer.scene.sao.numSamples = this._configs[name] = parseFloat(value);
                     break;
 
                 case "saoBlur":
@@ -769,32 +683,6 @@ class BIMViewer extends Controller {
 
                 case "xrayContext":
                     this._configs[name] = value;
-                    break;
-
-                case "saoInteractive":
-                    this._configs["saoInteractive"] = parseBool(value);
-                    break;
-
-                case "saoInteractiveDelay":
-                    var saoInteractiveDelay = parseFloat(value);
-                    if (saoInteractiveDelay < 0) {
-                        this.error("setConfig() - saoInteractiveDelay cannot be less than zero - clamping to zero");
-                        saoInteractiveDelay = 0;
-                    }
-                    this._configs["saoInteractiveDelay"] = parseFloat(value);
-                    break;
-
-                case "edgesInteractive":
-                    this._configs["edgesInteractive"] = parseBool(value);
-                    break;
-
-                case "edgesInteractiveDelay":
-                    var edgesInteractiveDelay = parseFloat(value);
-                    if (edgesInteractiveDelay < 0) {
-                        this.error("setConfig() - edgesInteractiveDelay cannot be less than zero - clamping to zero");
-                        edgesInteractiveDelay = 0;
-                    }
-                    this._configs["edgesInteractiveDelay"] = parseFloat(value);
                     break;
 
                 default:

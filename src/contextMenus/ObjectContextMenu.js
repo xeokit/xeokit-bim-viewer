@@ -69,7 +69,6 @@ class ObjectContextMenu extends ContextMenu {
                                 return;
                             }
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             metaObject.withMetaObjectsInSubtree((metaObject) => {
                                 const entity = scene.objects[metaObject.id];
                                 if (entity) {
@@ -126,7 +125,6 @@ class ObjectContextMenu extends ContextMenu {
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
                             scene.setObjectsPickable(scene.objectIds, false);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             metaObject.withMetaObjectsInSubtree((metaObject) => {
                                 const entity = scene.objects[metaObject.id];
                                 if (entity) {

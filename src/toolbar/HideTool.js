@@ -1,10 +1,4 @@
 import {Controller} from "../Controller.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-
-function closeEnough(p, q) {
-    const CLICK_DIST = 4;
-    return (Math.abs(p[0] - q[0]) < 4) && (Math.abs(p[1] - q[1]) < CLICK_DIST);
-}
 
 /** @private */
 class HideTool extends Controller {
@@ -31,9 +25,19 @@ class HideTool extends Controller {
             if (active) {
                 buttonElement.classList.add("active");
                 this.viewer.cameraControl.doublePickFlyTo = false;
+                this._onPick = this.viewer.cameraControl.on("picked", (pickResult) => {
+                    if (!pickResult.entity) {
+                        return;
+                    }
+                    pickResult.entity.visible = false;
+                });
             } else {
                 buttonElement.classList.remove("active");
                 this.viewer.cameraControl.doublePickFlyTo = false;
+                if (this._onPick !== undefined) {
+                    this.viewer.cameraControl.off(this._onPick);
+                    this._onPick = undefined;
+                }
             }
         });
 
@@ -49,58 +53,6 @@ class HideTool extends Controller {
 
         this.bimViewer.on("reset", () => {
             this.setActive(false);
-        });
-
-        this._init();
-    }
-
-    _init() {
-        var entity = null;
-        this._onHover = this.viewer.cameraControl.on("hover", (e) => {
-            if (!this.getActive() || !this.getEnabled()) {
-                return;
-            }
-            if (entity) {
-                entity.highlighted = false;
-                entity = null;
-            }
-            if (!e.entity || !e.entity.isObject) {
-                return;
-            }
-            entity = e.entity;
-            entity.highlighted = true;
-        });
-        this._onHoverOff = this.viewer.cameraControl.on("hoverOff", (e) => {
-            if (!this.getActive() || !this.getEnabled()) {
-                return;
-            }
-            if (entity) {
-                entity.highlighted = false;
-                entity = null;
-            }
-        });
-        const lastCoords = math.vec2();
-        const input = this.viewer.scene.input;
-        this._onMousedown = input.on("mousedown", (coords) => {
-            if (!input.mouseDownLeft || input.mouseDownRight || input.mouseDownMiddle) {
-                return;
-            }
-            lastCoords[0] = coords[0];
-            lastCoords[1] = coords[1];
-        });
-        this._onMouseup = input.on("mouseup", (coords) => {
-            if (!this.getActive() || !this.getEnabled()) {
-                return;
-            }
-            if (entity) {
-                if (!closeEnough(lastCoords, coords)) {
-                    entity = null;
-                    return;
-                }
-                entity.visible = false;
-                entity.highlighted = false;
-                entity = null;
-            }
         });
     }
 }

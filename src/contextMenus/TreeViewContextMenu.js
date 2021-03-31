@@ -103,7 +103,6 @@ class TreeViewContextMenu extends ContextMenu {
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
                             scene.setObjectsPickable(scene.xrayedObjectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                                 if (treeViewNode.objectId) {
                                     const entity = scene.objects[treeViewNode.objectId];
@@ -182,6 +181,7 @@ class TreeViewContextMenu extends ContextMenu {
                                 if (treeViewNode.objectId) {
                                     const entity = context.viewer.scene.objects[treeViewNode.objectId];
                                     if (entity) {
+                                        entity.selected = false;
                                         entity.xrayed = true;
                                         entity.visible = true;
                                         entity.pickable = false;
@@ -211,7 +211,7 @@ class TreeViewContextMenu extends ContextMenu {
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsXRayed(scene.objectIds, true);
-                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {
                                 if (treeViewNode.objectId) {
                                     const entity = scene.objects[treeViewNode.objectId];
@@ -229,6 +229,7 @@ class TreeViewContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
+                            scene.setObjectsSelected(scene.selectedObjectIds, false);
                             scene.setObjectsPickable(scene.objectIds, false);
                         }
                     },
