@@ -100,13 +100,14 @@ Click the links below to run some demos.
 
 | Live Demo | Model Source |
 |---|---|
+| [Double-Precision Model](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=MAP) | [BIMData](https://bimdata.io) |
+| [Point Cloud](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=MAPPointCloud)| [BIMData](https://bimdata.io) |
 | [OTC Conference Center](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys) | [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/301) |
 | [Holter Tower](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=HolterTower&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/316) |
 | [West Riverside Hospital](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital&tab=models)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/308) |
 | [Schependomlaan](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
-| [Point Cloud](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=MAPPointCloud)| [BIMData](https://bimdata.io) |
 
 ## License
 
@@ -254,11 +255,7 @@ The table below lists the complete set of available configurations. Think of the
 | "saoScale"            | Number            | ````[0.0...1000.0]````| ````500.0````     | SAO scale factor |
 | "saoKernelRadius"     | Number            | ````[0.0...200.0]```` | ````100.0````     | The maximum area that SAO takes into account when checking for possible occlusion |
 | "saoBlur"             | Boolean           |                       | ````true````      | Whether Guassian blur is enabled for SAO |
-| "saoInteractive"      | Boolean           |                       | ````true````      | When ````true````, applies SAO when moving the camera, otherwise applies it once the camera stops moving |
-| "saoInteractiveDelay" | Number            |                       | ````500````       | when "saoInteractive" is ````false````, this is the time delay in milliseconds after which SAO is applied after the camera has stopped moving |
 | "edgesEnabled"          | Boolean           |                       | ````true````     | Whether or not to enhance edges on objects |
-| "edgesInteractive"      | Boolean           |                       | ````true````      | When "edgesEnabled" is ````true````, enhances edges on objects while moving the camera, otherwise enhances them only once the camera stops moving |
-| "edgesInteractiveDelay" | Number            |                       | ````500````       | when "edgesInteractive" is ````false````, this is the time delay in milliseconds after which edges are enhanced, after the camera has stopped moving |
 | "viewFitFOV"          | Number            | ````[10.0...70.0]```` | ````30````        | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view |
 | "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
 | "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
