@@ -1,21 +1,34 @@
 {
-  "id": "holterTower",
-  "name": "HolterTower",
-  "models": [
-    {
-      "id": "design",
-      "name": "Holter Tower"
+    "id": "holterTower",
+    "name": "HolterTower",
+    "models": [
+        {
+            "id": "design",
+            "name": "Holter Tower",
+            "backfaces": false
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.9,
+            0.9,
+            1.0
+        ],
+        "saoNumSamples": 60,
+        "saoKernelRadius": 200,
+        "objectColorSource": "model"
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1,
+        "saoEnabled": "true",
+        "objectColorSource": "viewer"
     }
-  ],
-  "viewerContent": {
-    "modelsLoaded": [
-      "design"
-    ]
-  },
-  "viewerState": {
-    "tabOpen": "classes",
-    "expandObjectsTree": 3,
-    "expandClassesTree": 1,
-    "expandStoreysTree": 1
-  }
 }

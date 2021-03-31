@@ -13,28 +13,23 @@
         },
         {
             "id": "electrical",
-            "name": "Hospital Electrical",
-            "saoEnabled": false
+            "name": "Hospital Electrical"
         },
         {
             "id": "sprinklers",
-            "name": "Hospital Sprinklers",
-            "saoEnabled": false
+            "name": "Hospital Sprinklers"
         },
         {
             "id": "plumbing",
-            "name": "Hospital Plumbing",
-            "saoEnabled": false
+            "name": "Hospital Plumbing"
         },
         {
             "id": "fireAlarms",
-            "name": "Hospital Fire Alarms",
-            "saoEnabled": false
+            "name": "Hospital Fire Alarms"
         },
         {
             "id": "mechanical",
-            "name": "Hospital Mechanical",
-            "saoEnabled": false
+            "name": "Hospital Mechanical"
         }
     ],
     "viewerConfigs": {
@@ -42,16 +37,9 @@
         "cameraNear": 0.05,
         "cameraFar": 3000.0,
         "saoEnabled": true,
-        "saoBias": 0.5,
-        "saoIntensity": 0.7,
-        "saoScale": 1200.0,
-        "saoKernelRadius": 100,
-        "saoBlur": true,
-        "saoInteractive": false,
-        "saoInteractiveDelay": 500,
+        "saoNumSamples": 60,
         "edgesEnabled": "true",
-        "edgesInteractive": false,
-        "edgesInteractiveDelay": 500
+        "objectColorSource": "model"
     },
     "viewerContent": {
         "modelsLoaded": [

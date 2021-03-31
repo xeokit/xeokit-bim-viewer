@@ -4,8 +4,7 @@
     "models": [
         {
             "id": "MAPFullPrecision",
-            "name": "Full-Precision Model",
-            "saoEnabled": false
+            "name": "Double-Precision Model"
         },
         {
             "id": "MAPJitter",
@@ -14,8 +13,16 @@
         }
     ],
     "viewerConfigs": {
+        "backgroundColor": [
+            0.9,
+            0.9,
+            1.0
+        ],
         "cameraNear": "0.05",
-        "cameraFar": "3000.0"
+        "cameraFar": "3000.0",
+        "saoNumSamples": 50,
+        "saoKernelRadius": 100,
+        "objectColorSource": "model"
     },
     "viewerContent": {
         "modelsLoaded": [
@@ -29,20 +36,21 @@
         "expandStoreysTree": 1,
         "setCamera": {
             "eye": [
-                1842072.0004422595,
-                36.787413105361736,
-                -5173313.014714716
+                1841982.5187600704,
+                19.207790938410042,
+                -5173303.042326414
             ],
             "look": [
-                1842022.2889441466,
-                10.494778407372536,
-                -5173301.847852232
+                1842011.793756829,
+                 9.913817421536704,
+                 -5173299.841616623
             ],
             "up": [
-                -0.4474339881582741,
-                0.8886511377283971,
-                0.10050861482881593
+                0.2991762376746394,
+                0.9536370664170352,
+                0.0327096983532173
             ]
         }
     }
 }
+
