@@ -29,9 +29,7 @@ Then users can view your models in their browsers, with URLs like this:
 [````https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys````](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
 
-Read the documentation below to get started. 
-
-[Need Help?](#need-help)
+Read the documentation below to get started.
 
 --- 
 
@@ -45,7 +43,6 @@ Read the documentation below to get started.
 
 - [Features](#features)
 - [Demos](#demos)
-- [Need Help?](#need-help-)
 - [License](#license)
 - [The Viewer Application](#the-viewer-application)
 - [Model Database](#model-database)
@@ -74,9 +71,6 @@ Read the documentation below to get started.
   * [Building the Documentation](#building-the-documentation)
 
 ---
- 
-[Get in touch](http://xeolabs.com/contact/) if you could use a little help getting started. 
-
 
 ## Features
 
