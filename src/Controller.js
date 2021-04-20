@@ -218,8 +218,6 @@ class Controller {
      * Fires an "enabled" event on update.
      *
      * @protected
-     *
-     *
      * @param {boolean} enabled Whether or not to enable.
      */
     setEnabled(enabled) {
