@@ -1680,6 +1680,7 @@ class BIMViewer extends Controller {
             return;
         }
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
+        this._orthoMode.setActive(this.viewer.camera.projection === "ortho");
     }
 
     /**
