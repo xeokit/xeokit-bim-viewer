@@ -171,7 +171,7 @@ class SectionTool extends Controller { // XX
     }
 
     getNumSections() {
-        return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
+        return Object.keys(this.viewer.scene.sectionPlanes).length;
     }
 
     clear() {
