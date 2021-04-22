@@ -249,7 +249,8 @@ The table below lists the complete set of available configurations. Think of the
 | "saoScale"            | Number            | ````[0.0...1000.0]````| ````500.0````     | SAO scale factor |
 | "saoKernelRadius"     | Number            | ````[0.0...200.0]```` | ````100.0````     | The maximum area that SAO takes into account when checking for possible occlusion |
 | "saoBlur"             | Boolean           |                       | ````true````      | Whether Guassian blur is enabled for SAO |
-| "edgesEnabled"          | Boolean           |                       | ````true````     | Whether or not to enhance edges on objects |
+| "edgesEnabled"        | Boolean           |                       | ````true````      | Whether or not to enhance edges on objects |
+| "pbrEnabled"          | Boolean           |                       | ````false````     | Whether or not to enable Physically Based rendering (PBR) |
 | "viewFitFOV"          | Number            | ````[10.0...70.0]```` | ````30````        | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view |
 | "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
 | "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |

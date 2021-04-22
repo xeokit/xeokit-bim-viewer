@@ -466,7 +466,9 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer);
+        this._fastNavPlugin = new FastNavPlugin(viewer, {
+
+        });
     }
 
     _customizeViewer() {
@@ -509,14 +511,14 @@ class BIMViewer extends Controller {
         });
 
         new DirLight(scene, {
-            dir: [-0.8, -.5, 0.5],
+            dir: [0.8, -.5, -0.5],
             color: [0.67, 0.67, 1.0],
             intensity: 0.7,
             space: &quot;world&quot;
         });
 
         new DirLight(scene, {
-            dir: [0.8, -1.0, -0.5],
+            dir: [-0.8, -1.0, 0.5],
             color: [1, 1, .9],
             intensity: 0.9,
             space: &quot;world&quot;
@@ -601,6 +603,7 @@ class BIMViewer extends Controller {
             &quot;cameraFar&quot;: &quot;3000.0&quot;,
             &quot;smartPivot&quot;: &quot;true&quot;,
             &quot;saoEnabled&quot;: &quot;false&quot;,
+            &quot;pbrEnabled&quot;: &quot;false&quot;,
             &quot;saoBias&quot;: &quot;0.5&quot;,
             &quot;saoIntensity&quot;: &quot;0.2&quot;,
             &quot;saoNumSamples&quot;: &quot;40&quot;,
@@ -672,7 +675,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;saoEnabled&quot;:
-                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.saoEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;saoBias&quot;:
@@ -696,7 +699,11 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;edgesEnabled&quot;:
-                    this.viewer.scene.edgeMaterial.edges = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.edgesEnabled = this._configs[name] = parseBool(value);
+                    break;
+
+                case &quot;pbrEnabled&quot;:
+                    this._fastNavPlugin.pbrEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;viewFitFOV&quot;:
@@ -1719,6 +1726,7 @@ class BIMViewer extends Controller {
             return;
         }
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
+        this._orthoMode.setActive(this.viewer.camera.projection === &quot;ortho&quot;);
     }
 
     /**

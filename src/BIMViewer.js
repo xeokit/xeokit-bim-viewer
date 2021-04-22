@@ -427,7 +427,9 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer);
+        this._fastNavPlugin = new FastNavPlugin(viewer, {
+
+        });
     }
 
     _customizeViewer() {
@@ -562,6 +564,7 @@ class BIMViewer extends Controller {
             "cameraFar": "3000.0",
             "smartPivot": "true",
             "saoEnabled": "false",
+            "pbrEnabled": "false",
             "saoBias": "0.5",
             "saoIntensity": "0.2",
             "saoNumSamples": "40",
@@ -633,7 +636,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case "saoEnabled":
-                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.saoEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case "saoBias":
@@ -657,7 +660,11 @@ class BIMViewer extends Controller {
                     break;
 
                 case "edgesEnabled":
-                    this.viewer.scene.edgeMaterial.edges = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.edgesEnabled = this._configs[name] = parseBool(value);
+                    break;
+
+                case "pbrEnabled":
+                    this._fastNavPlugin.pbrEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case "viewFitFOV":
