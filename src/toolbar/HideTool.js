@@ -42,12 +42,11 @@ class HideTool extends Controller {
         });
 
         buttonElement.addEventListener("click", (event) => {
-            if (!this.getEnabled()) {
-                return;
+            if (this.getEnabled()) {
+                this.bimViewer._sectionTool.hideControl();
+                const active = this.getActive();
+                this.setActive(!active);
             }
-            this.bimViewer._sectionTool.hideControl();
-            const active = this.getActive();
-            this.setActive(!active);
             event.preventDefault();
         });
 

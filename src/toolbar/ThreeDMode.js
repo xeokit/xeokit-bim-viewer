@@ -30,9 +30,11 @@ class ThreeDMode extends Controller {
         });
 
         this._buttonElement.addEventListener("click", (event) => {
-            this.bimViewer._sectionTool.hideControl();
-            this.setActive(!this.getActive(), () => { // Animated
-            });
+            if (this.getEnabled()) {
+                this.bimViewer._sectionTool.hideControl();
+                this.setActive(!this.getActive(), () => { // Animated
+                });
+            }
             event.preventDefault();
         });
 

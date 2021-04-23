@@ -45,11 +45,10 @@ class FirstPersonMode extends Controller {
         });
 
         buttonElement.addEventListener("click", (event) => {
-            if (!this.getEnabled()) {
-                return;
+            if (this.getEnabled()) {
+                const active = this.getActive();
+                this.setActive(!active);
             }
-            const active = this.getActive();
-            this.setActive(!active);
             event.preventDefault();
         });
 
