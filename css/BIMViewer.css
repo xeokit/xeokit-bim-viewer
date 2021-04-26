@@ -9,13 +9,13 @@
     background: transparent;
     pointer-events: none;
     padding: 10px;
-
 }
 
 .xeokit-btn-group {
     position: relative;
     display: inline-flex;
     vertical-align: middle;
+    margin-bottom: 3px;
     margin-right: 1.2rem !important;
     pointer-events: none;
 }
@@ -800,7 +800,7 @@
     vertical-align: middle;
     border-style: solid;
     border-width: 8px 8px 0 8px;
-    border-color: black transparent transparent transparent  !important;
+    border-color: black transparent transparent transparent !important;
 }
 
 .xeokit-arrow-down.disabled {

@@ -27,6 +27,7 @@ body {
 }
 
 #myToolbar {
+    min-width: 400px;
     top: 0;
     align-items: center;
     justify-content: center;
