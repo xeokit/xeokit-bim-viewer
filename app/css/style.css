@@ -1,4 +1,3 @@
-/* Page style */
 
 html, body {
     height: 100%;
@@ -22,69 +21,9 @@ body {
     align-items: stretch;
     z-index: 10000;
     overflow: hidden;
-}
-
-#myExplorer {
-    min-width: 400px;
-    max-width: 400px;
-    height: 100%;
-    margin-left: -400px;
-    background: #03103F;
-    color: #fff;
-    transition: all 0.3s;
-    padding: 0;
-    padding-left: 15px;
-    overflow-y: hidden;
-}
-
-#myExplorer.active {
-    margin-left: 0;
-}
-
-#myExplorer .explorer-toolbar {
-    padding: 0;
-    background: #03103F;
-}
-
-#myExplorer ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
-}
-
-#myExplorer ul p {
-    color: #CFCFCF;
-    padding: 10px;
-}
-
-#myExplorer ul li a {
-    padding: 0;
-    font-size: 14px;
-    display: block;
-}
-
-#myExplorer ul li a:hover {
-    color: #477dca;
-}
-
-#myExplorer ul li.active > a, a[aria-expanded="true"] {
-    color: #fff;
-    background: #03103F;
-}
-
-#myExplorer input[type="checkbox"] {
-    background-color: initial;
-    cursor: default;
-    -webkit-appearance: checkbox;
-    box-sizing: border-box;
-    margin: 3px 4px 3px 8px;
-    padding: initial;
-    border: initial;
-}
-
-#myContent {
-    width: calc(100% - 400px);
-    height: 100%;
-    background: #f2f2f2;
+    position: absolute;
+    left: 0;
+    transition: all 300ms ease-in-out;
 }
 
 #myToolbar {
@@ -92,10 +31,11 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0;
-    /*height: 60px;*/
     z-index: 100000;
-    position: absolute;
     pointer-events: none;
+    position: fixed;
+    left: 90px;
+    transition: all 300ms ease-in-out;
 }
 
 #myCanvas {
@@ -115,4 +55,64 @@ body {
     bottom: 0;
     right: 0;
     z-index: 200000;
+}
+
+
+#myExplorer {
+    position: fixed;
+    height: 100%;
+    color: #fff;
+    background: #03103F;
+    overflow: auto;
+    border-right: 2px solid #212529;
+    padding: 0px;
+    padding-bottom: 100px;
+    padding-left: 15px;
+    user-select: none;
+    top: 0;
+    left: -500px;
+    z-index: 10;
+    width: 460px;
+    transition: all 300ms ease-in-out;
+}
+
+#explorer_toggle {
+    display: none;
+}
+
+.explorer_toggle_label {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: 100000;
+    transition: all 300ms ease-in-out;
+}
+
+.explorer_toggle_label:hover {
+    cursor: pointer;
+}
+
+#explorer_toggle:checked ~ #myExplorer {
+    left: 0;
+}
+
+#explorer_toggle:checked + .explorer_toggle_label {
+    left: 495px;
+    color: #fff;
+    background-color: #03103F;
+    border-color: #03103F;
+}
+
+#explorer_toggle:checked ~ #myToolbar {
+    left: 565px;
+}
+
+#explorer_toggle:checked ~ #myViewer {
+    left: 477px;
+    width: calc(100% - 477px);
 }
