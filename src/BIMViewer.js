@@ -79,9 +79,9 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
     </div>
     <div class="xeokit-btn-group" role="group">
         <!-- 3D Mode button -->
-        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
+        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled" data-tippy-content="Toggle 2D/3D"></button>
         <!-- Perspective/Ortho Mode button -->
-        <button type="button" class="xeokit-ortho xeokit-btn fa fa-th fa-2x" data-tippy-content="Toggle Perspective/Ortho"></button>
+        <button type="button" class="xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled" data-tippy-content="Toggle Perspective/Ortho"></button>
         <!-- Fit button -->
         <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="View fit"></button>   
         <!-- First Person mode button -->
@@ -96,7 +96,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
         <!-- section tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button disabled"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
     </div>
 
 </div>`;
@@ -430,6 +430,8 @@ class BIMViewer extends Controller {
         this._fastNavPlugin = new FastNavPlugin(viewer, {
 
         });
+
+        this.setControlsEnabled(false);
     }
 
     _customizeViewer() {
