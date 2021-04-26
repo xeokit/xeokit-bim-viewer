@@ -34,7 +34,7 @@ body {
     z-index: 100000;
     pointer-events: none;
     position: fixed;
-    left: 90px;
+    left: 95px;
     transition: all 300ms ease-in-out;
 }
 
@@ -57,7 +57,6 @@ body {
     z-index: 200000;
 }
 
-
 #myExplorer {
     position: fixed;
     height: 100%;
@@ -70,7 +69,7 @@ body {
     padding-left: 15px;
     user-select: none;
     top: 0;
-    left: -500px;
+    left: -460px;
     z-index: 10;
     width: 460px;
     transition: all 300ms ease-in-out;
@@ -97,22 +96,27 @@ body {
     cursor: pointer;
 }
 
-#explorer_toggle:checked ~ #myExplorer {
-    left: 0;
-}
-
 #explorer_toggle:checked + .explorer_toggle_label {
-    left: 495px;
+    left: 480px;
     color: #fff;
     background-color: #03103F;
     border-color: #03103F;
 }
 
-#explorer_toggle:checked ~ #myToolbar {
-    left: 565px;
+#explorer_toggle:checked ~ #myExplorer {
+    left: 0;
 }
 
 #explorer_toggle:checked ~ #myViewer {
-    left: 477px;
-    width: calc(100% - 477px);
+    left: 460px;
+    width: calc(100% - 460px);
 }
+
+#explorer_toggle:checked ~ #myToolbar {
+    left: 555px;
+}
+
+.xeokit-btn {
+    box-shadow: 1px 2px 1px rgba(0,0,0,0.1);
+}
+
