@@ -1,8 +1,8 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.2.0-alpha.1",
+  "version": "2.2.0-alpha.3",
   "description": "BIM viewer built on xeokit",
-  "main": "dist/xeokit-bim-viewer.js",
+  "main": "dist/xeokit-bim-viewer.es.js",
   "files": [
     "/dist/xeokit-bim-viewer.js",
     "/dist/xeokit-bim-viewer.css"
