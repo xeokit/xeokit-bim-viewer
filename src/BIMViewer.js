@@ -1,3 +1,12 @@
+import {
+    Viewer,
+    AmbientLight,
+    DirLight,
+    BCFViewpointsPlugin,
+    math,
+    FastNavPlugin
+} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+
 import {Controller} from "./Controller.js";
 import {BusyModal} from "./BusyModal.js";
 import {ResetAction} from "./toolbar/ResetAction.js";
@@ -14,16 +23,10 @@ import {ObjectsExplorer} from "./explorer/ObjectsExplorer.js";
 import {ClassesExplorer} from "./explorer/ClassesExplorer.js";
 import {StoreysExplorer} from "./explorer/StoreysExplorer.js";
 
-import {Viewer} from "@xeokit/xeokit-sdk/src/viewer/Viewer.js";
-import {AmbientLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js";
-import {DirLight} from "@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js";
-import {BCFViewpointsPlugin} from "@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js";
 import {ThreeDMode} from "./toolbar/ThreeDMode.js";
 import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
-import {FastNavPlugin} from "@xeokit/xeokit-sdk/src/plugins/FastNavPlugin/FastNavPlugin.js";
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs">
@@ -427,9 +430,7 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer, {
-
-        });
+        this._fastNavPlugin = new FastNavPlugin(viewer, {});
 
         this.setControlsEnabled(false);
     }

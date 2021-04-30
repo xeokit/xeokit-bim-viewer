@@ -1,6 +1,6 @@
-import {Controller} from "../Controller.js";
-import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
+import {TreeViewPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
+import {Controller} from "../Controller.js";
 
 /** @private */
 class ObjectsExplorer extends Controller {
@@ -93,7 +93,7 @@ class ObjectsExplorer extends Controller {
             }
         });
 
-        this.bimViewer.on("reset", ()=>{
+        this.bimViewer.on("reset", () => {
             this._treeView.collapse();
         });
     }

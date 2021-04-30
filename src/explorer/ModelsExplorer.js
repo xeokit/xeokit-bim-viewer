@@ -1,6 +1,5 @@
+import {XKTLoaderPlugin, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 import {Controller} from "../Controller.js";
-import {XKTLoaderPlugin} from "@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js";
 import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
 import {ModelsContextMenu} from "../contextMenus/ModelsContextMenu.js";

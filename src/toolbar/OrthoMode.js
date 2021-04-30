@@ -1,5 +1,4 @@
 import {Controller} from "../Controller.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /** @private */
 class OrthoMode extends Controller {

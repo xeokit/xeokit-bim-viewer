@@ -764,7 +764,7 @@ npm i @xeokit/xeokit-bim-viewer
 
 ### Building the Binary
 
-To build the ES6 module in ````/dist/main.js````:
+To build the ES6 module in ````/dist/xeokit-bim-viewer.es.js````:
 
 ````
 npm run build

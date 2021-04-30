@@ -84,11 +84,23 @@ body {
     position: absolute;
     top: 10px;
     left: 20px;
-    text-align: center;
-    vertical-align: middle;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    flex: 1 1 auto;
+    color: #03103F;
+    background-color: white;
+    text-align: center;
+    vertical-align: middle;
+    border: 2px solid #1d2453;
+    padding: .375rem .75rem;
+    border-radius: .25rem;
+    -webkit-appearance: button;
+    overflow: visible;
+    margin: 0 2px 0 0;
+    box-sizing: border-box;
+    align-items: flex-start;
+    pointer-events: all;
     z-index: 100000;
     transition: all 300ms ease-in-out;
 }

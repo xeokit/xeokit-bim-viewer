@@ -1,5 +1,4 @@
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
+import {math, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 const tempVec3 = math.vec3();
 
@@ -69,11 +68,11 @@ class TreeViewContextMenu extends ContextMenu {
 
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
-                           // scene.setObjectsPickable(scene.objectIds, false);
+                            // scene.setObjectsPickable(scene.objectIds, false);
                             scene.setObjectsSelected(scene.selectedObjectIds, false);
 
                             scene.setObjectsVisible(objectIds, true);
-                           // scene.setObjectsPickable(objectIds, true);
+                            // scene.setObjectsPickable(objectIds, true);
 
                             viewer.cameraFlight.flyTo({
                                 aabb: aabb

@@ -1,7 +1,6 @@
+import {TreeViewPlugin, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 import {Controller} from "../Controller.js";
-import {TreeViewPlugin} from "@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 import {TreeViewContextMenu} from "../contextMenus/TreeViewContextMenu.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 const tempVec3 = math.vec3();
 
@@ -78,7 +77,7 @@ class ClassesExplorer extends Controller {
             }
         });
 
-        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) =>{
+        this._onModelLoaded = this.viewer.scene.on("modelLoaded", (modelId) => {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
                 if (!modelInfo) {

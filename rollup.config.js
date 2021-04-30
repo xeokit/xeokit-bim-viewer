@@ -1,15 +1,15 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
-import minify from 'rollup-plugin-minify-es';
+import {terser} from "rollup-plugin-terser";
 
 export default {
     input: './index.js',
     output: {
-        file: './dist/main.js',
+        file: './dist/xeokit-bim-viewer.es.js',
         format: 'es',
         name: 'bundle'
     },
     plugins: [
         nodeResolve(),
-        minify()
+        terser()
     ]
 }

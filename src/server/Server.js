@@ -1,4 +1,4 @@
-import {utils} from "@xeokit/xeokit-sdk/src/viewer/scene/utils.js";
+import {utils} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /**
  * Default server client which loads content for a {@link BIMViewer} via HTTP from the file system.

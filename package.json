@@ -1,16 +1,11 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.1.0",
+  "version": "2.2.0-alpha.1",
   "description": "BIM viewer built on xeokit",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "main": "dist/xeokit-bim-viewer.js",
   "files": [
-    "/css",
-    "/lib",
-    "/src",
-    "/dist"
+    "/dist/xeokit-bim-viewer.js",
+    "/dist/xeokit-bim-viewer.css"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -23,11 +18,17 @@
     "url": "git+https://github.com/xeokit/xeokit-bim-viewer.git"
   },
   "keywords": [
-    "WebGL",
-    "BIM",
-    "IFC",
+    "OpenProject",
+    "webgl",
+    "javascript",
     "xeokit",
-    "OpenProject"
+    "xeolabs",
+    "ifc",
+    "bim",
+    "buildingsmart",
+    "openbim",
+    "opensource",
+    "3d-viewer"
   ],
   "author": "Lindsay Kay",
   "license": "See LICENSE.txt",
@@ -40,10 +41,10 @@
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "rollup": "^1.32.1",
-    "rollup-plugin-minify-es": "^1.1.1",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "1.8.2"
+    "@xeokit/xeokit-sdk": "1.8.3-alpha.3"
   }
 }

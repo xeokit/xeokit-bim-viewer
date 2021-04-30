@@ -1,5 +1,5 @@
 import {Controller} from "../Controller.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 const tempVec3a = math.vec3();
 
