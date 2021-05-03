@@ -127,6 +127,14 @@ class SectionTool extends Controller { // XX
             this.setActive(false);
         });
 
+        this.viewer.scene.on("sectionPlaneCreated", ()=> {
+            this._updateSectionPlanesCount();
+        });
+
+        this.viewer.scene.on("sectionPlaneDestroyed", ()=> {
+            this._updateSectionPlanesCount();
+        });
+
         this._initSectionMode();
     }
 
@@ -150,13 +158,7 @@ class SectionTool extends Controller { // XX
                     dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
                 });
 
-                sectionPlane.on("destroyed", () => {
-                    this._updateSectionPlanesCount();
-                });
-
                 this._sectionPlanesPlugin.showControl(sectionPlane.id);
-
-                this._updateSectionPlanesCount();
             }
         });
 
