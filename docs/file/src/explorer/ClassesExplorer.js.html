@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -37,10 +38,9 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/explorer/ClassesExplorer.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
-import {TreeViewPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {TreeViewPlugin, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+import {Controller} from &quot;../Controller.js&quot;;
 import {TreeViewContextMenu} from &quot;../contextMenus/TreeViewContextMenu.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 
 const tempVec3 = math.vec3();
 
@@ -117,7 +117,7 @@ class ClassesExplorer extends Controller {
             }
         });
 
-        this._onModelLoaded = this.viewer.scene.on(&quot;modelLoaded&quot;, (modelId) =&gt;{
+        this._onModelLoaded = this.viewer.scene.on(&quot;modelLoaded&quot;, (modelId) =&gt; {
             if (this.viewer.metaScene.metaModels[modelId]) {
                 const modelInfo = this.bimViewer._modelsExplorer.getModelInfo(modelId);
                 if (!modelInfo) {

@@ -6,6 +6,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-bim-viewer/src/ifcelementdescriptions/ifcelementdescriptions.js~ifcelementdescriptions",
+    "variable/index.html#static-variable-IFCElementDescriptions",
+    "<span>IFCElementDescriptions</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/IFCElementDescriptions/IFCElementDescriptions.js</span>",
+    "variable"
+  ],
+  [
     "@xeokit/xeokit-bim-viewer/src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu",
     "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html",
     "<span>SectionToolContextMenu</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/contextMenus/SectionToolContextMenu.js</span>",
@@ -672,6 +678,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/ifcelementdescriptions/ifcelementdescriptions.js",
+    "file/src/IFCElementDescriptions/IFCElementDescriptions.js.html",
+    "src/IFCElementDescriptions/IFCElementDescriptions.js",
+    "file"
+  ],
+  [
     "src/ifcobjectdefaults/modelifcobjectcolors.js",
     "file/src/IFCObjectDefaults/ModelIFCObjectColors.js.html",
     "src/IFCObjectDefaults/ModelIFCObjectColors.js",
@@ -681,6 +693,12 @@ window.esdocSearchIndex = [
     "src/ifcobjectdefaults/viewerifcobjectcolors.js",
     "file/src/IFCObjectDefaults/ViewerIFCObjectColors.js.html",
     "src/IFCObjectDefaults/ViewerIFCObjectColors.js",
+    "file"
+  ],
+  [
+    "src/map.js",
+    "file/src/Map.js.html",
+    "src/Map.js",
     "file"
   ],
   [

@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -38,7 +39,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/ThreeDMode.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 const tempVec3a = math.vec3();
 
@@ -69,9 +70,11 @@ class ThreeDMode extends Controller {
         });
 
         this._buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
-            this.bimViewer._sectionTool.hideControl();
-            this.setActive(!this.getActive(), () =&gt; { // Animated
-            });
+            if (this.getEnabled()) {
+                this.bimViewer._sectionTool.hideControl();
+                this.setActive(!this.getActive(), () =&gt; { // Animated
+                });
+            }
             event.preventDefault();
         });
 

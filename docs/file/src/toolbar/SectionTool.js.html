@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -38,9 +39,8 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/SectionTool.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
-import {SectionPlanesPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js&quot;;
 import {SectionToolContextMenu} from &quot;./../contextMenus/SectionToolContextMenu.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {SectionPlanesPlugin, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 /** @private */
 class SectionTool extends Controller { // XX
@@ -167,6 +167,14 @@ class SectionTool extends Controller { // XX
             this.setActive(false);
         });
 
+        this.viewer.scene.on(&quot;sectionPlaneCreated&quot;, ()=&gt; {
+            this._updateSectionPlanesCount();
+        });
+
+        this.viewer.scene.on(&quot;sectionPlaneDestroyed&quot;, ()=&gt; {
+            this._updateSectionPlanesCount();
+        });
+
         this._initSectionMode();
     }
 
@@ -190,13 +198,7 @@ class SectionTool extends Controller { // XX
                     dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
                 });
 
-                sectionPlane.on(&quot;destroyed&quot;, () =&gt; {
-                    this._updateSectionPlanesCount();
-                });
-
                 this._sectionPlanesPlugin.showControl(sectionPlane.id);
-
-                this._updateSectionPlanesCount();
             }
         });
 
@@ -210,7 +212,7 @@ class SectionTool extends Controller { // XX
     }
 
     getNumSections() {
-        return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
+        return Object.keys(this.viewer.scene.sectionPlanes).length;
     }
 
     clear() {
