@@ -1,0 +1,24 @@
+{
+    "id": "RevitSamples",
+    "name": "Revit Samples",
+    "models": [
+        {
+            "id": "rac_advanced_sample_project",
+            "name": "RAC Advanced Sample Project",
+            "saoEnabled": true
+        },
+        {
+            "id": "rme_advanced_sample_project",
+            "name": "RME Advanced Sample Project",
+            "saoEnabled": true
+        }
+    ],
+    "viewerConfigs": {
+        "saoEnabled": "true"
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "rac_advanced_sample_project"
+        ]
+    }
+}
