@@ -40,32 +40,32 @@
 .xeokit-btn.disabled {
     opacity: .55;
     color: #99A4AD;
-    border: 2px solid #6c757d !important;
+    border-color: #6c757d !important;
     pointer-events: none;
 }
 
 .xeokit-btn.active {
     color: #fff;
     background-color: #03103F;
-    border-color: #03103F;
+    border-color: #03103F !important;
 }
 
 .xeokit-btn:hover {
     color: #477dca;
-    border: 2px solid #477dca;
+    border-color: #477dca !important;
 }
 
 .xeokit-btn.active:hover {
     /*color: transparent;*/
     color: white;
     background: #477dca;
-    border: 2px solid #477dca;
+    border-color: #477dca !important;
 }
 
 .xeokit-btn.disabled:hover {
     opacity: .55;
     color: #99A4AD;
-    border: 2px solid #6c757d !important;
+    border-color: #6c757d !important;
 }
 
 /*  Tabs    */
