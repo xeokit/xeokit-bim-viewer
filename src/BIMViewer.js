@@ -473,7 +473,7 @@ class BIMViewer extends Controller {
         //
         // new AmbientLight(scene, {
         //     color: [0.9, 0.9, 1.0],
-        //     intensity: 0.8
+        //     intensity: 0.9
         // });
         //
         // new DirLight(scene, {
