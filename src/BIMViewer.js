@@ -99,7 +99,7 @@ const toolbarTemplate = `<div class="xeokit-toolbar">
         <!-- Query tool button -->
         <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
         <!-- section tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button disabled"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button disabled" data-tippy-content="Slices menu"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
     </div>
 
 </div>`;
@@ -196,7 +196,9 @@ class BIMViewer extends Controller {
 
         const viewer = new Viewer({
             canvasElement: canvasElement,
-            transparent: true,
+            transparent: false,
+            backgroundColor: [1, 1, 1],
+            backgroundColorFromAmbientLight: false,
             saoEnabled: true,
             pbrEnabled: true
         });
@@ -214,7 +216,6 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
-        this._initConfigs();
 
         this._enableAddModels = !!cfg.enableEditModels;
 
@@ -432,6 +433,7 @@ class BIMViewer extends Controller {
 
         this._fastNavPlugin = new FastNavPlugin(viewer, {});
 
+        this._initConfigs();
         this.setControlsEnabled(false);
     }
 
@@ -467,26 +469,26 @@ class BIMViewer extends Controller {
 
         // Lighting
 
-        scene.clearLights();
-
-        new AmbientLight(scene, {
-            color: [0.9, 0.9, 0.9],
-            intensity: 0.7
-        });
-
-        new DirLight(scene, {
-            dir: [0.8, -.5, -0.5],
-            color: [0.67, 0.67, 1.0],
-            intensity: 0.7,
-            space: "world"
-        });
-
-        new DirLight(scene, {
-            dir: [-0.8, -1.0, 0.5],
-            color: [1, 1, .9],
-            intensity: 0.9,
-            space: "world"
-        });
+        // scene.clearLights();
+        //
+        // new AmbientLight(scene, {
+        //     color: [0.9, 0.9, 1.0],
+        //     intensity: 0.8
+        // });
+        //
+        // new DirLight(scene, {
+        //     dir: [0.8, -.5, -0.5],
+        //     color: [0.67, 0.67, 1.0],
+        //     intensity: 0.7,
+        //     space: "world"
+        // });
+        //
+        // new DirLight(scene, {
+        //     dir: [-0.8, -1.0, 0.2],
+        //     color: [1, 1, .9],
+        //     intensity: 0.9,
+        //     space: "world"
+        // });
 
         // Camera control
 
@@ -566,7 +568,7 @@ class BIMViewer extends Controller {
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
             "smartPivot": "true",
-            "saoEnabled": "false",
+            "saoEnabled": "true",
             "pbrEnabled": "false",
             "saoBias": "0.5",
             "saoIntensity": "0.2",
@@ -1005,7 +1007,7 @@ class BIMViewer extends Controller {
      * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.
      */
     setBackgroundColor(rgbColor) {
-        this.viewer.scene.canvas.canvas.style.background = "rgba(" + (rgbColor[0] * 255) + "," + (rgbColor[1] * 255) + "," + (rgbColor[2] * 255) + ", 1.0)";
+        this.viewer.scene.canvas.backgroundColor = rgbColor;
     }
 
     /**
