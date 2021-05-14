@@ -1,6 +1,5 @@
 # xeokit-bim-viewer
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9144bfee5a4b42ae8dc2eb603aa9966c)](https://www.codacy.com/manual/lindsay-kay/xeokit-viewer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xeokit/xeokit-viewer&amp;utm_campaign=Badge_Grade)
 [![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer)
 [![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
 
@@ -20,7 +19,7 @@ The viewer can be used as a stand-alone JavaScript application. In combination w
 To view your models with this viewer: 
 
 1. Fork the [xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer) repository on GitHub.
-1. Convert your IFC STEP files using [open source CLI tools](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM). 
+1. Convert your IFC STEP files using [open source CLI tools](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee). 
 3. Add your converted models to your fork's data directory.
 4. Serve your fork using [GitHub Pages](https://pages.github.com/).
 
@@ -76,9 +75,9 @@ Read the documentation below to get started.
 
 * Uses [xeokit](https://xeokit.io) for efficient model loading and rendering.
 * Works in all major browsers, including mobile.
-* Loads models from the file system.
+* Can load models from the file system.
 * Loads multiple models.
-* Saves and loads BCF viewpoints
+* Saves and loads BCF viewpoints.
 * 3D and 2D viewing modes.
 * Interactively X-ray, highlight, show, hide and section objects. 
 * Tree views of structure, layers and storeys.
@@ -106,7 +105,7 @@ Click the links below to run some demos.
 
 ## License
 
-xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io). See [Pricing](https://xeokit.io/index.html#pricing) for licensing options.
+xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is licensed under the AGPL3. See [Pricing](https://xeokit.io/index.html#pricing) for custom licensing options.
 
 ## The Viewer Application
 
@@ -122,44 +121,43 @@ To view a project, load the viewer with the project's ID on the URL:
 
 **This section aims to show you how how to add your own models to the viewer application.**
                  
-Let's examine the structure of the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, where the viewer keeps its projects and models.   
+Let's examine the structure of the [````./app/data/projects````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, where the viewer keeps its projects and models.   
 
-Shown below is a portion of the ````./app/data```` directory. We'll describe it from the root directory downwards.
+Shown below is a portion of the ````./app/data/projects```` directory. We'll describe it from the root directory downwards.
                                                    
 Within the root, we have a directory for each project, along with a manifest of the projects in ````index.json````.
 
 Within a project directory, we have a directory for each model in the project, along with a manifest of the models in ````index.json````.
 
-Within a model directory, we have two files that comprise the model itself:
-
-* ````geometry.xkt```` - the model's geometry, formatted as ````.XKT````, which is xeokit's native binary geometry format, and 
-* ````metadata.json```` - the model's structural metadata, a JSON file containing the IFC element hierarchy.
+Within a model directory, we have the ````.XKT```` file which contains the model's geometry and metadata.
 
 ````
-.app/data/
-└── projects
-    ├── index.json
-    ├── Duplex
-    │   ├── index.json
-    │   └── models
-    │       └── design
-    │           ├── geometry.xkt
-    │           └── metadata.json
-    └── WestRiversideHospital
-          ├── index.json
-          └── models
-              ├── architecture
-              │   ├── geometry.xkt
-              │   └── metadata.json
-              ├── structure
-              │   ├── geometry.xkt
-              │   └── metadata.json
+.app/data/projects
+  │
+  ├── index.json
+  │
+  ├── Duplex
+  │     │
+  │     ├── index.json
+  │     │
+  │     └── models
+  │           └── design
+  │                   └── geometry.xkt
+  │
+  └── WestRiversideHospital
+        │
+        ├── index.json
+        │
+        └── models
+              ├── architecture             
+              │       └── geometry.xkt
+              ├── structure            
+              │       └── geometry.xkt
               └── electrical
-                  ├── geometry.xkt
-                  └── metadata.json
+                      └── geometry.xkt                  
 ````
 
-The ````index.json```` at the root of ````./data```` is shown below. 
+The ````index.json```` at the root of ````./app/data/projects```` is shown below. 
 
 Within this file, the ````id```` of each project matches the name of that project's subdirectory. 
 
@@ -168,17 +166,11 @@ Within this file, the ````id```` of each project matches the name of that projec
   "projects": [
     {
       "id": "Duplex",
-      "name": "Duplex",
-      "position": [-20, 0.0, -10.0],
-      "scale": [1.0, 1.0, 1.0],
-      "rotation": [0.0, 0.0, 0.0]
+      "name": "Duplex"
     },
     {
       "id": "WestRiversideHospital",
-      "name": "West Riverside Hospital",
-      "position": [20, 0.0, 0.0],
-      "scale": [1.0, 1.0, 1.0],
-      "rotation": [0.0, 0.0, 0.0]
+      "name": "West Riverside Hospital"
     },
     //...
   ]
@@ -209,8 +201,7 @@ The ````index.json```` for the "WestRiversideHospital" project is shown below.
         }
     ],
     "viewerConfigs": {
-        "backgroundColor": [0.9, 0.9, 1.0],
-        "saoEnabled": true
+        "backgroundColor": [0.9, 0.9, 1.0]
     },
     "viewerContent": {
         "modelsLoaded": [
@@ -230,9 +221,8 @@ The optional ````viewerContent```` array specifies IDs of models that the viewer
 
 The optional ````viewerState```` section specifies how the viewer should set up the initial state of its UI, right after its loaded the initial models. See the complete list of available viewer states in [Viewer States](#viewer-states).
 
-The ````geometry.xkt```` and ````metadata.json```` files for each model are created from an IFC file using open source CLI tools. Learn how to create those files in the [Creating  Files for Offline BIM](https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM) tutorial.  
-
-While not essential, you can learn about the format of an ````.xkt```` geometry file in [XKT Format](https://github.com/xeokit/xeokit-sdk/wiki/XKT-Format) specification. 
+The ````geometry.xkt```` file for each model is created from an IFC file using open 
+source CLI tools. Learn how to create those files in *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*.  
 
 ### Viewer Configurations
 
@@ -242,7 +232,7 @@ The table below lists the complete set of available configurations. Think of the
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
 | "backgroundColor"     | Array             |                       | ````[1.0,1.0,1.0]````   | Canvas background color           |     
 | "cameraNear"          | Number            | ````[0.01-0.1]````    | ````0.05````      | Distance to the near clipping plane |
-| "cameraFar"           | Number            | ````[1-10000]````     | ````3000.0````    | Distance to the far clipping plane |
+| "cameraFar"           | Number            | ````[1-100000000]```` | ````3000.0````    | Distance to the far clipping plane |
 | "smartPivot"          | Boolean           |                       | ````true````      | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.  |
 | "saoEnabled"          | Boolean           |                       | ````true````      | Whether or not to enable Scalable Ambient Obscurance (SAO) |
 | "saoBias"             | Number            | ````[0.0...10.0]````  | ````0.5````       | SAO bias          |
@@ -256,6 +246,7 @@ The table below lists the complete set of available configurations. Think of the
 | "viewFitDuration"     | Number            | ````[0..5]````        | ````0.5````       | When fitting objects to view with an animated transition, this is the duration of the transition in seconds |
 | "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
 | "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
+| "externalMetadata"    | Boolean           |                       | ````false````     | Whether to load a metadata.json file with each geometry.xkt file |
 
 ### Viewer States
 
@@ -332,17 +323,16 @@ In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob
  
 See [````app/css/style.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css) for how we've styled these elements. 
 
-Also see [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css) for the CSS styles that BIMViewer applies to the elements it creates internally.  
+Also see [````dist/xeokit-bim-viewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/dist/xeokit-bim-viewer.css) for the CSS styles that BIMViewer applies to the elements it creates internally.  
  
 ### Configuring the Viewer
  
 With our viewer created, let's use [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs) to configure it. 
 
-We'll enable Scalable Ambient Obscurance and set the canvas background color to white:
+We'll just set the canvas background color to white:
  
 ````javascript
 myBIMViewer.setConfigs({
-    "saoEnabled":        "white",
     "backgroundColor":   [1.0, 1.0, 1.0]
 });
 ````
@@ -770,6 +760,8 @@ To build the ES6 module in ````/dist/xeokit-bim-viewer.es.js````:
 ````
 npm run build
 ````
+
+Note that ````dist/xeokit-bim-viewer.css```` does not require building, and also resides in that directory.
 
 ### Building the Documentation
 

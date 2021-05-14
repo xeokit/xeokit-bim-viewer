@@ -71,6 +71,9 @@ class OrthoMode extends Controller {
         this.bimViewer.on(&quot;reset&quot;, () =&gt; {
             this.setActive(false);
         });
+
+        this._active = false;
+        this._buttonElement.classList.remove(&quot;active&quot;);
     }
 
     setActive(active, done) {

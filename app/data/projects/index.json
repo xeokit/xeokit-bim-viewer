@@ -31,6 +31,26 @@
     {
       "id": "WaterLock",
       "name": "WaterLock"
+    },
+    {
+      "id": "MAP",
+      "name": "MAP"
+    },
+    {
+      "id": "MAPPointCloud",
+      "name": "MAP Point Cloud"
+    },
+    {
+      "id": "Lyon",
+      "name": "Lyon"
+    },
+    {
+      "id": "HolterTower",
+      "name": "Holter Tower"
+    },
+    {
+      "id": "RevitSamples",
+      "name": "Revit Samples"
     }
   ]
 }

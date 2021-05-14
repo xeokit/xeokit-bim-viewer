@@ -37,8 +37,7 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><a href="https://www.codacy.com/manual/lindsay-kay/xeokit-viewer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xeokit/xeokit-viewer&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9144bfee5a4b42ae8dc2eb603aa9966c" alt="Codacy Badge"></a>
-<a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a>
 <a href="https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer"><img src="https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge" alt></a></p>
 <p><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png" alt="Screenshot"></a></p>
 <hr>
@@ -49,7 +48,7 @@
 <p>To view your models with this viewer: </p>
 <ol>
 <li>Fork the <a href="https://github.com/xeokit/xeokit-bim-viewer">xeokit-bim-viewer</a> repository on GitHub.</li>
-<li>Convert your IFC STEP files using <a href="https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM">open source CLI tools</a>. </li>
+<li>Convert your IFC STEP files using <a href="https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee">open source CLI tools</a>. </li>
 <li>Add your converted models to your fork&apos;s data directory.</li>
 <li>Serve your fork using <a href="https://pages.github.com/">GitHub Pages</a>.</li>
 </ol>
@@ -109,9 +108,9 @@
 <h2 id="features">Features</h2><ul>
 <li>Uses <a href="https://xeokit.io">xeokit</a> for efficient model loading and rendering.</li>
 <li>Works in all major browsers, including mobile.</li>
-<li>Loads models from the file system.</li>
+<li>Can load models from the file system.</li>
 <li>Loads multiple models.</li>
-<li>Saves and loads BCF viewpoints</li>
+<li>Saves and loads BCF viewpoints.</li>
 <li>3D and 2D viewing modes.</li>
 <li>Interactively X-ray, highlight, show, hide and section objects. </li>
 <li>Tree views of structure, layers and storeys.</li>
@@ -168,59 +167,51 @@
 </tr>
 </tbody>
 </table>
-<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled within the <a href="http://xeokit.io">xeokit SDK</a>. See <a href="https://xeokit.io/index.html#pricing">Pricing</a> for licensing options.</p>
+<h2 id="license">License</h2><p>xeokit-bim-viewer is bundled within the <a href="http://xeokit.io">xeokit SDK</a>, which is licensed under the AGPL3. See <a href="https://xeokit.io/index.html#pricing">Pricing</a> for custom licensing options.</p>
 <h2 id="the-viewer-application">The Viewer Application</h2><p>The <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/index.html"><code>./app/index.html</code></a> page provides a ready-to-use instance of xeokit-bim-viewer. We&apos;ll just call it <em>viewer</em> from now on.</p>
 <p>The viewer loads projects and models from the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory.</p>
 <p>To view a project, load the viewer with the project&apos;s ID on the URL: </p>
 <p><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital"><code>https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital</code></a></p>
 <h2 id="model-database">Model Database</h2><p><strong>This section aims to show you how how to add your own models to the viewer application.</strong></p>
-<p>Let&apos;s examine the structure of the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data</code></a> directory, where the viewer keeps its projects and models.   </p>
-<p>Shown below is a portion of the <code>./app/data</code> directory. We&apos;ll describe it from the root directory downwards.</p>
+<p>Let&apos;s examine the structure of the <a href="https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data"><code>./app/data/projects</code></a> directory, where the viewer keeps its projects and models.   </p>
+<p>Shown below is a portion of the <code>./app/data/projects</code> directory. We&apos;ll describe it from the root directory downwards.</p>
 <p>Within the root, we have a directory for each project, along with a manifest of the projects in <code>index.json</code>.</p>
 <p>Within a project directory, we have a directory for each model in the project, along with a manifest of the models in <code>index.json</code>.</p>
-<p>Within a model directory, we have two files that comprise the model itself:</p>
-<ul>
-<li><code>geometry.xkt</code> - the model&apos;s geometry, formatted as <code>.XKT</code>, which is xeokit&apos;s native binary geometry format, and </li>
-<li><code>metadata.json</code> - the model&apos;s structural metadata, a JSON file containing the IFC element hierarchy.</li>
-</ul>
-<pre><code><code class="source-code prettyprint">.app/data/
-&#x2514;&#x2500;&#x2500; projects
-    &#x251C;&#x2500;&#x2500; index.json
-    &#x251C;&#x2500;&#x2500; Duplex
-    &#x2502;   &#x251C;&#x2500;&#x2500; index.json
-    &#x2502;   &#x2514;&#x2500;&#x2500; models
-    &#x2502;       &#x2514;&#x2500;&#x2500; design
-    &#x2502;           &#x251C;&#x2500;&#x2500; geometry.xkt
-    &#x2502;           &#x2514;&#x2500;&#x2500; metadata.json
-    &#x2514;&#x2500;&#x2500; WestRiversideHospital
-          &#x251C;&#x2500;&#x2500; index.json
-          &#x2514;&#x2500;&#x2500; models
-              &#x251C;&#x2500;&#x2500; architecture
-              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
-              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
-              &#x251C;&#x2500;&#x2500; structure
-              &#x2502;   &#x251C;&#x2500;&#x2500; geometry.xkt
-              &#x2502;   &#x2514;&#x2500;&#x2500; metadata.json
+<p>Within a model directory, we have the <code>.XKT</code> file which contains the model&apos;s geometry and metadata.</p>
+<pre><code><code class="source-code prettyprint">.app/data/projects
+  &#x2502;
+  &#x251C;&#x2500;&#x2500; index.json
+  &#x2502;
+  &#x251C;&#x2500;&#x2500; Duplex
+  &#x2502;     &#x2502;
+  &#x2502;     &#x251C;&#x2500;&#x2500; index.json
+  &#x2502;     &#x2502;
+  &#x2502;     &#x2514;&#x2500;&#x2500; models
+  &#x2502;           &#x2514;&#x2500;&#x2500; design
+  &#x2502;                   &#x2514;&#x2500;&#x2500; geometry.xkt
+  &#x2502;
+  &#x2514;&#x2500;&#x2500; WestRiversideHospital
+        &#x2502;
+        &#x251C;&#x2500;&#x2500; index.json
+        &#x2502;
+        &#x2514;&#x2500;&#x2500; models
+              &#x251C;&#x2500;&#x2500; architecture             
+              &#x2502;       &#x2514;&#x2500;&#x2500; geometry.xkt
+              &#x251C;&#x2500;&#x2500; structure            
+              &#x2502;       &#x2514;&#x2500;&#x2500; geometry.xkt
               &#x2514;&#x2500;&#x2500; electrical
-                  &#x251C;&#x2500;&#x2500; geometry.xkt
-                  &#x2514;&#x2500;&#x2500; metadata.json</code>
-</code></pre><p>The <code>index.json</code> at the root of <code>./data</code> is shown below. </p>
+                      &#x2514;&#x2500;&#x2500; geometry.xkt                  </code>
+</code></pre><p>The <code>index.json</code> at the root of <code>./app/data/projects</code> is shown below. </p>
 <p>Within this file, the <code>id</code> of each project matches the name of that project&apos;s subdirectory. </p>
 <pre><code class="lang-json"><code class="source-code prettyprint">{
   &quot;projects&quot;: [
     {
       &quot;id&quot;: &quot;Duplex&quot;,
-      &quot;name&quot;: &quot;Duplex&quot;,
-      &quot;position&quot;: [-20, 0.0, -10.0],
-      &quot;scale&quot;: [1.0, 1.0, 1.0],
-      &quot;rotation&quot;: [0.0, 0.0, 0.0]
+      &quot;name&quot;: &quot;Duplex&quot;
     },
     {
       &quot;id&quot;: &quot;WestRiversideHospital&quot;,
-      &quot;name&quot;: &quot;West Riverside Hospital&quot;,
-      &quot;position&quot;: [20, 0.0, 0.0],
-      &quot;scale&quot;: [1.0, 1.0, 1.0],
-      &quot;rotation&quot;: [0.0, 0.0, 0.0]
+      &quot;name&quot;: &quot;West Riverside Hospital&quot;
     },
     //...
   ]
@@ -247,8 +238,7 @@
         }
     ],
     &quot;viewerConfigs&quot;: {
-        &quot;backgroundColor&quot;: [0.9, 0.9, 1.0],
-        &quot;saoEnabled&quot;: true
+        &quot;backgroundColor&quot;: [0.9, 0.9, 1.0]
     },
     &quot;viewerContent&quot;: {
         &quot;modelsLoaded&quot;: [
@@ -264,8 +254,8 @@
 <p>The optional <code>viewerConfigs</code> section specifies configurations for the viewer to set on itself as it loads the project. See the complete list of available viewer configurations in <a href="#viewer-configurations">Viewer Configurations</a>.</p>
 <p>The optional <code>viewerContent</code> array specifies IDs of models that the viewer will load initially, right after it&apos;s applied the configurations. </p>
 <p>The optional <code>viewerState</code> section specifies how the viewer should set up the initial state of its UI, right after its loaded the initial models. See the complete list of available viewer states in <a href="#viewer-states">Viewer States</a>.</p>
-<p>The <code>geometry.xkt</code> and <code>metadata.json</code> files for each model are created from an IFC file using open source CLI tools. Learn how to create those files in the <a href="https://github.com/xeokit/xeokit-sdk/wiki/Creating-Files-for-Offline-BIM">Creating  Files for Offline BIM</a> tutorial.  </p>
-<p>While not essential, you can learn about the format of an <code>.xkt</code> geometry file in <a href="https://github.com/xeokit/xeokit-sdk/wiki/XKT-Format">XKT Format</a> specification. </p>
+<p>The <code>geometry.xkt</code> file for each model is created from an IFC file using open 
+source CLI tools. Learn how to create those files in <em><a href="https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee">Viewing an IFC Model with xeokit</a></em>.  </p>
 <h3 id="viewer-configurations">Viewer Configurations</h3><p>The table below lists the complete set of available configurations. Think of these as user preferences. These may be provided to the viewer within project info files, as described in <a href="#model-database">Model Database</a>, or set programmatically on the viewer with <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs"><code>BIMViewer#setConfigs()</code></a>, as described in <a href="#configuring-the-viewer">Configuring the Viewer</a>.  </p>
 <table>
 <thead>
@@ -295,7 +285,7 @@
 <tr>
 <td style="text-align:left">&quot;cameraFar&quot;</td>
 <td style="text-align:left">Number</td>
-<td style="text-align:left"><code>[1-10000]</code></td>
+<td style="text-align:left"><code>[1-100000000]</code></td>
 <td style="text-align:left"><code>3000.0</code></td>
 <td style="text-align:left">Distance to the far clipping plane</td>
 </tr>
@@ -310,7 +300,7 @@
 <td style="text-align:left">&quot;saoEnabled&quot;</td>
 <td style="text-align:left">Boolean</td>
 <td style="text-align:left"></td>
-<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left"><code>true</code></td>
 <td style="text-align:left">Whether or not to enable Scalable Ambient Obscurance (SAO)</td>
 </tr>
 <tr>
@@ -389,6 +379,13 @@
 <td style="text-align:left">&quot;model&quot;, &quot;viewer&quot;</td>
 <td style="text-align:left">&quot;model&quot;</td>
 <td style="text-align:left">Where the colors for model objects will be loaded from</td>
+</tr>
+<tr>
+<td style="text-align:left">&quot;externalMetadata&quot;</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Whether to load a metadata.json file with each geometry.xkt file</td>
 </tr>
 </tbody>
 </table>
@@ -494,11 +491,10 @@ const myBIMViewer = new BIMViewer(server, {
  &lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;</code>
 </code></pre>
 <p>See <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/css/style.css"><code>app/css/style.css</code></a> for how we&apos;ve styled these elements. </p>
-<p>Also see <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css"><code>css/BIMViewer.css</code></a> for the CSS styles that BIMViewer applies to the elements it creates internally.  </p>
+<p>Also see <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/dist/xeokit-bim-viewer.css"><code>dist/xeokit-bim-viewer.css</code></a> for the CSS styles that BIMViewer applies to the elements it creates internally.  </p>
 <h3 id="configuring-the-viewer">Configuring the Viewer</h3><p>With our viewer created, let&apos;s use <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs"><code>BIMViewer#setConfigs()</code></a> to configure it. </p>
-<p>We&apos;ll enable Scalable Ambient Obscurance and set the canvas background color to white:</p>
+<p>We&apos;ll just set the canvas background color to white:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.setConfigs({
-    &quot;saoEnabled&quot;:        &quot;white&quot;,
     &quot;backgroundColor&quot;:   [1.0, 1.0, 1.0]
 });</code>
 </code></pre>
@@ -801,7 +797,8 @@ export {IFCObjectDefaults};</code>
 <pre><code><code class="source-code prettyprint">npm i @xeokit/xeokit-bim-viewer</code>
 </code></pre><h3 id="building-the-binary">Building the Binary</h3><p>To build the ES6 module in <code>/dist/xeokit-bim-viewer.es.js</code>:</p>
 <pre><code><code class="source-code prettyprint">npm run build</code>
-</code></pre><h3 id="building-the-documentation">Building the Documentation</h3><p>To build the API documentation in <code>/docs/</code>:</p>
+</code></pre><p>Note that <code>dist/xeokit-bim-viewer.css</code> does not require building, and also resides in that directory.</p>
+<h3 id="building-the-documentation">Building the Documentation</h3><p>To build the API documentation in <code>/docs/</code>:</p>
 <pre><code><code class="source-code prettyprint">npm run docs</code>
 </code></pre></div>
 </div>

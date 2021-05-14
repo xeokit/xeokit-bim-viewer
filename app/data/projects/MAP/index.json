@@ -13,12 +13,12 @@
         }
     ],
     "viewerConfigs": {
-        "backgroundColor": [0.9,0.9,1.0],
-        "cameraNear": "0.05",
-        "cameraFar": "3000.0",
-        "saoNumSamples": 50,
-        "saoKernelRadius": 100,
-        "objectColorSource": "model"
+        "externalMetadata": true,
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
     },
     "viewerContent": {
         "modelsLoaded": [

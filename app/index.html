@@ -67,9 +67,8 @@
 
         // Create tooltips on various HTML elements created by BIMViewer
         tippy('[data-tippy-content]', {
-            appendTo: function () {
-                return document.querySelector('#myViewer')
-            }
+            appendTo: "parent",
+            zIndex: 100000
         });
 
         // Configure our viewer

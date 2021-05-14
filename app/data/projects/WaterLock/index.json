@@ -1,37 +1,34 @@
 {
-  "id": "WaterLock",
-  "name": "WaterLock",
-  "models": [
-    {
-      "id": "design",
-      "name": "WaterLock Design",
-      "saoEnabled": true,
-      "pbrEnabled": true,
-      "edges": true
+    "id": "WaterLock",
+    "name": "WaterLock",
+    "models": [
+        {
+            "id": "design",
+            "name": "WaterLock Design",
+            "saoEnabled": true,
+            "pbrEnabled": true,
+            "edges": true
+        }
+    ],
+    "viewerConfigs": {
+        "externalMetadata": true,
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "viewCubeEnabled": true,
+        "threeDEnabled": true,
+        "tabOpen": "classes",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 2
     }
-  ],
-  "viewerConfigs": {
-    "backgroundColor": [0.9,0.9,1.0],
-    "cameraNear": 0.05,
-    "cameraFar": 3000.0,
-    "saoEnabled": true,
-    "viewFitDuration": 0.5,
-    "viewFitFOV": 45,
-    "perspectiveFOV": 55,
-    "objectColorSource": "model",
-    "smartPivot": "true"
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "design"
-    ]
-  },
-  "viewerState": {
-    "viewCubeEnabled": true,
-    "threeDEnabled": true,
-    "tabOpen": "classes",
-    "expandObjectsTree": 3,
-    "expandClassesTree": 1,
-    "expandStoreysTree": 2
-  }
 }

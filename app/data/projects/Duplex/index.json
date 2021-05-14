@@ -1,28 +1,23 @@
 {
-  "id": "duplex",
-  "name": "Duplex",
-  "models": [
-    {
-      "id": "design",
-      "name": "Duplex Design"
+    "id": "duplex",
+    "name": "Duplex",
+    "models": [
+        {
+            "id": "design",
+            "name": "Duplex Design"
+        }
+    ],
+    "viewerConfigs": {
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 1,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
     }
-  ],
-  "viewerConfigs": {
-    "backgroundColor": [0.9,0.9,1.0],
-    "cameraNear": "0.05",
-    "cameraFar": "3000.0",
-    "saoEnabled": "true",
-    "objectColorSource": "model"
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "design"
-    ]
-  },
-  "viewerState": {
-    "tabOpen": "classes",
-    "expandObjectsTree": 1,
-    "expandClassesTree": 1,
-    "expandStoreysTree": 1
-  }
 }

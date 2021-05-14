@@ -139,7 +139,7 @@ const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
         &lt;!-- Query tool button --&gt;
         &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;Query objects&quot;&gt;&lt;/button&gt;
         &lt;!-- section tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot; data-tippy-content=&quot;Slices menu&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;&lt;/button&gt;
     &lt;/div&gt;
 
 &lt;/div&gt;`;
@@ -236,7 +236,9 @@ class BIMViewer extends Controller {
 
         const viewer = new Viewer({
             canvasElement: canvasElement,
-            transparent: true,
+            transparent: false,
+            backgroundColor: [1, 1, 1],
+            backgroundColorFromAmbientLight: false,
             saoEnabled: true,
             pbrEnabled: true
         });
@@ -254,7 +256,6 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
-        this._initConfigs();
 
         this._enableAddModels = !!cfg.enableEditModels;
 
@@ -472,6 +473,7 @@ class BIMViewer extends Controller {
 
         this._fastNavPlugin = new FastNavPlugin(viewer, {});
 
+        this._initConfigs();
         this.setControlsEnabled(false);
     }
 
@@ -507,26 +509,26 @@ class BIMViewer extends Controller {
 
         // Lighting
 
-        scene.clearLights();
-
-        new AmbientLight(scene, {
-            color: [0.9, 0.9, 0.9],
-            intensity: 0.7
-        });
-
-        new DirLight(scene, {
-            dir: [0.8, -.5, -0.5],
-            color: [0.67, 0.67, 1.0],
-            intensity: 0.7,
-            space: &quot;world&quot;
-        });
-
-        new DirLight(scene, {
-            dir: [-0.8, -1.0, 0.5],
-            color: [1, 1, .9],
-            intensity: 0.9,
-            space: &quot;world&quot;
-        });
+        // scene.clearLights();
+        //
+        // new AmbientLight(scene, {
+        //     color: [0.9, 0.9, 1.0],
+        //     intensity: 0.9
+        // });
+        //
+        // new DirLight(scene, {
+        //     dir: [0.8, -.5, -0.5],
+        //     color: [0.67, 0.67, 1.0],
+        //     intensity: 0.7,
+        //     space: &quot;world&quot;
+        // });
+        //
+        // new DirLight(scene, {
+        //     dir: [-0.8, -1.0, 0.2],
+        //     color: [1, 1, .9],
+        //     intensity: 0.9,
+        //     space: &quot;world&quot;
+        // });
 
         // Camera control
 
@@ -606,16 +608,17 @@ class BIMViewer extends Controller {
             &quot;cameraNear&quot;: &quot;0.05&quot;,
             &quot;cameraFar&quot;: &quot;3000.0&quot;,
             &quot;smartPivot&quot;: &quot;true&quot;,
-            &quot;saoEnabled&quot;: &quot;false&quot;,
+            &quot;saoEnabled&quot;: &quot;true&quot;,
             &quot;pbrEnabled&quot;: &quot;false&quot;,
             &quot;saoBias&quot;: &quot;0.5&quot;,
-            &quot;saoIntensity&quot;: &quot;0.2&quot;,
+            &quot;saoIntensity&quot;: &quot;0.15&quot;,
             &quot;saoNumSamples&quot;: &quot;40&quot;,
             &quot;saoKernelRadius&quot;: &quot;100&quot;,
             &quot;edgesEnabled&quot;: true,
             &quot;xrayContext&quot;: true,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
-            &quot;objectColorSource&quot;: &quot;model&quot;
+            &quot;objectColorSource&quot;: &quot;model&quot;,
+            &quot;externalMetadata&quot;: false
         });
     }
 
@@ -733,6 +736,10 @@ class BIMViewer extends Controller {
 
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
+                    break;
+
+                case &quot;externalMetadata&quot;:
+                    this._configs[name] = parseBool(value);
                     break;
 
                 default:
@@ -1045,7 +1052,7 @@ class BIMViewer extends Controller {
      * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.
      */
     setBackgroundColor(rgbColor) {
-        this.viewer.scene.canvas.canvas.style.background = &quot;rgba(&quot; + (rgbColor[0] * 255) + &quot;,&quot; + (rgbColor[1] * 255) + &quot;,&quot; + (rgbColor[2] * 255) + &quot;, 1.0)&quot;;
+        this.viewer.scene.canvas.backgroundColor = rgbColor;
     }
 
     /**

@@ -4,18 +4,19 @@
     "models": [
         {
             "id": "rac_advanced_sample_project",
-            "name": "RAC Advanced Sample Project",
-            "saoEnabled": true
+            "name": "RAC Advanced Sample Project"
         },
         {
             "id": "rme_advanced_sample_project",
-            "name": "RME Advanced Sample Project",
-            "saoEnabled": true
+            "name": "RME Advanced Sample Project"
         }
     ],
     "viewerConfigs": {
-        "backgroundColor": [0.9,0.9,1.0],
-        "saoEnabled": "true"
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
     },
     "viewerContent": {
         "modelsLoaded": [

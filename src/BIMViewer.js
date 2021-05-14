@@ -571,13 +571,14 @@ class BIMViewer extends Controller {
             "saoEnabled": "true",
             "pbrEnabled": "false",
             "saoBias": "0.5",
-            "saoIntensity": "0.2",
+            "saoIntensity": "0.15",
             "saoNumSamples": "40",
             "saoKernelRadius": "100",
             "edgesEnabled": true,
             "xrayContext": true,
             "backgroundColor": [1.0, 1.0, 1.0],
-            "objectColorSource": "model"
+            "objectColorSource": "model",
+            "externalMetadata": false
         });
     }
 
@@ -695,6 +696,10 @@ class BIMViewer extends Controller {
 
                 case "xrayContext":
                     this._configs[name] = value;
+                    break;
+
+                case "externalMetadata":
+                    this._configs[name] = parseBool(value);
                     break;
 
                 default:
