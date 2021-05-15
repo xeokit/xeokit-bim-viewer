@@ -51,6 +51,7 @@ Read the documentation below to get started.
 - [Model Database](#model-database)
     * [Viewer Configurations](#viewer-configurations)
     * [Viewer States](#viewer-states)
+- [Deploying XKT V7 and Earlier](#deploying-xkt-v7-and-earlier)
 - [Programming API](#programming-api)
     * [Creating a Viewer](#creating-a-viewer)
     * [Configuring the Viewer](#configuring-the-viewer)
@@ -109,8 +110,8 @@ Click the links below to run some demos.
 
 ## License
 
-xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is licensed under the AGPL3.
-See [Pricing](https://xeokit.io/index.html#pricing) for custom licensing options.
+xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is licensed under the AGPL3. See
+our [Pricing](https://xeokit.io/index.html#pricing) page for custom licensing options.
 
 ## The Viewer Application
 
@@ -118,7 +119,7 @@ The [````./app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/tree/
 ready-to-use instance of xeokit-bim-viewer. We'll just call it *viewer* from now on.
 
 The viewer loads projects and models from
-the [````./app/data````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory.
+the [````./app/data/projects````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data/projects) directory.
 
 To view a project, load the viewer with the project's ID on the URL:
 
@@ -126,7 +127,8 @@ To view a project, load the viewer with the project's ID on the URL:
 
 ## Model Database
 
-**This section aims to show you how how to add your own models to the viewer application.**
+> **This section shows how to add your own models to the viewer application. These instructions rely on the most
+> recent versions of XKT (V8 or later) and the conversion tools, which you can learn about in  *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*.**
 
 Let's examine the structure of
 the [````./app/data/projects````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, where the
@@ -183,10 +185,10 @@ Within this file, the ````id```` of each project matches the name of that projec
             "id": "WestRiversideHospital",
             "name": "West Riverside Hospital"
         }
-        //...
+        //..
     ]
 }
-```` 
+````
 
 The ````index.json```` for the "WestRiversideHospital" project is shown below.
 
@@ -290,9 +292,101 @@ using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-v
 | "expandStoreysTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "storeys" tree |
 | "setCamera"           | { eye: Number[], look: Number[], up: Number[] } |  | 0        | Camera position |
 
+## Deploying XKT V7 and Earlier
+
+> **This section describes how to deploy models that use older versions of XKT that don't combine geometry and metadata. For those older versions,
+> we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
+
+The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
+metadata into the same XKT file, and was introduced in the
+[xeokit v1.9 release](https://www.notion.so/xeokit/What-s-New-in-xeokit-1-9-b7503ca7647e43e4b9c76e1505fa4484).
+
+XKT versions prior to V8 only contained geometry, and needed to be accompanied by a JSON file that contained the model's
+IFC metadata. In this section, we'll describe how to deploy models that use XKT versions prior to V8.
+
+Let's imagine that we want to deploy the Duplex and West Riverside Hospital projects, using XKT V7. For each model
+within our database, we'll deploy a ````geometry.xkt````, which is an XKT V7 file containing the model's geometry, and
+a ````metadata.json ````, containing IFC metadata for the model.
+
+We'll just assume that you've got those files already, and are not ready to convert their original IFC files into XKT V8+.    
+
+Here's our database files again, this time with XKT V7 and accompanying metadata files:
+
+````
+.app/data/projects
+  │
+  ├── index.json
+  │
+  ├── Duplex
+  │     │
+  │     ├── index.json
+  │     │
+  │     └── models
+  │           └── design
+  │                   ├── geometry.xkt
+  │                   └── metadata.json
+  │
+  └── WestRiversideHospital
+        │
+        ├── index.json
+        │
+        └── models
+              ├── architecture             
+              │       ├── geometry.xkt
+              │       └── metadata.json
+              ├── structure            
+              │       ├── geometry.xkt
+              │       └── metadata.json
+              └── electrical
+                      ├── geometry.xkt 
+                      └── metadata.json                 
+````
+
+To make BIMViewer load both the ````geometry.xkt```` and ````metadata.json```` files for each model, we need to add a
+new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` in the project's ````index.json```` file:
+
+````json
+{
+    "id": "WestRiversideHospital",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "architectural",
+            "name": "Hospital Architecture"
+        },
+        {
+            "id": "structure",
+            "name": "Hospital Structure"
+        },
+        {
+            "id": "electrical",
+            "name": "Hospital Electrical",
+            "saoEnabled": false
+        }
+    ],
+    "viewerConfigs": {
+        "externalMetadata": true, // <<------------ ADD THIS
+        "backgroundColor": [
+            0.9,
+            0.9,
+            1.0
+        ]
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "structure",
+            "architectural"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "models"
+    }
+}
+````
+
 ## Programming API
 
-**This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
+> **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
 programming API.**
 
 The viewer is implemented by the
@@ -342,8 +436,8 @@ const myBIMViewer = new BIMViewer(server, {
 });
 ````
 
-Configuring the ````BIMViewer```` with separate places to locate its parts allows us to integrate them more flexibly
-into our web page.
+Configuring the ````BIMViewer```` with separate places in the document to locate its parts allows us to integrate them
+more flexibly into our web page.
 
 In our [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) page, the HTML
 elements look like this:
