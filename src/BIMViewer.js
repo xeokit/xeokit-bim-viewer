@@ -1,7 +1,5 @@
 import {
     Viewer,
-    AmbientLight,
-    DirLight,
     BCFViewpointsPlugin,
     math,
     FastNavPlugin
@@ -466,29 +464,6 @@ class BIMViewer extends Controller {
         scene.pointsMaterial.perspectivePoints = true;
         scene.pointsMaterial.minPerspectivePointSize = 2;
         scene.pointsMaterial.maxPerspectivePointSize = 4;
-
-        // Lighting
-
-        // scene.clearLights();
-        //
-        // new AmbientLight(scene, {
-        //     color: [0.9, 0.9, 1.0],
-        //     intensity: 0.9
-        // });
-        //
-        // new DirLight(scene, {
-        //     dir: [0.8, -.5, -0.5],
-        //     color: [0.67, 0.67, 1.0],
-        //     intensity: 0.7,
-        //     space: "world"
-        // });
-        //
-        // new DirLight(scene, {
-        //     dir: [-0.8, -1.0, 0.2],
-        //     color: [1, 1, .9],
-        //     intensity: 0.9,
-        //     space: "world"
-        // });
 
         // Camera control
 
