@@ -624,12 +624,12 @@
     padding: 0;
     border: 2px solid #888;
     border-radius: 0.5em;
-    width: 400px;
+    width: 30%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-animation-name: xeokit-busy-modal-animatetop;
     -webkit-animation-duration: 0.6s;
     animation-name: xeokit-busy-modal-animatetop;
-    animation-duration: 0.6s
+    animation-duration: .6s
 }
 
 /* Add Animation */
