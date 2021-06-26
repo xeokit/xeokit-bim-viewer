@@ -1,0 +1,23 @@
+{
+    "id": "HDB",
+    "name": "HDB",
+    "models": [
+        {
+            "id": "design",
+            "name": "HDB"
+        }
+    ],
+    "viewerConfigs": {
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 1,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
+    }
+}
