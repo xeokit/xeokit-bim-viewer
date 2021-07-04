@@ -16,15 +16,11 @@
 <label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
        data-tippy-content="Toggle explorer panel"></label>
 <div id="myExplorer"></div>
-<div id="myBIM"></div>
+<div id="infoBox" [ngStyle]="{'background-color': dynamicColor}">asfjhakjhfkhf</div>
 <div id="myToolbar"></div>
 <div id="myViewer">
     <canvas id="myCanvas"></canvas>
     <canvas id="myNavCubeCanvas"></canvas>
-</div>
-<div class="info"
-    id = "myBIM"
-    style="z-index: 300000; position: absolute; border-radius: 4px; display: none; background: white; border: 1px solid black; box-shadow: gray 0px 4px 5px 0px; right: 10px; top: 10px;">
 </div>
 </body>
 
@@ -82,8 +78,8 @@
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
-            document.getElementById("myBIM").innerHTML = JSON.stringify(event, null, "\t");
-            document.getElementById("myBIM").style.display = "block";
+            document.querySelector("infoBox").innerHTML = JSON.stringify(event, null, "\t");
+            document.querySelector("infoBox").style.display = "block";
         });
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
