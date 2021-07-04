@@ -60,7 +60,7 @@ body {
 
 #myExplorer {
     position: fixed;
-    height: 40%;
+    height: 100%;
     color: #fff;
     background: #03103F;
     overflow: auto;
