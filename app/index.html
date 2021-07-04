@@ -16,7 +16,7 @@
 <label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
        data-tippy-content="Toggle explorer panel"></label>
 <div id="myExplorer"></div>
-<div id="infoBox" [ngStyle]="{'background-color': dynamicColor}">asfjhakjhfkhf</div>
+<div id="infoBox" [ngStyle]="{'background-color': dynamicColor}">111</div>
 <div id="myToolbar"></div>
 <div id="myViewer">
     <canvas id="myCanvas"></canvas>
@@ -78,7 +78,12 @@
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
-            document.getElementById("infoBox").innerHTML = JSON.stringify(event, null, "\t");
+            var info = null;
+            var obj = JSON.parse(JSON.stringify(event, null, ""));
+            for (const [key, value] of Object.entries(object1)) {
+                info = info + "${key}: ${value}" + "<br/>"
+            }
+            document.getElementById("infoBox").innerHTML = info;
             document.getElementById("infoBox").style.display = "block";
         });
 
