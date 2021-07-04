@@ -134,6 +134,8 @@ body {
 }
 
 #infoBox {
+    right: 20px;
+    top: 45px;
     word-break: break-all;
     clear: both;
     border-radius: 10px;
