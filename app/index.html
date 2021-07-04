@@ -81,7 +81,7 @@
             var info = "";
             var obj = JSON.parse(JSON.stringify(event, null, ""));
             for (const [key, value] of Object.entries(obj)) {
-                info = info + `${key} ${value}` + "<br/>"
+                info = info + `${key}: ${value}` + "<br/>"
             }
             document.getElementById("infoBox").innerHTML = info;
             document.getElementById("infoBox").style.display = "block";
