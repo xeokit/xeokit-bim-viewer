@@ -14,10 +14,6 @@ body {
     overflow: hidden;
 }
 
-div {
-    display: "block";
-}
-
 #myViewer {
     display: flex;
     width: 100%;
@@ -139,13 +135,13 @@ div {
 
 #infoBox {
     right: 20px;
-    top: 45px;
+    top: 70px;
     word-break: break-all;
     clear: both;
     border-radius: 10px;
     padding: 20px;
     display: none;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgb(0 0 0 / 20%);
     position: absolute;
     height: auto;
     max-height: 500px;
