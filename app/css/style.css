@@ -14,6 +14,10 @@ body {
     overflow: hidden;
 }
 
+div {
+    display: "block";
+}
+
 #myViewer {
     display: flex;
     width: 100%;
