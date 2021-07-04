@@ -16,6 +16,7 @@
 <label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
        data-tippy-content="Toggle explorer panel"></label>
 <div id="myExplorer"></div>
+<div id="myBIM"></div>
 <div id="myToolbar"></div>
 <div id="myViewer">
     <canvas id="myCanvas"></canvas>
@@ -23,7 +24,7 @@
 </div>
 <div class="info"
     id = "myBIM"
-    style="z-index: 300000; position: absolute; border-radius: 4px; display: none; background: white; border: 1px solid black; box-shadow: gray 0px 4px 5px 0px; left: 367px; top: 171px;">
+    style="z-index: 300000; position: absolute; border-radius: 4px; display: none; background: white; border: 1px solid black; box-shadow: gray 0px 4px 5px 0px; right: 10px; top: 10px;">
 </div>
 </body>
 
@@ -36,13 +37,7 @@
     // Set up application
 
     import {Server, BIMViewer} from "../dist/xeokit-bim-viewer.es.js";
-    window.onlcick = function (e) {
-        if (document.getElementById("myBIM").style.display == "block") {
-            document.getElementById("myBIM").style.display = "none";
-            console.log(1);
-        }
-        console.log(0);
-    }
+    
     window.onload = function () {
 
         const requestParams = getRequestParams();
