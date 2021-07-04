@@ -85,7 +85,6 @@
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
             document.getElementById("myBIM").innerHTML = JSON.stringify(event, null, "\t");
             document.getElementById("myBIM").style.display = "block";
-            event.stopPropagation();
         });
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
