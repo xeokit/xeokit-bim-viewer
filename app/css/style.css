@@ -140,7 +140,7 @@ body {
     clear: both;
     border-radius: 10px;
     padding: 20px;
-    display: none;
+    display: block;
     background-color: rgba(255, 255, 255, 0.3);
     position: absolute;
     height: auto;
