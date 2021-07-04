@@ -150,7 +150,7 @@ div {
     height: auto;
     max-height: 500px;
     width: 200px;
-    z-index: 2;
+    z-index: 300000;
     overflow: auto;
     text-align: justify;
     text-align-last: justify;
