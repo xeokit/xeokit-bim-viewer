@@ -39,6 +39,10 @@
 
     import {Server, BIMViewer} from "../dist/xeokit-bim-viewer.es.js";
 
+    window.onclick = function (e) {
+        document.getElementById("myBIM").style.display = "none";
+        e.stopPropagation();
+    }
     window.onload = function () {
 
         const requestParams = getRequestParams();
@@ -245,10 +249,6 @@
 
         window.bimViewer = bimViewer; // For debugging
     };
-    window.onclick = function (e) {
-        document.getElementById("myBIM").style.display = "none";
-        e.stopPropagation();
-    }
 
 </script>
 
