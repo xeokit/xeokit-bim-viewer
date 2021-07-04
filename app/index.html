@@ -98,6 +98,7 @@
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+            document.getElementById("myBIM").innerHTML = JSON.stringify(event, null, "\t");
             document.getElementById("myBIM").style.display = "block";
         });
 
