@@ -145,7 +145,7 @@ body {
     position: absolute;
     height: auto;
     max-height: 500px;
-    width: 200px;
+    width: 250px;
     z-index: 300000;
     overflow: auto;
     text-align: justify;
