@@ -80,9 +80,7 @@
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
             var info = "";
             var obj = JSON.parse(JSON.stringify(event, null, ""));
-            for (const [key, value] of Object.entries(obj)) {
-                info = info + `${key}: ${value}` + "<br/>"
-            }
+            var info = obj.info;
             document.getElementById("infoBox").innerHTML = info;
             document.getElementById("infoBox").style.display = "block";
         });
