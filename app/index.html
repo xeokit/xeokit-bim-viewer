@@ -77,18 +77,18 @@
         
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
-            myViewer.getObjectInfo("WestRiversideHospital", "architectural", "2HaS6zNOX8xOGjmaNi_r6b", (objectInfo) => {
-                    console.log(JSON.stringify(objectInfo, null, "\t"));
-                }, (errMsg) => {
-                    console.log("Oops! There was an error getting info for this object: " + errMsg);
-                });
-            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
             var info = "";
             var obj = JSON.parse(JSON.stringify(event, null, ""));
             //info = obj.info;
             for (const [key, value] of Object.entries(obj)) {
                 info = info + `${key}: ${value}` + "<br/>";
             }
+            bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
+                    console.log(JSON.stringify(objectInfo, null, "\t"));
+                }, (errMsg) => {
+                    console.log("Oops! There was an error getting info for this object: " + errMsg);
+                });
+            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
             document.getElementById("infoBox").innerHTML = info;
             document.getElementById("infoBox").style.display = "block";
         });
