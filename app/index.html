@@ -83,12 +83,12 @@
             console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
                     info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
+                    console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+                    document.getElementById("infoBox").innerHTML = info;
+                    document.getElementById("infoBox").style.display = "block";
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
-            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
-            document.getElementById("infoBox").innerHTML = info;
-            document.getElementById("infoBox").style.display = "block";
         });
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
