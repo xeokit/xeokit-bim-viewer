@@ -77,7 +77,6 @@
         
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
-            var info = "";
             var obj = JSON.parse(JSON.stringify(event, null, ""));
 //             //info = obj.info;
 //             for (const [key, value] of Object.entries(obj)) {
@@ -86,7 +85,7 @@
             console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
                     var obj_info = JSON.parse(JSON.stringify(objectInfo, null, "\t"));
-                    info = obj_info['info'];
+                    const info = obj_info['info'];
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
