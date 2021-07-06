@@ -85,7 +85,7 @@
             }
             console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
-                    console.log(JSON.stringify(objectInfo, null, "\t"));
+                    info = objectInfo.info;
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
