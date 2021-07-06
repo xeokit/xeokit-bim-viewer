@@ -81,9 +81,9 @@
             var info = "";
 //             //info = obj.info;
             console.log(obj.objectId);
+            var obj_info = new Objec
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
-                    var obj_info = JSON.parse(JSON.stringify(objectInfo, null, "\t"));
-                    info = obj_info.info;
+                    info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
