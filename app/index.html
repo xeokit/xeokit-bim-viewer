@@ -83,6 +83,7 @@
             for (const [key, value] of Object.entries(obj)) {
                 info = info + `${key}: ${value}` + "<br/>";
             }
+            console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
                     console.log(JSON.stringify(objectInfo, null, "\t"));
                 }, (errMsg) => {
