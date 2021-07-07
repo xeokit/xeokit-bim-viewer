@@ -76,6 +76,11 @@
 
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
+            bimViewer.getObjectInfo(event.projectId, event.modelId, event.objectId, (objectInfo) => {
+                alert(JSON.stringify(objectInfo, null, "\t"));
+            }, (errMsg) => {
+                alert(errMsg);
+            })
             console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
         });
 
