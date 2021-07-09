@@ -487,7 +487,7 @@ class BIMViewer extends Controller {
         scene.camera.perspective.near = 0.01;
         scene.camera.perspective.far = 3000.0;
         scene.camera.ortho.near = 0.01;
-        scene.camera.ortho.far = 3000.0;
+        scene.camera.ortho.far = 2000.0; //
 
         // Scalable Ambient Obscurance (SAO) defaults
         // Since SAO is non-interactive, set to higher-quality
@@ -608,7 +608,7 @@ class BIMViewer extends Controller {
                 case "cameraFar":
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
-                    this.viewer.scene.camera.ortho.far = far;
+                // this.viewer.scene.camera.ortho.far = far;
                     this._configs[name] = far;
                     break;
 
@@ -1664,7 +1664,7 @@ class BIMViewer extends Controller {
      * @param {*} [options] Options for setting the viewpoint.
      * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest
      * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
-     * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
+     * @param {Boolean} [options.immediate=true] When ````true```` (default), immediately set camera position.
      * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
      * @param {Boolean} [options.reset=true] When ````true```` (default), set {@link Entity#xrayed} and {@link Entity#highlighted} ````false```` on all scene objects.
      * @param {Boolean} [options.reverseClippingPlanes=false] When ````true````, clipping planes are reversed (https://github.com/buildingSMART/BCF-XML/issues/193)
