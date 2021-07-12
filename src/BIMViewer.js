@@ -608,7 +608,7 @@ class BIMViewer extends Controller {
                 case "cameraFar":
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
-                // this.viewer.scene.camera.ortho.far = far;
+                    // this.viewer.scene.camera.ortho.far = far;
                     this._configs[name] = far;
                     break;
 
@@ -703,6 +703,7 @@ class BIMViewer extends Controller {
     //------------------------------------------------------------------------------------------------------------------
 
     /**
+     * Gets information on all available projects.
      * Gets information on all available projects.
      *
      * See [Getting Info on Available Projects](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-available-projects) for usage.
