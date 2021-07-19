@@ -1,1 +1,622 @@
-{"id": "Project Number", "projectId": "0Cl6IS$_1DJ9$qSaKDGRh5", "author": "", "createdAt": "2021-07-05T11:37:32", "schema": "IFC2X3", "creatingApplication": "21.1.21.45 - Exporter 21.1.21.45 - Alternate UI 21.1.21.45", "metaObjects": [{"id": "0Cl6IS$_1DJ9$qSaKDGRh5", "name": "Project Number", "type": "IfcProject", "parent": null, "info": ""}, {"id": "0Cl6IS$_1DJ9$qSaKDGRh7", "name": "Default", "type": "IfcSite", "parent": "0Cl6IS$_1DJ9$qSaKDGRh5", "info": ""}, {"id": "0Cl6IS$_1DJ9$qSaKDGRh4", "name": "", "type": "IfcBuilding", "parent": "0Cl6IS$_1DJ9$qSaKDGRh7", "info": ""}, {"id": "0Cl6IS$_1DJ9$qSaNolaHc", "name": "Level 1", "type": "IfcBuildingStorey", "parent": "0Cl6IS$_1DJ9$qSaKDGRh4", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv89K", "name": "Basic Wall:1:426675", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.25m<sup>3</sup><br/>Height: 2.90m<br/>Width: 6.72m<br/>Thickness: 0.12m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv89S", "name": "Basic Wall:2:426683", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.58m<sup>3</sup><br/>Height: 2.90m<br/>Width: 5.56m<br/>Thickness: 0.10m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88d", "name": "Basic Wall:3:426688", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.03m<sup>3</sup><br/>Height: 2.90m<br/>Width: 2.86m<br/>Thickness: 0.12m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88Z", "name": "Basic Wall:4:426692", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.65m<sup>3</sup><br/>Height: 2.90m<br/>Width: 1.38m<br/>Thickness: 0.16m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88k", "name": "Basic Wall:5:426697", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.38m<sup>3</sup><br/>Height: 2.90m<br/>Width: 3.17m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88f", "name": "Basic Wall:6:426702", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.78m<sup>3</sup><br/>Height: 2.90m<br/>Width: 1.20m<br/>Thickness: 0.22m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88r", "name": "Basic Wall:7:426706", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 4.25m<sup>3</sup><br/>Height: 2.90m<br/>Width: 9.79m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88n", "name": "Basic Wall:8:426710", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.47m<sup>3</sup><br/>Height: 2.90m<br/>Width: 4.63m<br/>Thickness: 0.11m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88y", "name": "Basic Wall:9:426715", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.18m<sup>3</sup><br/>Height: 2.90m<br/>Width: 4.03m<br/>Thickness: 0.19m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv887", "name": "Basic Wall:10:426720", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.41m<sup>3</sup><br/>Height: 2.90m<br/>Width: 3.26m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv882", "name": "Basic Wall:11:426725", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 3.11m<sup>3</sup><br/>Height: 2.90m<br/>Width: 7.16m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88E", "name": "Basic Wall:12:426729", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.24m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.55m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88A", "name": "Basic Wall:13:426733", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.16m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.37m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88M", "name": "Basic Wall:14:426737", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.38m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.87m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88I", "name": "Basic Wall:15:426741", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.04m<sup>3</sup><br/>Height: 2.90m<br/>Width: 3.01m<br/>Thickness: 0.12m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv88R", "name": "Basic Wall:16:426748", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.24m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.55m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fc", "name": "Basic Wall:17:426753", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.38m<sup>3</sup><br/>Height: 2.90m<br/>Width: 3.18m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8FY", "name": "Basic Wall:18:426757", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 3.66m<sup>3</sup><br/>Height: 2.90m<br/>Width: 4.01m<br/>Thickness: 0.32m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fj", "name": "Basic Wall:19:426762", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.06m<sup>3</sup><br/>Height: 2.90m<br/>Width: 2.43m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Ff", "name": "Basic Wall:20:426766", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.66m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.62m<br/>Thickness: 0.37m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fr", "name": "Basic Wall:21:426770", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.54m<sup>3</sup><br/>Height: 2.90m<br/>Width: 1.21m<br/>Thickness: 0.44m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fn", "name": "Basic Wall:22:426774", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.54m<sup>3</sup><br/>Height: 2.90m<br/>Width: 0.67m<br/>Thickness: 0.28m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fz", "name": "Basic Wall:23:426778", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.75m<sup>3</sup><br/>Height: 2.90m<br/>Width: 2.25m<br/>Thickness: 0.27m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Fv", "name": "Basic Wall:24:426782", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.46m<sup>3</sup><br/>Height: 2.90m<br/>Width: 2.98m<br/>Thickness: 0.28m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8F5", "name": "Basic Wall:25:426786", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.91m<sup>3</sup><br/>Height: 2.90m<br/>Width: 1.21m<br/>Thickness: 0.26m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8F1", "name": "Basic Wall:26:426790", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.93m<sup>3</sup><br/>Height: 2.90m<br/>Width: 2.15m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8FD", "name": "Basic Wall:27:426794", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 0.72m<sup>3</sup><br/>Height: 2.90m<br/>Width: 1.67m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8F9", "name": "Basic Wall:28:426798", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 1.57m<sup>3</sup><br/>Height: 2.90m<br/>Width: 3.32m<br/>Thickness: 0.16m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8FK", "name": "Basic Wall:29:426803", "type": "IfcWallStandardCase", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.10m<sup>3</sup><br/>Height: 2.90m<br/>Width: 4.85m<br/>Thickness: 0.15m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8Ts", "name": "Rectangular - Precast:339x961:427921", "type": "IfcColumn", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Tn", "name": "Rectangular - Precast:297x386:427926", "type": "IfcColumn", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Ty", "name": "Rectangular - Precast:379x854:427931", "type": "IfcColumn", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8T7", "name": "Rectangular - Precast:442x761:427936", "type": "IfcColumn", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8T2", "name": "Rectangular - Precast:536x969:427941", "type": "IfcColumn", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8ZP", "name": "Floor:0:428094", "type": "IfcSlab", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Ib", "name": "DY:2150\u8133800:431170", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9IZ", "name": "DY:2150\u8133800:431172", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Il", "name": "DY:2050\u8133800:431176", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Ij", "name": "DY:2150\u8133800:431178", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9If", "name": "DY:2150\u8133900:431182", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Ir", "name": "DY:2022\u81331100:431186", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9In", "name": "DY:2150\u81331200:431190", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Iz", "name": "DY:2150\u8133700:431194", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9Iv", "name": "DY:2150\u81331182:431198", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv9I7", "name": "DY:2150\u8133800:431200", "type": "IfcDoor", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZl", "name": "CSA1:1062\u81331360:436232", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZh", "name": "AV:562\u8133767:436236", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZt", "name": "CSA1:1101\u81331740:436240", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZp", "name": "CSA1:1859\u81332818:436244", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZ$", "name": "CSA1:1119\u81331576:436248", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZx", "name": "CSA1:979\u8133398:436252", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZ7", "name": "CSA1:1183\u81332678:436256", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpvAZ3", "name": "AV:560\u8133749:436260", "type": "IfcWindow", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Sq", "name": "1", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8So", "name": "2", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Sm", "name": "3", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S_", "name": "4", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Sy", "name": "5", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Sw", "name": "6", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8Su", "name": "7", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S6", "name": "8", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S4", "name": "9", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S2", "name": "10", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.25m<sup>3</sup><br/>Height: 2.90m<br/>Width: 6.72m<br/>Thickness: 0.12m<br/>Material: Concrete<br/>"}, {"id": "1GXZCKXf5BLvOO8cnpv8S0", "name": "1", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SF", "name": "2", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SE", "name": "3", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SD", "name": "4", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SC", "name": "5", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SB", "name": "6", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SA", "name": "7", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S9", "name": "8", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8S8", "name": "9", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8SN", "name": "10", "type": "IfcSpace", "parent": "0Cl6IS$_1DJ9$qSaNolaHc", "info": "Type: Wall<br/>Volume: 2.25m<sup>3</sup><br/>Height: 2.90m<br/>Width: 6.72m<br/>Thickness: 0.12m<br/>Material: Concrete<br/>"}, {"id": "0Cl6IS$_1DJ9$qSaNola$M", "name": "Level 2", "type": "IfcBuildingStorey", "parent": "0Cl6IS$_1DJ9$qSaKDGRh4", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8St", "name": "Floor:0:427984", "type": "IfcSlab", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8i4", "name": "RB-Beams-CRHConcrete:348.732948303223\u8133757.482767105103:429027", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8i0", "name": "RB-Beams-CRHConcrete:385.724782943726\u8133726.102113723755:429031", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8iC", "name": "RB-Beams-CRHConcrete:368.022918701173\u8133710.906267166138:429035", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8i8", "name": "RB-Beams-CRHConcrete:339.030265808106\u8133721.595287322998:429039", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8iK", "name": "RB-Beams-CRHConcrete:227.890014648438\u8133721.595287322998:429043", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8iG", "name": "RB-Beams-CRHConcrete:379.251956939697\u8133339.132070541382:429047", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8iS", "name": "RB-Beams-CRHConcrete:286.569595336914\u8133873.180866241455:429051", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8iO", "name": "RB-Beams-CRHConcrete:277.060031890869\u8133873.180866241455:429055", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8pa", "name": "RB-Beams-CRHConcrete:431.437939405441\u8133687.962532043457:429059", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8pW", "name": "RB-Beams-CRHConcrete:237.05792427063\u8133687.962532043457:429063", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}, {"id": "1GXZCKXf5BLvOO8cnpv8pi", "name": "RB-Beams-CRHConcrete:340.600013732911\u8133739.251375198364:429067", "type": "IfcBeam", "parent": "0Cl6IS$_1DJ9$qSaNola$M", "info": ""}]}
+{
+  "id": "Project Number",
+  "projectId": "0sFmhjh4T5lOjJg49P6Rtr",
+  "author": "",
+  "createdAt": "2021-07-19T11:12:16",
+  "schema": "IFC2X3",
+  "creatingApplication": "21.1.21.45 - Exporter 21.1.21.45 - Alternate UI 21.1.21.45",
+  "metaObjects": [
+    {
+      "id": "0sFmhjh4T5lOjJg49P6Rtr",
+      "name": "Project Number",
+      "type": "IfcProject",
+      "parent": null
+    },
+    {
+      "id": "0sFmhjh4T5lOjJg49P6Rtt",
+      "name": "Default",
+      "type": "IfcSite",
+      "parent": "0sFmhjh4T5lOjJg49P6Rtr"
+    },
+    {
+      "id": "0sFmhjh4T5lOjJg49P6Rtq",
+      "name": "",
+      "type": "IfcBuilding",
+      "parent": "0sFmhjh4T5lOjJg49P6Rtt"
+    },
+    {
+      "id": "0sFmhjh4T5lOjJg4AcvaDM",
+      "name": "Level 1",
+      "type": "IfcBuildingStorey",
+      "parent": "0sFmhjh4T5lOjJg49P6Rtq"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJNG",
+      "name": "Basic Wall:1:426675",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJNO",
+      "name": "Basic Wall:2:426683",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJMf",
+      "name": "Basic Wall:3:426698",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJMj",
+      "name": "Basic Wall:4:426702",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJM_",
+      "name": "Basic Wall:5:426717",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJM1",
+      "name": "Basic Wall:6:426722",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJM5",
+      "name": "Basic Wall:7:426726",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJM9",
+      "name": "Basic Wall:8:426730",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJMC",
+      "name": "Basic Wall:9:426735",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJMT",
+      "name": "Basic Wall:10:426750",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJHk",
+      "name": "Basic Wall:11:426765",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJH$",
+      "name": "Basic Wall:12:426780",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJH3",
+      "name": "Basic Wall:13:426784",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJH7",
+      "name": "Basic Wall:14:426788",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJHB",
+      "name": "Basic Wall:15:426792",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJHK",
+      "name": "Basic Wall:16:426807",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGb",
+      "name": "Basic Wall:17:426822",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGf",
+      "name": "Basic Wall:18:426826",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGi",
+      "name": "Basic Wall:19:426831",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGz",
+      "name": "Basic Wall:20:426846",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGE",
+      "name": "Basic Wall:21:426861",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJGI",
+      "name": "Basic Wall:22:426865",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJJZ",
+      "name": "Basic Wall:23:426880",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJJi",
+      "name": "Basic Wall:24:426895",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJJz",
+      "name": "Basic Wall:25:426910",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJJE",
+      "name": "Basic Wall:26:426925",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJJV",
+      "name": "Basic Wall:27:426940",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJIZ",
+      "name": "Basic Wall:28:426944",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJIi",
+      "name": "Basic Wall:29:426959",
+      "type": "IfcWallStandardCase",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJ_w",
+      "name": "Rectangular - Precast:339x961:428249",
+      "type": "IfcColumn",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJ_z",
+      "name": "Rectangular - Precast:297x386:428254",
+      "type": "IfcColumn",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJ_0",
+      "name": "Rectangular - Precast:379x854:428259",
+      "type": "IfcColumn",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJ_B",
+      "name": "Rectangular - Precast:442x761:428264",
+      "type": "IfcColumn",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJ_E",
+      "name": "Rectangular - Precast:536x969:428269",
+      "type": "IfcColumn",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJrq",
+      "name": "Floor:0:428567",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5C",
+      "name": "DY:2150×800:431663",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5I",
+      "name": "DY:2150×800:431665",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5G",
+      "name": "DY:2150×800:431667",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5K",
+      "name": "DY:2150×900:431671",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5O",
+      "name": "DY:2150×700:431675",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskI5U",
+      "name": "DY:2150×800:431677",
+      "type": "IfcDoor",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHxO",
+      "name": "CSA1:1062×1360:436667",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHxS",
+      "name": "AV:562×767:436671",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwW",
+      "name": "CSA1:1123×1740:436675",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwe",
+      "name": "CSA1:1952×2818:436683",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwi",
+      "name": "CSA1:1126×1576:436687",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwm",
+      "name": "CSA1:1100×509:436691",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwq",
+      "name": "CSA1:1928×2678:436695",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskHwu",
+      "name": "AV:560×771:436699",
+      "type": "IfcWindow",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN1R",
+      "name": "Pipe Types:P&S - Gas - GI:444216",
+      "type": "IfcFlowSegment",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN1O",
+      "name": "Pipe Types:P&S - Gas - GI:444219",
+      "type": "IfcFlowSegment",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN1T",
+      "name": "Pipe Types:P&S - Gas - GI:444222",
+      "type": "IfcFlowSegment",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN0Y",
+      "name": "Pipe Types:P&S - Gas - GI:444225",
+      "type": "IfcFlowSegment",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuA",
+      "name": "1",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJu8",
+      "name": "2",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuE",
+      "name": "3",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuC",
+      "name": "4",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuI",
+      "name": "5",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuG",
+      "name": "6",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuM",
+      "name": "7",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuK",
+      "name": "8",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuQ",
+      "name": "9",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuO",
+      "name": "10",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN0d",
+      "name": "M_Elbow - Threaded - MI - Class 1:Standard:444228",
+      "type": "IfcFlowFitting",
+      "parent": "2FjKXJaun5CfpSSxAskJuO"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskN0m",
+      "name": "M_Transition - Generic1:Standard 3:444243",
+      "type": "IfcFlowFitting",
+      "parent": "2FjKXJaun5CfpSSxAskJuO"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuU",
+      "name": "1",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuT",
+      "name": "2",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuS",
+      "name": "3",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxZ",
+      "name": "4",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxY",
+      "name": "5",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxX",
+      "name": "6",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxW",
+      "name": "7",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxd",
+      "name": "8",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxc",
+      "name": "9",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJxb",
+      "name": "10",
+      "type": "IfcSpace",
+      "parent": "0sFmhjh4T5lOjJg4AcvaDM"
+    },
+    {
+      "id": "0sFmhjh4T5lOjJg4AcvaZc",
+      "name": "Level 2",
+      "type": "IfcBuildingStorey",
+      "parent": "0sFmhjh4T5lOjJg49P6Rtq"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJvp",
+      "name": "Floor:0:428304",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJvx",
+      "name": "Floor:0:428312",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJv3",
+      "name": "Floor:0:428320",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJvF",
+      "name": "Floor:1:428332",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJvN",
+      "name": "Floor:0:428340",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJvV",
+      "name": "Floor:0:428348",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJud",
+      "name": "Floor:0:428356",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuj",
+      "name": "Floor:1:428366",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJur",
+      "name": "Floor:0:428374",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJuz",
+      "name": "Floor:0:428382",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJu5",
+      "name": "Floor:1:428390",
+      "type": "IfcSlab",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJhV",
+      "name": "RB-Beams-CRHConcrete:348.732948303223×757.482767105103:429500",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgZ",
+      "name": "RB-Beams-CRHConcrete:385.724782943726×726.102113723755:429504",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgd",
+      "name": "RB-Beams-CRHConcrete:368.022918701173×710.906267166138:429508",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgh",
+      "name": "RB-Beams-CRHConcrete:339.030265808106×721.595287322998:429512",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgl",
+      "name": "RB-Beams-CRHConcrete:227.890014648438×721.595287322998:429516",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgp",
+      "name": "RB-Beams-CRHConcrete:379.251956939697×339.132070541382:429520",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgt",
+      "name": "RB-Beams-CRHConcrete:286.569595336914×873.180866241455:429524",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJgx",
+      "name": "RB-Beams-CRHConcrete:277.060031890869×873.180866241455:429528",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJg$",
+      "name": "RB-Beams-CRHConcrete:431.437939405441×687.962532043457:429532",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJg3",
+      "name": "RB-Beams-CRHConcrete:237.05792427063×687.962532043457:429536",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    },
+    {
+      "id": "2FjKXJaun5CfpSSxAskJg7",
+      "name": "RB-Beams-CRHConcrete:340.600013732911×739.251375198364:429540",
+      "type": "IfcBeam",
+      "parent": "0sFmhjh4T5lOjJg4AcvaZc"
+    }
+  ]
+}
