@@ -78,8 +78,7 @@
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
             var obj = JSON.parse(JSON.stringify(event, null, ""));
-            var info = "";
-//             //info = obj.info;
+            var info = document.getElementById("infoBox").innerHTML;
             console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
                     var new_info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
@@ -87,9 +86,14 @@
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
+                        var infobox = document.getElementById("infoBox");
+	                    infobox.style.left = event.clientX + 'px';
+	                    infobox.style.top = event.clientY + 'px';
                     } else {
                         document.getElementById("infoBox").innerHTML = "";
                         document.getElementById("infoBox").style.display = "none";
+                        document.getElementById("infoBox").style.height = 0;
+                        console.log("Hide infobox!");
                     }
                     info = document.getElementById("infoBox").innerHTML;
                 }, (errMsg) => {
