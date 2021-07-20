@@ -88,7 +88,7 @@
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
 			var posX = 0, posY = 0;
-		    	var e = event || window.event;
+		    	var e = window.event;
 		    	if (e.pageX || e.pageY) {
 				posX = e.pageX;
 				posY = e.pageY;
