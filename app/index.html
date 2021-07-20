@@ -71,7 +71,11 @@
             appendTo: "parent",
             zIndex: 100000
         });
-
+	var posX = 0, posY = 0;
+	document.addEventListener("click", function (e) {
+        	posX = e.clientX;
+        	posY = e.clientY;
+    	})
         // Configure our viewer
         bimViewer.setConfigs({});
         
@@ -87,17 +91,8 @@
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
-			var posX = 0, posY = 0;
-		    	var e = window.event;
-		    	if (e.pageX || e.pageY) {
-				posX = e.pageX;
-				posY = e.pageY;
-			    } else if (e.clientX || e.clientY) {
-				posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
-				posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
-			    }
-			    document.getElementById("infoBox").style.top = posY + "px";
-			    document.getElementById("infoBox").style.left = posX + "px";
+			document.getElementById("infoBox").style.top = posY + "px";
+			document.getElementById("infoBox").style.left = posX + "px";
                     } else {
                         document.getElementById("infoBox").innerHTML = "";
                         document.getElementById("infoBox").style.display = "none";
