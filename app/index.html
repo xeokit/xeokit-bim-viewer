@@ -79,10 +79,11 @@
         bimViewer.on("queryPicked", (event) => {
             var obj = JSON.parse(JSON.stringify(event, null, ""));
             var info = document.getElementById("infoBox").innerHTML;
-            console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
                     var new_info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
                     console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+		    console.log(info);
+		    console.log(new_info);
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
