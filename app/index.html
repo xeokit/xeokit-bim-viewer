@@ -82,10 +82,16 @@
 //             //info = obj.info;
             console.log(obj.objectId);
             bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
-                    info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
+                    var new_info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
                     console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
-                    document.getElementById("infoBox").innerHTML = info;
-                    document.getElementById("infoBox").style.display = "block";
+                    if (new_info != info){
+                        document.getElementById("infoBox").innerHTML = new_info;
+                        document.getElementById("infoBox").style.display = "block";
+                    } else {
+                        document.getElementById("infoBox").innerHTML = "";
+                        document.getElementById("infoBox").style.display = "none";
+                    }
+                    info = document.getElementById("infoBox").innerHTML;
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
