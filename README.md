@@ -91,6 +91,7 @@ Read the documentation below to get started.
 * Point clouds.
 * Supports IFC2x3 and IFC4.
 * Customize viewer appearance with your own CSS.
+* Localization support.  
 * JavaScript programming API for all viewer functions.
 
 ## Demos

@@ -126,6 +126,7 @@ using <a href="https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c37
 <li>Point clouds.</li>
 <li>Supports IFC2x3 and IFC4.</li>
 <li>Customize viewer appearance with your own CSS.</li>
+<li>Localization support.  </li>
 <li>JavaScript programming API for all viewer functions.</li>
 </ul>
 <h2 id="demos">Demos</h2><p>Click the links below to run some demos.</p>
@@ -959,7 +960,7 @@ by a xeokit <a href>I18nLocaleService</a>. </p>
 within the BIMViewer. We&apos;ll just show the translations for the faces of the NavCube. We&apos;ll also load the translations 
 inline, rather than fetch them from a separate JSON file, as we would in practice.</p>
 <p>To see all the translations expected by a BIMViewer, take a look at the translations we&apos;ve configured for the bundled BIMViewer 
-demo application:  <a href="/app/locales/messages.js"><code>./app/locales/messages.js</code></a>.  </p>
+demo application:  <a href="/app/locales/messages.js"><code>/app/locales/messages.js</code></a>.  </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.localeService.loadMessages({
     &quot;en&quot;: { // English
         &quot;NavCube&quot;: {
