@@ -31,11 +31,16 @@
 
     // Set up application
 
-    import {Server, BIMViewer} from "../dist/xeokit-bim-viewer.es.js";
+    import {Server, BIMViewer, I18nLocaleService} from "../dist/xeokit-bim-viewer.es.js";
+
+    import {messages as localeMessages} from "./locales/messages.js";
 
     window.onload = function () {
 
         const requestParams = getRequestParams();
+
+        // Localization
+        const locale = requestParams.locale || "en";
 
         // Project to load into the viewer
         const projectId = requestParams.projectId;
@@ -56,13 +61,16 @@
 
         // Create  BIMViewer that loads data via the Server
         const bimViewer = new BIMViewer(server, {
+            localeService: new I18nLocaleService({
+                messages: localeMessages,
+                locale: locale
+            }),
             canvasElement: document.getElementById("myCanvas"), // WebGL canvas
             explorerElement: document.getElementById("myExplorer"), // Left panel
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
             navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
             busyModelBackdropElement: document.getElementById("myViewer"),
             enableEditModels: enableEditModels
-
         });
 
         // Create tooltips on various HTML elements created by BIMViewer

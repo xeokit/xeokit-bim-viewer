@@ -26,45 +26,49 @@ import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
 
-function createExplorerTemplate(cfg) {
-    const explorerTemplate = `<div class="xeokit-tabs">
+function createExplorerTemplate(cfg, viewer) {
+    function translate(key, fallback) {
+        return viewer.localeService.translate(key) || fallback;
+    }
+
+    const explorerTemplate = `<div class="xeokit-tabs"> 
     <div class="xeokit-tab xeokit-modelsTab">
-        <a class="xeokit-tab-btn" href="#">Models</a>
+        <a class="xeokit-tab-btn" href="#">${translate("modelsExplorer.title", "Models")}</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-loadAllModels xeokit-btn disabled" data-tippy-content="Load all models">Load all</button>
-                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="Unload all models">Unload all</button>` +
-        (cfg.enableEditModels ? `<button type="button" class="xeokit-addModel xeokit-btn disabled" data-tippy-content="Add model">Add</button>` : ``) +
+                <button type="button" class="xeokit-loadAllModels xeokit-btn disabled" data-tippy-content="${translate("modelsExplorer.loadAllTip", "Load all models")}">${translate("modelsExplorer.loadAll", "Load all")}</button>
+                <button type="button" class="xeokit-unloadAllModels xeokit-btn disabled" data-tippy-content="${translate("modelsExplorer.unloadAllTip", "Unload all models")}">${translate("modelsExplorer.unloadAll", "Unload all")}</button>` +
+        (cfg.enableEditModels ? `<button type="button" class="xeokit-addModel xeokit-btn disabled" data-tippy-content="${translate("modelsExplorer.addTip", "Add model")}">${translate("modelsExplorer.add", "Add")}</button>` : ``) +
         `</div>
             <div class="xeokit-models" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-objectsTab">
-        <a class="xeokit-tab-btn disabled" href="#">Objects</a>
+        <a class="xeokit-tab-btn disabled" href="#">${translate("objectsExplorer.title", "Objects")}</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
-            <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="Show all objects">Show all</button>
-            <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="Hide all objects">Hide all</button>
+            <button type="button" class="xeokit-showAllObjects xeokit-btn disabled" data-tippy-content="${translate("objectsExplorer.showAllTip", "Show all objects")}">${translate("objectsExplorer.showAll", "Show all")}</button>
+            <button type="button" class="xeokit-hideAllObjects xeokit-btn disabled" data-tippy-content="${translate("objectsExplorer.hideAllTip", "Hide all objects")}">${translate("objectsExplorer.hideAll", "Hide all")}</button>
         </div>
         <div class="xeokit-objects xeokit-tree-panel" ></div>
         </div>
     </div>
     <div class="xeokit-tab xeokit-classesTab">
-        <a class="xeokit-tab-btn disabled" href="#">Classes</a>
+        <a class="xeokit-tab-btn disabled" href="#">${translate("classesExplorer.title", "Classes")}</a>
         <div class="xeokit-tab-content">
             <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="Show all classes">Show all</button>
-                <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="Hide all classes">Hide all</button>
+                <button type="button" class="xeokit-showAllClasses xeokit-btn disabled" data-tippy-content="${translate("classesExplorer.showAllTip", "Show all classes")}">${translate("classesExplorer.showAll", "Show all")}</button>
+                <button type="button" class="xeokit-hideAllClasses xeokit-btn disabled" data-tippy-content="${translate("classesExplorer.hideAllTip", "Hide all classes")}">${translate("objectsExplorer.hideAll", "Hide all")}</button>
             </div>
             <div class="xeokit-classes xeokit-tree-panel" ></div>
         </div>
     </div>
      <div class="xeokit-tab xeokit-storeysTab">
-        <a class="xeokit-tab-btn disabled" href="#">Storeys</a>
+        <a class="xeokit-tab-btn disabled" href="#">${translate("storeysExplorer.title", "Storeys")}</a>
         <div class="xeokit-tab-content">
          <div class="xeokit-btn-group">
-                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled" data-tippy-content="Show all storeys">Show all</button>
-                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled" data-tippy-content="Hide all storeys">Hide all</button>
+                <button type="button" class="xeokit-showAllStoreys xeokit-btn disabled" data-tippy-content="${translate("storeysExplorer.showAllTip", "Show all storeys")}">${translate("storeysExplorer.showAll", "Show all")}</button>
+                <button type="button" class="xeokit-hideAllStoreys xeokit-btn disabled" data-tippy-content="${translate("storeysExplorer.showAllTip", "Hide all storeys")}">${translate("storeysExplorer.hideAll", "Hide all")}</button>
             </div>
              <div class="xeokit-storeys xeokit-tree-panel"></div>
         </div>
@@ -73,34 +77,39 @@ function createExplorerTemplate(cfg) {
     return explorerTemplate;
 }
 
-const toolbarTemplate = `<div class="xeokit-toolbar">
+function createToolbarTemplate(cfg, viewer) {
+    function translate(key, fallback) {
+        return viewer.localeService.translate(key) || fallback;
+    }
+    const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
     <div class="xeokit-btn-group">
-        <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled" data-tippy-content="Reset view"></button>
+        <button type="button" class="xeokit-reset xeokit-btn fa fa-home fa-2x disabled" data-tippy-content="${translate("toolbar.resetViewTip", "Reset view")}"></button>
     </div>
     <div class="xeokit-btn-group" role="group">
         <!-- 3D Mode button -->
-        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled" data-tippy-content="Toggle 2D/3D"></button>
+        <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled" data-tippy-content="${translate("toolbar.toggle2d3dTip", "Toggle 2D/3D")}"></button>
         <!-- Perspective/Ortho Mode button -->
-        <button type="button" class="xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled" data-tippy-content="Toggle Perspective/Ortho"></button>
+        <button type="button" class="xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled" data-tippy-content="${translate("toolbar.togglePerspectiveTip", "Toggle Perspective/Ortho")}"></button>
         <!-- Fit button -->
-        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="View fit"></button>   
+        <button type="button" class="xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-tippy-content="${translate("toolbar.viewFitTip", "View fit")}"></button>   
         <!-- First Person mode button -->
-        <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled" data-tippy-content="First person"></button>
+        <button type="button" class="xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled" data-tippy-content="${translate("toolbar.firstPersonTip", "Toggle first-person mode")}"></button>
     </div>
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
         <!-- Hide tool button -->
-        <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled" data-tippy-content="Hide objects"></button>
+        <button type="button" class="xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled" data-tippy-content="${translate("toolbar.hideObjectsTip", "Hide objects")}"></button>
         <!-- Select tool button -->
-        <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-tippy-content="Select objects"></button>
+        <button type="button" class="xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-tippy-content="${translate("toolbar.selectObjectsTip", "Select objects")}"></button>
         <!-- Query tool button -->
-        <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="Query objects"></button>
+        <button type="button" class="xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-tippy-content="${translate("toolbar.queryObjectsTip", "Query objects")}"></button>
         <!-- section tool button -->
-        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="Slice objects"><div class="xeokit-section-menu-button disabled" data-tippy-content="Slices menu"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="Number of existing slices"></div></button>
+        <button type="button" class="xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-tippy-content="${translate("toolbar.sliceObjectsTip", "Slice objects")}"><div class="xeokit-section-menu-button disabled" data-tippy-content="${translate("toolbar.slicesMenuTip", "Slices menu")}"><span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span></div><div class="xeokit-section-counter" data-tippy-content="${translate("toolbar.numSlicesTip", "Number of existing slices")}"></div></button>
     </div>
-
 </div>`;
+    return toolbarTemplate;
+}
 
 function initTabs(containerElement) {
 
@@ -193,6 +202,7 @@ class BIMViewer extends Controller {
         };
 
         const viewer = new Viewer({
+            localeService: cfg.localeService,
             canvasElement: canvasElement,
             transparent: false,
             backgroundColor: [1, 1, 1],
@@ -217,8 +227,8 @@ class BIMViewer extends Controller {
 
         this._enableAddModels = !!cfg.enableEditModels;
 
-        explorerElement.innerHTML = createExplorerTemplate(cfg);
-        toolbarElement.innerHTML = toolbarTemplate;
+        explorerElement.innerHTML = createExplorerTemplate(cfg, viewer);
+        toolbarElement.innerHTML = createToolbarTemplate(cfg, viewer);
 
         this._explorerElement = explorerElement;
 
@@ -276,18 +286,15 @@ class BIMViewer extends Controller {
                 if (active) {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "orbit";
-                    //  bimViewer.viewer.cameraControl.followPointer = true;
                 } else {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = "planView";
-                    //  bimViewer.viewer.cameraControl.followPointer = false;
                 }
                 threeDActive = active;
             };
 
             this.setFirstPersonModeActive = (active) => {
                 bimViewer.viewer.cameraControl.navMode = active ? "firstPerson" : (threeDActive ? "orbit" : "planView");
-                //bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode !== "planView";
                 firstPersonActive = active;
             };
         })(this);
@@ -555,6 +562,15 @@ class BIMViewer extends Controller {
             "objectColorSource": "model",
             "externalMetadata": false
         });
+    }
+
+    /**
+     * Returns the LocaleService that was configured on this Viewer.
+     *
+     * @return {LocaleService} The LocaleService.
+     */
+    get localeService() {
+        return this._viewer.localeService;
     }
 
     /**
