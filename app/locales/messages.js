@@ -118,7 +118,10 @@ const messages = {
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "clearSlices": "Clear Slices", // Menu option to delete all slices
-            "flipSlices": "Flip Slices" // Menu option to reverse the cutting direction of all slices 
+            "flipSlices": "Flip Slices", // Menu option to reverse the cutting direction of all slices
+            "edit": "Edit", // Sub-menu option to edit a single slice
+            "flip": "Flip", // Sub-menu option to reverse the cutting direction of a single slice
+            "delete": "Delete" // Sub-menu option to delete a single slice
         }
     },
 
@@ -237,7 +240,10 @@ const messages = {
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "clearSlices": "Slices löschen", // Menu option to delete all slices
-            "flipSlices": "Scheiben wenden" // Menu option to reverse the cutting direction of all slices 
+            "flipSlices": "Scheiben wenden", // Menu option to reverse the cutting direction of all slices
+            "edit": "Bearbeiten", // Sub-menu option to edit a single slice
+            "flip": "Wenden", // Sub-menu option to reverse the cutting direction of a single slice
+            "delete": "Löschen" // Sub-menu option to delete a single slice
         }
     }
 
