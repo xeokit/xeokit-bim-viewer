@@ -13,8 +13,7 @@
 
 <body>
 <input type="checkbox" id="explorer_toggle"/>
-<label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
-       data-tippy-content="Toggle explorer panel"></label>
+<label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"></label>
 <div id="myExplorer"></div>
 <div id="myToolbar"></div>
 <div id="myViewer">
@@ -31,7 +30,7 @@
 
     // Set up application
 
-    import {Server, BIMViewer, I18nLocaleService} from "../dist/xeokit-bim-viewer.es.js";
+    import {Server, BIMViewer, LocaleService} from "../dist/xeokit-bim-viewer.es.js";
 
     import {messages as localeMessages} from "./locales/messages.js";
 
@@ -61,7 +60,7 @@
 
         // Create  BIMViewer that loads data via the Server
         const bimViewer = new BIMViewer(server, {
-            localeService: new I18nLocaleService({
+            localeService: new LocaleService({
                 messages: localeMessages,
                 locale: locale
             }),
@@ -73,11 +72,39 @@
             enableEditModels: enableEditModels
         });
 
-        // Create tooltips on various HTML elements created by BIMViewer
-        tippy('[data-tippy-content]', {
-            appendTo: "parent",
-            zIndex: 100000
+        bimViewer.localeService.on("updated", () => {
+
+            // Create tooltips on various HTML elements created by BIMViewer
+
+            const changes = document.querySelectorAll('[data-xeokit-i18ntip]');
+
+            changes.forEach((change) => {
+
+                // Update text label
+                if (change.dataset.xeokitI18n) {
+                    change.innerText = bimViewer.localeService.translate(change.dataset.xeokitI18n);
+                }
+
+                // Create text for tooltip
+                if (change.dataset.xeokitI18ntip) {
+                    change.dataset.tippyContent = bimViewer.localeService.translate(change.dataset.xeokitI18ntip);
+                }
+
+                // Create tooltip from text, or update existing tooltip
+                if (change.dataset.tippyContent) {
+                    if (change._tippy) {
+                        change._tippy.setContent(change.dataset.tippyContent);
+                    } else {
+                        tippy(change, {
+                            appendTo: "parent",
+                            zIndex: 1000000,
+                            allowHTML: true
+                        });
+                    }
+                }
+            });
         });
+
 
         // Configure our viewer
         bimViewer.setConfigs({});
