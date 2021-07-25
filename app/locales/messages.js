@@ -48,6 +48,7 @@ const messages = {
             "hideAllTip": "Hide all storeys"
         },
         "toolbar": { // The toolbar at the top of the canvas
+            "toggleExplorer": "Toggle explorer", // Button to open or close the explorer panel on the left
             "resetViewTip": "Reset view", // Button to reset the viewer to initial state
             "toggle2d3dTip": "Toggle 2D/3D", // Button to toggle between 3D view and 2D plan view modes
             "togglePerspectiveTip": "Toggle Perspective/Ortho", // Button to toggle between perspective and orthographic projection
@@ -170,7 +171,8 @@ const messages = {
             "hideAllTip": "Alle Stockwerke ausblenden"
         },
         "toolbar": { // The toolbar at the top of the canvas
-            "resetViewTip": "Ansicht zurücksetzen", // Button to reset the voewer to initial state
+            "toggleExplorer": "Explorer umschalten", // Button to open or close the explorer panel on the left
+            "resetViewTip": "Ansicht zurücksetzen", // Button to reset the viewer to initial state
             "toggle2d3dTip": "2D/3D umschalten", // Button to toggle between 2D and 3D viewing modes
             "togglePerspectiveTip": "Ortho/Perspektive umschalten", // Buttons to toggle between orthographic and perspective projection modes
             "viewFitTip": "Alles zur Ansicht anpassen", // Button to fit everything in view

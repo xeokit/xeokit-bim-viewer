@@ -13,7 +13,7 @@
 
 <body>
 <input type="checkbox" id="explorer_toggle"/>
-<label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"></label>
+<label for="explorer_toggle" class="xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap" data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
 <div id="myExplorer"></div>
 <div id="myToolbar"></div>
 <div id="myViewer">
@@ -74,28 +74,28 @@
 
         bimViewer.localeService.on("updated", () => {
 
-            // Create tooltips on various HTML elements created by BIMViewer
+            // Create tooltip, and possibly label text, on each element tagged as localized
 
-            const changes = document.querySelectorAll('[data-xeokit-i18ntip]');
+            const localizedElements = document.querySelectorAll('.xeokit-i18n');
 
-            changes.forEach((change) => {
+            localizedElements.forEach((localizedElement) => {
 
                 // Update text label
-                if (change.dataset.xeokitI18n) {
-                    change.innerText = bimViewer.localeService.translate(change.dataset.xeokitI18n);
+                if (localizedElement.dataset.xeokitI18n) {
+                    localizedElement.innerText = bimViewer.localeService.translate(localizedElement.dataset.xeokitI18n);
                 }
 
                 // Create text for tooltip
-                if (change.dataset.xeokitI18ntip) {
-                    change.dataset.tippyContent = bimViewer.localeService.translate(change.dataset.xeokitI18ntip);
+                if (localizedElement.dataset.xeokitI18ntip) {
+                    localizedElement.dataset.tippyContent = bimViewer.localeService.translate(localizedElement.dataset.xeokitI18ntip);
                 }
 
                 // Create tooltip from text, or update existing tooltip
-                if (change.dataset.tippyContent) {
-                    if (change._tippy) {
-                        change._tippy.setContent(change.dataset.tippyContent);
+                if (localizedElement.dataset.tippyContent) {
+                    if (localizedElement._tippy) {
+                        localizedElement._tippy.setContent(localizedElement.dataset.tippyContent);
                     } else {
-                        tippy(change, {
+                        tippy(localizedElement, {
                             appendTo: "parent",
                             zIndex: 1000000,
                             allowHTML: true
