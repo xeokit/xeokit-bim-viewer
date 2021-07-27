@@ -133,118 +133,118 @@ const messages = {
             "loading": "Laden von" // Loading <myModel>
         },
         "NavCube": { // The 3D navigation cube at the bottom right of the canvas
-            "front": "Vorderseite",
-            "back": "Zurück",
+            "front": "Vorne",
+            "back": "Hinten",
             "top": "Oben",
-            "bottom": "Unterseite",
+            "bottom": "Unten",
             "left": "Links",
-            "right": "Recht"
+            "right": "Rechts"
         },
         "modelsExplorer": { // The "Models" tab on the left of the canvas
             "title": "Modelle",
             "loadAll": "Alle laden",
-            "loadAllTip": "Alle Modelle laden",
-            "unloadAll": "Alles entladen",
-            "unloadAllTip": "Alle Modelle entladen",
+            "loadAllTip": "Alle Modelle in diesem Projekt laden",
+            "unloadAll": "Alle abwählen",
+            "unloadAllTip": "Alle Modelle abwählen",
             "add": "Hinzufügen",
             "addTip": "Modell hinzufügen"
         },
         "objectsExplorer": { // The "Objects" tab on the left of the canvas
             "title": "Objekte",
-            "showAll": "Zeige alles",
+            "showAll": "Alle anzeigen",
             "showAllTip": "Alle Objekte anzeigen",
-            "hideAll": "Versteck alles",
+            "hideAll": "Alle ausblenden",
             "hideAllTip": "Alle Objekte ausblenden"
         },
         "classesExplorer": { // The "Classes" tab on the left of the canvas
             "title": "Typen",
-            "showAll": "Zeige alles",
+            "showAll": "Alle anzeigen",
             "showAllTip": "Alle Typen anzeigen",
-            "hideAll": "Versteck alles",
+            "hideAll": "Alle ausblenden",
             "hideAllTip": "Alle Typen ausblenden"
         },
         "storeysExplorer": { // The "Storeys" tab on the left of the canvas
             "title": "Stockwerke",
-            "showAll": "Zeige alles",
+            "showAll": "Alle anzeigen",
             "showAllTip": "Alle Stockwerke anzeigen",
-            "hideAll": "Versteck alles",
+            "hideAll": "Alle ausblenden",
             "hideAllTip": "Alle Stockwerke ausblenden"
         },
         "toolbar": { // The toolbar at the top of the canvas
-            "toggleExplorer": "Explorer umschalten", // Button to open or close the explorer panel on the left
+            "toggleExplorer": "Explorer ein- und ausblenden", // Button to open or close the explorer panel on the left
             "resetViewTip": "Ansicht zurücksetzen", // Button to reset the viewer to initial state
             "toggle2d3dTip": "2D/3D umschalten", // Button to toggle between 2D and 3D viewing modes
-            "togglePerspectiveTip": "Ortho/Perspektive umschalten", // Buttons to toggle between orthographic and perspective projection modes
-            "viewFitTip": "Alles zur Ansicht anpassen", // Button to fit everything in view
-            "firstPersonTip": "Ego-Navigationsmodus umschalten", // Button to toggle between first-person and orbiting camera navigation
+            "togglePerspectiveTip": "Orthogonale/Perspektivische Ansicht umschalten", // Buttons to toggle between orthographic and perspective projection modes
+            "viewFitTip": "In Ansicht einpassen", // Button to fit everything in view
+            "firstPersonTip": "Ich-Perspektive umschalten", // Button to toggle between first-person and orbiting camera navigation
             "hideObjectsTip": "Objekte ausblenden", // Button to activate/deactivate the Hide Objects tool
             "selectObjectsTip": "Objekte auswählen", // Button to activate/deactivate "Select objects" tool
             "queryObjectsTip": "Abfrageobjekte", // Button to activate/deactivate "Query objects" tool
-            "sliceObjectsTip": "Objekte aufschneiden", // Button to activate/deactivate "Slice objects" tool
-            "slicesMenuTip": "Scheiben Menü", // Button to open the pull-down menu of existing section planes
-            "numSlicesTip": "Anzahl der Scheiben" // Label shows number of existing section planes
+            "sliceObjectsTip": "Objekte schneiden", // Button to activate/deactivate "Slice objects" tool
+            "slicesMenuTip": "Menü Schnittebenen", // Button to open the pull-down menu of existing section planes
+            "numSlicesTip": "Anzahl der Schnittebenen" // Label shows number of existing section planes
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
-            "viewFitAll": "Alle in Sichtweite einpassen", // Menu option to position the camera to fit all objects in view
-            "hideAll": "Versteck alles", // Menu option to hide all objects
-            "showAll": "Zeige alles", // Menu option to show all objects
-            "xRayAll": "X-Ray alles", // Menu option to X-ray all objects
-            "xRayNone": "X-Ray keine", // Menu option to remove X-ray effect from all objects
-            "selectNone": "Nichts ausgewählt", // Menu option to clear any currently selected objects
+            "viewFitAll": "In Ansicht einpassen", // Menu option to position the camera to fit all objects in view
+            "hideAll": "Alle ausblenden", // Menu option to hide all objects
+            "showAll": "Alle anzeigen", // Menu option to show all objects
+            "xRayAll": "Röntgenansicht (alle)", // Menu option to X-ray all objects
+            "xRayNone": "Röntgenansicht (keine)", // Menu option to remove X-ray effect from all objects
+            "selectNone": "Alle abwählen", // Menu option to clear any currently selected objects
             "resetView": "Ansicht zurücksetzen", // Menu option to reset the view to initial state
-            "clearSlices": "Scheiben löschen" // Menu option to delete all section planes created with the Slice tool
+            "clearSlices": "Schnittebenen löschen" // Menu option to delete all section planes created with the Slice tool
         },
         "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
             "loadModel": "Laden", // Menu option to load a model
-            "unloadModel": "Entladen", // Menu option to unload a model
+            "unloadModel": "Abwählen", // Menu option to unload a model
             "editModel": "Bearbeiten", // Menu option to edit a model (re-upload its IFC file)
             "deleteModel": "Löschen", // Menu option to delete a model
             "loadAllModels": "Alle laden", // Menu option to load all available models
-            "unloadAllModels": "Alle entladen", // Menu option to unload all available models
-            "clearSlices": "Slices löschen" // Menu option to delete all slices made with the Slicing tool
+            "unloadAllModels": "Alle abwählen", // Menu option to unload all available models
+            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
-            "viewFit": "Objekt in Sichtweite einpassen", // Menu option to position the camera to fit the right-clicked object in view
-            "viewFitAll": "Alle in Sichtweite einpassen", // Menu option to position the camera to fit all objects in view
+            "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the right-clicked object in view
+            "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "showInTree": "Im Baum anzeigen", // Menu option to show the right-clicked object in the Objects tab's tree
             "hide": "Ausblenden", // Menu option to hide the right-clicked object
-            "hideOthers": "Andere verstecken", // Menu option to hide all objects except the right-clicked object
-            "hideAll": "Versteck alles", // Menu option to hide all objects
-            "showAll": "Zeige alles", // Menu option to show all objects
-            "xray": "X-Ray", // Menu option to X-ray the right-clicked object
-            "xrayOthers": "X-Ray Andere", // Menu option to X-ray all objects except the right-clicked object
-            "xrayAll": "X-Ray alles", // Menu option to X-ray all objects
-            "xrayNone": "X-Ray keine",  // Menu option to undo X-ray on all objects
-            "select": "Wählen",  // Menu option to select the right-clicked object
+            "hideOthers": "Andere ausblenden", // Menu option to hide all objects except the right-clicked object
+            "hideAll": "Alle ausblenden", // Menu option to hide all objects
+            "showAll": "Alle anzeigen", // Menu option to show all objects
+            "xray": "Röntgenansicht", // Menu option to X-ray the right-clicked object
+            "xrayOthers": "Röntgenansicht (andere)", // Menu option to X-ray all objects except the right-clicked object
+            "xrayAll": "Röntgenansicht (alle)", // Menu option to X-ray all objects
+            "xrayNone": "Röntgenansicht (keine)",  // Menu option to undo X-ray on all objects
+            "select": "Auswählen",  // Menu option to select the right-clicked object
             "undoSelect": "Abwählen",  // Menu option to unselect the right-clicked object
-            "selectNone": "Nichts ausgewählt", // Menu option to unselect all objects
-            "clearSlices": "Slices löschen" // Menu option to delete all slices
+            "selectNone": "Alle abwählen", // Menu option to unselect all objects
+            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
-            "viewFit": "Objekt in Sichtweite einpassen", // Menu option to position the camera to fit the object in view
-            "viewFitAll": "Alle in Sichtweite einpassen", // Menu option to position the camera to fit all objects in view
+            "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the object in view
+            "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "isolate": "Isolieren", // Menu option to hide all other objects and fit this object in view
             "hide": "Ausblenden", // Menu option to hide this object
-            "hideOthers": "Andere Verstecken", // Menu option to hide other objects
-            "hideAll": "Versteck Alles", // Menu option to hide all objects
-            "show": "Zeige", // Menu option to show this object
-            "showOthers": "Anderen Zeigen", // Menu option to hide this object and show all others
-            "showAll": "Zeige Alles", // Menu option to show all objects
-            "xray": "X-Ray", // Menu option to X-ray this object
-            "undoXray": "X-Ray rückgängig machen", // Menu option to undo X-ray on this object
-            "xrayOthers": "X-Ray Andere", // Menu option to undo X-ray on all other objects
-            "xrayAll": "X-Ray alles", // Menu option to X-ray all objects
-            "xrayNone": "X-Ray keine", // Menu option to remove X-ray effect from all objects
-            "select": "Wählen", // Menu option to select this object
+            "hideOthers": "Andere ausblenden", // Menu option to hide other objects
+            "hideAll": "Alle ausblenden", // Menu option to hide all objects
+            "show": "Anzeigen", // Menu option to show this object
+            "showOthers": "Andere anzeigen", // Menu option to hide this object and show all others
+            "showAll": "Alle anzeigen", // Menu option to show all objects
+            "xray": "Röntgenansicht", // Menu option to X-ray this object
+            "undoXray": "Röntgenansicht rückgängig machen", // Menu option to undo X-ray on this object
+            "xrayOthers": "Röntgenansicht (andere)", // Menu option to undo X-ray on all other objects
+            "xrayAll": "Röntgenansicht (alle)", // Menu option to X-ray all objects
+            "xrayNone": "Röntgenansicht (keine)", // Menu option to remove X-ray effect from all objects
+            "select": "Auswählen", // Menu option to select this object
             "undoSelect": "Abwählen", // Menu option to deselect this object
-            "selectNone": "Nichts ausgewählt", // Menu option to deselect all objects
-            "clearSlices": "Slices löschen" // Menu option to delete all slices made with the Slicing tool
+            "selectNone": "Alle abwählen", // Menu option to deselect all objects
+            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
-            "clearSlices": "Slices löschen", // Menu option to delete all slices
-            "flipSlices": "Scheiben wenden", // Menu option to reverse the cutting direction of all slices
+            "clearSlices": "Schnittebenen löschen", // Menu option to delete all slices
+            "flipSlices": "Schnittebenen umdrehen", // Menu option to reverse the cutting direction of all slices
             "edit": "Bearbeiten", // Sub-menu option to edit a single slice
-            "flip": "Wenden", // Sub-menu option to reverse the cutting direction of a single slice
+            "flip": "Umdrehen", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Löschen" // Sub-menu option to delete a single slice
         }
     }
