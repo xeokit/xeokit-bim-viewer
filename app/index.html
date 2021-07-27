@@ -98,6 +98,7 @@
                         document.getElementById("infoBox").style.display = "none";
                     }
                     info = document.getElementById("infoBox").innerHTML;
+		    bimViewer.setAllObjectsSelected(true);
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
