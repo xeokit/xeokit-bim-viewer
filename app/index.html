@@ -88,7 +88,6 @@
 		    document.getElementById("infoBox").innerHTML = new_info;
 		    new_info = document.getElementById("infoBox").innerHTML;
                     console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
-		    bimViewer.setAllObjectsSelected(false);
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
@@ -100,7 +99,7 @@
                         document.getElementById("infoBox").innerHTML = "";
                         document.getElementById("infoBox").style.display = "none";
                     }
-                    info = document.getElementById("infoBox").innerHTML；
+                    info = document.getElementById("infoBox").innerHTML;
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
