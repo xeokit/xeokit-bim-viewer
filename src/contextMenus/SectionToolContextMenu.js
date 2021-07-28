@@ -40,8 +40,8 @@ class SectionToolContextMenu extends ContextMenu {
 
             sectionPlanesMenuItems.push({
 
-                getTitle: () => {
-                    return "Slice #" + (i + 1);
+                getTitle: (context) => {
+                    return `${context.viewer.localeService.translate("sectionToolContextMenu.slice") || "Slice"} #` + (i + 1);
                 },
 
                 doHoverEnter(context) {
