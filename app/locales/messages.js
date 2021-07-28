@@ -266,9 +266,9 @@ const messages = {
         "modelsExplorer": { // The "Models" tab on the left of the canvas
             "title": "Modèles",
             "loadAll": "Afficher tout",
-            "loadAllTip": "Affiche tous les modèles du projet",
+            "loadAllTip": "Afficher tous les modèles du projet",
             "unloadAll": "Masquer tout",
-            "unloadAllTip": "Masque tous les modèles",
+            "unloadAllTip": "Masquer tous les modèles",
             "add": "Ajouter",
             "addTip": "Ajouter un modèle"
         },
@@ -284,7 +284,7 @@ const messages = {
             "showAll": "Afficher tout",
             "showAllTip": "Affiche toutes les classes",
             "hideAll": "Masquer tout",
-            "hideAllTip": "Maquer toutes les classes"
+            "hideAllTip": "Masquer toutes les classes"
         },
         "storeysExplorer": { // The "Storeys" tab on the left of the canvas
             "title": "Étages",
@@ -347,7 +347,7 @@ const messages = {
             "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
             "isolate": "Isoler", // Menu option to hide all other objects and fit this object in view
-            "hide": "Maquer", // Menu option to hide this object
+            "hide": "Masquer", // Menu option to hide this object
             "hideOthers": "Masquer autres", // Menu option to hide other objects
             "hideAll": "Masquer tout", // Menu option to hide all objects
             "show": "Afficher", // Menu option to show this object
