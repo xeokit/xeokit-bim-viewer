@@ -88,6 +88,7 @@
 		    document.getElementById("infoBox").innerHTML = new_info;
 		    new_info = document.getElementById("infoBox").innerHTML;
                     console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+		    bimViewer.setAllObjectsSelected(false);
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
