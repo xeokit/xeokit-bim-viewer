@@ -88,19 +88,19 @@
 		    document.getElementById("infoBox").innerHTML = new_info;
 		    new_info = document.getElementById("infoBox").innerHTML;
                     console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+		    bimViewer.setAllObjectsSelected(false);
                     if (new_info != info){
                         document.getElementById("infoBox").innerHTML = new_info;
                         document.getElementById("infoBox").style.display = "block";
 			document.getElementById("infoBox").style.top = posY + "px";
 			document.getElementById("infoBox").style.left = posX + "px";
+			bimViewer.setObjectsSelected([obj.objectId], true);
                     } else {
 			bimViewer.setAllObjectsSelected(false);
                         document.getElementById("infoBox").innerHTML = "";
                         document.getElementById("infoBox").style.display = "none";
                     }
-                    info = document.getElementById("infoBox").innerHTML;
-		    bimViewer.setAllObjectsSelected(false);
-		    bimViewer.setObjectsSelected([obj.objectId], true);
+                    info = document.getElementById("infoBox").innerHTML；
                 }, (errMsg) => {
                     console.log("Oops! There was an error getting info for this object: " + errMsg);
                 });
