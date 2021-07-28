@@ -247,9 +247,129 @@ const messages = {
             "flip": "Umdrehen", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Löschen" // Sub-menu option to delete a single slice
         }
-    }
+    },
 
-    // Please add your locale translations here!
+    // French
+
+    "fr": {
+        "busyModal": { // The dialog that appears in the center of the canvas while we are loading a model
+            "loading": "chargement" // Loading <myModel>
+        },
+        "NavCube": { // The 3D navigation cube at the bottom right of the canvas
+            "front": "Avant",//alternative: Face
+            "back": "Arrière",//alternative: Dos
+            "top": "Dessus",
+            "bottom": "Dessous",
+            "left": "Droite",
+            "right": "Gauche"
+        },
+        "modelsExplorer": { // The "Models" tab on the left of the canvas
+            "title": "Modèles",
+            "loadAll": "Afficher tout",
+            "loadAllTip": "Affiche tous les modèles du projet",
+            "unloadAll": "Masquer tout",
+            "unloadAllTip": "Masque tous les modèles",
+            "add": "Ajouter",
+            "addTip": "Ajouter un modèle"
+        },
+        "objectsExplorer": { // The "Objects" tab on the left of the canvas
+            "title": "Conteneurs",
+            "showAll": "Afficher tout",
+            "showAllTip": "Afficher tous les objets",
+            "hideAll": "Masquer tout",
+            "hideAllTip": "Masquer tous les objets"
+        },
+        "classesExplorer": { // The "Classes" tab on the left of the canvas
+            "title": "Classes IFC",
+            "showAll": "Afficher tout",
+            "showAllTip": "Affiche toutes les classes",
+            "hideAll": "Masquer tout",
+            "hideAllTip": "Maquer toutes les classes"
+        },
+        "storeysExplorer": { // The "Storeys" tab on the left of the canvas
+            "title": "Étages",
+            "showAll": "Afficher tout",
+            "showAllTip": "Afficher tous les étages",
+            "hideAll": "Masquer tout",
+            "hideAllTip": "Masquer tous les étages"
+        },
+        "toolbar": { // The toolbar at the top of the canvas
+            "resetViewTip": "Réinitialiser la vue", // Button to reset the viewer to initial state
+            "toggle2d3dTip": "Activer 2D/3D", // Button to toggle between 3D view and 2D plan view modes
+            "togglePerspectiveTip": "Activer Perspective/Ortho", // Button to toggle between perspective and orthographic projection
+            "viewFitTip": "Recadrer la vue", // Button to position the camera to fit all objects in view
+            "firstPersonTip": "Mode 1ere personne", // Button to switch between first-person and orbit navigation modes
+            "hideObjectsTip": "Masquer objets", // Button to activate "Hide objects" tool
+            "selectObjectsTip": "Sélectionner", // Button to activate "Select objects" tool
+            "queryObjectsTip": "Informations objets", // Button to activate "Query objects" tool
+            "sliceObjectsTip": "Coupes", // Button to activate "Slice objects" tool
+            "slicesMenuTip": "Outils de coupe", // Button to open the pull-down menu of existing section planes
+            "numSlicesTip": "Nombre de coupes" // Label shows number of sexisting section planes
+        },
+        "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitAll": "Recadrer tout", // Menu option to position the camera to fit all objects in view
+            "hideAll": "Masquer tout", // Menu option to hide all objects
+            "showAll": "Afficher tout", // Menu option to show all objects
+            "xRayAll": "X-Ray tout", // Menu option to X-ray all objects
+            "xRayNone": "X-Ray aucun", // Menu option to remove X-ray effect from all objects
+            "selectNone": "Réinitialiser sélection", // Menu option to clear any currently selected objects
+            "resetView": "Réinitialiser la vue", // Menu option to reset the view to initial state
+            "clearSlices": "Effacer les coupes" // Menu option to delete all section planes created with the Slice tool
+        },
+        "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
+            "loadModel": "Charger",
+            "unloadModel": "Retirer",
+            "editModel": "Editer",
+            "deleteModel": "Supprimer",
+            "loadAllModels": "Tout charger",
+            "unloadAllModels": "Tout retirer",
+            "clearSlices": "Effacer les coupes"
+        },
+        "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
+            "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
+            "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
+            "showInTree": "Afficher arborescence", // Menu option to show the object in the Objects tab's tree
+            "hide": "Masquer", // Menu option to hide this object
+            "hideOthers": "Isoler l'objet", // Menu option to hide other objects
+            "hideAll": "Tout masquer", // Menu option to hide all objects
+            "showAll": "Tout afficher", // Menu option to show all objects
+            "xray": "X-Ray", // Menu option to X-ray this object
+            "xrayOthers": "X-Ray autres", // Menu option to undo X-ray on all other objects
+            "xrayAll": "X-Ray tout", // Menu option to X-ray all objects
+            "xrayNone": "X-Ray aucun", // Menu option to remove X-ray effect from all objects
+            "select": "Sélectionner", // Menu option to select this object
+            "undoSelect": "Annuler sélection", // Menu option to deselect this object
+            "selectNone": "Réinitialiser sélection", // Menu option to deselect all objects
+            "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
+        },
+        "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
+            "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
+            "isolate": "Isoler", // Menu option to hide all other objects and fit this object in view
+            "hide": "Maquer", // Menu option to hide this object
+            "hideOthers": "Masquer autres", // Menu option to hide other objects
+            "hideAll": "Masquer tout", // Menu option to hide all objects
+            "show": "Afficher", // Menu option to show this object
+            "showOthers": "Afficher les autres", // Menu option to hide this object and show all others
+            "showAll": "Afficher tout", // Menu option to show all objects
+            "xray": "X-Ray", // Menu option to X-ray this object
+            "undoXray": "Annuler X-Ray", // Menu option to undo X-ray on this object
+            "xrayOthers": "X-Ray autres", // Menu option to undo X-ray on all other objects
+            "xrayAll": "X-Ray tout", // Menu option to X-ray all objects
+            "xrayNone": "X-Ray aucun", // Menu option to remove X-ray effect from all objects
+            "select": "Sélectionner", // Menu option to select this object
+            "undoSelect": "Annuler sélection", // Menu option to deselect this object
+            "selectNone": "Réinitialiser sélection", // Menu option to deselect all objects
+            "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
+        },
+        "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
+            "clearSlices": "Effacer les coupes", // Menu option to delete all slices
+            "flipSlices": "Inverser les coupes", // Menu option to reverse the cutting direction of all slices
+            "edit": "Editer", // Sub-menu option to edit a single slice
+            "flip": "Inverser", // Sub-menu option to reverse the cutting direction of a single slice
+            "delete": "Supprimer" // Sub-menu option to delete a single slice
+        }
+    }
 };
 
 export {messages};
