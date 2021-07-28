@@ -253,7 +253,7 @@ const messages = {
 
     "fr": {
         "busyModal": { // The dialog that appears in the center of the canvas while we are loading a model
-            "loading": "chargement" // Loading <myModel>
+            "loading": "Chargement" // Loading <myModel>
         },
         "NavCube": { // The 3D navigation cube at the bottom right of the canvas
             "front": "Avant",//alternative: Face
@@ -294,6 +294,7 @@ const messages = {
             "hideAllTip": "Masquer tous les étages"
         },
         "toolbar": { // The toolbar at the top of the canvas
+            "toggleExplorer": "Afficher la structure", // Button to open or close the explorer panel on the left
             "resetViewTip": "Réinitialiser la vue", // Button to reset the viewer to initial state
             "toggle2d3dTip": "Activer 2D/3D", // Button to toggle between 3D view and 2D plan view modes
             "togglePerspectiveTip": "Activer Perspective/Ortho", // Button to toggle between perspective and orthographic projection
