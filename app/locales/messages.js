@@ -118,6 +118,7 @@ const messages = {
             "clearSlices": "Clear Slices" // Menu option to delete all slices made with the Slicing tool
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
+            "slice": "Slice", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
             "clearSlices": "Clear Slices", // Menu option to delete all slices
             "flipSlices": "Flip Slices", // Menu option to reverse the cutting direction of all slices
             "edit": "Edit", // Sub-menu option to edit a single slice
@@ -241,6 +242,7 @@ const messages = {
             "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
+            "slice": "Schnitte", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
             "clearSlices": "Schnittebenen löschen", // Menu option to delete all slices
             "flipSlices": "Schnittebenen umdrehen", // Menu option to reverse the cutting direction of all slices
             "edit": "Bearbeiten", // Sub-menu option to edit a single slice
@@ -256,7 +258,7 @@ const messages = {
             "loading": "Chargement" // Loading <myModel>
         },
         "NavCube": { // The 3D navigation cube at the bottom right of the canvas
-            "front": "Avant",//alternative: Face
+            "front": "Face",
             "back": "Arrière",//alternative: Dos
             "top": "Dessus",
             "bottom": "Dessous",
@@ -364,6 +366,7 @@ const messages = {
             "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
+            "slice": "Coupe", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
             "clearSlices": "Effacer les coupes", // Menu option to delete all slices
             "flipSlices": "Inverser les coupes", // Menu option to reverse the cutting direction of all slices
             "edit": "Editer", // Sub-menu option to edit a single slice
