@@ -12,7 +12,7 @@
         }
     ],
     "viewerConfigs": {
-        "externalMetadata": false
+        "externalMetadata": true
     },
     "viewerContent": {
         "modelsLoaded": [
