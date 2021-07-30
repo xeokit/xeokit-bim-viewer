@@ -5,10 +5,6 @@
         {
             "id": "design",
             "name": "HDB"
-        },
-        {
-            "id": "PointCloud",
-            "name": "PointCloud"
         }
     ],
     "viewerConfigs": {
