@@ -1,6 +1,5 @@
 import {Controller} from "../Controller.js";
-import {ModelMemento} from "@xeokit/xeokit-sdk/src/viewer/scene/mementos/ModelMemento.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {ModelMemento, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 const tempVec3a = math.vec3();
 

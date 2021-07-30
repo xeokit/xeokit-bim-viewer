@@ -1,4 +1,4 @@
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
+import {ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /**
  * @private

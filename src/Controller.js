@@ -1,5 +1,4 @@
-import {Map} from "@xeokit/xeokit-sdk/src/viewer/scene/utils/Map.js";
-import {utils} from "@xeokit/xeokit-sdk/src/viewer/scene/utils.js";
+import {Map} from "./Map.js";
 
 /** @private */
 class Controller {
@@ -218,8 +217,6 @@ class Controller {
      * Fires an "enabled" event on update.
      *
      * @protected
-     *
-     *
      * @param {boolean} enabled Whether or not to enable.
      */
     setEnabled(enabled) {

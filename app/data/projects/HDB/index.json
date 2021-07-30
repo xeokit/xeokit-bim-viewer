@@ -1,0 +1,29 @@
+{
+    "id": "HDB",
+    "name": "HDB",
+    "models": [
+        {
+            "id": "design",
+            "name": "HDB"
+        },
+        {
+            "id": "PointCloud",
+            "name": "PointCloud"
+        }
+    ],
+    "viewerConfigs": {
+        "externalMetadata": false
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design",
+            "PointCloud"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 1,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
+    }
+}

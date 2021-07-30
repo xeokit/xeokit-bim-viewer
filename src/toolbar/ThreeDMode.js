@@ -1,5 +1,5 @@
 import {Controller} from "../Controller.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 const tempVec3a = math.vec3();
 
@@ -14,6 +14,7 @@ class ThreeDMode extends Controller {
             throw "Missing config: buttonElement";
         }
 
+        this._saveOrthoActive = null;
         this._buttonElement = cfg.buttonElement;
 
         this._cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
@@ -29,9 +30,11 @@ class ThreeDMode extends Controller {
         });
 
         this._buttonElement.addEventListener("click", (event) => {
-            this.bimViewer._sectionTool.hideControl();
-            this.setActive(!this.getActive(), () => { // Animated
-            });
+            if (this.getEnabled()) {
+                this.bimViewer._sectionTool.hideControl();
+                this.setActive(!this.getActive(), () => { // Animated
+                });
+            }
             event.preventDefault();
         });
 
@@ -39,6 +42,11 @@ class ThreeDMode extends Controller {
             this.setActive(true, () => { // Animated
             });
         });
+    }
+
+    setEnabled(enabled) {
+        super.setEnabled(enabled);
+        this._saveOrthoActive = this.bimViewer._orthoMode.getActive();
     }
 
     setActive(active, done) {
@@ -92,6 +100,7 @@ class ThreeDMode extends Controller {
         this.bimViewer._firstPersonMode.setEnabled(true);
         this._cameraControlNavModeMediator.setThreeDModeActive(true);
         this.bimViewer._sectionTool.setEnabled(true);
+        this.bimViewer._orthoMode.setEnabled(true);
 
         if (done) {
             viewer.cameraFlight.flyTo({
@@ -99,7 +108,8 @@ class ThreeDMode extends Controller {
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
                 orthoScale: diag * 1.3,
-                duration: 1
+                duration: 1,
+                projection: this._saveOrthoActive ? "ortho" : "perspective"
             }, () => {
                 done();
             });
@@ -108,7 +118,8 @@ class ThreeDMode extends Controller {
                 look: center,
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
-                orthoScale: diag * 1.3
+                orthoScale: diag * 1.3,
+                projection: this._saveOrthoActive ? "ortho" : "perspective"
             });
         }
     }
@@ -135,6 +146,9 @@ class ThreeDMode extends Controller {
         this.bimViewer._sectionTool.setActive(false);
         this.bimViewer._firstPersonMode.setEnabled(false);
 
+        this._saveOrthoActive = this.bimViewer._orthoMode.getActive();
+         this.bimViewer._orthoMode.setEnabled(false);
+
         this._cameraControlNavModeMediator.setThreeDModeActive(false);
 
         if (done) {
@@ -142,7 +156,8 @@ class ThreeDMode extends Controller {
                 eye: eye2,
                 look: look2,
                 up: up2,
-                orthoScale: orthoScale2
+                orthoScale: orthoScale2,
+                projection: "ortho"
             }, () => {
                 this.bimViewer._navCubeMode.setActive(false);
             });
@@ -151,7 +166,8 @@ class ThreeDMode extends Controller {
                 eye: eye2,
                 look: look2,
                 up: up2,
-                orthoScale: orthoScale2
+                orthoScale: orthoScale2,
+                projection: "ortho"
             });
             this.bimViewer._navCubeMode.setActive(false);
         }

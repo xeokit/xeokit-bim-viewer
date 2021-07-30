@@ -1,32 +1,30 @@
 {
-  "id": "Schependomlaan_SelectedStorey",
-  "name": "Schependomlaan",
-  "models": [
-    {
-      "id": "design",
-      "name": "Schependomlaan Design"
+    "id": "Schependomlaan_SelectedStorey",
+    "name": "Schependomlaan",
+    "models": [
+        {
+            "id": "design",
+            "name": "Schependomlaan Design"
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "threeDEnabled": true,
+        "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1",
+        "tabOpen": "objects",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
     }
-  ],
-  "viewerConfigs": {
-    "backgroundColor": [0,0,0],
-    "cameraNear": 0.05,
-    "cameraFar": 3000.0,
-    "saoEnabled": true,
-    "viewFitDuration": 0.5,
-    "viewFitFOV": 45,
-    "perspectiveFOV": 55
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "design"
-    ]
-  },
-  "viewerState": {
-    "threeDEnabled": true,
-    "selectedStorey": "2SWZMQPyD9pfT9q87pgXa1",
-    "tabOpen": "objects",
-    "expandObjectsTree": 3,
-    "expandClassesTree": 1,
-    "expandStoreysTree": 1
-  }
 }

@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -37,7 +38,14 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/BIMViewer.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;./Controller.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {
+    Viewer,
+    BCFViewpointsPlugin,
+    math,
+    FastNavPlugin
+} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+
+import {Controller} from &quot;./Controller.js&quot;;
 import {BusyModal} from &quot;./BusyModal.js&quot;;
 import {ResetAction} from &quot;./toolbar/ResetAction.js&quot;;
 import {FitAction} from &quot;./toolbar/FitAction.js&quot;;
@@ -53,16 +61,10 @@ import {ObjectsExplorer} from &quot;./explorer/ObjectsExplorer.js&quot;;
 import {ClassesExplorer} from &quot;./explorer/ClassesExplorer.js&quot;;
 import {StoreysExplorer} from &quot;./explorer/StoreysExplorer.js&quot;;
 
-import {Viewer} from &quot;@xeokit/xeokit-sdk/src/viewer/Viewer.js&quot;;
-import {AmbientLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js&quot;;
-import {DirLight} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/lights/DirLight.js&quot;;
-import {BCFViewpointsPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js&quot;;
 import {ThreeDMode} from &quot;./toolbar/ThreeDMode.js&quot;;
 import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
 import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 import {OrthoMode} from &quot;./toolbar/OrthoMode.js&quot;;
-import {FastNavPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/FastNavPlugin/FastNavPlugin.js&quot;;
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;
@@ -118,9 +120,9 @@ const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
         &lt;!-- 3D Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;
         &lt;!-- Perspective/Ortho Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-ortho xeokit-btn fa fa-th fa-2x&quot; data-tippy-content=&quot;Toggle Perspective/Ortho&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled&quot; data-tippy-content=&quot;Toggle Perspective/Ortho&quot;&gt;&lt;/button&gt;
         &lt;!-- Fit button --&gt;
         &lt;button type=&quot;button&quot; class=&quot;xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-tippy-content=&quot;View fit&quot;&gt;&lt;/button&gt;   
         &lt;!-- First Person mode button --&gt;
@@ -135,7 +137,7 @@ const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
         &lt;!-- Query tool button --&gt;
         &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;Query objects&quot;&gt;&lt;/button&gt;
         &lt;!-- section tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot; data-tippy-content=&quot;Slices menu&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;&lt;/button&gt;
     &lt;/div&gt;
 
 &lt;/div&gt;`;
@@ -232,7 +234,9 @@ class BIMViewer extends Controller {
 
         const viewer = new Viewer({
             canvasElement: canvasElement,
-            transparent: true,
+            transparent: false,
+            backgroundColor: [1, 1, 1],
+            backgroundColorFromAmbientLight: false,
             saoEnabled: true,
             pbrEnabled: true
         });
@@ -250,7 +254,6 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
-        this._initConfigs();
 
         this._enableAddModels = !!cfg.enableEditModels;
 
@@ -466,7 +469,10 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer);
+        this._fastNavPlugin = new FastNavPlugin(viewer, {});
+
+        this._initConfigs();
+        this.setControlsEnabled(false);
     }
 
     _customizeViewer() {
@@ -498,29 +504,6 @@ class BIMViewer extends Controller {
         scene.pointsMaterial.perspectivePoints = true;
         scene.pointsMaterial.minPerspectivePointSize = 2;
         scene.pointsMaterial.maxPerspectivePointSize = 4;
-
-        // Lighting
-
-        scene.clearLights();
-
-        new AmbientLight(scene, {
-            color: [0.9, 0.9, 0.9],
-            intensity: 0.7
-        });
-
-        new DirLight(scene, {
-            dir: [-0.8, -.5, 0.5],
-            color: [0.67, 0.67, 1.0],
-            intensity: 0.7,
-            space: &quot;world&quot;
-        });
-
-        new DirLight(scene, {
-            dir: [0.8, -1.0, -0.5],
-            color: [1, 1, .9],
-            intensity: 0.9,
-            space: &quot;world&quot;
-        });
 
         // Camera control
 
@@ -600,15 +583,17 @@ class BIMViewer extends Controller {
             &quot;cameraNear&quot;: &quot;0.05&quot;,
             &quot;cameraFar&quot;: &quot;3000.0&quot;,
             &quot;smartPivot&quot;: &quot;true&quot;,
-            &quot;saoEnabled&quot;: &quot;false&quot;,
+            &quot;saoEnabled&quot;: &quot;true&quot;,
+            &quot;pbrEnabled&quot;: &quot;false&quot;,
             &quot;saoBias&quot;: &quot;0.5&quot;,
-            &quot;saoIntensity&quot;: &quot;0.2&quot;,
+            &quot;saoIntensity&quot;: &quot;0.15&quot;,
             &quot;saoNumSamples&quot;: &quot;40&quot;,
             &quot;saoKernelRadius&quot;: &quot;100&quot;,
             &quot;edgesEnabled&quot;: true,
             &quot;xrayContext&quot;: true,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
-            &quot;objectColorSource&quot;: &quot;model&quot;
+            &quot;objectColorSource&quot;: &quot;model&quot;,
+            &quot;externalMetadata&quot;: false
         });
     }
 
@@ -672,7 +657,7 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;saoEnabled&quot;:
-                    this.viewer.scene.sao.enabled = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.saoEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;saoBias&quot;:
@@ -696,7 +681,11 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;edgesEnabled&quot;:
-                    this.viewer.scene.edgeMaterial.edges = this._configs[name] = parseBool(value);
+                    this._fastNavPlugin.edgesEnabled = this._configs[name] = parseBool(value);
+                    break;
+
+                case &quot;pbrEnabled&quot;:
+                    this._fastNavPlugin.pbrEnabled = this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;viewFitFOV&quot;:
@@ -722,6 +711,10 @@ class BIMViewer extends Controller {
 
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
+                    break;
+
+                case &quot;externalMetadata&quot;:
+                    this._configs[name] = parseBool(value);
                     break;
 
                 default:
@@ -1034,7 +1027,7 @@ class BIMViewer extends Controller {
      * @param {Number[]} rgbColor Three-element array of RGB values, each in range ````[0..1]````.
      */
     setBackgroundColor(rgbColor) {
-        this.viewer.scene.canvas.canvas.style.background = &quot;rgba(&quot; + (rgbColor[0] * 255) + &quot;,&quot; + (rgbColor[1] * 255) + &quot;,&quot; + (rgbColor[2] * 255) + &quot;, 1.0)&quot;;
+        this.viewer.scene.canvas.backgroundColor = rgbColor;
     }
 
     /**
@@ -1712,6 +1705,10 @@ class BIMViewer extends Controller {
      * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
      * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
      * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
+     * @param {Boolean} [options.reset=true] When ````true```` (default), set {@link Entity#xrayed} and {@link Entity#highlighted} ````false```` on all scene objects.
+     * @param {Boolean} [options.reverseClippingPlanes=false] When ````true````, clipping planes are reversed (https://github.com/buildingSMART/BCF-XML/issues/193)
+     * @param {Boolean} [options.updateCompositeObjects=false] When ````true````, then when visibility and selection updates refer to composite objects (eg. an IfcBuildingStorey),
+     * then this method will apply the updates to objects within those composites.
      */
     loadBCFViewpoint(bcfViewpoint, options) {
         if (!bcfViewpoint) {
@@ -1719,6 +1716,7 @@ class BIMViewer extends Controller {
             return;
         }
         this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
+        this._orthoMode.setActive(this.viewer.camera.projection === &quot;ortho&quot;);
     }
 
     /**

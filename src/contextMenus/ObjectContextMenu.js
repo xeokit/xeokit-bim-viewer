@@ -1,5 +1,4 @@
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
-import {ContextMenu} from "@xeokit/xeokit-sdk/src/extras/ContextMenu/ContextMenu.js";
+import {math, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /**
  * @private

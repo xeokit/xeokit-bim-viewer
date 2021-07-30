@@ -1,7 +1,6 @@
 import {Controller} from "../Controller.js";
-import {SectionPlanesPlugin} from "@xeokit/xeokit-sdk/src/plugins/SectionPlanesPlugin/SectionPlanesPlugin.js";
 import {SectionToolContextMenu} from "./../contextMenus/SectionToolContextMenu.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
+import {SectionPlanesPlugin, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /** @private */
 class SectionTool extends Controller { // XX
@@ -128,6 +127,14 @@ class SectionTool extends Controller { // XX
             this.setActive(false);
         });
 
+        this.viewer.scene.on("sectionPlaneCreated", ()=> {
+            this._updateSectionPlanesCount();
+        });
+
+        this.viewer.scene.on("sectionPlaneDestroyed", ()=> {
+            this._updateSectionPlanesCount();
+        });
+
         this._initSectionMode();
     }
 
@@ -151,13 +158,7 @@ class SectionTool extends Controller { // XX
                     dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
                 });
 
-                sectionPlane.on("destroyed", () => {
-                    this._updateSectionPlanesCount();
-                });
-
                 this._sectionPlanesPlugin.showControl(sectionPlane.id);
-
-                this._updateSectionPlanesCount();
             }
         });
 
@@ -171,7 +172,7 @@ class SectionTool extends Controller { // XX
     }
 
     getNumSections() {
-        return Object.keys(this._sectionPlanesPlugin.sectionPlanes).length;
+        return Object.keys(this.viewer.scene.sectionPlanes).length;
     }
 
     clear() {

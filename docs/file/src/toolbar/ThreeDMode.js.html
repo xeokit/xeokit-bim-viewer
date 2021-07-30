@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -38,7 +39,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/ThreeDMode.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+import {math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 const tempVec3a = math.vec3();
 
@@ -53,6 +54,7 @@ class ThreeDMode extends Controller {
             throw &quot;Missing config: buttonElement&quot;;
         }
 
+        this._saveOrthoActive = null;
         this._buttonElement = cfg.buttonElement;
 
         this._cameraControlNavModeMediator = cfg.cameraControlNavModeMediator;
@@ -68,9 +70,11 @@ class ThreeDMode extends Controller {
         });
 
         this._buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
-            this.bimViewer._sectionTool.hideControl();
-            this.setActive(!this.getActive(), () =&gt; { // Animated
-            });
+            if (this.getEnabled()) {
+                this.bimViewer._sectionTool.hideControl();
+                this.setActive(!this.getActive(), () =&gt; { // Animated
+                });
+            }
             event.preventDefault();
         });
 
@@ -78,6 +82,11 @@ class ThreeDMode extends Controller {
             this.setActive(true, () =&gt; { // Animated
             });
         });
+    }
+
+    setEnabled(enabled) {
+        super.setEnabled(enabled);
+        this._saveOrthoActive = this.bimViewer._orthoMode.getActive();
     }
 
     setActive(active, done) {
@@ -131,6 +140,7 @@ class ThreeDMode extends Controller {
         this.bimViewer._firstPersonMode.setEnabled(true);
         this._cameraControlNavModeMediator.setThreeDModeActive(true);
         this.bimViewer._sectionTool.setEnabled(true);
+        this.bimViewer._orthoMode.setEnabled(true);
 
         if (done) {
             viewer.cameraFlight.flyTo({
@@ -138,7 +148,8 @@ class ThreeDMode extends Controller {
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
                 orthoScale: diag * 1.3,
-                duration: 1
+                duration: 1,
+                projection: this._saveOrthoActive ? &quot;ortho&quot; : &quot;perspective&quot;
             }, () =&gt; {
                 done();
             });
@@ -147,7 +158,8 @@ class ThreeDMode extends Controller {
                 look: center,
                 eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                 up: up,
-                orthoScale: diag * 1.3
+                orthoScale: diag * 1.3,
+                projection: this._saveOrthoActive ? &quot;ortho&quot; : &quot;perspective&quot;
             });
         }
     }
@@ -174,6 +186,9 @@ class ThreeDMode extends Controller {
         this.bimViewer._sectionTool.setActive(false);
         this.bimViewer._firstPersonMode.setEnabled(false);
 
+        this._saveOrthoActive = this.bimViewer._orthoMode.getActive();
+         this.bimViewer._orthoMode.setEnabled(false);
+
         this._cameraControlNavModeMediator.setThreeDModeActive(false);
 
         if (done) {
@@ -181,7 +196,8 @@ class ThreeDMode extends Controller {
                 eye: eye2,
                 look: look2,
                 up: up2,
-                orthoScale: orthoScale2
+                orthoScale: orthoScale2,
+                projection: &quot;ortho&quot;
             }, () =&gt; {
                 this.bimViewer._navCubeMode.setActive(false);
             });
@@ -190,7 +206,8 @@ class ThreeDMode extends Controller {
                 eye: eye2,
                 look: look2,
                 up: up2,
-                orthoScale: orthoScale2
+                orthoScale: orthoScale2,
+                projection: &quot;ortho&quot;
             });
             this.bimViewer._navCubeMode.setActive(false);
         }

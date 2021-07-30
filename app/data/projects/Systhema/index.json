@@ -44,11 +44,12 @@
         }
     ],
     "viewerConfigs": {
-        "cameraNear": "0.05",
-        "cameraFar": "3000.0",
-        "saoEnabled": "true",
-        "saoNumSamples": 40,
-        "xrayContext": true
+        "externalMetadata": true,
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
     },
     "viewerContent": {
         "modelsLoaded": [

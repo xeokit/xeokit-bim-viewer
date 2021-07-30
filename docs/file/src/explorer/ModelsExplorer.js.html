@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
@@ -37,9 +38,8 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/explorer/ModelsExplorer.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
-import {XKTLoaderPlugin} from &quot;@xeokit/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js&quot;;
-import {math} from &quot;@xeokit/xeokit-sdk/src/viewer/scene/math/math.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {XKTLoaderPlugin, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+import {Controller} from &quot;../Controller.js&quot;;
 import {ModelIFCObjectColors} from &quot;../IFCObjectDefaults/ModelIFCObjectColors.js&quot;;
 import {ViewerIFCObjectColors} from &quot;../IFCObjectDefaults/ViewerIFCObjectColors.js&quot;;
 import {ModelsContextMenu} from &quot;../contextMenus/ModelsContextMenu.js&quot;;
@@ -274,67 +274,77 @@ class ModelsExplorer extends Controller {
             }
             return;
         }
+
         this.bimViewer._busyModal.show(&quot;Loading: &quot; + modelInfo.name);
-        this.server.getMetadata(this._projectId, modelId,
-            (json) =&gt; {
-                this.server.getGeometry(this._projectId, modelId,
-                    (arraybuffer) =&gt; {
-                        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
-                        const objectDefaults = (objectColorSource === &quot;model&quot;) ? ModelIFCObjectColors : ViewerIFCObjectColors;
-                        const model = this._xktLoader.load({
-                            id: modelId,
-                            metaModelData: json,
-                            xkt: arraybuffer,
-                            objectDefaults: objectDefaults,
-                            excludeUnclassifiedObjects: true,
-                            position: modelInfo.position,
-                            scale: modelInfo.scale,
-                            rotation: modelInfo.rotation,
-                            matrix: modelInfo.matrix,
-                            edges: (modelInfo.edges !== false),
-                            saoEnabled: modelInfo.saoEnabled,
-                            pbrEnabled: modelInfo.pbrEnabled,
-                            backfaces: modelInfo.backfaces,
-                            excludeTypes: [&quot;IfcSpace&quot;]
+
+        const externalMetadata = this.bimViewer.getConfig(&quot;externalMetadata&quot;);
+
+        if (externalMetadata) {
+            this.server.getMetadata(this._projectId, modelId, (json) =&gt; {
+                    this._loadGeometry(modelId, modelInfo, json, done, error);
+                },
+                (errMsg) =&gt; {
+                    this.bimViewer._busyModal.hide();
+                    this.error(errMsg);
+                    if (error) {
+                        error(errMsg);
+                    }
+                });
+        } else {
+            this._loadGeometry(modelId, modelInfo, null, done, error);
+        }
+    }
+
+    _loadGeometry(modelId, modelInfo, json, done, error) {
+        this.server.getGeometry(this._projectId, modelId, (arraybuffer) =&gt; {
+                const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+                const objectDefaults = (objectColorSource === &quot;model&quot;) ? ModelIFCObjectColors : ViewerIFCObjectColors;
+                const model = this._xktLoader.load({
+                    id: modelId,
+                    metaModelData: json,
+                    xkt: arraybuffer,
+                    objectDefaults: objectDefaults,
+                    excludeUnclassifiedObjects: true,
+                    position: modelInfo.position,
+                    scale: modelInfo.scale,
+                    rotation: modelInfo.rotation,
+                    matrix: modelInfo.matrix,
+                    edges: (modelInfo.edges !== false),
+                    saoEnabled: modelInfo.saoEnabled,
+                    pbrEnabled: modelInfo.pbrEnabled,
+                    backfaces: modelInfo.backfaces,
+                    excludeTypes: [&quot;IfcSpace&quot;]
+                });
+                model.on(&quot;loaded&quot;, () =&gt; {
+                    const checkbox = document.getElementById(&quot;&quot; + modelId);
+                    checkbox.checked = true;
+                    const scene = this.viewer.scene;
+                    const aabb = scene.getAABB(scene.visibleObjectIds);
+                    this._numModelsLoaded++;
+                    this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+                    if (this._numModelsLoaded &lt; this._numModels) {
+                        this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+                    } else {
+                        this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
+                    }
+                    if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
+                        this.viewer.cameraFlight.jumpTo({
+                            aabb: aabb
                         });
-                        model.on(&quot;loaded&quot;, () =&gt; {
-                            const checkbox = document.getElementById(&quot;&quot; + modelId);
-                            checkbox.checked = true;
-                            const scene = this.viewer.scene;
-                            const aabb = scene.getAABB(scene.visibleObjectIds);
-                            this._numModelsLoaded++;
-                            this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
-                            if (this._numModelsLoaded &lt; this._numModels) {
-                                this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
-                            } else {
-                                this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
-                            }
-                            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
-                                this.viewer.cameraFlight.jumpTo({
-                                    aabb: aabb
-                                });
-                                this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
-                                this.fire(&quot;modelLoaded&quot;, modelId);
-                                this.bimViewer._busyModal.hide();
-                                if (done) {
-                                    done();
-                                }
-                            } else {
-                                this.fire(&quot;modelLoaded&quot;, modelId);
-                                this.bimViewer._busyModal.hide();
-                                if (done) {
-                                    done();
-                                }
-                            }
-                        });
-                    },
-                    (errMsg) =&gt; {
+                        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+                        this.fire(&quot;modelLoaded&quot;, modelId);
                         this.bimViewer._busyModal.hide();
-                        this.error(errMsg);
-                        if (error) {
-                            error(errMsg);
+                        if (done) {
+                            done();
                         }
-                    });
+                    } else {
+                        this.fire(&quot;modelLoaded&quot;, modelId);
+                        this.bimViewer._busyModal.hide();
+                        if (done) {
+                            done();
+                        }
+                    }
+                });
             },
             (errMsg) =&gt; {
                 this.bimViewer._busyModal.hide();

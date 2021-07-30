@@ -8,12 +8,11 @@
         }
     ],
     "viewerConfigs": {
-        "cameraNear": "0.05",
-        "cameraFar": "3000.0",
-        "saoEnabled": "true",
-        "saoNumSamples": 50,
-        "saoKernelRadius": 200,
-        "objectColorSource": "model"
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
     },
     "viewerContent": {
         "modelsLoaded": [
@@ -24,11 +23,6 @@
         "tabOpen": "objects",
         "expandObjectsTree": 3,
         "expandClassesTree": 1,
-        "expandStoreysTree": 1,
-        "setCamera": {
-            "eye": [65.79, 42.41, 15.37],
-            "look": [25.78, -28.86, -75.24],
-            "up": [-0.23, 0.81, -0.53]
-        }
+        "expandStoreysTree": 1
     }
 }

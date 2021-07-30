@@ -10,13 +10,10 @@
     ],
     "viewerConfigs": {
         "backgroundColor": [
-            0.9,
-            0.9,
+            0.95,
+            0.95,
             1.0
-        ],
-        "saoNumSamples": 60,
-        "saoKernelRadius": 200,
-        "objectColorSource": "model"
+        ]
     },
     "viewerContent": {
         "modelsLoaded": [

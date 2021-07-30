@@ -1,5 +1,4 @@
 import {Controller} from "../Controller.js";
-import {math} from "@xeokit/xeokit-sdk/src/viewer/scene/math/math.js";
 
 /** @private */
 class OrthoMode extends Controller {
@@ -23,13 +22,18 @@ class OrthoMode extends Controller {
         });
 
         this._buttonElement.addEventListener("click", (event) => {
-            this.setActive(!this.getActive());
+            if (this.getEnabled()) {
+                this.setActive(!this.getActive());
+            }
             event.preventDefault();
         });
 
-        this.bimViewer.on("reset", ()=>{
+        this.bimViewer.on("reset", () => {
             this.setActive(false);
         });
+
+        this._active = false;
+        this._buttonElement.classList.remove("active");
     }
 
     setActive(active, done) {
