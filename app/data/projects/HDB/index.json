@@ -16,7 +16,8 @@
     },
     "viewerContent": {
         "modelsLoaded": [
-            "design"
+            "design",
+            "PointCloud"
         ]
     },
     "viewerState": {
