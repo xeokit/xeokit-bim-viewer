@@ -21156,12 +21156,12 @@ class Sn {
     }
 
     getGeometry(e, t, i, s) {
-        const r = this._dataDir + "/projects/" + e + "/models/" + t + "/geometry.xkt";
+        const r = this._dataDir + "/geometry.xkt";
         f.loadArraybuffer(r, i, s)
     }
 
     getObjectInfo(e, t, i, s, r) {
-        const o = this._dataDir + "/projects/" + e + "/models/" + t + "/objects/" + i + ".json";
+        const o = this._dataDir +  "/" + i + ".json";
         f.loadJSON(o, s, r)
     }
 
