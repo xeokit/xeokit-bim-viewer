@@ -1260,6 +1260,7 @@ const f = {
                 }), 0)
             }
         } else {
+            console.log(e);
             const s = new XMLHttpRequest;
             s.open("GET", e, !0), s.responseType = "arraybuffer", s.onreadystatechange = function () {
                 4 === s.readyState && (200 === s.status ? t(s.response) : i("loadArrayBuffer error : " + s.response))
