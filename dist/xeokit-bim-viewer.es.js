@@ -21161,7 +21161,7 @@ class Sn {
     }
 
     getObjectInfo(e, t, i, s, r) {
-        const o = this._dataDir + "/projects/" + e + "/models/" + t + "/objects/" + i + "/properties.json";
+        const o = this._dataDir + "/projects/" + e + "/models/" + t + "/objects/" + i + ".json";
         f.loadJSON(o, s, r)
     }
 
