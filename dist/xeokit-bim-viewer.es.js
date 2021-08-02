@@ -21142,17 +21142,17 @@ class Sn {
     }
 
     getProjects(e, t) {
-        const i = this._dataDir + "/projects/index.json";
+        const i = "./data" + "/projects/index.json";
         f.loadJSON(i, e, t)
     }
 
     getProject(e, t, i) {
-        const s = this._dataDir + "/projects/" + e + "/index.json";
+        const s = "./data" + "/projects/" + e + "/index.json";
         f.loadJSON(s, t, i)
     }
 
     getMetadata(e, t, i, s) {
-        const r = this._dataDir + "/projects/" + e + "/models/" + t + "/metadata.json";
+        const r = "./data" + "/projects/" + e + "/models/" + t + "/metadata.json";
         f.loadJSON(r, i, s)
     }
 
@@ -21167,7 +21167,7 @@ class Sn {
     }
 
     getIssues(e, t, i, s) {
-        const r = this._dataDir + "/projects/" + e + "/models/" + t + "/issues.json";
+        const r = "./data" + "/projects/" + e + "/models/" + t + "/issues.json";
         f.loadJSON(r, i, s)
     }
 }
