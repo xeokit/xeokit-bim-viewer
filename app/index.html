@@ -17,7 +17,7 @@
        data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
 
 <input type="checkbox" id="inspector_toggle"/>
-<label for="inspector_toggle" class="XXxeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x"
+<label id="inspector_toggle_label" for="inspector_toggle" class="XXxeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x"
        XXdata-xeokit-i18ntip="toolbar.toggleInspector" data-tippy-content="Toggle inspector"></label>
 <div id="myInspector"></div>
 
@@ -83,10 +83,6 @@
             enableQueryObjects: enableQueryObjects
         });
 
-        const propertiesInspector = new PropertiesInspector({
-            containerElement: document.getElementById("myInspector")
-        });
-
         bimViewer.localeService.on("updated", () => {
 
             // Create tooltip, and possibly label text, on each element tagged as localized
@@ -125,37 +121,46 @@
 
         // Object properties queries
 
-        document.getElementById("inspector_toggle").addEventListener('change', function () {
-            bimViewer.setQueryEnabled(this.checked);
-        });
+        setExplorerToggleShown(enableQueryObjects);
 
-        bimViewer.on("queryPicked", (event) => {
+        if (enableQueryObjects) {
 
-            setInspectorOpen(true);
-
-            bimViewer.getObjectInfo(event.projectId, event.modelId, event.objectId, (objectInfo) => {
-                propertiesInspector.setObjectInfo(objectInfo);
-
-            }, (errMsg) => {
-
-                propertiesInspector.setObjectInfo({
-                    "Type": event.objectType,
-                    // "Desc": IFCElementDescriptions[event.objectType],
-                    "Name": event.objectName,
-                    "ID": event.objectId,
-                    "Model": event.modelId,
-                    "Project": event.projectId
-                    // ,
-                    // "Area": "[Calculate]",
-                    // "Boundary": [0, 0, 0, 0, 0, 0],
-                    // "Center": [0, 0, 0]
-                }, event.objectType);
+            const propertiesInspector = new PropertiesInspector({
+                containerElement: document.getElementById("myInspector")
             });
-        });
 
-        bimViewer.on("queryNotPicked", () => {
-            propertiesInspector.setObjectInfo({});
-        });
+            document.getElementById("inspector_toggle").addEventListener('change', function () {
+                bimViewer.setQueryEnabled(this.checked);
+            });
+
+            bimViewer.on("queryPicked", (event) => {
+
+                setInspectorOpen(true);
+
+                bimViewer.getObjectInfo(event.projectId, event.modelId, event.objectId, (objectInfo) => {
+                    propertiesInspector.setObjectInfo(objectInfo);
+
+                }, (errMsg) => {
+
+                    propertiesInspector.setObjectInfo({
+                        "Type": event.objectType,
+                        // "Desc": IFCElementDescriptions[event.objectType],
+                        "Name": event.objectName,
+                        "ID": event.objectId,
+                        "Model": event.modelId,
+                        "Project": event.projectId
+                        // ,
+                        // "Area": "[Calculate]",
+                        // "Boundary": [0, 0, 0, 0, 0, 0],
+                        // "Center": [0, 0, 0]
+                    }, event.objectType);
+                });
+            });
+
+            bimViewer.on("queryNotPicked", () => {
+                propertiesInspector.setObjectInfo({});
+            });
+        }
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
             console.log("addModel: " + JSON.stringify(event, null, "\t"));
@@ -304,6 +309,13 @@
                 hashParams[d(e[1])] = d(e[2]);
             }
             return hashParams;
+        }
+
+        function setExplorerToggleShown(explorerToggleShown) {
+            const toggle = document.getElementById("inspector_toggle_label");
+            if (toggle) {
+                toggle.style.visibility = explorerToggleShown ? "visible" : "hidden";
+            }
         }
 
         function setExplorerOpen(explorerOpen) {

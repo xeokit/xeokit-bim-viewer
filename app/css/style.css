@@ -201,6 +201,7 @@ body {
     pointer-events: all;
     z-index: 100000;
     transition: all 300ms ease-in-out;
+    visibility: hidden;
 }
 
 .inspector_toggle_label:hover {
