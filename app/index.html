@@ -50,9 +50,13 @@
 
         const enableEditModels = (requestParams.enableEditModels === "true");
 
+	const urlParams = new URLSearchParams(window.location.search);
+	const bucket = urlParams.get('bucket');
+	const key = urlParams.get('key');
+	const s3Url = `https://${bucket}.s3.ap-southeast-1.amazonaws.com/${key}`;
         // Server client will load data from the file systems
         const server = new Server({
-            dataDir: "./data"//"https://is2b-dev-xeokit.s3.ap-southeast-1.amazonaws.com/projects/HDB/models/design"
+            dataDir: s3Url//"./data"//"https://is2b-dev-xeokit.s3.ap-southeast-1.amazonaws.com/projects/HDB/models/design"
         });
 
         // Create  BIMViewer that loads data via the Server
