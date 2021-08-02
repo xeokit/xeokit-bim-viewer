@@ -50,10 +50,8 @@ class ObjectContextMenu extends ContextMenu {
             items: [
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.viewFit&quot;) || &quot;View Fit&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;View Fit&quot;,
+                        doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
                             const entity = context.entity;
@@ -69,10 +67,8 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.viewFitAll&quot;) || &quot;View Fit All&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;View Fit All&quot;,
+                        doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
                             const sceneAABB = scene.getAABB(scene.visibleObjectIds);
@@ -84,10 +80,8 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.showInTree&quot;) || &quot;Show in Tree&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;Show in Tree&quot;,
+                        doAction: function (context) {
                             const objectId = context.entity.id;
                             context.showObjectInExplorers(objectId);
                         }
@@ -95,21 +89,17 @@ class ObjectContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hide&quot;) || &quot;Hide&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Hide&quot;,
+                        getEnabled: function (context) {
                             return context.entity.visible;
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.entity.visible = false;
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hideOthers&quot;) || &quot;Hide Others&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;Hide Others&quot;,
+                        doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
                             const entity = context.entity;
@@ -127,25 +117,21 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hideAll&quot;) || &quot;Hide All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Hide All&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numVisibleObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.showAll&quot;) || &quot;Show All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Show All&quot;,
+                        getEnabled: function (context) {
                             const scene = context.viewer.scene;
                             return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsPickable(scene.xrayedObjectIds, true);
@@ -155,23 +141,19 @@ class ObjectContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xray&quot;) || &quot;X-Ray&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;X-Ray&quot;,
+                        getEnabled: function (context) {
                             return (!context.entity.xrayed);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const entity = context.entity;
                             entity.xrayed = true;
                             entity.pickable = false;
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayOthers&quot;) || &quot;X-Ray Others&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;X-Ray Others&quot;,
+                        doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
                             const entity = context.entity;
@@ -192,14 +174,12 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayAll&quot;) || &quot;X-Ray All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;X-Ray All&quot;,
+                        getEnabled: function (context) {
                             const scene = context.viewer.scene;
                             return (scene.numXRayedObjects &lt; scene.numObjects);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsPickable(scene.objectIds, false);
@@ -207,13 +187,11 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayNone&quot;) || &quot;X-Ray None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;X-Ray None&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numXRayedObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const scene = context.viewer.scene;
                             const xrayedObjectIds = scene.xrayedObjectIds;
                             scene.setObjectsPickable(xrayedObjectIds, true);
@@ -223,49 +201,41 @@ class ObjectContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.select&quot;) || &quot;Select&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Select&quot;,
+                        getEnabled: function (context) {
                             return (!context.entity.selected);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.entity.selected = true;
 
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.undoSelect&quot;) || &quot;Undo Select&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Undo Select&quot;,
+                        getEnabled: function (context) {
                             return context.entity.selected;
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.entity.selected = false;
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.selectNone&quot;) || &quot;Select None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Select None&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numSelectedObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
                         }
                     }
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Clear Slices&quot;,
+                        getEnabled: function (context) {
                             return (context.bimViewer.getNumSections() &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.bimViewer.clearSections();
                         }
                     }
@@ -273,7 +243,7 @@ class ObjectContextMenu extends ContextMenu {
             ]
         });
     }
-}
+};
 
 export {ObjectContextMenu};</code></pre>
 

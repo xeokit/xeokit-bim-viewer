@@ -13,9 +13,10 @@
 
 <body>
 <input type="checkbox" id="explorer_toggle"/>
-<label for="explorer_toggle" class="xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
-       data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
+<label for="explorer_toggle" class="explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
+       data-tippy-content="Toggle explorer panel"></label>
 <div id="myExplorer"></div>
+<div id="infoBox" [ngStyle]="{'background-color': dynamicColor}">111</div>
 <div id="myToolbar"></div>
 <div id="myViewer">
     <canvas id="myCanvas"></canvas>
@@ -31,16 +32,11 @@
 
     // Set up application
 
-    import {Server, BIMViewer, LocaleService} from "../dist/xeokit-bim-viewer.es.js";
-
-    import {messages as localeMessages} from "./locales/messages.js";
-
+    import {Server, BIMViewer} from "../dist/xeokit-bim-viewer.es.js";
+    
     window.onload = function () {
 
         const requestParams = getRequestParams();
-
-        // Localization
-        const locale = requestParams.locale || "en";
 
         // Project to load into the viewer
         const projectId = requestParams.projectId;
@@ -54,70 +50,64 @@
 
         const enableEditModels = (requestParams.enableEditModels === "true");
 
+	const urlParams = new URLSearchParams(window.location.search);
+	const bucket = urlParams.get('bucket');
+	const path = urlParams.get('path');
+	const s3Url = `https://${bucket}.s3.ap-southeast-1.amazonaws.com/${path}`;
         // Server client will load data from the file systems
         const server = new Server({
-            dataDir: "./data"
+            dataDir: s3Url//"./data"//"https://is2b-dev-xeokit.s3.ap-southeast-1.amazonaws.com/projects/HDB/models/design"
         });
 
         // Create  BIMViewer that loads data via the Server
         const bimViewer = new BIMViewer(server, {
-            localeService: new LocaleService({
-                messages: localeMessages,
-                locale: locale
-            }),
             canvasElement: document.getElementById("myCanvas"), // WebGL canvas
             explorerElement: document.getElementById("myExplorer"), // Left panel
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
             navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
             busyModelBackdropElement: document.getElementById("myViewer"),
             enableEditModels: enableEditModels
+
         });
 
-        bimViewer.localeService.on("updated", () => {
-
-            // Create tooltip, and possibly label text, on each element tagged as localized
-
-            const localizedElements = document.querySelectorAll('.xeokit-i18n');
-
-            localizedElements.forEach((localizedElement) => {
-
-                // Update text label
-                if (localizedElement.dataset.xeokitI18n) {
-                    localizedElement.innerText = bimViewer.localeService.translate(localizedElement.dataset.xeokitI18n);
-                }
-
-                // Create text for tooltip
-                if (localizedElement.dataset.xeokitI18ntip) {
-                    localizedElement.dataset.tippyContent = bimViewer.localeService.translate(localizedElement.dataset.xeokitI18ntip);
-                }
-
-                // Create tooltip from text, or update existing tooltip
-                if (localizedElement.dataset.tippyContent) {
-                    if (localizedElement._tippy) {
-                        localizedElement._tippy.setContent(localizedElement.dataset.tippyContent);
-                    } else {
-                        tippy(localizedElement, {
-                            appendTo: "parent",
-                            zIndex: 1000000,
-                            allowHTML: true
-                        });
-                    }
-                }
-            });
+        // Create tooltips on various HTML elements created by BIMViewer
+        tippy('[data-tippy-content]', {
+            appendTo: "parent",
+            zIndex: 100000
         });
-
-
+	var posX = 0, posY = 0;
+	document.addEventListener("click", function (e) {
+        	posX = e.clientX;
+        	posY = e.clientY;
+    	})
         // Configure our viewer
         bimViewer.setConfigs({});
-
+        
         // Log info on whatever objects we click with the BIMViewer's Query tool
         bimViewer.on("queryPicked", (event) => {
-            bimViewer.getObjectInfo(event.projectId, event.modelId, event.objectId, (objectInfo) => {
-                alert(JSON.stringify(objectInfo, null, "\t"));
-            }, (errMsg) => {
-                alert(errMsg);
-            })
-            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+            var obj = JSON.parse(JSON.stringify(event, null, ""));
+            var info = document.getElementById("infoBox").innerHTML;
+            bimViewer.getObjectInfo("HDB", "design", obj.objectId, (objectInfo) => {
+                    var new_info = JSON.parse(JSON.stringify(objectInfo, null, "\t")).info;
+		    document.getElementById("infoBox").innerHTML = new_info;
+		    new_info = document.getElementById("infoBox").innerHTML;
+                    console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+		    bimViewer.setAllObjectsSelected(false);
+                    if (new_info != info){
+                        document.getElementById("infoBox").innerHTML = new_info;
+                        document.getElementById("infoBox").style.display = "block";
+			document.getElementById("infoBox").style.top = posY + "px";
+			document.getElementById("infoBox").style.left = posX + "px";
+			bimViewer.setObjectsSelected([obj.objectId], true);
+                    } else {
+			bimViewer.setAllObjectsSelected(false);
+                        document.getElementById("infoBox").innerHTML = "";
+                        document.getElementById("infoBox").style.display = "none";
+                    }
+                    info = document.getElementById("infoBox").innerHTML;
+                }, (errMsg) => {
+                    console.log("Oops! There was an error getting info for this object: " + errMsg);
+                });
         });
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
@@ -278,7 +268,6 @@
 
         window.bimViewer = bimViewer; // For debugging
     };
-
 
 </script>
 

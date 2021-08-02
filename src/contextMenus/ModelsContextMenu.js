@@ -14,24 +14,20 @@ class ModelsContextMenu extends ContextMenu {
         const items = [
             [
                 {
-                    getTitle: (context) => {
-                        return context.viewer.localeService.translate("modelsContextMenu.loadModel") || "Load";
-                    },
-                    getEnabled: (context) => {
+                    title: "Load",
+                    getEnabled: function (context) {
                         return (!context.bimViewer.isModelLoaded(context.modelId));
                     },
-                    doAction: (context) => {
+                    doAction: function (context) {
                         context.bimViewer.loadModel(context.modelId);
                     }
                 },
                 {
-                    getTitle: (context) => {
-                        return context.viewer.localeService.translate("modelsContextMenu.unloadModel") || "Unload";
-                    },
-                    getEnabled: (context) => {
+                    title: "Unload",
+                    getEnabled: function (context) {
                         return context.bimViewer.isModelLoaded(context.modelId);
                     },
-                    doAction: (context) => {
+                    doAction: function (context) {
                         context.bimViewer.unloadModel(context.modelId);
                     }
                 }
@@ -42,24 +38,20 @@ class ModelsContextMenu extends ContextMenu {
 
             items.push([
                 {
-                    getTitle: (context) => {
-                        return context.viewer.localeService.translate("modelsContextMenu.editModel") || "Edit";
-                    },
-                    getEnabled: (context) => {
+                    title: "Edit",
+                    getEnabled: function (context) {
                         return true;
                     },
-                    doAction: (context) => {
+                    doAction: function (context) {
                         context.bimViewer.editModel(context.modelId);
                     }
                 },
                 {
-                    getTitle: (context) => {
-                        return context.viewer.localeService.translate("modelsContextMenu.deleteModel") || "Delete";
-                    },
-                    getEnabled: (context) => {
+                    title: "Delete",
+                    getEnabled: function (context) {
                         return true;
                     },
-                    doAction: (context) => {
+                    doAction: function (context) {
                         context.bimViewer.deleteModel(context.modelId);
                     }
                 }
@@ -68,28 +60,24 @@ class ModelsContextMenu extends ContextMenu {
 
         items.push([
             {
-                getTitle: (context) => {
-                    return context.viewer.localeService.translate("modelsContextMenu.loadAllModels") || "Load All";
-                },
-                getEnabled: (context) => {
+                title: "Load All",
+                getEnabled: function (context) {
                     const bimViewer = context.bimViewer;
                     const modelIds = bimViewer.getModelIds();
                     const loadedModelIds = bimViewer.getLoadedModelIds();
                     return (loadedModelIds.length < modelIds.length);
                 },
-                doAction: (context) => {
+                doAction: function (context) {
                     context.bimViewer.loadAllModels();
                 }
             },
             {
-                getTitle: (context) => {
-                    return context.viewer.localeService.translate("modelsContextMenu.unloadAllModels") || "Unload All";
-                },
-                getEnabled: (context) => {
+                title: "Unload All",
+                getEnabled: function (context) {
                     const loadedModelIds = context.bimViewer.getLoadedModelIds();
                     return (loadedModelIds.length > 0);
                 },
-                doAction: (context) => {
+                doAction: function (context) {
                     context.bimViewer.unloadAllModels();
                 }
             }
@@ -97,13 +85,11 @@ class ModelsContextMenu extends ContextMenu {
 
         items.push([
             {
-                getTitle: (context) => {
-                    return context.viewer.localeService.translate("modelsContextMenu.clearSlices") || "Clear Slices";
-                },
-                getEnabled: (context) => {
+                title: "Clear Slices",
+                getEnabled: function (context) {
                     return (context.bimViewer.getNumSections() > 0);
                 },
-                doAction: (context) => {
+                doAction: function (context) {
                     context.bimViewer.clearSections();
                 }
             }

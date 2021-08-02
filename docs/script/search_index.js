@@ -480,12 +480,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/bimviewer.js~bimviewer#localeservice",
-    "class/src/BIMViewer.js~BIMViewer.html#instance-get-localeService",
-    "src/BIMViewer.js~BIMViewer#localeService",
-    "member"
-  ],
-  [
     "src/bimviewer.js~bimviewer#opentab",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-openTab",
     "src/BIMViewer.js~BIMViewer#openTab",

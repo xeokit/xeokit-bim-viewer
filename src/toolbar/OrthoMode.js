@@ -23,7 +23,7 @@ class OrthoMode extends Controller {
 
         this._buttonElement.addEventListener("click", (event) => {
             if (this.getEnabled()) {
-                this.setActive(!this.getActive(), ()=>{});
+                this.setActive(!this.getActive());
             }
             event.preventDefault();
         });
@@ -70,19 +70,11 @@ class OrthoMode extends Controller {
     }
 
     _enterOrthoMode(done) {
-        if (done) {
-            this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, done);
-        } else {
-            this.viewer.cameraFlight.jumpTo({projection: "ortho"});
-        }
+        this.viewer.cameraFlight.flyTo({projection: "ortho", duration: 0.5}, done);
     }
 
     _exitOrthoMode(done) {
-        if (done) {
-            this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, done);
-        } else {
-            this.viewer.cameraFlight.jumpTo({projection: "perspective"});
-        }
+        this.viewer.cameraFlight.flyTo({projection: "perspective", duration: 0.5}, done);
     }
 }
 

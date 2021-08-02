@@ -52,9 +52,7 @@ class TreeViewContextMenu extends ContextMenu {
             items: [
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.viewFit&quot;) || &quot;View Fit&quot;;
-                        },
+                        title: &quot;View Fit&quot;,
                         doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
@@ -79,9 +77,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.viewFitAll&quot;) || &quot;View Fit All&quot;;
-                        },
+                        title: &quot;View Fit All&quot;,
                         doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
@@ -96,9 +92,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.isolate&quot;) || &quot;Isolate&quot;;
-                        },
+                        title: &quot;Isolate&quot;,
                         doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
@@ -129,9 +123,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.hide&quot;) || &quot;Hide&quot;;
-                        },
+                        title: &quot;Hide&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -144,9 +136,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.hideOthers&quot;) || &quot;Hide Others&quot;;
-                        },
+                        title: &quot;Hide Others&quot;,
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.visibleObjectIds, false);
@@ -163,9 +153,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.hideAll&quot;) || &quot;Hide All&quot;;
-                        },
+                        title: &quot;Hide All&quot;,
                         getEnabled: function (context) {
                             return (context.viewer.scene.visibleObjectIds.length &gt; 0);
                         },
@@ -176,9 +164,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.show&quot;) || &quot;Show&quot;;
-                        },
+                        title: &quot;Show&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -196,9 +182,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.showOthers&quot;) || &quot;Shows Others&quot;;
-                        },
+                        title: &quot;Show Others&quot;,
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
@@ -215,9 +199,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.showAll&quot;) || &quot;Show All&quot;;
-                        },
+                        title: &quot;Show All&quot;,
                         getEnabled: function (context) {
                             const scene = context.viewer.scene;
                             return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
@@ -232,9 +214,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.xray&quot;) || &quot;X-Ray&quot;;
-                        },
+                        title: &quot;X-Ray&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -250,9 +230,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.undoXray&quot;) || &quot;Undo X-Ray&quot;;
-                        },
+                        title: &quot;Undo X-Ray&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -266,9 +244,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.xrayOthers&quot;) || &quot;X-Ray Others&quot;;
-                        },
+                        title: &quot;X-Ray Others&quot;,
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
@@ -287,9 +263,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.xrayAll&quot;) || &quot;X-Ray All&quot;;
-                        },
+                        title: &quot;X-Ray All&quot;,
                         doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
@@ -299,9 +273,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.xrayNone&quot;) || &quot;X-Ray None&quot;;
-                        },
+                        title: &quot;X-Ray None&quot;,
                         getEnabled: function (context) {
                             return (context.viewer.scene.numXRayedObjects &gt; 0);
                         },
@@ -315,9 +287,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.select&quot;) || &quot;Select&quot;;
-                        },
+                        title: &quot;Select&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -331,9 +301,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.undoSelect&quot;) || &quot;Undo Select&quot;;
-                        },
+                        title: &quot;Undo Select&quot;,
                         doAction: function (context) {
                             context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) =&gt; {
                                 if (treeViewNode.objectId) {
@@ -346,9 +314,7 @@ class TreeViewContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.selectNone&quot;) || &quot;Select None&quot;;
-                        },
+                        title: &quot;Select None&quot;,
                         getEnabled: function (context) {
                             return (context.viewer.scene.numSelectedObjects &gt; 0);
                         },
@@ -359,9 +325,7 @@ class TreeViewContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;treeViewContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
-                        },
+                        title: &quot;Clear Slices&quot;,
                         getEnabled: function (context) {
                             return (context.bimViewer.getNumSections() &gt; 0);
                         },

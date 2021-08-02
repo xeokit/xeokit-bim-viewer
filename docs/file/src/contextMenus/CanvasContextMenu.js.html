@@ -50,10 +50,8 @@ class CanvasContextMenu extends ContextMenu {
             items: [
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.viewFitAll&quot;) || &quot;View Fit All&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;View Fit All&quot;,
+                        doAction: function (context) {
                             const viewer = context.viewer;
                             const scene = viewer.scene;
                             const sceneAABB = scene.getAABB(scene.visibleObjectIds);
@@ -67,25 +65,21 @@ class CanvasContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.hideAll&quot;) || &quot;Hide All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Hide All&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numVisibleObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.showAll&quot;) || &quot;Show All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Show all&quot;,
+                        getEnabled: function (context) {
                             const scene = context.viewer.scene;
                             return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.xrayedObjectIds, false);
@@ -94,14 +88,12 @@ class CanvasContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.xRayAll&quot;) || &quot;X-Ray All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;X-Ray All&quot;,
+                        getEnabled: function (context) {
                             const scene = context.viewer.scene;
                             return (scene.numXRayedObjects &lt; scene.numObjects);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
@@ -109,13 +101,11 @@ class CanvasContextMenu extends ContextMenu {
                         }
                     },
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.xRayNone&quot;) || &quot;X-Ray None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;X-Ray None&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numXRayedObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             const xrayedObjectIds = context.viewer.scene.xrayedObjectIds;
                             context.viewer.scene.setObjectsPickable(xrayedObjectIds, true);
                             context.viewer.scene.setObjectsXRayed(xrayedObjectIds, false);
@@ -124,36 +114,30 @@ class CanvasContextMenu extends ContextMenu {
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.selectNone&quot;) || &quot;Select None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Select None&quot;,
+                        getEnabled: function (context) {
                             return (context.viewer.scene.numSelectedObjects &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
                         }
                     }
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.resetView&quot;) || &quot;Reset View&quot;;
-                        },
-                        doAction: (context) =&gt; {
+                        title: &quot;Reset View&quot;,
+                        doAction: function (context) {
                             context.bimViewer.resetView();
                         }
                     }
                 ],
                 [
                     {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;canvasContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
+                        title: &quot;Clear Slices&quot;,
+                        getEnabled: function (context) {
                             return (context.bimViewer.getNumSections() &gt; 0);
                         },
-                        doAction: (context) =&gt; {
+                        doAction: function (context) {
                             context.bimViewer.clearSections();
                         }
                     }

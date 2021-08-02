@@ -68,7 +68,6 @@ Read the documentation below to get started.
     * [Modal Busy Dialog](#modal-busy-dialog)
     * [Tooltips](#tooltips)
     * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
-- [Localizing a Viewer](#localizing-a-viewer)
 - [xeokit Components Used in the Viewer](#xeokit-components-used-in-the-viewer)
 - [Building the Viewer](#building-the-viewer)
     * [Installing from NPM](#installing-from-npm)
@@ -91,7 +90,6 @@ Read the documentation below to get started.
 * Point clouds.
 * Supports IFC2x3 and IFC4.
 * Customize viewer appearance with your own CSS.
-* Localization support.  
 * JavaScript programming API for all viewer functions.
 
 ## Demos
@@ -310,8 +308,7 @@ Let's imagine that we want to deploy the Duplex and West Riverside Hospital proj
 within our database, we'll deploy a ````geometry.xkt````, which is an XKT V7 file containing the model's geometry, and
 a ````metadata.json ````, containing IFC metadata for the model.
 
-We'll just assume that you've got those files already, and are not ready to convert their original IFC files into XKT
-V8+.
+We'll just assume that you've got those files already, and are not ready to convert their original IFC files into XKT V8+.    
 
 Here's our database files again, this time with XKT V7 and accompanying metadata files:
 
@@ -368,8 +365,7 @@ new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` i
         }
     ],
     "viewerConfigs": {
-        "externalMetadata": true,
-        // <<------------ ADD THIS
+        "externalMetadata": true, // <<------------ ADD THIS
         "backgroundColor": [
             0.9,
             0.9,
@@ -390,7 +386,8 @@ new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` i
 
 ## Programming API
 
-> **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.**
+> **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
+programming API.**
 
 The viewer is implemented by the
 JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html)
@@ -930,73 +927,6 @@ export {IFCObjectDefaults};
 
 Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have
 configurations in there so that we can see through them.
-
-### Localizing a Viewer
-
-The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented 
-by a xeokit [LocaleService](http://localhost:8080/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html). 
-
-The snippet below shows how it's done, using a partial set of the translations expected by the components
-within the BIMViewer. We'll just show the translations for the faces of the NavCube. We'll also load the translations 
-inline, rather than fetch them from a separate JSON file, as we would in practice.
-
-To see all the translations expected by a BIMViewer, take a look at the translations we've configured for the bundled BIMViewer 
-demo application:  [````/app/locales/messages.js````](/app/locales/messages.js).  
-
-````javascript
-myBIMViewer.localeService.loadMessages({
-    "en": { // English
-        "NavCube": {
-            "front": "Front",
-            "back": "Back",
-            "top": "Top",
-            "bottom": "Bottom",
-            "left": "Left",
-            "right": "Right"
-        },
-        //..
-    },
-    "mi": { // Māori
-        "NavCube": {
-            "front": "Mua",
-            "back": "Tuarā",
-            "top": "Runga",
-            "bottom": "Raro",
-            "left": "Mauī",
-            "right": "Tika"
-        },
-        //..
-    },
-    "fr": { // French
-        "NavCube": {
-            "front": "Avant",
-            "back": "Arrière",
-            "top": "Supérieur",
-            "bottom": "Inférieur",
-            "left": "Gauche",
-            "right": "Droit"
-        },
-        //..
-    },
-    "jp": { // Japanese
-        "NavCube": {
-            "front": "前部",
-            "backLabel": "裏",
-            "topLabel": "上",
-            "bottomLabel": "底",
-            "leftLabel": "左",
-            "rightLabel": "右"
-        },
-        //..
-    },
-});
-````
-
-Once we've loaded our translations, we can switch the BIMViewer between locales like so:
-
-````javascript
-myBIMViewer.localeService.locale = "jp";
-````
 
 ## xeokit Components Used in the Viewer
 
