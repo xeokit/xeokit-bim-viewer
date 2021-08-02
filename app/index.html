@@ -52,7 +52,7 @@
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const bucket = urlParams.get('bucket');
-	const key = urlParams.get('path');
+	const path = urlParams.get('path');
 	const s3Url = `https://${bucket}.s3.ap-southeast-1.amazonaws.com/${path}`;
         // Server client will load data from the file systems
         const server = new Server({
