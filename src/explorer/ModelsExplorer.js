@@ -235,7 +235,7 @@ class ModelsExplorer extends Controller {
             return;
         }
 
-        this.bimViewer._busyModal.show("Loading: " + modelInfo.name);
+        this.bimViewer._busyModal.show(`${this.viewer.localeService.translate("busyModal.loading") || "Loading"} ${modelInfo.name}`);
 
         const externalMetadata = this.bimViewer.getConfig("externalMetadata");
 

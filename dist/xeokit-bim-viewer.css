@@ -566,7 +566,7 @@
 .xeokit-context-menu ul li:hover {
     background: black;
     color: white;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .xeokit-context-menu ul li span {

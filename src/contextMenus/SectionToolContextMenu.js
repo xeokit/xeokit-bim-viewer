@@ -40,8 +40,8 @@ class SectionToolContextMenu extends ContextMenu {
 
             sectionPlanesMenuItems.push({
 
-                getTitle: () => {
-                    return "Slice #" + (i + 1);
+                getTitle: (context) => {
+                    return `${context.viewer.localeService.translate("sectionToolContextMenu.slice") || "Slice"} #` + (i + 1);
                 },
 
                 doHoverEnter(context) {
@@ -56,10 +56,9 @@ class SectionToolContextMenu extends ContextMenu {
                 items: [ // Submenu
                     [ // Group
                         {
-                            getTitle(context) {
-                                return "Edit"
+                            getTitle: (context) => {
+                                return context.viewer.localeService.translate("sectionToolContextMenu.edit") || "Edit";
                             },
-
                             doAction: (context) => {
 
                                 sectionPlanesPlugin.hideControl();
@@ -82,19 +81,17 @@ class SectionToolContextMenu extends ContextMenu {
                             }
                         },
                         {
-                            getTitle(context) {
-                                return "Flip"
+                            getTitle: (context) => {
+                                return context.viewer.localeService.translate("sectionToolContextMenu.flip") || "Flip";
                             },
-
                             doAction: (context) => {
                                 sectionPlane.flipDir();
                             }
                         },
                         {
-                            getTitle(context) {
-                                return "Delete"
+                            getTitle: (context) => {
+                                return context.viewer.localeService.translate("sectionToolContextMenu.delete") || "Delete";
                             },
-
                             doAction: (context) => {
                                 sectionPlane.destroy();
                             }
@@ -107,20 +104,24 @@ class SectionToolContextMenu extends ContextMenu {
         this.items = [
             [
                 {
-                    title: "Clear Slices",
-                    getEnabled: function (context) {
+                    getTitle: (context) => {
+                        return context.viewer.localeService.translate("sectionToolContextMenu.clearSlices") || "Clear Slices";
+                    },
+                    getEnabled: (context) => {
                         return (context.bimViewer.getNumSections() > 0);
                     },
-                    doAction: function (context) {
+                    doAction: (context) => {
                         context.bimViewer.clearSections();
                     }
                 },
                 {
-                    title: "Flip Slices",
-                    getEnabled: function (context) {
+                    getTitle: (context) => {
+                        return context.viewer.localeService.translate("sectionToolContextMenu.flipSlices") || "Flip Slices";
+                    },
+                    getEnabled: (context) => {
                         return (context.bimViewer.getNumSections() > 0);
                     },
-                    doAction: function (context) {
+                    doAction: (context) => {
                         context.bimViewer.flipSections();
                     }
                 }

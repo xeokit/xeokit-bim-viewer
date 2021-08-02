@@ -37,7 +37,7 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><a href="https://twitter.com/xeolabs"><img src="https://img.shields.io/twitter/follow/xeolabs?style=social" alt="Twitter Follow"></a> <a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a>
 <a href="https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer"><img src="https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge" alt></a></p>
 <p><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png" alt="Screenshot"></a></p>
 <hr>
@@ -103,6 +103,7 @@ using <a href="https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c37
 <li><a href="#customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</a></li>
 </ul>
 </li>
+<li><a href="#localizing-a-viewer">Localizing a Viewer</a></li>
 <li><a href="#xeokit-components-used-in-the-viewer">xeokit Components Used in the Viewer</a></li>
 <li><a href="#building-the-viewer">Building the Viewer</a><ul>
 <li><a href="#installing-from-npm">Installing from NPM</a></li>
@@ -125,6 +126,7 @@ using <a href="https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c37
 <li>Point clouds.</li>
 <li>Supports IFC2x3 and IFC4.</li>
 <li>Customize viewer appearance with your own CSS.</li>
+<li>Localization support.  </li>
 <li>JavaScript programming API for all viewer functions.</li>
 </ul>
 <h2 id="demos">Demos</h2><p>Click the links below to run some demos.</p>
@@ -492,7 +494,8 @@ IFC metadata. In this section, we&apos;ll describe how to deploy models that use
 <p>Let&apos;s imagine that we want to deploy the Duplex and West Riverside Hospital projects, using XKT V7. For each model
 within our database, we&apos;ll deploy a <code>geometry.xkt</code>, which is an XKT V7 file containing the model&apos;s geometry, and
 a <code>metadata.json</code>, containing IFC metadata for the model.</p>
-<p>We&apos;ll just assume that you&apos;ve got those files already, and are not ready to convert their original IFC files into XKT V8+.    </p>
+<p>We&apos;ll just assume that you&apos;ve got those files already, and are not ready to convert their original IFC files into XKT
+V8+.</p>
 <p>Here&apos;s our database files again, this time with XKT V7 and accompanying metadata files:</p>
 <pre><code><code class="source-code prettyprint">.app/data/projects
   &#x2502;
@@ -542,7 +545,8 @@ new  <code>externalMetadata: true</code> configuration to the <code>viewerConfig
         }
     ],
     &quot;viewerConfigs&quot;: {
-        &quot;externalMetadata&quot;: true, // &lt;&lt;------------ ADD THIS
+        &quot;externalMetadata&quot;: true,
+        // &lt;&lt;------------ ADD THIS
         &quot;backgroundColor&quot;: [
             0.9,
             0.9,
@@ -561,8 +565,7 @@ new  <code>externalMetadata: true</code> configuration to the <code>viewerConfig
 }</code>
 </code></pre>
 <h2 id="programming-api">Programming API</h2><blockquote>
-<p><strong>This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
-programming API.</strong></p>
+<p><strong>This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.</strong></p>
 </blockquote>
 <p>The viewer is implemented by the
 JavaScript <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html"><code>BIMViewer</code></a>
@@ -951,6 +954,63 @@ export {IFCObjectDefaults};</code>
 </code></pre>
 <p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have
 configurations in there so that we can see through them.</p>
+<h3 id="localizing-a-viewer">Localizing a Viewer</h3><p>The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented 
+by a xeokit <a href>I18nLocaleService</a>. </p>
+<p>The snippet below shows how it&apos;s done, using a partial set of the translations expected by the components
+within the BIMViewer. We&apos;ll just show the translations for the faces of the NavCube. We&apos;ll also load the translations 
+inline, rather than fetch them from a separate JSON file, as we would in practice.</p>
+<p>To see all the translations expected by a BIMViewer, take a look at the translations we&apos;ve configured for the bundled BIMViewer 
+demo application:  <a href="/app/locales/messages.js"><code>/app/locales/messages.js</code></a>.  </p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.localeService.loadMessages({
+    &quot;en&quot;: { // English
+        &quot;NavCube&quot;: {
+            &quot;front&quot;: &quot;Front&quot;,
+            &quot;back&quot;: &quot;Back&quot;,
+            &quot;top&quot;: &quot;Top&quot;,
+            &quot;bottom&quot;: &quot;Bottom&quot;,
+            &quot;left&quot;: &quot;Left&quot;,
+            &quot;right&quot;: &quot;Right&quot;
+        },
+        //..
+    },
+    &quot;mi&quot;: { // M&#x101;ori
+        &quot;NavCube&quot;: {
+            &quot;front&quot;: &quot;Mua&quot;,
+            &quot;back&quot;: &quot;Tuar&#x101;&quot;,
+            &quot;top&quot;: &quot;Runga&quot;,
+            &quot;bottom&quot;: &quot;Raro&quot;,
+            &quot;left&quot;: &quot;Mau&#x12B;&quot;,
+            &quot;right&quot;: &quot;Tika&quot;
+        },
+        //..
+    },
+    &quot;fr&quot;: { // French
+        &quot;NavCube&quot;: {
+            &quot;front&quot;: &quot;Avant&quot;,
+            &quot;back&quot;: &quot;Arri&#xE8;re&quot;,
+            &quot;top&quot;: &quot;Sup&#xE9;rieur&quot;,
+            &quot;bottom&quot;: &quot;Inf&#xE9;rieur&quot;,
+            &quot;left&quot;: &quot;Gauche&quot;,
+            &quot;right&quot;: &quot;Droit&quot;
+        },
+        //..
+    },
+    &quot;jp&quot;: { // Japanese
+        &quot;NavCube&quot;: {
+            &quot;front&quot;: &quot;&#x524D;&#x90E8;&quot;,
+            &quot;backLabel&quot;: &quot;&#x88CF;&quot;,
+            &quot;topLabel&quot;: &quot;&#x4E0A;&quot;,
+            &quot;bottomLabel&quot;: &quot;&#x5E95;&quot;,
+            &quot;leftLabel&quot;: &quot;&#x5DE6;&quot;,
+            &quot;rightLabel&quot;: &quot;&#x53F3;&quot;
+        },
+        //..
+    },
+});</code>
+</code></pre>
+<p>Once we&apos;ve loaded our translations, we can switch the BIMViewer between locales like so:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.localeService.locale = &quot;jp&quot;;</code>
+</code></pre>
 <h2 id="xeokit-components-used-in-the-viewer">xeokit Components Used in the Viewer</h2><p>The viewer is built on various <a href="http://xeokit.io">xeokit SDK</a> components and plugins that are designed to accelerate the
 development of BIM and CAD visualization apps.</p>
 <p>The table below lists the main ones used in this viewer.</p>

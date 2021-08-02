@@ -66,45 +66,49 @@ import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
 import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 import {OrthoMode} from &quot;./toolbar/OrthoMode.js&quot;;
 
-function createExplorerTemplate(cfg) {
-    const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;
+function createExplorerTemplate(cfg, viewer) {
+    function translate(key, fallback) {
+        return viewer.localeService.translate(key) || fallback;
+    }
+
+    const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt; 
     &lt;div class=&quot;xeokit-tab xeokit-modelsTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn&quot; href=&quot;#&quot;&gt;Models&lt;/a&gt;
+        &lt;a class=&quot;xeokit-tab-btn&quot; href=&quot;#&quot;&gt;${translate(&quot;modelsExplorer.title&quot;, &quot;Models&quot;)}&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
             &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-loadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;Load all models&quot;&gt;Load all&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-unloadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;Unload all models&quot;&gt;Unload all&lt;/button&gt;` +
-        (cfg.enableEditModels ? `&lt;button type=&quot;button&quot; class=&quot;xeokit-addModel xeokit-btn disabled&quot; data-tippy-content=&quot;Add model&quot;&gt;Add&lt;/button&gt;` : ``) +
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-loadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.loadAllTip&quot;, &quot;Load all models&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.loadAll&quot;, &quot;Load all&quot;)}&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-unloadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.unloadAllTip&quot;, &quot;Unload all models&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.unloadAll&quot;, &quot;Unload all&quot;)}&lt;/button&gt;` +
+        (cfg.enableEditModels ? `&lt;button type=&quot;button&quot; class=&quot;xeokit-addModel xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.addTip&quot;, &quot;Add model&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.add&quot;, &quot;Add&quot;)}&lt;/button&gt;` : ``) +
         `&lt;/div&gt;
             &lt;div class=&quot;xeokit-models&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-tab xeokit-objectsTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Objects&lt;/a&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;objectsExplorer.title&quot;, &quot;Objects&quot;)}&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
          &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-            &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;Show all objects&quot;&gt;Show all&lt;/button&gt;
-            &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all objects&quot;&gt;Hide all&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;objectsExplorer.showAllTip&quot;, &quot;Show all objects&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;objectsExplorer.hideAllTip&quot;, &quot;Hide all objects&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
         &lt;/div&gt;
         &lt;div class=&quot;xeokit-objects xeokit-tree-panel&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-tab xeokit-classesTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Classes&lt;/a&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;classesExplorer.title&quot;, &quot;Classes&quot;)}&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
             &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;Show all classes&quot;&gt;Show all&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all classes&quot;&gt;Hide all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;classesExplorer.showAllTip&quot;, &quot;Show all classes&quot;)}&quot;&gt;${translate(&quot;classesExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;classesExplorer.hideAllTip&quot;, &quot;Hide all classes&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
             &lt;/div&gt;
             &lt;div class=&quot;xeokit-classes xeokit-tree-panel&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
      &lt;div class=&quot;xeokit-tab xeokit-storeysTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;Storeys&lt;/a&gt;
+        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;storeysExplorer.title&quot;, &quot;Storeys&quot;)}&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
          &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;Show all storeys&quot;&gt;Show all&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;Hide all storeys&quot;&gt;Hide all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;storeysExplorer.showAllTip&quot;, &quot;Show all storeys&quot;)}&quot;&gt;${translate(&quot;storeysExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;storeysExplorer.showAllTip&quot;, &quot;Hide all storeys&quot;)}&quot;&gt;${translate(&quot;storeysExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
             &lt;/div&gt;
              &lt;div class=&quot;xeokit-storeys xeokit-tree-panel&quot;&gt;&lt;/div&gt;
         &lt;/div&gt;
@@ -113,34 +117,39 @@ function createExplorerTemplate(cfg) {
     return explorerTemplate;
 }
 
-const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
+function createToolbarTemplate(cfg, viewer) {
+    function translate(key, fallback) {
+        return viewer.localeService.translate(key) || fallback;
+    }
+    const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
     &lt;!-- Reset button --&gt;
     &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-reset xeokit-btn fa fa-home fa-2x disabled&quot; data-tippy-content=&quot;Reset view&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-reset xeokit-btn fa fa-home fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.resetViewTip&quot;, &quot;Reset view&quot;)}&quot;&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
         &lt;!-- 3D Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.toggle2d3dTip&quot;, &quot;Toggle 2D/3D&quot;)}&quot;&gt;&lt;/button&gt;
         &lt;!-- Perspective/Ortho Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled&quot; data-tippy-content=&quot;Toggle Perspective/Ortho&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.togglePerspectiveTip&quot;, &quot;Toggle Perspective/Ortho&quot;)}&quot;&gt;&lt;/button&gt;
         &lt;!-- Fit button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-tippy-content=&quot;View fit&quot;&gt;&lt;/button&gt;   
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.viewFitTip&quot;, &quot;View fit&quot;)}&quot;&gt;&lt;/button&gt;   
         &lt;!-- First Person mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-tippy-content=&quot;First person&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.firstPersonTip&quot;, &quot;Toggle first-person mode&quot;)}&quot;&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;!-- Tools button group --&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
         &lt;!-- Hide tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled&quot; data-tippy-content=&quot;Hide objects&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.hideObjectsTip&quot;, &quot;Hide objects&quot;)}&quot;&gt;&lt;/button&gt;
         &lt;!-- Select tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled&quot; data-tippy-content=&quot;Select objects&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.selectObjectsTip&quot;, &quot;Select objects&quot;)}&quot;&gt;&lt;/button&gt;
         &lt;!-- Query tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;Query objects&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.queryObjectsTip&quot;, &quot;Query objects&quot;)}&quot;&gt;&lt;/button&gt;
         &lt;!-- section tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;Slice objects&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot; data-tippy-content=&quot;Slices menu&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.sliceObjectsTip&quot;, &quot;Slice objects&quot;)}&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.slicesMenuTip&quot;, &quot;Slices menu&quot;)}&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;${translate(&quot;toolbar.numSlicesTip&quot;, &quot;Number of existing slices&quot;)}&quot;&gt;&lt;/div&gt;&lt;/button&gt;
     &lt;/div&gt;
-
 &lt;/div&gt;`;
+    return toolbarTemplate;
+}
 
 function initTabs(containerElement) {
 
@@ -233,6 +242,7 @@ class BIMViewer extends Controller {
         };
 
         const viewer = new Viewer({
+            localeService: cfg.localeService,
             canvasElement: canvasElement,
             transparent: false,
             backgroundColor: [1, 1, 1],
@@ -257,8 +267,8 @@ class BIMViewer extends Controller {
 
         this._enableAddModels = !!cfg.enableEditModels;
 
-        explorerElement.innerHTML = createExplorerTemplate(cfg);
-        toolbarElement.innerHTML = toolbarTemplate;
+        explorerElement.innerHTML = createExplorerTemplate(cfg, viewer);
+        toolbarElement.innerHTML = createToolbarTemplate(cfg, viewer);
 
         this._explorerElement = explorerElement;
 
@@ -316,18 +326,15 @@ class BIMViewer extends Controller {
                 if (active) {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = &quot;orbit&quot;;
-                    //  bimViewer.viewer.cameraControl.followPointer = true;
                 } else {
                     bimViewer._firstPersonMode.setActive(false);
                     bimViewer.viewer.cameraControl.navMode = &quot;planView&quot;;
-                    //  bimViewer.viewer.cameraControl.followPointer = false;
                 }
                 threeDActive = active;
             };
 
             this.setFirstPersonModeActive = (active) =&gt; {
                 bimViewer.viewer.cameraControl.navMode = active ? &quot;firstPerson&quot; : (threeDActive ? &quot;orbit&quot; : &quot;planView&quot;);
-                //bimViewer.viewer.cameraControl.followPointer = bimViewer.viewer.cameraControl.navMode !== &quot;planView&quot;;
                 firstPersonActive = active;
             };
         })(this);
@@ -527,7 +534,7 @@ class BIMViewer extends Controller {
         scene.camera.perspective.near = 0.01;
         scene.camera.perspective.far = 3000.0;
         scene.camera.ortho.near = 0.01;
-        scene.camera.ortho.far = 3000.0;
+        scene.camera.ortho.far = 2000.0; //
 
         // Scalable Ambient Obscurance (SAO) defaults
         // Since SAO is non-interactive, set to higher-quality
@@ -598,6 +605,15 @@ class BIMViewer extends Controller {
     }
 
     /**
+     * Returns the LocaleService that was configured on this Viewer.
+     *
+     * @return {LocaleService} The LocaleService.
+     */
+    get localeService() {
+        return this._viewer.localeService;
+    }
+
+    /**
      * Sets a batch of viewer configurations.
      *
      * Note that this method is not to be confused with {@link BIMViewer#setViewerState}, which batch-updates various states of the viewer&apos;s UI and 3D view.
@@ -648,7 +664,7 @@ class BIMViewer extends Controller {
                 case &quot;cameraFar&quot;:
                     const far = parseFloat(value);
                     this.viewer.scene.camera.perspective.far = far;
-                    this.viewer.scene.camera.ortho.far = far;
+                    // this.viewer.scene.camera.ortho.far = far;
                     this._configs[name] = far;
                     break;
 
@@ -743,6 +759,7 @@ class BIMViewer extends Controller {
     //------------------------------------------------------------------------------------------------------------------
 
     /**
+     * Gets information on all available projects.
      * Gets information on all available projects.
      *
      * See [Getting Info on Available Projects](https://xeokit.github.io/xeokit-bim-viewer/docs/#getting-info-on-available-projects) for usage.
@@ -1613,6 +1630,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} [options.spacesVisible=false] Indicates whether ````IfcSpace```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.openingsVisible=false] Indicates whether ````IfcOpening```` types should be forced visible in the viewpoint.
      * @param {Boolean} [options.spaceBoundariesVisible=false] Indicates whether the boundaries of ````IfcSpace```` types should be visible in the viewpoint.
+     * @param {Boolean} [options.reverseClippingPlanes=false] When ````true````, clipping planes are reversed (https://github.com/buildingSMART/BCF-XML/issues/193)
      * @param {Boolean} [options.defaultInvisible=false] When ````true````, will save the default visibility of all objects
      * as ````false````. This means that when we load the viewpoint again, and there are additional models loaded that
      * were not saved in the viewpoint, those models will be hidden when we load the viewpoint, and that only the
@@ -1703,7 +1721,7 @@ class BIMViewer extends Controller {
      * @param {*} [options] Options for setting the viewpoint.
      * @param {Boolean} [options.rayCast=true] When ````true```` (default), will attempt to set {@link Camera#look} to the closest
      * point of surface intersection with a ray fired from the BCF ````camera_view_point```` in the direction of ````camera_direction````.
-     * @param {Boolean} [options.immediate] When ````true```` (default), immediately set camera position.
+     * @param {Boolean} [options.immediate=true] When ````true```` (default), immediately set camera position.
      * @param {Boolean} [options.duration] Flight duration in seconds.  Overrides {@link CameraFlightAnimation#duration}.
      * @param {Boolean} [options.reset=true] When ````true```` (default), set {@link Entity#xrayed} and {@link Entity#highlighted} ````false```` on all scene objects.
      * @param {Boolean} [options.reverseClippingPlanes=false] When ````true````, clipping planes are reversed (https://github.com/buildingSMART/BCF-XML/issues/193)

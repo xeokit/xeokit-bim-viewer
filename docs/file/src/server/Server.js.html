@@ -118,7 +118,7 @@ class Server {
      * @param {Function} error Callback through which an error message is returned on error.
      */
     getObjectInfo(projectId, modelId, objectId, done, error) {
-        const url = this._dataDir + &quot;/projects/&quot; + projectId + &quot;/models/&quot; + modelId + &quot;/objects/&quot; + objectId + &quot;/properties.json&quot;;
+        const url = this._dataDir + &quot;/projects/&quot; + projectId + &quot;/models/&quot; + modelId + &quot;/props/&quot; + objectId + &quot;.json&quot;;
         utils.loadJSON(url, done, error);
     }
 
