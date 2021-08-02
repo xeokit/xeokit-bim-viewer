@@ -21157,7 +21157,7 @@ class Sn {
     }
 
     getGeometry(e, t, i, s) {
-        const r = this._dataDir + "/geometry.xkt";
+        const r = this._dataDir + "/model.xkt";
         f.loadArraybuffer(r, i, s)
     }
 
