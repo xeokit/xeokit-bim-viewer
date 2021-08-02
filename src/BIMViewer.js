@@ -101,9 +101,7 @@ function createToolbarTemplate(cfg, viewer) {
         <!-- Hide tool button -->
         <button type="button" class="xeokit-i18n xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled" data-xeokit-i18ntip="toolbar.hideObjectsTip" data-tippy-content="Hide objects"></button>
         <!-- Select tool button -->
-        <button type="button" class="xeokit-i18n xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-xeokit-i18ntip="toolbar.selectObjectsTip" data-tippy-content="Select objects"></button>
-        <!-- Query tool button -->
-        <button type="button" class="xeokit-i18n xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled" data-xeokit-i18ntip="toolbar.queryObjectsTip" data-tippy-content="Query objects"></button>
+        <button type="button" class="xeokit-i18n xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-xeokit-i18ntip="toolbar.selectObjectsTip" data-tippy-content="Select objects"></button>    
         <!-- section tool button -->
         <button type="button" class="xeokit-i18n xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-xeokit-i18ntip="toolbar.sliceObjectsTip" data-tippy-content="Slice objects">
             <div class="xeokit-i18n xeokit-section-menu-button disabled" data-xeokit-i18ntip="toolbar.slicesMenuTip"  data-tippy-content="Slices menu">
@@ -168,6 +166,7 @@ class BIMViewer extends Controller {
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
+     * @param {Boolean} [cfg.enableQueryObjects=false] TODO.
      */
     constructor(server, cfg = {}) {
 
@@ -191,7 +190,6 @@ class BIMViewer extends Controller {
         const explorerElement = cfg.explorerElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
-        const queryInfoPanelElement = cfg.queryInfoPanelElement;
         const busyModelBackdropElement = cfg.busyModelBackdropElement;
 
         explorerElement.oncontextmenu = (e) => {
@@ -220,6 +218,9 @@ class BIMViewer extends Controller {
 
         this._configs = {};
 
+        this._enableAddModels = !!cfg.enableEditModels;
+        this._enableQueryObjects = !!cfg.enableQueryObjects;
+
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
@@ -229,8 +230,6 @@ class BIMViewer extends Controller {
 
         this._customizeViewer();
         this._initCanvasContextMenus();
-
-        this._enableAddModels = !!cfg.enableEditModels;
 
         explorerElement.innerHTML = createExplorerTemplate(cfg, viewer);
         toolbarElement.innerHTML = createToolbarTemplate(cfg, viewer);
@@ -332,8 +331,6 @@ class BIMViewer extends Controller {
         });
 
         this._queryTool = new QueryTool(this, {
-            buttonElement: toolbarElement.querySelector(".xeokit-query"),
-            queryInfoPanelElement: queryInfoPanelElement,
             active: false
         });
 
@@ -373,6 +370,10 @@ class BIMViewer extends Controller {
             this.fire("modelUnloaded", modelId);
         });
 
+        this._queryTool.on("active", (active) => {
+            this.fire("queryToolActive", active);
+        });
+
         this._queryTool.on("queryPicked", (event) => {
             this.fire("queryPicked", event);
         });
@@ -385,7 +386,7 @@ class BIMViewer extends Controller {
             this.fire("reset", true);
         });
 
-        this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);
+        this._mutexActivation([this._hideTool, this._selectionTool, this._sectionTool]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
             this.setAllObjectsVisible(true);
@@ -512,8 +513,8 @@ class BIMViewer extends Controller {
 
     _initCanvasContextMenus() {
 
-        this._canvasContextMenu = new CanvasContextMenu();
-        this._objectContextMenu = new ObjectContextMenu();
+        this._canvasContextMenu = new CanvasContextMenu(this);
+        this._objectContextMenu = new ObjectContextMenu(this);
 
         this.viewer.cameraControl.on("rightClick", (e) => {
 
@@ -1557,6 +1558,24 @@ class BIMViewer extends Controller {
      */
     getOrthoEnabled() {
         return this._orthoMode.getActive();
+    }
+
+    /**
+     * Sets whether query pick mode is active.
+     *
+     * @param {Boolean} enabled Set true to switch into query mode, else false.
+     */
+    setQueryEnabled(enabled) {
+        this._queryTool.setActive(enabled);
+    }
+
+    /**
+     * Gets whether query pick mode is active.
+     *
+     * @returns {boolean} True when in query mode, else false.
+     */
+    getQueryEnabled() {
+        return this._queryTool.getActive();
     }
 
     /**

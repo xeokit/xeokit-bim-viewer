@@ -15,12 +15,19 @@
 <input type="checkbox" id="explorer_toggle"/>
 <label for="explorer_toggle" class="xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
        data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
+
+<input type="checkbox" id="inspector_toggle"/>
+<label for="inspector_toggle" class="xeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x"
+       data-xeokit-i18ntip="toolbar.toggleInspector" data-tippy-content="Toggle inspector"></label>
+<div id="myInspector"></div>
+
 <div id="myExplorer"></div>
 <div id="myToolbar"></div>
 <div id="myViewer">
     <canvas id="myCanvas"></canvas>
     <canvas id="myNavCubeCanvas"></canvas>
 </div>
+
 </body>
 
 <!-- App tooltips libraries-->
@@ -34,6 +41,7 @@
     import {Server, BIMViewer, LocaleService} from "../dist/xeokit-bim-viewer.es.js";
 
     import {messages as localeMessages} from "./locales/messages.js";
+    import {PropertiesInspector} from "./src/PropertiesInspector.js";
 
     window.onload = function () {
 
@@ -53,6 +61,7 @@
         setExplorerOpen(openExplorer === "true");
 
         const enableEditModels = (requestParams.enableEditModels === "true");
+        const enableQueryObjects = (requestParams.enableQueryObjects === "true");
 
         // Server client will load data from the file systems
         const server = new Server({
@@ -70,7 +79,12 @@
             toolbarElement: document.getElementById("myToolbar"), // Toolbar
             navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
             busyModelBackdropElement: document.getElementById("myViewer"),
-            enableEditModels: enableEditModels
+            enableEditModels: enableEditModels,
+            enableQueryObjects: enableQueryObjects
+        });
+
+        const propertiesInspector = new PropertiesInspector({
+            containerElement: document.getElementById("myInspector")
         });
 
         bimViewer.localeService.on("updated", () => {
@@ -106,18 +120,41 @@
             });
         });
 
-
         // Configure our viewer
         bimViewer.setConfigs({});
 
-        // Log info on whatever objects we click with the BIMViewer's Query tool
+        // Object properties queries
+
+        document.getElementById("inspector_toggle").addEventListener('change', function () {
+            bimViewer.setQueryEnabled(this.checked);
+        });
+
         bimViewer.on("queryPicked", (event) => {
+
+            setInspectorOpen(true);
+
             bimViewer.getObjectInfo(event.projectId, event.modelId, event.objectId, (objectInfo) => {
-                alert(JSON.stringify(objectInfo, null, "\t"));
+                propertiesInspector.setObjectInfo(objectInfo);
+
             }, (errMsg) => {
-                alert(errMsg);
-            })
-            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+
+                propertiesInspector.setObjectInfo({
+                    "Type": event.objectType,
+                    // "Desc": IFCElementDescriptions[event.objectType],
+                    "Name": event.objectName,
+                    "ID": event.objectId,
+                    "Model": event.modelId,
+                    "Project": event.projectId
+                    // ,
+                    // "Area": "[Calculate]",
+                    // "Boundary": [0, 0, 0, 0, 0, 0],
+                    // "Center": [0, 0, 0]
+                }, event.objectType);
+            });
+        });
+
+        bimViewer.on("queryNotPicked", () => {
+            propertiesInspector.setObjectInfo({});
         });
 
         bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
@@ -274,6 +311,14 @@
             if (toggle) {
                 toggle.checked = explorerOpen;
             }
+        }
+
+        function setInspectorOpen(inspectorOpen) {
+            const toggle = document.getElementById("inspector_toggle");
+            if (toggle) {
+                toggle.checked = inspectorOpen;
+            }
+            bimViewer.setQueryEnabled(inspectorOpen);
         }
 
         window.bimViewer = bimViewer; // For debugging

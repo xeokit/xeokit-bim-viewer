@@ -7,64 +7,22 @@ class QueryTool extends Controller {
 
         super(parent);
 
-        if (!cfg.buttonElement) {
-            throw "Missing config: buttonElement";
-        }
-
-        const buttonElement = cfg.buttonElement;
-
-        this.on("enabled", (enabled) => {
-            if (!enabled) {
-                buttonElement.classList.add("disabled");
-            } else {
-                buttonElement.classList.remove("disabled");
-            }
-        });
-
         this.on("active", (active) => {
-            if (active) {
 
-                buttonElement.classList.add("active");
+            if (active) {
 
                 this._onPick = this.viewer.cameraControl.on("picked", (pickResult) => {
                     if (!pickResult.entity) {
                         return;
                     }
-                    const entity = pickResult.entity;
-                    const model = entity.model;
-                    if (!model) { // OK to click on entities that don't belong to models - could be a navigation gizmo or helper
-                        return;
-                    }
-                    const projectId = this.bimViewer.getLoadedProjectId();
-                    if (!projectId) {
-                        this.error("Query tool: should be a project loaded - ignoring query-pick");
-                        return;
-                    }
-                    const modelId = model.id;
-                    const objectId = entity.id;
-                    const metaObject = this.viewer.metaScene.metaObjects[objectId];
-                    if (!metaObject) {
-                        return;
-                    }
-                    const objectName = metaObject.name;
-                    const objectType = metaObject.type;
-                    const objectQueryResult = {
-                        projectId: projectId,
-                        modelId: modelId,
-                        objectId: objectId,
-                        objectName: objectName,
-                        objectType: objectType
-                    };
-                    this.fire("queryPicked", objectQueryResult);
+                    this.queryEntity(pickResult.entity);
                 });
 
-                this._onPickedNothing = this.viewer.cameraControl.on("pickedNothing", (pickResult) => {
+                this._onPickedNothing = this.viewer.cameraControl.on("pickedNothing", () => {
                     this.fire("queryNotPicked", false);
                 });
 
             } else {
-
-                buttonElement.classList.remove("active");
 
                 if (this._onPick !== undefined) {
                     this.viewer.cameraControl.off(this._onPick);
@@ -75,18 +33,65 @@ class QueryTool extends Controller {
             }
         });
 
-        buttonElement.addEventListener("click", (event) => {
-            this.bimViewer._sectionTool.hideControl();
-            if (this.getEnabled()) {
-                const active = this.getActive();
-                this.setActive(!active);
-            }
-            event.preventDefault();
-        });
-
         this.bimViewer.on("reset", () => {
             this.setActive(false);
         });
+    }
+
+    queryObject(objectId) {
+        const metaObject = this.viewer.metaScene.metaObjects[objectId];
+        if (metaObject) {
+            this.queryMetaObject(metaObject);
+        }
+    }
+
+    queryMetaObject(metaObject) {
+        const projectId = this.bimViewer.getLoadedProjectId();
+        if (!projectId) {
+            this.error("Query tool: should be a project loaded - ignoring query-pick");
+            return;
+        }
+        const metaModel = metaObject.metaModel;
+        const modelId = metaModel.id;
+        const objectId = metaObject.id;
+        const objectName = metaObject.name;
+        const objectType = metaObject.type;
+        const objectQueryResult = {
+            projectId: projectId,
+            modelId: modelId,
+            objectId: objectId,
+            objectName: objectName,
+            objectType: objectType
+        };
+        this.fire("queryPicked", objectQueryResult);
+    }
+
+    queryEntity(entity) {
+        const model = entity.model;
+        if (!model) { // Navigation gizmo
+            return;
+        }
+        const projectId = this.bimViewer.getLoadedProjectId();
+        if (!projectId) {
+            this.error("Query tool: should be a project loaded - ignoring query-pick");
+            return;
+        }
+        const modelId = model.id;
+        const objectId = entity.id;
+        const metaObject = this.viewer.metaScene.metaObjects[objectId];
+        if (!metaObject) {
+            return;
+        }
+        const objectName = metaObject.name;
+        const objectType = metaObject.type;
+        const objectQueryResult = {
+            projectId: projectId,
+            modelId: modelId,
+            objectId: objectId,
+            objectName: objectName,
+            objectType: objectType
+        };
+        this.fire("queryPicked", objectQueryResult);
     }
 }
 
