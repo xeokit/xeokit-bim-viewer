@@ -88749,7 +88749,7 @@ function createExplorerTemplate(cfg, viewer) {
             <div class="xeokit-btn-group">
                 <button type="button" class="xeokit-i18n xeokit-loadAllModels xeokit-btn disabled" data-xeokit-i18n="modelsExplorer.loadAll" data-xeokit-i18ntip="modelsExplorer.loadAllTip" data-tippy-content="Load all models">Load all</button>
                 <button type="button" class="xeokit-i18n xeokit-unloadAllModels xeokit-btn disabled" data-xeokit-i18n="modelsExplorer.unloadAll"  data-xeokit-i18ntip="modelsExplorer.unloadAllTip" data-tippy-content="Unload all models">Unload all</button>` +
-        (cfg.enableEditModels ? `<button type="button" class=xeokit-i18n "xeokit-addModel xeokit-btn disabled" data-xeokit-i18n="modelsExplorer.add"  data-xeokit-i18ntip="modelsExplorer.addTip" data-tippy-content="Add model">Add</button>` : ``) + `</div>
+        (cfg.enableEditModels ? `<button type="button" class="xeokit-i18n xeokit-addModel xeokit-btn disabled" data-xeokit-i18n="modelsExplorer.add"  data-xeokit-i18ntip="modelsExplorer.addTip" data-tippy-content="Add model">Add</button>` : ``) + `</div>
             <div class="xeokit-models" ></div>
         </div>
     </div>
