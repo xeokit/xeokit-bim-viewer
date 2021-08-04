@@ -8,20 +8,16 @@ class QueryTool extends Controller {
         super(parent);
 
         this.on("active", (active) => {
-
             if (active) {
-
                 this._onPick = this.viewer.cameraControl.on("picked", (pickResult) => {
                     if (!pickResult.entity) {
                         return;
                     }
                     this.queryEntity(pickResult.entity);
                 });
-
                 this._onPickedNothing = this.viewer.cameraControl.on("pickedNothing", () => {
                     this.fire("queryNotPicked", false);
                 });
-
             } else {
 
                 if (this._onPick !== undefined) {

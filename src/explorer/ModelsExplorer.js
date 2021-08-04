@@ -4,7 +4,7 @@ import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js
 import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
 import {ModelsContextMenu} from "../contextMenus/ModelsContextMenu.js";
 
-const tempVec3 = math.vec3();
+const tempVec3a = math.vec3();
 
 /** @private */
 class ModelsExplorer extends Controller {
@@ -279,7 +279,6 @@ class ModelsExplorer extends Controller {
                     const checkbox = document.getElementById("" + modelId);
                     checkbox.checked = true;
                     const scene = this.viewer.scene;
-                    const aabb = scene.getAABB(scene.visibleObjectIds);
                     this._numModelsLoaded++;
                     this._unloadModelsButtonElement.classList.remove("disabled");
                     if (this._numModelsLoaded < this._numModels) {
@@ -288,10 +287,7 @@ class ModelsExplorer extends Controller {
                         this._loadModelsButtonElement.classList.add("disabled");
                     }
                     if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
-                        this.viewer.cameraFlight.jumpTo({
-                            aabb: aabb
-                        });
-                        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3);
+                        this._jumpToInitialCamera();
                         this.fire("modelLoaded", modelId);
                         this.bimViewer._busyModal.hide();
                         if (done) {
@@ -313,6 +309,27 @@ class ModelsExplorer extends Controller {
                     error(errMsg);
                 }
             });
+    }
+
+    _jumpToInitialCamera() {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        const diag = math.getAABB3Diag(aabb);
+        const center = math.getAABB3Center(aabb, tempVec3a);
+        const camera = scene.camera;
+        const fitFOV = camera.perspective.fov;
+        const dist = Math.abs(diag / Math.tan(45 * math.DEGTORAD));
+        const dir = math.normalizeVec3((camera.yUp) ? [-0.5, -0.7071, -0.5] : [-1, 1, -1]);
+        const up = math.normalizeVec3((camera.yUp) ? [-0.5, 0.7071, -0.5] : [-1, 1, 1]);
+        viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
+        viewer.cameraFlight.jumpTo({
+            look: center,
+            eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
+            up: up,
+            orthoScale: diag * 1.1
+        });
     }
 
     unloadModel(modelId) {

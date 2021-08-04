@@ -108,11 +108,11 @@ class ResetAction extends Controller {
         const aabb = scene.getAABB(scene.visibleObjectIds);
         const diag = math.getAABB3Diag(aabb);
         const center = math.getAABB3Center(aabb, tempVec3a);
-        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
         const camera = scene.camera;
-        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
-    //    const up = math.mulVec3Scalar((camera.yUp) ? [-1, 1, -1] : [-1, 1, 1], -1, []);
-        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
+        const fitFOV = camera.perspective.fov;
+        const dist = Math.abs(diag / Math.tan(45 * math.DEGTORAD));
+        const dir = math.normalizeVec3((camera.yUp) ? [-0.5, -0.7071, -0.5] : [-1, 1, -1]);
+        const up = math.normalizeVec3((camera.yUp) ? [-0.5, 0.7071, -0.5] : [-1, 1, 1]);
         viewer.cameraControl.pivotPos = center;
         viewer.cameraControl.planView = false;
         viewer.cameraFlight.flyTo({

@@ -61974,14 +61974,14 @@ class NavCubePlugin extends Plugin {
                     var aabb = self._fitVisible ? viewer.scene.getAABB(viewer.scene.visibleObjectIds) : viewer.scene.aabb;
                     var diag = math.getAABB3Diag(aabb);
                     math.getAABB3Center(aabb, center);
-                    var dist = Math.abs(diag / Math.tan(55.0 / 2));
+                    var dist = Math.abs(diag / Math.tan(self._cameraFitFOV * math.DEGTORAD));
                     viewer.cameraControl.pivotPos = center;
                     if (self._cameraFly) {
                         viewer.cameraFlight.flyTo({
                             look: center,
                             eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                             up: up || [0, 1, 0],
-                            orthoScale: diag * 1.3,
+                            orthoScale: diag * 1.1,
                             fitFOV: self._cameraFitFOV,
                             duration: self._cameraFlyDuration
                         }, ok);
@@ -61990,7 +61990,7 @@ class NavCubePlugin extends Plugin {
                             look: center,
                             eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
                             up: up || [0, 1, 0],
-                            orthoScale: diag * 1.3,
+                            orthoScale: diag * 1.1,
                             fitFOV: self._cameraFitFOV
                         }, ok);
                     }
@@ -85880,11 +85880,11 @@ class ResetAction extends Controller {
         const aabb = scene.getAABB(scene.visibleObjectIds);
         const diag = math.getAABB3Diag(aabb);
         const center = math.getAABB3Center(aabb, tempVec3a$10);
-        const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
         const camera = scene.camera;
-        const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
-    //    const up = math.mulVec3Scalar((camera.yUp) ? [-1, 1, -1] : [-1, 1, 1], -1, []);
-        const up = (camera.yUp) ? [-1, 1, -1] : [-1, 1, 1];
+        const fitFOV = camera.perspective.fov;
+        const dist = Math.abs(diag / Math.tan(45 * math.DEGTORAD));
+        const dir = math.normalizeVec3((camera.yUp) ? [-0.5, -0.7071, -0.5] : [-1, 1, -1]);
+        const up = math.normalizeVec3((camera.yUp) ? [-0.5, 0.7071, -0.5] : [-1, 1, 1]);
         viewer.cameraControl.pivotPos = center;
         viewer.cameraControl.planView = false;
         viewer.cameraFlight.flyTo({
@@ -86920,7 +86920,7 @@ class ModelsContextMenu extends ContextMenu {
     }
 }
 
-const tempVec3$8 = math.vec3();
+const tempVec3a$11 = math.vec3();
 
 /** @private */
 class ModelsExplorer extends Controller {
@@ -87195,7 +87195,6 @@ class ModelsExplorer extends Controller {
                     const checkbox = document.getElementById("" + modelId);
                     checkbox.checked = true;
                     const scene = this.viewer.scene;
-                    const aabb = scene.getAABB(scene.visibleObjectIds);
                     this._numModelsLoaded++;
                     this._unloadModelsButtonElement.classList.remove("disabled");
                     if (this._numModelsLoaded < this._numModels) {
@@ -87204,10 +87203,7 @@ class ModelsExplorer extends Controller {
                         this._loadModelsButtonElement.classList.add("disabled");
                     }
                     if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
-                        this.viewer.cameraFlight.jumpTo({
-                            aabb: aabb
-                        });
-                        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$8);
+                        this._jumpToInitialCamera();
                         this.fire("modelLoaded", modelId);
                         this.bimViewer._busyModal.hide();
                         if (done) {
@@ -87229,6 +87225,27 @@ class ModelsExplorer extends Controller {
                     error(errMsg);
                 }
             });
+    }
+
+    _jumpToInitialCamera() {
+        const viewer = this.viewer;
+        const scene = viewer.scene;
+        const aabb = scene.getAABB(scene.visibleObjectIds);
+        const diag = math.getAABB3Diag(aabb);
+        const center = math.getAABB3Center(aabb, tempVec3a$11);
+        const camera = scene.camera;
+        const fitFOV = camera.perspective.fov;
+        const dist = Math.abs(diag / Math.tan(45 * math.DEGTORAD));
+        const dir = math.normalizeVec3((camera.yUp) ? [-0.5, -0.7071, -0.5] : [-1, 1, -1]);
+        const up = math.normalizeVec3((camera.yUp) ? [-0.5, 0.7071, -0.5] : [-1, 1, 1]);
+        viewer.cameraControl.pivotPos = center;
+        viewer.cameraControl.planView = false;
+        viewer.cameraFlight.jumpTo({
+            look: center,
+            eye: [center[0] - (dist * dir[0]), center[1] - (dist * dir[1]), center[2] - (dist * dir[2])],
+            up: up,
+            orthoScale: diag * 1.1
+        });
     }
 
     unloadModel(modelId) {
@@ -87301,7 +87318,7 @@ class ModelsExplorer extends Controller {
     }
 }
 
-const tempVec3$9 = math.vec3();
+const tempVec3$8 = math.vec3();
 
 /**
  * @private
@@ -87392,7 +87409,7 @@ class TreeViewContextMenu extends ContextMenu {
                         });
                         const aabb = scene.getAABB(objectIds);
 
-                        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$9);
+                        viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$8);
 
                         scene.setObjectsXRayed(scene.xrayedObjectIds, false);
                         scene.setObjectsVisible(scene.visibleObjectIds, false);
@@ -87915,7 +87932,7 @@ class ClassesExplorer extends Controller {
     }
 }
 
-const tempVec3$a = math.vec3();
+const tempVec3$9 = math.vec3();
 
 /** @private */
 class StoreysExplorer extends Controller {
@@ -88057,7 +88074,7 @@ class StoreysExplorer extends Controller {
         const scene = this.viewer.scene;
         const aabb = scene.getAABB(objectIds);
 
-        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$a);
+        this.viewer.cameraControl.pivotPos = math.getAABB3Center(aabb, tempVec3$9);
 
         if (done) {
 
@@ -88103,7 +88120,7 @@ class StoreysExplorer extends Controller {
     }
 }
 
-const tempVec3a$11 = math.vec3();
+const tempVec3a$12 = math.vec3();
 
 /** @private */
 class ThreeDMode extends Controller {
@@ -88190,7 +88207,7 @@ class ThreeDMode extends Controller {
         const scene = viewer.scene;
         const aabb = scene.getAABB(scene.visibleObjectIds);
         const diag = math.getAABB3Diag(aabb);
-        const center = math.getAABB3Center(aabb, tempVec3a$11);
+        const center = math.getAABB3Center(aabb, tempVec3a$12);
         const dist = Math.abs(diag / Math.tan(65.0 / 2));     // TODO: fovy match with CameraFlight
         const camera = scene.camera;
         const dir = (camera.yUp) ? [-1, -1, -1] : [1, 1, 1];
@@ -88237,7 +88254,7 @@ class ThreeDMode extends Controller {
         const fitFOV = 45; // fitFOV;
         const sca = Math.abs(diag / Math.tan(fitFOV * math.DEGTORAD));
         const orthoScale2 = diag * 1.3;
-        const eye2 = tempVec3a$11;
+        const eye2 = tempVec3a$12;
 
         eye2[0] = look2[0] + (camera.worldUp[0] * sca);
         eye2[1] = look2[1] + (camera.worldUp[1] * sca);
