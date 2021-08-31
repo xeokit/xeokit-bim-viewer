@@ -341,6 +341,11 @@ class ContextMenu {
                     this.hide();
                 }
             });
+            document.addEventListener("touchstart", this._canvasTouchStartHandler = (event) => {
+                if (!event.target.classList.contains("xeokit-context-menu-item")) {
+                    this.hide();
+                }
+            });
         }
 
         if (cfg.items) {
@@ -82261,7 +82266,7 @@ class TouchPanRotateAndDollyHandler {
                 return;
             }
 
-            event.stopPropagation();
+            //event.stopPropagation();
             event.preventDefault();
 
             const touches = event.touches;
@@ -82557,8 +82562,6 @@ class TouchPickHandler {
             }
 
             activeTouches.length = touches.length;
-
-            e.stopPropagation();
 
         }, {passive: true});
 
