@@ -3,6 +3,9 @@ import {math, utils, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js
 const tempAABB = math.AABB3();
 const tempVec3 = math.vec3();
 
+/**
+ * @private
+ */
 class SectionToolContextMenu extends ContextMenu {
 
     constructor(cfg = {}) {

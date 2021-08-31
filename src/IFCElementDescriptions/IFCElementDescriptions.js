@@ -1,3 +1,6 @@
+/**
+ * @private
+ */
 const IFCElementDescriptions = {
     "IfcActionRequest": "A request is the act or instance of asking for something, such as a request for information, bid submission, or performance of work.",
     "IfcActor": "The IfcActor defines all actors or human agents involved in a project during its full life cycle. It facilitates the use of person and organization definitions in the resource part of the IFC object model. This includes name, address, telecommunication addresses, and roles.",
