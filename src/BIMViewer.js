@@ -521,7 +521,7 @@ class BIMViewer extends Controller {
             const event = e.event;
 
             const hit = this.viewer.scene.pick({
-                canvasPos: [event.offsetX, event.offsetY]
+                canvasPos: e.canvasPos
             });
 
             if (hit && hit.entity.isObject) {
@@ -539,14 +539,14 @@ class BIMViewer extends Controller {
                     },
                     entity: hit.entity
                 };
-                this._objectContextMenu.show(event.pageX, event.pageY);
+                this._objectContextMenu.show(e.pagePos[0], e.pagePos[1]);
             } else {
                 this._objectContextMenu.hide();
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
-                this._canvasContextMenu.show(event.pageX, event.pageY);
+                this._canvasContextMenu.show(e.pagePos[0], e.pagePos[1]);
             }
         });
     }
