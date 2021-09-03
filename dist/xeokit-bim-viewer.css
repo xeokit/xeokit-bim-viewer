@@ -114,7 +114,7 @@
 }
 
 .xeokit-tabs .xeokit-tab.active .xeokit-tab-btn {
-    background-color: #03103F;
+    background-color: #313961;
 }
 
 @media (min-width: 40em) {
@@ -822,4 +822,228 @@
 
 .xeokit-arrow-down.disabled:hover {
     border-color: #99A4AD transparent transparent transparent !important;
+}
+
+
+
+.xeokit-accordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.xeokit-accordion .xeokit-accordion-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 5px;
+}
+.xeokit-accordion .xeokit-accordion-container .xeokit-accordion-button {
+    margin: 0;
+    position: relative;
+    padding: 15px 15px;
+    color: #bdbdbd;
+    display: block;
+    font-weight: 500;
+    background-color: #313961;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, .15), 0 10px 10px -5px rgba(0, 0, 0, .1) !important;
+}
+.xeokit-accordion .xeokit-accordion-container .xeokit-accordion-button span {
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 14px;
+    right: 20px;
+    top: 18px;
+}
+.xeokit-accordion .xeokit-accordion-container .xeokit-accordion-button span:after {
+    content: '';
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #fff;
+    position: absolute;
+    top: 6px;
+}
+.xeokit-accordion .xeokit-accordion-container .xeokit-accordion-button span:before {
+    content: '';
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #fff;
+    position: absolute;
+    top: 6px;
+    transform: rotate(90deg);
+    transition: all 0.3s ease-in-out;
+}
+.xeokit-accordion .xeokit-accordion-container .xeokit-accordion-panel {
+    width: 100%;
+    color: #cfcfcf;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    height: auto;
+    max-height: 0;
+    padding: 0 10px;
+}
+.xeokit-accordion .xeokit-accordion-container.active .xeokit-accordion-button {
+    color: #cfcfcf;
+}
+.xeokit-accordion .xeokit-accordion-container.active .xeokit-accordion-button span::before {
+    transform: rotate(0deg);
+}
+.xeokit-accordion .xeokit-accordion-container.active .xeokit-accordion-panel {
+    padding: 0;
+    opacity: 1;
+    max-height: 500px;
+}
+
+
+
+
+.xeokit-propertiesTab .element-attributes {
+    padding-left: 15px;
+}
+
+.xeokit-propertiesTab .xeokit-tab-btn {
+    margin-left: 15px;
+}
+
+.xeokit-propertiesTab .title {
+    color: #CFCFCF;
+    font-size: 20px;
+    font-weight: normal;
+    padding-left: 0;
+    padding-top: 0;
+    padding-bottom: 20px;
+    margin-top: 12px;
+}
+
+.xeokit-propertiesTab .subtitle {
+    color: #CFCFCF;
+    font-size: 16px;
+    font-weight: normal;
+    padding-left: 0;
+}
+
+.xeokit-propertiesTab .subsubtitle {
+    color: #CFCFCF;
+    font-size: 14px;
+    font-weight: normal;
+    padding-left: 0;
+}
+
+.xeokit-propertiesTab .panel {
+    padding: 0 18px;
+    background: #03103F;
+    color: #CFCFCF;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.15s;
+}
+
+.xeokit-propertiesTab input {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+.xeokit-propertiesTab .row {
+    display: flex;
+}
+
+.xeokit-propertiesTab .row .col {
+    flex: 1;
+}
+
+.xeokit-propertiesTab .row .col:last-child {
+    margin-left: 1em;
+}
+
+.xeokit-propertiesTab .tabs {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
+}
+
+.xeokit-propertiesTab .tab {
+    width: 100%;
+    color: #CFCFCF;
+    overflow: hidden;
+}
+
+.xeokit-propertiesTab .tab-label {
+    display: flex;
+    padding: .5em .5em .5em 1em;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.xeokit-propertiesTab .tab-label:hover {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.xeokit-propertiesTab .tab-label::before {
+    content: "\276F";
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    transition: all 0.35s;
+}
+
+.xeokit-propertiesTab .tab-content {
+    max-height: 0;
+    padding: 0 1em;
+    transition: all 0.35s;
+    overflow: hidden;
+}
+
+.xeokit-btn {
+    box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.1);
+}
+
+.xeokit-table {
+    width: 100%;
+    margin-bottom: 1rem;
+    display: table;
+    /*border-collapse: separate;*/
+    box-sizing: border-box;
+    text-indent: initial;
+    /*border-spacing: 2px;*/
+}
+
+.xeokit-table .td1, .xeokit-table th {
+    padding: .6em;
+    vertical-align: top;
+    border-top: 1px solid #81819a;
+    border-right: 1px solid #81819a;
+    white-space: nowrap;
+    font-weight: bold;
+    width: 30%;
+}
+
+.xeokit-table tr:first-child td {
+    border-top: 0;
+}
+
+.xeokit-table .td2, .xeokit-table th {
+    padding: .5em;
+    vertical-align: top;
+    border-top: 1px solid #81819a;
+    width: 70%;
+}
+
+.xeokit-table th {
+    text-align: inherit;
+}
+
+.xeokit-table th {
+    display: table-cell;
+    vertical-align: inherit;
+    font-weight: bold;
 }

@@ -15,15 +15,20 @@ class TreeViewContextMenu extends ContextMenu {
 
     _buildMenu() {
 
+        const showObjectItems = [];
         const focusObjectItems = [];
 
-        if (this._bimViewer._enableQueryObjects) {
-            focusObjectItems.push({
+        if (this._bimViewer._enablePropertiesInspector) {
+            showObjectItems.push({
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showProperties") || "Show Properties";
+                    return context.viewer.localeService.translate("treeViewContextMenu.inspectProperties") || "Inspect Properties";
+                },
+                getShown(context) {
+                    return !!context.viewer.metaScene.metaObjects[context.treeViewNode.objectId];
                 },
                 doAction: (context) => {
-                    context.bimViewer._queryTool.queryObject(context.treeViewNode.objectId);
+                    const objectId = context.treeViewNode.objectId;
+                    context.bimViewer.showObjectProperties(objectId);
                 }
             });
         }
@@ -74,6 +79,7 @@ class TreeViewContextMenu extends ContextMenu {
         ]);
 
         this.items = [
+            showObjectItems,
             focusObjectItems,
             [
                 {

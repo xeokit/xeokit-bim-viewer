@@ -74,11 +74,12 @@ class Group {
  * @private
  */
 class Item {
-    constructor(id, getTitle, doAction, getEnabled) {
+    constructor(id, getTitle, doAction, getEnabled, getShown) {
         this.id = id;
         this.getTitle = getTitle;
         this.doAction = doAction;
         this.getEnabled = getEnabled;
+        this.getShown = getShown;
         this.itemElement = null;
         this.subMenu = null;
         this.enabled = true;
@@ -97,6 +98,7 @@ class Item {
  * * A pure JavaScript, lightweight context menu
  * * Dynamically configure menu items
  * * Dynamically enable or disable items
+ * * Dynamically show or hide items
  * * Supports cascading sub-menus
  * * Configure custom style with custom CSS (see examples above)
  *
@@ -110,16 +112,23 @@ class Item {
  * Each item has:
  *
  * * a ````title```` for the item,
- * * a ````doAction()```` callback to fire when the item's title is clicked, and
- * * an optional ````getEnabled()```` callback that indicates if the item should enabled in the menu or not.
+ * * a ````doAction()```` callback to fire when the item's title is clicked,
+ * * an optional ````getShown()```` callback that indicates if the item should shown in the menu or not, and
+ * * an optional ````getEnabled()```` callback that indicates if the item should be shown enabled in the menu or not.
  *
  * <br>
  *
- * The ````getEnabled()```` callbacks are invoked whenever the menu is shown. When an item's ````getEnabled()```` callback
- * returns ````true````, then the item is enabled and clickable. When it returns ````false````, then the item is disabled
- * and cannot be clicked. An item without a ````getEnabled()```` callback is always enabled and clickable.
+ * The ````getShown()```` and ````getEnabled()```` callbacks are invoked whenever the menu is shown.
  *
- * Note how the ````doAction()```` and ````getEnabled()```` callbacks accept a ````context````
+ * When an item's ````getShown()```` callback
+ * returns ````true````, then the item is shown. When it returns ````false````, then the item is hidden. An item without
+ * a ````getShown()```` callback is always shown.
+ *
+ * When an item's ````getEnabled()```` callback returns ````true````, then the item is enabled and clickable (as long as it's also shown). When it
+ * returns ````false````, then the item is disabled and cannot be clicked. An item without a ````getEnabled()````
+ * callback is always enabled and clickable.
+ *
+ * Note how the ````doAction()````,  ````getShown()```` and ````getEnabled()```` callbacks accept a ````context````
  * object. That must be set on the ````ContextMenu```` before we're able to we show it. The context object can be anything. In this example,
  * we'll use the context object to provide the callbacks with the Entity that we right-clicked.
  *
@@ -580,7 +589,11 @@ class ContextMenu {
                         return true;
                     });
 
-                    const item = new Item(itemId, getTitle, doAction, getEnabled);
+                    const getShown = itemCfg.getShown || (() => {
+                        return true;
+                    });
+
+                    const item = new Item(itemId, getTitle, doAction, getEnabled, getShown);
 
                     item.parentMenu = menu;
 
@@ -814,6 +827,10 @@ class ContextMenu {
             if (!itemElement) {
                 continue;
             }
+            const getShown = item.getShown;
+            if (!getShown || !getShown(this._context)) {
+                continue;
+            }
             const title = item.getTitle(this._context);
             if (item.subMenu) {
                 itemElement.innerText = title;
@@ -836,6 +853,22 @@ class ContextMenu {
             const getEnabled = item.getEnabled;
             if (!getEnabled) {
                 continue;
+            }
+            const getShown = item.getShown;
+            if (!getShown) {
+                continue;
+            }
+            const shown = getShown(this._context);
+            item.shown = shown;
+            if (!shown) {
+                itemElement.style.visibility = "hidden";
+                itemElement.style.height = "0";
+                itemElement.style.padding = "0";
+                continue;
+            } else {
+                itemElement.style.visibility = "visible";
+                itemElement.style.height = "auto";
+                itemElement.style.padding = null;
             }
             const enabled = getEnabled(this._context);
             item.enabled = enabled;
@@ -23433,8 +23466,10 @@ class Scene extends Component {
     }
 
     _deregisterModel(entity) {
-        delete this.models[entity.id];
+        const modelId = entity.id;
+        delete this.models[modelId];
         this._modelIds = null; // Lazy regenerate
+        this.fire("modelUnloaded", modelId);
     }
 
     _registerObject(entity) {
@@ -82266,7 +82301,6 @@ class TouchPanRotateAndDollyHandler {
                 return;
             }
 
-            //event.stopPropagation();
             event.preventDefault();
 
             const touches = event.touches;
@@ -86368,87 +86402,31 @@ class QueryTool extends Controller {
 
         super(parent);
 
-        this.on("active", (active) => {
-            if (active) {
-                this._onPick = this.viewer.cameraControl.on("picked", (pickResult) => {
-                    if (!pickResult.entity) {
-                        return;
-                    }
-                    this.queryEntity(pickResult.entity);
-                });
-                this._onPickedNothing = this.viewer.cameraControl.on("pickedNothing", () => {
-                    this.fire("queryNotPicked", false);
-                });
-            } else {
-
-                if (this._onPick !== undefined) {
-                    this.viewer.cameraControl.off(this._onPick);
-                    this.viewer.cameraControl.off(this._onPickedNothing);
-                    this._onPick = undefined;
-                    this._onPickedNothing = undefined;
-                }
-            }
-        });
-
-        this.bimViewer.on("reset", () => {
-            this.setActive(false);
-        });
-    }
-
-    queryObject(objectId) {
-        const metaObject = this.viewer.metaScene.metaObjects[objectId];
-        if (metaObject) {
-            this.queryMetaObject(metaObject);
-        }
-    }
-
-    queryMetaObject(metaObject) {
-        const projectId = this.bimViewer.getLoadedProjectId();
-        if (!projectId) {
-            this.error("Query tool: should be a project loaded - ignoring query-pick");
-            return;
-        }
-        const metaModel = metaObject.metaModel;
-        const modelId = metaModel.id;
-        const objectId = metaObject.id;
-        const objectName = metaObject.name;
-        const objectType = metaObject.type;
-        const objectQueryResult = {
-            projectId: projectId,
-            modelId: modelId,
-            objectId: objectId,
-            objectName: objectName,
-            objectType: objectType
-        };
-        this.fire("queryPicked", objectQueryResult);
-    }
-
-    queryEntity(entity) {
-        const model = entity.model;
-        if (!model) { // Navigation gizmo
-            return;
-        }
-        const projectId = this.bimViewer.getLoadedProjectId();
-        if (!projectId) {
-            this.error("Query tool: should be a project loaded - ignoring query-pick");
-            return;
-        }
-        const modelId = model.id;
-        const objectId = entity.id;
-        const metaObject = this.viewer.metaScene.metaObjects[objectId];
-        if (!metaObject) {
-            return;
-        }
-        const objectName = metaObject.name;
-        const objectType = metaObject.type;
-        const objectQueryResult = {
-            projectId: projectId,
-            modelId: modelId,
-            objectId: objectId,
-            objectName: objectName,
-            objectType: objectType
-        };
-        this.fire("queryPicked", objectQueryResult);
+       //  this.on("active", (active) => {
+       //      if (active) {
+       //          this._onPick = this.viewer.cameraControl.on("picked", (pickResult) => {
+       //              if (!pickResult.entity) {
+       //                  return;
+       //              }
+       // //             this.queryEntity(pickResult.entity);
+       //          });
+       //          this._onPickedNothing = this.viewer.cameraControl.on("pickedNothing", () => {
+       //              this.fire("queryNotPicked", false);
+       //          });
+       //      } else {
+       //
+       //          if (this._onPick !== undefined) {
+       //              this.viewer.cameraControl.off(this._onPick);
+       //              this.viewer.cameraControl.off(this._onPickedNothing);
+       //              this._onPick = undefined;
+       //              this._onPickedNothing = undefined;
+       //          }
+       //      }
+       //  });
+       //
+       //  this.bimViewer.on("reset", () => {
+       //      this.setActive(false);
+       //  });
     }
 }
 
@@ -87566,15 +87544,20 @@ class TreeViewContextMenu extends ContextMenu {
 
     _buildMenu() {
 
+        const showObjectItems = [];
         const focusObjectItems = [];
 
-        if (this._bimViewer._enableQueryObjects) {
-            focusObjectItems.push({
+        if (this._bimViewer._enablePropertiesInspector) {
+            showObjectItems.push({
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showProperties") || "Show Properties";
+                    return context.viewer.localeService.translate("treeViewContextMenu.inspectProperties") || "Inspect Properties";
+                },
+                getShown(context) {
+                    return !!context.viewer.metaScene.metaObjects[context.treeViewNode.objectId];
                 },
                 doAction: (context) => {
-                    context.bimViewer._queryTool.queryObject(context.treeViewNode.objectId);
+                    const objectId = context.treeViewNode.objectId;
+                    context.bimViewer.showObjectProperties(objectId);
                 }
             });
         }
@@ -87625,6 +87608,7 @@ class TreeViewContextMenu extends ContextMenu {
         ]);
 
         this.items = [
+            showObjectItems,
             focusObjectItems,
             [
                 {
@@ -88539,40 +88523,53 @@ class ObjectContextMenu extends ContextMenu {
 
     _buildMenu() {
 
+        const showObjectItems = [];
         const focusObjectItems = [];
 
-        if (this._bimViewer._enableQueryObjects) {
-            focusObjectItems.push({
+        if (this._bimViewer._enablePropertiesInspector) {
+            showObjectItems.push(...[{
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showProperties") || "Show Properties";
+                    return context.viewer.localeService.translate("objectContextMenu.inspectProperties") || "Inspect Properties";
                 },
                 doAction: (context) => {
-                    const bimViewer = context.bimViewer;
-                    const entity = context.entity;
-                    bimViewer._queryTool.queryEntity(entity);
+                    const objectId = context.entity.id;
+                    context.bimViewer.showObjectProperties(objectId);
                 }
-            });
+            }]);
         }
 
-        focusObjectItems.push(...[{
-            getTitle: (context) => {
-                return context.viewer.localeService.translate("objectContextMenu.viewFit") || "View Fit";
-            },
-            doAction: (context) => {
-                const viewer = context.viewer;
-                const scene = viewer.scene;
-                const entity = context.entity;
-                viewer.cameraFlight.flyTo({
-                    aabb: entity.aabb,
-                    duration: 0.5
-                }, () => {
-                    setTimeout(function () {
-                        scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
-                    }, 500);
-                });
-                viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
+        showObjectItems.push(...[
+            {
+                getTitle: (context) => {
+                    return context.viewer.localeService.translate("objectContextMenu.showInTree") || "Show in Explorer";
+                },
+                doAction: (context) => {
+                    const objectId = context.entity.id;
+                    context.showObjectInExplorers(objectId);
+                }
             }
-        },
+        ]);
+
+        focusObjectItems.push(...[
+            {
+                getTitle: (context) => {
+                    return context.viewer.localeService.translate("objectContextMenu.viewFit") || "View Fit";
+                },
+                doAction: (context) => {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const entity = context.entity;
+                    viewer.cameraFlight.flyTo({
+                        aabb: entity.aabb,
+                        duration: 0.5
+                    }, () => {
+                        setTimeout(function () {
+                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                        }, 500);
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
+                }
+            },
             {
                 getTitle: (context) => {
                     return context.viewer.localeService.translate("objectContextMenu.viewFitAll") || "View Fit All";
@@ -88587,18 +88584,11 @@ class ObjectContextMenu extends ContextMenu {
                     });
                     viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
                 }
-            },
-            {
-                getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showInTree") || "Show in Tree";
-                },
-                doAction: (context) => {
-                    const objectId = context.entity.id;
-                    context.showObjectInExplorers(objectId);
-                }
-            }]);
+            }
+        ]);
 
         this.items = [
+            showObjectItems,
             focusObjectItems,
             [
                 {
@@ -88990,8 +88980,133 @@ class OrthoMode extends Controller {
     }
 }
 
-function createExplorerTemplate(cfg, viewer) {
+/** @private */
+class PropertiesInspector extends Controller {
 
+    constructor(parent, cfg = {}) {
+
+        super(parent);
+
+        if (!cfg.propertiesTabElement) {
+            throw "Missing config: propertiesTabElement";
+        }
+
+        if (!cfg.propertiesElement) {
+            throw "Missing config: propertiesElement";
+        }
+
+        this._metaObject = null;
+
+        this._propertiesTabElement = cfg.propertiesTabElement;
+        this._propertiesElement = cfg.propertiesElement;
+        this._propertiesTabButtonElement = this._propertiesTabElement.querySelector(".xeokit-tab-btn");
+
+        if (!this._propertiesTabButtonElement) {
+            throw "Missing DOM element: ,xeokit-tab-btn";
+        }
+
+        this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
+            if (this._metaObject && this._metaObject.metaModel.id === modelId) {
+                this.clear();
+            }
+        });
+
+        this.bimViewer.on("reset", () => {
+            this.clear();
+        });
+
+        document.addEventListener('click', this._clickListener = (e) => {
+            if (!e.target.matches('.xeokit-accordion .xeokit-accordion-button')) {
+                return;
+            } else {
+                if (!e.target.parentElement.classList.contains('active')) {
+                    e.target.parentElement.classList.add('active');
+                } else {
+                    e.target.parentElement.classList.remove('active');
+                }
+            }
+        });
+    }
+
+    showObjectPropertySets(objectId) {
+        const metaObject = this.viewer.metaScene.metaObjects[objectId];
+        if (!metaObject) {
+            return;
+        }
+        const propertySets = metaObject.propertySets;
+        if (propertySets && propertySets.length > 0) {
+            this._setPropertySets(metaObject, propertySets);
+        } else {
+            this._setPropertySets(metaObject);
+        }
+        this._metaObject = metaObject;
+    }
+
+    clear() {
+        const html = [];
+        html.push(`<div class="element-attributes">`);
+        html.push(`<p class="subsubtitle">No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.</p>`);
+        html.push(`</div>`);
+        const htmlStr = html.join("");
+       this._propertiesElement.innerHTML = htmlStr;
+    }
+
+    _setPropertySets(metaObject, propertySets) {
+        const html = [];
+        html.push(`<div class="element-attributes">`);
+        if (!metaObject) {
+            html.push(`<p class="subsubtitle">No object selected</p>`);
+        } else {
+            html.push(`<p class="subsubtitle">"${metaObject.name}"</p>`);
+            if (metaObject.type) {
+                html.push(`<p class="subtitle">${metaObject.type}</p>`);
+            }
+            if (!propertySets || propertySets.length === 0) {
+                html.push(`<p class="subtitle">No properties sets found for this object.</p>`);
+                html.push(`</div>`);
+            } else {
+                html.push(`</div>`);
+                html.push(`<div class="xeokit-accordion">`);
+                for (let i = 0, len = propertySets.length; i < len; i++) {
+                    const propertySet = propertySets[i];
+                    const properties = propertySet.properties || [];
+                    if (properties.length > 0) {
+                        html.push(`<div class="xeokit-accordion-container">
+                                        <p class="xeokit-accordion-button"><span></span>${propertySet.name}</p>                                       
+                                        <div class="xeokit-accordion-panel">                                           
+                                            <table class="xeokit-table"><tbody>`);
+                        for (let i = 0, len = properties.length; i < len; i++) {
+                            const property = properties[i];
+                            html.push(`<tr><td class="td1">${property.name || property.label}:</td><td class="td2">${property.value}</td></tr>`);
+                        }
+                        html.push(`</tbody></table>
+                        </div>
+                        </div>`);
+                    }
+                }
+                html.push(`</div>`);
+            }
+        }
+        this._propertiesElement.innerHTML = html.join("");
+    }
+
+    setEnabled(enabled) {
+        if (!enabled) {
+            this._propertiesTabButtonElement.classList.add("disabled");
+        } else {
+            this._propertiesTabButtonElement.classList.remove("disabled");
+        }
+    }
+
+    destroy() {
+        super.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
+        document.removeEventListener('click', this._clickListener);
+    }
+}
+
+function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs"> 
     <div class="xeokit-tab xeokit-modelsTab">
         <a class="xeokit-i18n xeokit-tab-btn" href="#" data-xeokit-i18n="modelsExplorer.title">Models</a>
@@ -89037,8 +89152,7 @@ function createExplorerTemplate(cfg, viewer) {
     return explorerTemplate;
 }
 
-function createToolbarTemplate(cfg, viewer) {
-
+function createToolbarTemplate() {
     const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
     <div class="xeokit-btn-group">
@@ -89070,6 +89184,18 @@ function createToolbarTemplate(cfg, viewer) {
     </div>
 </div>`;
     return toolbarTemplate;
+}
+
+function createInspectorTemplate() {
+    const inspectorTemplate = `<div class="xeokit-tabs">  
+    <div class="xeokit-tab xeokit-propertiesTab">
+        <a class="xeokit-i18n xeokit-tab-btn disabled" href="#" data-xeokit-i18n="propertiesInspector.title">Properties</a>
+        <div class="xeokit-tab-content">        
+        <div class="xeokit-properties"></div>
+        </div>
+    </div>
+</div>`;
+    return inspectorTemplate;
 }
 
 function initTabs(containerElement) {
@@ -89124,7 +89250,6 @@ class BIMViewer extends Controller {
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
-     * @param {Boolean} [cfg.enableQueryObjects=false] TODO.
      */
     constructor(server, cfg = {}) {
 
@@ -89146,6 +89271,7 @@ class BIMViewer extends Controller {
 
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
+        const inspectorElement = cfg.inspectorElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
         const busyModelBackdropElement = cfg.busyModelBackdropElement;
@@ -89177,7 +89303,7 @@ class BIMViewer extends Controller {
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
-        this._enableQueryObjects = !!cfg.enableQueryObjects;
+        this._enablePropertiesInspector = !!cfg.inspectorElement;
 
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
@@ -89191,10 +89317,17 @@ class BIMViewer extends Controller {
 
         explorerElement.innerHTML = createExplorerTemplate(cfg);
         toolbarElement.innerHTML = createToolbarTemplate();
+        if (this._enablePropertiesInspector) {
+            inspectorElement.innerHTML = createInspectorTemplate();
+        }
 
         this._explorerElement = explorerElement;
+        this._inspectorElement = inspectorElement;
 
         initTabs(explorerElement);
+        if (this._enablePropertiesInspector) {
+            initTabs(inspectorElement);
+        }
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
@@ -89225,6 +89358,13 @@ class BIMViewer extends Controller {
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
+
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector = new PropertiesInspector(this, {
+                propertiesTabElement: inspectorElement.querySelector(".xeokit-propertiesTab"),
+                propertiesElement: inspectorElement.querySelector(".xeokit-properties")
+            });
+        }
 
         this._resetAction = new ResetAction(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-reset"),
@@ -89324,18 +89464,6 @@ class BIMViewer extends Controller {
                 this.openTab("models");
             }
             this.fire("modelUnloaded", modelId);
-        });
-
-        this._queryTool.on("active", (active) => {
-            this.fire("queryToolActive", active);
-        });
-
-        this._queryTool.on("queryPicked", (event) => {
-            this.fire("queryPicked", event);
-        });
-
-        this._queryTool.on("queryNotPicked", () => {
-            this.fire("queryNotPicked", true);
         });
 
         this._resetAction.on("reset", () => {
@@ -90074,6 +90202,7 @@ class BIMViewer extends Controller {
         this._objectsExplorer.showNodeInTreeView(objectId);
         this._classesExplorer.showNodeInTreeView(objectId);
         this._storeysExplorer.showNodeInTreeView(objectId);
+        this.fire("openExplorer", {});
     }
 
     /**
@@ -90087,6 +90216,22 @@ class BIMViewer extends Controller {
         this._objectsExplorer.unShowNodeInTreeView();
         this._classesExplorer.unShowNodeInTreeView();
         this._storeysExplorer.unShowNodeInTreeView();
+    }
+
+    /**
+     * Shows the properties of the given object in the Properties tab.
+     *
+     * @param {String} objectId ID of the object
+     */
+    showObjectProperties(objectId) {
+        if (!objectId) {
+            this.error("showObjectInExplorers() - Argument expected: objectId");
+            return;
+        }
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.showObjectPropertySets(objectId);
+        }
+        this.fire("openInspector", {});
     }
 
     /**
@@ -90392,8 +90537,9 @@ class BIMViewer extends Controller {
      *
      *  * "models" - the Models tab, which lists the models available within the currently loaded project,
      *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types, and
+     *  * "properties" - the Properties tab, which shows property sets for a given object.
      *
      * @param {String} tabId ID of the tab to open - see method description.
      */
@@ -90402,8 +90548,6 @@ class BIMViewer extends Controller {
             this.error("openTab() - Argument expected: tabId");
             return;
         }
-        const tabClass = 'xeokit-tab';
-        const activeClass = 'active';
         let tabSelector;
         switch (tabId) {
             case "models":
@@ -90418,12 +90562,22 @@ class BIMViewer extends Controller {
             case "storeys":
                 tabSelector = "xeokit-storeysTab";
                 break;
+            case "properties":
+                tabSelector = "xeokit-propertiesTab";
+                break;
             default:
                 this.error("openTab() - tab not recognized: '" + tabId + "'");
                 return;
         }
-        let tabs = this._explorerElement.querySelectorAll("." + tabClass);
-        let tab = this._explorerElement.querySelector("." + tabSelector);
+        this._openTab(this._explorerElement, tabSelector);
+   //     this._openTab(this._inspectorElement, tabSelector);
+    }
+
+    _openTab(element, tabSelector) {
+        const tabClass = 'xeokit-tab';
+        const activeClass = 'active';
+        let tabs = element.querySelectorAll("." + tabClass);
+        let tab = element.querySelector("." + tabSelector);
         for (let i = 0; i < tabs.length; i++) {
             let tabElement = tabs[i];
             if (tabElement.isEqualNode(tab)) {
@@ -90441,8 +90595,9 @@ class BIMViewer extends Controller {
      *
      *  * "models" - the Models tab, which lists the models available within the currently loaded project,
      *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types,
+     *  * "properties" - the Properties tab, which shows property sets for a given object, and
      *  * "none" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.
      */
     getOpenTab() {
@@ -90469,6 +90624,10 @@ class BIMViewer extends Controller {
         let storeysTab = this._explorerElement.querySelector(".xeokit-storeysTab");
         if (hasClass(storeysTab, activeClass)) {
             return "storeys";
+        }
+        let propertiesTab = this._inspectorElement.querySelector(".xeokit-propertiesTab");
+        if (hasClass(propertiesTab, activeClass)) {
+            return "properties";
         }
         return "none";
     }
@@ -90514,24 +90673,6 @@ class BIMViewer extends Controller {
      */
     getOrthoEnabled() {
         return this._orthoMode.getActive();
-    }
-
-    /**
-     * Sets whether query pick mode is active.
-     *
-     * @param {Boolean} enabled Set true to switch into query mode, else false.
-     */
-    setQueryEnabled(enabled) {
-        this._queryTool.setActive(enabled);
-    }
-
-    /**
-     * Gets whether query pick mode is active.
-     *
-     * @returns {boolean} True when in query mode, else false.
-     */
-    getQueryEnabled() {
-        return this._queryTool.getActive();
     }
 
     /**
@@ -90714,6 +90855,11 @@ class BIMViewer extends Controller {
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
+
+        //
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.setEnabled(enabled);
+        }
     }
 
     /**

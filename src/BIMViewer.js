@@ -25,12 +25,9 @@ import {ThreeDMode} from "./toolbar/ThreeDMode.js";
 import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
+import {PropertiesInspector} from "./inspector/PropertiesInspector.js";
 
-function createExplorerTemplate(cfg, viewer) {
-    function translate(key, fallback) {
-        return viewer.localeService.translate(key) || fallback;
-    }
-
+function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs"> 
     <div class="xeokit-tab xeokit-modelsTab">
         <a class="xeokit-i18n xeokit-tab-btn" href="#" data-xeokit-i18n="modelsExplorer.title">Models</a>
@@ -76,11 +73,7 @@ function createExplorerTemplate(cfg, viewer) {
     return explorerTemplate;
 }
 
-function createToolbarTemplate(cfg, viewer) {
-    function translate(key, fallback) {
-        return viewer.localeService.translate(key) || fallback;
-    }
-
+function createToolbarTemplate() {
     const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
     <div class="xeokit-btn-group">
@@ -112,6 +105,18 @@ function createToolbarTemplate(cfg, viewer) {
     </div>
 </div>`;
     return toolbarTemplate;
+}
+
+function createInspectorTemplate() {
+    const inspectorTemplate = `<div class="xeokit-tabs">  
+    <div class="xeokit-tab xeokit-propertiesTab">
+        <a class="xeokit-i18n xeokit-tab-btn disabled" href="#" data-xeokit-i18n="propertiesInspector.title">Properties</a>
+        <div class="xeokit-tab-content">        
+        <div class="xeokit-properties"></div>
+        </div>
+    </div>
+</div>`;
+    return inspectorTemplate;
 }
 
 function initTabs(containerElement) {
@@ -166,7 +171,6 @@ class BIMViewer extends Controller {
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
-     * @param {Boolean} [cfg.enableQueryObjects=false] TODO.
      */
     constructor(server, cfg = {}) {
 
@@ -188,6 +192,7 @@ class BIMViewer extends Controller {
 
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
+        const inspectorElement = cfg.inspectorElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
         const busyModelBackdropElement = cfg.busyModelBackdropElement;
@@ -219,7 +224,7 @@ class BIMViewer extends Controller {
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
-        this._enableQueryObjects = !!cfg.enableQueryObjects;
+        this._enablePropertiesInspector = !!cfg.inspectorElement;
 
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
@@ -231,12 +236,19 @@ class BIMViewer extends Controller {
         this._customizeViewer();
         this._initCanvasContextMenus();
 
-        explorerElement.innerHTML = createExplorerTemplate(cfg, viewer);
-        toolbarElement.innerHTML = createToolbarTemplate(cfg, viewer);
+        explorerElement.innerHTML = createExplorerTemplate(cfg);
+        toolbarElement.innerHTML = createToolbarTemplate();
+        if (this._enablePropertiesInspector) {
+            inspectorElement.innerHTML = createInspectorTemplate();
+        }
 
         this._explorerElement = explorerElement;
+        this._inspectorElement = inspectorElement;
 
         initTabs(explorerElement);
+        if (this._enablePropertiesInspector) {
+            initTabs(inspectorElement);
+        }
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
@@ -267,6 +279,13 @@ class BIMViewer extends Controller {
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
         });
+
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector = new PropertiesInspector(this, {
+                propertiesTabElement: inspectorElement.querySelector(".xeokit-propertiesTab"),
+                propertiesElement: inspectorElement.querySelector(".xeokit-properties")
+            });
+        }
 
         this._resetAction = new ResetAction(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-reset"),
@@ -368,18 +387,6 @@ class BIMViewer extends Controller {
                 this.openTab("models");
             }
             this.fire("modelUnloaded", modelId);
-        });
-
-        this._queryTool.on("active", (active) => {
-            this.fire("queryToolActive", active);
-        });
-
-        this._queryTool.on("queryPicked", (event) => {
-            this.fire("queryPicked", event);
-        });
-
-        this._queryTool.on("queryNotPicked", () => {
-            this.fire("queryNotPicked", true);
         });
 
         this._resetAction.on("reset", () => {
@@ -1118,6 +1125,7 @@ class BIMViewer extends Controller {
         this._objectsExplorer.showNodeInTreeView(objectId);
         this._classesExplorer.showNodeInTreeView(objectId);
         this._storeysExplorer.showNodeInTreeView(objectId);
+        this.fire("openExplorer", {});
     }
 
     /**
@@ -1131,6 +1139,22 @@ class BIMViewer extends Controller {
         this._objectsExplorer.unShowNodeInTreeView();
         this._classesExplorer.unShowNodeInTreeView();
         this._storeysExplorer.unShowNodeInTreeView();
+    }
+
+    /**
+     * Shows the properties of the given object in the Properties tab.
+     *
+     * @param {String} objectId ID of the object
+     */
+    showObjectProperties(objectId) {
+        if (!objectId) {
+            this.error("showObjectInExplorers() - Argument expected: objectId");
+            return;
+        }
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.showObjectPropertySets(objectId);
+        }
+        this.fire("openInspector", {});
     }
 
     /**
@@ -1436,8 +1460,9 @@ class BIMViewer extends Controller {
      *
      *  * "models" - the Models tab, which lists the models available within the currently loaded project,
      *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types, and
+     *  * "properties" - the Properties tab, which shows property sets for a given object.
      *
      * @param {String} tabId ID of the tab to open - see method description.
      */
@@ -1446,8 +1471,6 @@ class BIMViewer extends Controller {
             this.error("openTab() - Argument expected: tabId");
             return;
         }
-        const tabClass = 'xeokit-tab';
-        const activeClass = 'active';
         let tabSelector;
         switch (tabId) {
             case "models":
@@ -1462,12 +1485,22 @@ class BIMViewer extends Controller {
             case "storeys":
                 tabSelector = "xeokit-storeysTab";
                 break;
+            case "properties":
+                tabSelector = "xeokit-propertiesTab";
+                break;
             default:
                 this.error("openTab() - tab not recognized: '" + tabId + "'");
                 return;
         }
-        let tabs = this._explorerElement.querySelectorAll("." + tabClass);
-        let tab = this._explorerElement.querySelector("." + tabSelector);
+        this._openTab(this._explorerElement, tabSelector);
+   //     this._openTab(this._inspectorElement, tabSelector);
+    }
+
+    _openTab(element, tabSelector) {
+        const tabClass = 'xeokit-tab';
+        const activeClass = 'active';
+        let tabs = element.querySelectorAll("." + tabClass);
+        let tab = element.querySelector("." + tabSelector);
         for (let i = 0; i < tabs.length; i++) {
             let tabElement = tabs[i];
             if (tabElement.isEqualNode(tab)) {
@@ -1485,8 +1518,9 @@ class BIMViewer extends Controller {
      *
      *  * "models" - the Models tab, which lists the models available within the currently loaded project,
      *  * "objects" - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * "classes" - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * "storeys" - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types,
+     *  * "properties" - the Properties tab, which shows property sets for a given object, and
      *  * "none" - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.
      */
     getOpenTab() {
@@ -1513,6 +1547,10 @@ class BIMViewer extends Controller {
         let storeysTab = this._explorerElement.querySelector(".xeokit-storeysTab");
         if (hasClass(storeysTab, activeClass)) {
             return "storeys";
+        }
+        let propertiesTab = this._inspectorElement.querySelector(".xeokit-propertiesTab");
+        if (hasClass(propertiesTab, activeClass)) {
+            return "properties";
         }
         return "none";
     }
@@ -1558,24 +1596,6 @@ class BIMViewer extends Controller {
      */
     getOrthoEnabled() {
         return this._orthoMode.getActive();
-    }
-
-    /**
-     * Sets whether query pick mode is active.
-     *
-     * @param {Boolean} enabled Set true to switch into query mode, else false.
-     */
-    setQueryEnabled(enabled) {
-        this._queryTool.setActive(enabled);
-    }
-
-    /**
-     * Gets whether query pick mode is active.
-     *
-     * @returns {boolean} True when in query mode, else false.
-     */
-    getQueryEnabled() {
-        return this._queryTool.getActive();
     }
 
     /**
@@ -1758,6 +1778,11 @@ class BIMViewer extends Controller {
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
+
+        //
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.setEnabled(enabled);
+        }
     }
 
     /**

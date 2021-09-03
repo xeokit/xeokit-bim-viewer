@@ -13,40 +13,53 @@ class ObjectContextMenu extends ContextMenu {
 
     _buildMenu() {
 
+        const showObjectItems = [];
         const focusObjectItems = [];
 
-        if (this._bimViewer._enableQueryObjects) {
-            focusObjectItems.push({
+        if (this._bimViewer._enablePropertiesInspector) {
+            showObjectItems.push(...[{
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showProperties") || "Show Properties";
+                    return context.viewer.localeService.translate("objectContextMenu.inspectProperties") || "Inspect Properties";
                 },
                 doAction: (context) => {
-                    const bimViewer = context.bimViewer;
-                    const entity = context.entity;
-                    bimViewer._queryTool.queryEntity(entity);
+                    const objectId = context.entity.id;
+                    context.bimViewer.showObjectProperties(objectId);
                 }
-            });
+            }]);
         }
 
-        focusObjectItems.push(...[{
-            getTitle: (context) => {
-                return context.viewer.localeService.translate("objectContextMenu.viewFit") || "View Fit";
-            },
-            doAction: (context) => {
-                const viewer = context.viewer;
-                const scene = viewer.scene;
-                const entity = context.entity;
-                viewer.cameraFlight.flyTo({
-                    aabb: entity.aabb,
-                    duration: 0.5
-                }, () => {
-                    setTimeout(function () {
-                        scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
-                    }, 500);
-                });
-                viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
+        showObjectItems.push(...[
+            {
+                getTitle: (context) => {
+                    return context.viewer.localeService.translate("objectContextMenu.showInTree") || "Show in Explorer";
+                },
+                doAction: (context) => {
+                    const objectId = context.entity.id;
+                    context.showObjectInExplorers(objectId);
+                }
             }
-        },
+        ]);
+
+        focusObjectItems.push(...[
+            {
+                getTitle: (context) => {
+                    return context.viewer.localeService.translate("objectContextMenu.viewFit") || "View Fit";
+                },
+                doAction: (context) => {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const entity = context.entity;
+                    viewer.cameraFlight.flyTo({
+                        aabb: entity.aabb,
+                        duration: 0.5
+                    }, () => {
+                        setTimeout(function () {
+                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                        }, 500);
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
+                }
+            },
             {
                 getTitle: (context) => {
                     return context.viewer.localeService.translate("objectContextMenu.viewFitAll") || "View Fit All";
@@ -61,18 +74,11 @@ class ObjectContextMenu extends ContextMenu {
                     });
                     viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
                 }
-            },
-            {
-                getTitle: (context) => {
-                    return context.viewer.localeService.translate("objectContextMenu.showInTree") || "Show in Tree";
-                },
-                doAction: (context) => {
-                    const objectId = context.entity.id;
-                    context.showObjectInExplorers(objectId);
-                }
-            }]);
+            }
+        ]);
 
         this.items = [
+            showObjectItems,
             focusObjectItems,
             [
                 {

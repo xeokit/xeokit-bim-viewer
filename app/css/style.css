@@ -157,21 +157,16 @@ body {
 #myInspector {
     position: absolute;
     height: 100%;
-    color: #CFCFCF;
+    color: #fff;
     background: #03103F;
     overflow: auto;
+    border-left: 2px solid #212529;
     padding: 0;
     top: 0;
     right: -360px;
     z-index: 40;
     width: 358px;
     transition: all 300ms ease-in-out;
-}
-
-#myInspector .title {
-    font-size: 20px;
-    font-weight: normal;
-    padding-left:10px;
 }
 
 #inspector_toggle {
@@ -201,7 +196,6 @@ body {
     pointer-events: all;
     z-index: 100000;
     transition: all 300ms ease-in-out;
-    visibility: hidden;
 }
 
 .inspector_toggle_label:hover {
@@ -237,43 +231,3 @@ body {
     width: calc(100% - var(--left));
 }
 
-.xeokit-btn {
-    box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.1);
-}
-
-.xeokit-table {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 1rem;
-    display: table;
-    /*border-collapse: separate;*/
-    box-sizing: border-box;
-    text-indent: initial;
-    /*border-spacing: 2px;*/
-    border-bottom: 1px solid #81819a;
-}
-
-.xeokit-table .td1, .xeokit-table  th {
-    padding: .6em;
-    vertical-align: top;
-    border-top: 1px solid #81819a;
-    border-right: 1px solid #81819a;
-    white-space: nowrap;
-    font-weight: bold;
-}
-
-.xeokit-table  .td2, .xeokit-table  th {
-    padding: .5em;
-    vertical-align: top;
-    border-top: 1px solid #81819a;
-}
-
-.xeokit-table th {
-    text-align: inherit;
-}
-
-.xeokit-table th {
-    display: table-cell;
-    vertical-align: inherit;
-    font-weight: bold;
-}

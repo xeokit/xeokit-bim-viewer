@@ -47,6 +47,9 @@ const messages = {
             "hideAll": "Hide all",
             "hideAllTip": "Hide all storeys"
         },
+        "propertiesInspector": { // The "Properties" tab on the right of the canvas
+            "title": "Properties"
+        },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Toggle explorer", // Button to open or close the explorer panel on the left
             "resetViewTip": "Reset view", // Button to reset the viewer to initial state
@@ -83,7 +86,7 @@ const messages = {
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
             "viewFit": "View Fit", // Menu option to position the camera to fit the object in view
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
-            "showInTree": "Show in Tree", // Menu option to show the object in the Objects tab's tree
+            "showInTree": "Show in Explorer", // Menu option to show the object in the Objects tab's tree
             "hide": "Hide", // Menu option to hide this object
             "hideOthers": "Hide Others", // Menu option to hide other objects
             "hideAll": "Hide All", // Menu option to hide all objects
