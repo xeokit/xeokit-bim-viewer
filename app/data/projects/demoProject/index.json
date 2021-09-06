@@ -1,0 +1,260 @@
+{
+	"id": "demoProject",
+	"name": "demoProject",
+	"created": "Wed, 14 Jun 2017 07:00:00 GMT",
+	"models": [
+		{
+			"id": "autzen",
+			"name": "autzen",
+			"metadata": {
+				"sourceFormat": "LAS",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 2,
+				"numObjects": 1,
+				"numTriangles": 0,
+				"numVertices": 10653336,
+				"xktSizeKb": "71525.95",
+				"aabb": [
+					635577.8125,
+					406.1400146484375,
+					848882.125,
+					639003.75,
+					615.260009765625,
+					853537.6875
+				]
+			}
+		},
+		{
+			"id": "DenHaag_01",
+			"name": "DenHaag_01",
+			"metadata": {
+				"sourceFormat": "CityJSON",
+				"schemaVersion": "1.0",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 2500,
+				"numObjects": 1991,
+				"numTriangles": 41197,
+				"numVertices": 71069,
+				"xktSizeKb": "399.55",
+				"aabb": [
+					78248.66,
+					2.463,
+					457604.591,
+					79036.024,
+					37.481,
+					458276.439
+				]
+			}
+		},
+		{
+			"id": "Dormitory-SECU.v9",
+			"name": "Dormitory-SECU.v9",
+			"metadata": {
+				"sourceFormat": "IFC",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 124,
+				"numMetaObjects": 91,
+				"numObjects": 37,
+				"numTriangles": 2155,
+				"numVertices": 4552,
+				"xktSizeKb": "17.70",
+				"aabb": [
+					40.04700494353892,
+					100.7425015065237,
+					72.91455865447642,
+					74.55850683897734,
+					106.79999866278376,
+					88.29456304962514
+				]
+			}
+		},
+		{
+			"id": "Duplex",
+			"name": "Duplex",
+			"metadata": {
+				"sourceFormat": "IFC",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 1369,
+				"numMetaObjects": 233,
+				"numObjects": 209,
+				"numTriangles": 18642,
+				"numVertices": 45372,
+				"xktSizeKb": "149.22",
+				"aabb": [
+					-0.2415001392364502,
+					-1.5499999523162842,
+					-0.2415003776550293,
+					9.0414999127388,
+					6.634799957275391,
+					18.041500091552734
+				]
+			}
+		},
+		{
+			"id": "IfcOpenHouse2x3",
+			"name": "IfcOpenHouse2x3",
+			"metadata": {
+				"sourceFormat": "IFC",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 44,
+				"numObjects": 41,
+				"numTriangles": 395,
+				"numVertices": 1147,
+				"xktSizeKb": "4.85",
+				"aabb": [
+					-5.100000242237002,
+					-2,
+					-5.400000095367432,
+					5.550000214483589,
+					5.780001658819685,
+					0.4000000059604645
+				]
+			}
+		},
+		{
+			"id": "IfcOpenHouse4",
+			"name": "IfcOpenHouse4",
+			"metadata": {
+				"sourceFormat": "IFC",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 44,
+				"numObjects": 41,
+				"numTriangles": 395,
+				"numVertices": 1147,
+				"xktSizeKb": "4.84",
+				"aabb": [
+					-5.100000242237002,
+					-2,
+					-5.400000095367432,
+					5.550000214483589,
+					5.780001658819685,
+					0.4000000059604645
+				]
+			}
+		},
+		{
+			"id": "indoor.0.1",
+			"name": "indoor.0.1",
+			"metadata": {
+				"sourceFormat": "LAS",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 2,
+				"numObjects": 1,
+				"numTriangles": 0,
+				"numVertices": 808042,
+				"xktSizeKb": "3403.12",
+				"aabb": [
+					-22.989999771118164,
+					-7.900000095367432,
+					-1.9700000286102295,
+					5.630000114440918,
+					12.359999656677246,
+					7.550000190734863
+				]
+			}
+		},
+		{
+			"id": "LoD3_Railway",
+			"name": "LoD3_Railway",
+			"metadata": {
+				"sourceFormat": "CityJSON",
+				"schemaVersion": "1.0",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 123,
+				"numObjects": 120,
+				"numTriangles": 113537,
+				"numVertices": 170281,
+				"xktSizeKb": "878.99",
+				"aabb": [
+					0.56,
+					7.579,
+					0.64,
+					12.64,
+					9.103,
+					7.68
+				]
+			}
+		},
+		{
+			"id": "MAP",
+			"name": "MAP",
+			"metadata": {
+				"sourceFormat": "IFC",
+				"schemaVersion": "",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 15454,
+				"numMetaObjects": 2017,
+				"numObjects": 1775,
+				"numTriangles": 169464,
+				"numVertices": 423072,
+				"xktSizeKb": "1424.54",
+				"aabb": [
+					1842005.8454500393,
+					-3.5999999046325684,
+					-5173320.87518855,
+					1842038.6731422788,
+					24.589556574821472,
+					-5173282.96501628
+				]
+			}
+		},
+		{
+			"id": "VM05_2009",
+			"name": "VM05_2009",
+			"metadata": {
+				"sourceFormat": "CityJSON",
+				"schemaVersion": "1.0",
+				"title": "",
+				"author": "",
+				"created": "",
+				"numPropertySets": 0,
+				"numMetaObjects": 296,
+				"numObjects": 294,
+				"numTriangles": 63265,
+				"numVertices": 32242,
+				"xktSizeKb": "519.25",
+				"aabb": [
+					300060.181,
+					5040722.785,
+					8.444,
+					301073.701,
+					5042282.343,
+					129.092
+				]
+			}
+		}
+	],
+	"viewerConfigs": {},
+	"viewerContent": {},
+	"viewerState": {}
+}
