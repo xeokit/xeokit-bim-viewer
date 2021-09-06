@@ -1493,7 +1493,7 @@ class BIMViewer extends Controller {
                 return;
         }
         this._openTab(this._explorerElement, tabSelector);
-   //     this._openTab(this._inspectorElement, tabSelector);
+        //     this._openTab(this._inspectorElement, tabSelector);
     }
 
     _openTab(element, tabSelector) {
@@ -1737,8 +1737,8 @@ class BIMViewer extends Controller {
             this.error("loadBCFViewpoint() - Argument expected: bcfViewpoint");
             return;
         }
-        this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
         this._orthoMode.setActive(this.viewer.camera.projection === "ortho");
+        this._bcfViewpointsPlugin.setViewpoint(bcfViewpoint, options);
     }
 
     /**
