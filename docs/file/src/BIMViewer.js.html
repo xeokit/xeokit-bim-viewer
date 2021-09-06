@@ -30,8 +30,6 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -65,50 +63,46 @@ import {ThreeDMode} from &quot;./toolbar/ThreeDMode.js&quot;;
 import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
 import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 import {OrthoMode} from &quot;./toolbar/OrthoMode.js&quot;;
+import {PropertiesInspector} from &quot;./inspector/PropertiesInspector.js&quot;;
 
-function createExplorerTemplate(cfg, viewer) {
-    function translate(key, fallback) {
-        return viewer.localeService.translate(key) || fallback;
-    }
-
+function createExplorerTemplate(cfg) {
     const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt; 
     &lt;div class=&quot;xeokit-tab xeokit-modelsTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn&quot; href=&quot;#&quot;&gt;${translate(&quot;modelsExplorer.title&quot;, &quot;Models&quot;)}&lt;/a&gt;
+        &lt;a class=&quot;xeokit-i18n xeokit-tab-btn&quot; href=&quot;#&quot; data-xeokit-i18n=&quot;modelsExplorer.title&quot;&gt;Models&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
             &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-loadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.loadAllTip&quot;, &quot;Load all models&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.loadAll&quot;, &quot;Load all&quot;)}&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-unloadAllModels xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.unloadAllTip&quot;, &quot;Unload all models&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.unloadAll&quot;, &quot;Unload all&quot;)}&lt;/button&gt;` +
-        (cfg.enableEditModels ? `&lt;button type=&quot;button&quot; class=&quot;xeokit-addModel xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;modelsExplorer.addTip&quot;, &quot;Add model&quot;)}&quot;&gt;${translate(&quot;modelsExplorer.add&quot;, &quot;Add&quot;)}&lt;/button&gt;` : ``) +
-        `&lt;/div&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-loadAllModels xeokit-btn disabled&quot; data-xeokit-i18n=&quot;modelsExplorer.loadAll&quot; data-xeokit-i18ntip=&quot;modelsExplorer.loadAllTip&quot; data-tippy-content=&quot;Load all models&quot;&gt;Load all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-unloadAllModels xeokit-btn disabled&quot; data-xeokit-i18n=&quot;modelsExplorer.unloadAll&quot;  data-xeokit-i18ntip=&quot;modelsExplorer.unloadAllTip&quot; data-tippy-content=&quot;Unload all models&quot;&gt;Unload all&lt;/button&gt;` +
+        (cfg.enableEditModels ? `&lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-addModel xeokit-btn disabled&quot; data-xeokit-i18n=&quot;modelsExplorer.add&quot;  data-xeokit-i18ntip=&quot;modelsExplorer.addTip&quot; data-tippy-content=&quot;Add model&quot;&gt;Add&lt;/button&gt;` : ``) + `&lt;/div&gt;
             &lt;div class=&quot;xeokit-models&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-tab xeokit-objectsTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;objectsExplorer.title&quot;, &quot;Objects&quot;)}&lt;/a&gt;
+        &lt;a class=&quot;xeokit-i18n xeokit-tab-btn disabled&quot; href=&quot;#&quot; data-xeokit-i18n=&quot;objectsExplorer.title&quot;&gt;Objects&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
          &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-            &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;objectsExplorer.showAllTip&quot;, &quot;Show all objects&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
-            &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllObjects xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;objectsExplorer.hideAllTip&quot;, &quot;Hide all objects&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-showAllObjects xeokit-btn disabled&quot; data-xeokit-i18n=&quot;objectsExplorer.showAll&quot; data-xeokit-i18ntip=&quot;objectsExplorer.showAllTip&quot; data-tippy-content=&quot;Show all objects&quot;&gt;Show all&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-hideAllObjects xeokit-btn disabled&quot; data-xeokit-i18n=&quot;objectsExplorer.hideAll&quot; data-xeokit-i18ntip=&quot;objectsExplorer.hideAllTip&quot; data-tippy-content=&quot;Hide all objects&quot;&gt;Hide all&lt;/button&gt;
         &lt;/div&gt;
         &lt;div class=&quot;xeokit-objects xeokit-tree-panel&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;xeokit-tab xeokit-classesTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;classesExplorer.title&quot;, &quot;Classes&quot;)}&lt;/a&gt;
+    &lt;div class=&quot;xeokit-i18n xeokit-tab xeokit-classesTab&quot;&gt;
+        &lt;a class=&quot;xeokit-i18n xeokit-tab-btn disabled&quot; href=&quot;#&quot; data-xeokit-i18n=&quot;classesExplorer.title&quot;&gt;Classes&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
             &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;classesExplorer.showAllTip&quot;, &quot;Show all classes&quot;)}&quot;&gt;${translate(&quot;classesExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllClasses xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;classesExplorer.hideAllTip&quot;, &quot;Hide all classes&quot;)}&quot;&gt;${translate(&quot;objectsExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-showAllClasses xeokit-btn disabled&quot; data-xeokit-i18n=&quot;classesExplorer.showAll&quot;  data-xeokit-i18ntip=&quot;classesExplorer.hideAllTip&quot; data-tippy-content=&quot;Show all classes&quot;&gt;Show all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-hideAllClasses xeokit-btn disabled&quot; data-xeokit-i18n=&quot;classesExplorer.hideAll&quot; data-xeokit-i18ntip=&quot;classesExplorer.hideAllTip&quot; data-tippy-content=&quot;Hide all classes&quot;&gt;Hide all&lt;/button&gt;
             &lt;/div&gt;
             &lt;div class=&quot;xeokit-classes xeokit-tree-panel&quot; &gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
      &lt;div class=&quot;xeokit-tab xeokit-storeysTab&quot;&gt;
-        &lt;a class=&quot;xeokit-tab-btn disabled&quot; href=&quot;#&quot;&gt;${translate(&quot;storeysExplorer.title&quot;, &quot;Storeys&quot;)}&lt;/a&gt;
+        &lt;a class=&quot;xeokit-i18n xeokit-tab-btn disabled&quot; href=&quot;#&quot; data-xeokit-i18n=&quot;storeysExplorer.title&quot;&gt;Storeys&lt;/a&gt;
         &lt;div class=&quot;xeokit-tab-content&quot;&gt;
          &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-showAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;storeysExplorer.showAllTip&quot;, &quot;Show all storeys&quot;)}&quot;&gt;${translate(&quot;storeysExplorer.showAll&quot;, &quot;Show all&quot;)}&lt;/button&gt;
-                &lt;button type=&quot;button&quot; class=&quot;xeokit-hideAllStoreys xeokit-btn disabled&quot; data-tippy-content=&quot;${translate(&quot;storeysExplorer.showAllTip&quot;, &quot;Hide all storeys&quot;)}&quot;&gt;${translate(&quot;storeysExplorer.hideAll&quot;, &quot;Hide all&quot;)}&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-showAllStoreys xeokit-btn disabled&quot; data-xeokit-i18n=&quot;storeysExplorer.showAll&quot; data-xeokit-i18ntip=&quot;storeysExplorer.showAllTip&quot; data-tippy-content=&quot;Show all storeys&quot;&gt;Show all&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-hideAllStoreys xeokit-btn disabled&quot; data-xeokit-i18n=&quot;storeysExplorer.hideAll&quot; data-xeokit-i18ntip=&quot;storeysExplorer.hideAllTip&quot; data-tippy-content=&quot;Hide all storeys&quot;&gt;Hide all&lt;/button&gt;
             &lt;/div&gt;
              &lt;div class=&quot;xeokit-storeys xeokit-tree-panel&quot;&gt;&lt;/div&gt;
         &lt;/div&gt;
@@ -117,38 +111,50 @@ function createExplorerTemplate(cfg, viewer) {
     return explorerTemplate;
 }
 
-function createToolbarTemplate(cfg, viewer) {
-    function translate(key, fallback) {
-        return viewer.localeService.translate(key) || fallback;
-    }
+function createToolbarTemplate() {
     const toolbarTemplate = `&lt;div class=&quot;xeokit-toolbar&quot;&gt;
     &lt;!-- Reset button --&gt;
     &lt;div class=&quot;xeokit-btn-group&quot;&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-reset xeokit-btn fa fa-home fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.resetViewTip&quot;, &quot;Reset view&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-reset xeokit-btn fa fa-home fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.resetViewTip&quot; data-tippy-content=&quot;Reset view&quot;&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
         &lt;!-- 3D Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.toggle2d3dTip&quot;, &quot;Toggle 2D/3D&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-threeD xeokit-btn fa fa-cube fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.toggle2d3dTip&quot; data-tippy-content=&quot;Toggle 2D/3D&quot;&gt;&lt;/button&gt;
         &lt;!-- Perspective/Ortho Mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.togglePerspectiveTip&quot;, &quot;Toggle Perspective/Ortho&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-ortho xeokit-btn fa fa-th fa-2x  disabled&quot; data-xeokit-i18ntip=&quot;toolbar.togglePerspectiveTip&quot; data-tippy-content=&quot;Toggle Perspective/Ortho&quot;&gt;&lt;/button&gt;
         &lt;!-- Fit button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.viewFitTip&quot;, &quot;View fit&quot;)}&quot;&gt;&lt;/button&gt;   
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.viewFitTip&quot; data-tippy-content=&quot;View fit&quot;&gt;&lt;/button&gt;
         &lt;!-- First Person mode button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.firstPersonTip&quot;, &quot;Toggle first-person mode&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.firstPersonTip&quot; data-tippy-content=&quot;Toggle first-person mode&quot;&gt;&lt;/button&gt;
     &lt;/div&gt;
     &lt;!-- Tools button group --&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
         &lt;!-- Hide tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.hideObjectsTip&quot;, &quot;Hide objects&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-hide xeokit-btn fa fa-eraser fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.hideObjectsTip&quot; data-tippy-content=&quot;Hide objects&quot;&gt;&lt;/button&gt;
         &lt;!-- Select tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.selectObjectsTip&quot;, &quot;Select objects&quot;)}&quot;&gt;&lt;/button&gt;
-        &lt;!-- Query tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-query xeokit-btn fa fa-info-circle fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.queryObjectsTip&quot;, &quot;Query objects&quot;)}&quot;&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.selectObjectsTip&quot; data-tippy-content=&quot;Select objects&quot;&gt;&lt;/button&gt;    
         &lt;!-- section tool button --&gt;
-        &lt;button type=&quot;button&quot; class=&quot;xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.sliceObjectsTip&quot;, &quot;Slice objects&quot;)}&quot;&gt;&lt;div class=&quot;xeokit-section-menu-button disabled&quot; data-tippy-content=&quot;${translate(&quot;toolbar.slicesMenuTip&quot;, &quot;Slices menu&quot;)}&quot;&gt;&lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;xeokit-section-counter&quot; data-tippy-content=&quot;${translate(&quot;toolbar.numSlicesTip&quot;, &quot;Number of existing slices&quot;)}&quot;&gt;&lt;/div&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-section xeokit-btn fa fa-cut fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.sliceObjectsTip&quot; data-tippy-content=&quot;Slice objects&quot;&gt;
+            &lt;div class=&quot;xeokit-i18n xeokit-section-menu-button disabled&quot; data-xeokit-i18ntip=&quot;toolbar.slicesMenuTip&quot;  data-tippy-content=&quot;Slices menu&quot;&gt;
+                &lt;span class=&quot;xeokit-arrow-down xeokit-section-menu-button-arrow&quot;&gt;&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;xeokit-i18n xeokit-section-counter&quot; data-xeokit-i18ntip=&quot;toolbar.numSlicesTip&quot; data-tippy-content=&quot;Number of existing slices&quot;&gt;&lt;/div&gt;
+        &lt;/button&gt;
     &lt;/div&gt;
 &lt;/div&gt;`;
     return toolbarTemplate;
+}
+
+function createInspectorTemplate() {
+    const inspectorTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt;  
+    &lt;div class=&quot;xeokit-tab xeokit-propertiesTab&quot;&gt;
+        &lt;a class=&quot;xeokit-i18n xeokit-tab-btn disabled&quot; href=&quot;#&quot; data-xeokit-i18n=&quot;propertiesInspector.title&quot;&gt;Properties&lt;/a&gt;
+        &lt;div class=&quot;xeokit-tab-content&quot;&gt;        
+        &lt;div class=&quot;xeokit-properties&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;`;
+    return inspectorTemplate;
 }
 
 function initTabs(containerElement) {
@@ -224,9 +230,9 @@ class BIMViewer extends Controller {
 
         const canvasElement = cfg.canvasElement;
         const explorerElement = cfg.explorerElement;
+        const inspectorElement = cfg.inspectorElement;
         const toolbarElement = cfg.toolbarElement;
         const navCubeCanvasElement = cfg.navCubeCanvasElement;
-        const queryInfoPanelElement = cfg.queryInfoPanelElement;
         const busyModelBackdropElement = cfg.busyModelBackdropElement;
 
         explorerElement.oncontextmenu = (e) =&gt; {
@@ -255,6 +261,9 @@ class BIMViewer extends Controller {
 
         this._configs = {};
 
+        this._enableAddModels = !!cfg.enableEditModels;
+        this._enablePropertiesInspector = !!cfg.inspectorElement;
+
         /**
          * The xeokit [Viewer](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) at the core of this BIMViewer.
          *
@@ -265,14 +274,19 @@ class BIMViewer extends Controller {
         this._customizeViewer();
         this._initCanvasContextMenus();
 
-        this._enableAddModels = !!cfg.enableEditModels;
-
-        explorerElement.innerHTML = createExplorerTemplate(cfg, viewer);
-        toolbarElement.innerHTML = createToolbarTemplate(cfg, viewer);
+        explorerElement.innerHTML = createExplorerTemplate(cfg);
+        toolbarElement.innerHTML = createToolbarTemplate();
+        if (this._enablePropertiesInspector) {
+            inspectorElement.innerHTML = createInspectorTemplate();
+        }
 
         this._explorerElement = explorerElement;
+        this._inspectorElement = inspectorElement;
 
         initTabs(explorerElement);
+        if (this._enablePropertiesInspector) {
+            initTabs(inspectorElement);
+        }
 
         this._modelsExplorer = new ModelsExplorer(this, {
             modelsTabElement: explorerElement.querySelector(&quot;.xeokit-modelsTab&quot;),
@@ -303,6 +317,13 @@ class BIMViewer extends Controller {
             hideAllStoreysButtonElement: explorerElement.querySelector(&quot;.xeokit-hideAllStoreys&quot;),
             storeysElement: explorerElement.querySelector(&quot;.xeokit-storeys&quot;)
         });
+
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector = new PropertiesInspector(this, {
+                propertiesTabElement: inspectorElement.querySelector(&quot;.xeokit-propertiesTab&quot;),
+                propertiesElement: inspectorElement.querySelector(&quot;.xeokit-properties&quot;)
+            });
+        }
 
         this._resetAction = new ResetAction(this, {
             buttonElement: toolbarElement.querySelector(&quot;.xeokit-reset&quot;),
@@ -367,8 +388,6 @@ class BIMViewer extends Controller {
         });
 
         this._queryTool = new QueryTool(this, {
-            buttonElement: toolbarElement.querySelector(&quot;.xeokit-query&quot;),
-            queryInfoPanelElement: queryInfoPanelElement,
             active: false
         });
 
@@ -408,19 +427,11 @@ class BIMViewer extends Controller {
             this.fire(&quot;modelUnloaded&quot;, modelId);
         });
 
-        this._queryTool.on(&quot;queryPicked&quot;, (event) =&gt; {
-            this.fire(&quot;queryPicked&quot;, event);
-        });
-
-        this._queryTool.on(&quot;queryNotPicked&quot;, () =&gt; {
-            this.fire(&quot;queryNotPicked&quot;, true);
-        });
-
         this._resetAction.on(&quot;reset&quot;, () =&gt; {
             this.fire(&quot;reset&quot;, true);
         });
 
-        this._mutexActivation([this._queryTool, this._hideTool, this._selectionTool, this._sectionTool]);
+        this._mutexActivation([this._hideTool, this._selectionTool, this._sectionTool]);
 
         explorerElement.querySelector(&quot;.xeokit-showAllObjects&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {
             this.setAllObjectsVisible(true);
@@ -547,15 +558,15 @@ class BIMViewer extends Controller {
 
     _initCanvasContextMenus() {
 
-        this._canvasContextMenu = new CanvasContextMenu();
-        this._objectContextMenu = new ObjectContextMenu();
+        this._canvasContextMenu = new CanvasContextMenu(this);
+        this._objectContextMenu = new ObjectContextMenu(this);
 
         this.viewer.cameraControl.on(&quot;rightClick&quot;, (e) =&gt; {
 
             const event = e.event;
 
             const hit = this.viewer.scene.pick({
-                canvasPos: [event.offsetX, event.offsetY]
+                canvasPos: e.canvasPos
             });
 
             if (hit &amp;&amp; hit.entity.isObject) {
@@ -573,14 +584,14 @@ class BIMViewer extends Controller {
                     },
                     entity: hit.entity
                 };
-                this._objectContextMenu.show(event.pageX, event.pageY);
+                this._objectContextMenu.show(e.pagePos[0], e.pagePos[1]);
             } else {
                 this._objectContextMenu.hide();
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
-                this._canvasContextMenu.show(event.pageX, event.pageY);
+                this._canvasContextMenu.show(e.pagePos[0], e.pagePos[1]);
             }
         });
     }
@@ -610,7 +621,7 @@ class BIMViewer extends Controller {
      * @return {LocaleService} The LocaleService.
      */
     get localeService() {
-        return this._viewer.localeService;
+        return this.viewer.localeService;
     }
 
     /**
@@ -1152,6 +1163,7 @@ class BIMViewer extends Controller {
         this._objectsExplorer.showNodeInTreeView(objectId);
         this._classesExplorer.showNodeInTreeView(objectId);
         this._storeysExplorer.showNodeInTreeView(objectId);
+        this.fire(&quot;openExplorer&quot;, {});
     }
 
     /**
@@ -1165,6 +1177,22 @@ class BIMViewer extends Controller {
         this._objectsExplorer.unShowNodeInTreeView();
         this._classesExplorer.unShowNodeInTreeView();
         this._storeysExplorer.unShowNodeInTreeView();
+    }
+
+    /**
+     * Shows the properties of the given object in the Properties tab.
+     *
+     * @param {String} objectId ID of the object
+     */
+    showObjectProperties(objectId) {
+        if (!objectId) {
+            this.error(&quot;showObjectInExplorers() - Argument expected: objectId&quot;);
+            return;
+        }
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.showObjectPropertySets(objectId);
+        }
+        this.fire(&quot;openInspector&quot;, {});
     }
 
     /**
@@ -1470,8 +1498,9 @@ class BIMViewer extends Controller {
      *
      *  * &quot;models&quot; - the Models tab, which lists the models available within the currently loaded project,
      *  * &quot;objects&quot; - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * &quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * &quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * &quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * &quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types, and
+     *  * &quot;properties&quot; - the Properties tab, which shows property sets for a given object.
      *
      * @param {String} tabId ID of the tab to open - see method description.
      */
@@ -1480,8 +1509,6 @@ class BIMViewer extends Controller {
             this.error(&quot;openTab() - Argument expected: tabId&quot;);
             return;
         }
-        const tabClass = &apos;xeokit-tab&apos;;
-        const activeClass = &apos;active&apos;;
         let tabSelector;
         switch (tabId) {
             case &quot;models&quot;:
@@ -1496,12 +1523,22 @@ class BIMViewer extends Controller {
             case &quot;storeys&quot;:
                 tabSelector = &quot;xeokit-storeysTab&quot;;
                 break;
+            case &quot;properties&quot;:
+                tabSelector = &quot;xeokit-propertiesTab&quot;;
+                break;
             default:
                 this.error(&quot;openTab() - tab not recognized: &apos;&quot; + tabId + &quot;&apos;&quot;);
                 return;
         }
-        let tabs = this._explorerElement.querySelectorAll(&quot;.&quot; + tabClass);
-        let tab = this._explorerElement.querySelector(&quot;.&quot; + tabSelector);
+        this._openTab(this._explorerElement, tabSelector);
+   //     this._openTab(this._inspectorElement, tabSelector);
+    }
+
+    _openTab(element, tabSelector) {
+        const tabClass = &apos;xeokit-tab&apos;;
+        const activeClass = &apos;active&apos;;
+        let tabs = element.querySelectorAll(&quot;.&quot; + tabClass);
+        let tab = element.querySelector(&quot;.&quot; + tabSelector);
         for (let i = 0; i &lt; tabs.length; i++) {
             let tabElement = tabs[i];
             if (tabElement.isEqualNode(tab)) {
@@ -1519,8 +1556,9 @@ class BIMViewer extends Controller {
      *
      *  * &quot;models&quot; - the Models tab, which lists the models available within the currently loaded project,
      *  * &quot;objects&quot; - the Objects tab, which contains a tree view for each loaded model, organized to indicate the containment hierarchy of their objects,
-     *  * &quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects, and
-     *  * &quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types.
+     *  * &quot;classes&quot; - the Classes tab, which contains a tree view for each loaded model, with nodes grouped by IFC types of their objects,
+     *  * &quot;storeys&quot; - the Storeys tab, which contains a tree view for each loaded model, with nodes grouped within ````IfcBuildingStoreys````, sub-grouped by their IFC types,
+     *  * &quot;properties&quot; - the Properties tab, which shows property sets for a given object, and
      *  * &quot;none&quot; - no tab is open; this is unlikely, since one of the above tabs should be open at a any time, but here for robustness.
      */
     getOpenTab() {
@@ -1547,6 +1585,10 @@ class BIMViewer extends Controller {
         let storeysTab = this._explorerElement.querySelector(&quot;.xeokit-storeysTab&quot;);
         if (hasClass(storeysTab, activeClass)) {
             return &quot;storeys&quot;;
+        }
+        let propertiesTab = this._inspectorElement.querySelector(&quot;.xeokit-propertiesTab&quot;);
+        if (hasClass(propertiesTab, activeClass)) {
+            return &quot;properties&quot;;
         }
         return &quot;none&quot;;
     }
@@ -1774,6 +1816,11 @@ class BIMViewer extends Controller {
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
+
+        //
+        if (this._enablePropertiesInspector) {
+            this._propertiesInspector.setEnabled(enabled);
+        }
     }
 
     /**

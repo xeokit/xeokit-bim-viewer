@@ -30,8 +30,6 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -44,234 +42,260 @@
  * @private
  */
 class ObjectContextMenu extends ContextMenu {
-    constructor(cfg = {}) {
-        super({
-            context: cfg.context,
-            items: [
-                [
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.viewFit&quot;) || &quot;View Fit&quot;;
-                        },
-                        doAction: (context) =&gt; {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const entity = context.entity;
-                            viewer.cameraFlight.flyTo({
-                                aabb: entity.aabb,
-                                duration: 0.5
-                            }, () =&gt; {
-                                setTimeout(function () {
-                                    scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
-                                }, 500);
-                            });
-                            viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.viewFitAll&quot;) || &quot;View Fit All&quot;;
-                        },
-                        doAction: (context) =&gt; {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const sceneAABB = scene.getAABB(scene.visibleObjectIds);
-                            viewer.cameraFlight.flyTo({
-                                aabb: sceneAABB,
-                                duration: 0.5
-                            });
-                            viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.showInTree&quot;) || &quot;Show in Tree&quot;;
-                        },
-                        doAction: (context) =&gt; {
-                            const objectId = context.entity.id;
-                            context.showObjectInExplorers(objectId);
-                        }
-                    }
-                ],
-                [
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hide&quot;) || &quot;Hide&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return context.entity.visible;
-                        },
-                        doAction: (context) =&gt; {
-                            context.entity.visible = false;
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hideOthers&quot;) || &quot;Hide Others&quot;;
-                        },
-                        doAction: (context) =&gt; {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const entity = context.entity;
-                            const metaObject = viewer.metaScene.metaObjects[entity.id];
-                            if (!metaObject) {
-                                return;
-                            }
-                            scene.setObjectsVisible(scene.visibleObjectIds, false);
-                            metaObject.withMetaObjectsInSubtree((metaObject) =&gt; {
-                                const entity = scene.objects[metaObject.id];
-                                if (entity) {
-                                    entity.visible = true;
-                                }
-                            });
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.hideAll&quot;) || &quot;Hide All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (context.viewer.scene.numVisibleObjects &gt; 0);
-                        },
-                        doAction: (context) =&gt; {
-                            context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.showAll&quot;) || &quot;Show All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            const scene = context.viewer.scene;
-                            return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
-                        },
-                        doAction: (context) =&gt; {
-                            const scene = context.viewer.scene;
-                            scene.setObjectsVisible(scene.objectIds, true);
-                            scene.setObjectsPickable(scene.xrayedObjectIds, true);
-                            scene.setObjectsXRayed(scene.xrayedObjectIds, false);
-                        }
-                    }
-                ],
-                [
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xray&quot;) || &quot;X-Ray&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (!context.entity.xrayed);
-                        },
-                        doAction: (context) =&gt; {
-                            const entity = context.entity;
-                            entity.xrayed = true;
-                            entity.pickable = false;
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayOthers&quot;) || &quot;X-Ray Others&quot;;
-                        },
-                        doAction: (context) =&gt; {
-                            const viewer = context.viewer;
-                            const scene = viewer.scene;
-                            const entity = context.entity;
-                            const metaObject = viewer.metaScene.metaObjects[entity.id];
-                            if (!metaObject) {
-                                return;
-                            }
-                            scene.setObjectsVisible(scene.objectIds, true);
-                            scene.setObjectsXRayed(scene.objectIds, true);
-                            scene.setObjectsPickable(scene.objectIds, false);
-                            metaObject.withMetaObjectsInSubtree((metaObject) =&gt; {
-                                const entity = scene.objects[metaObject.id];
-                                if (entity) {
-                                    entity.xrayed = false;
-                                    entity.pickable = true;
-                                }
-                            });
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayAll&quot;) || &quot;X-Ray All&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            const scene = context.viewer.scene;
-                            return (scene.numXRayedObjects &lt; scene.numObjects);
-                        },
-                        doAction: (context) =&gt; {
-                            const scene = context.viewer.scene;
-                            scene.setObjectsVisible(scene.objectIds, true);
-                            scene.setObjectsPickable(scene.objectIds, false);
-                            scene.setObjectsXRayed(scene.objectIds, true);
-                        }
-                    },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.xrayNone&quot;) || &quot;X-Ray None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (context.viewer.scene.numXRayedObjects &gt; 0);
-                        },
-                        doAction: (context) =&gt; {
-                            const scene = context.viewer.scene;
-                            const xrayedObjectIds = scene.xrayedObjectIds;
-                            scene.setObjectsPickable(xrayedObjectIds, true);
-                            scene.setObjectsXRayed(xrayedObjectIds, false);
-                        }
-                    }
-                ],
-                [
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.select&quot;) || &quot;Select&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (!context.entity.selected);
-                        },
-                        doAction: (context) =&gt; {
-                            context.entity.selected = true;
 
-                        }
+    constructor(bimViewer) {
+        super();
+        this._bimViewer = bimViewer;
+        this._buildMenu();
+    }
+
+    _buildMenu() {
+
+        const showObjectItems = [];
+        const focusObjectItems = [];
+
+        if (this._bimViewer._enablePropertiesInspector) {
+            showObjectItems.push(...[{
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.inspectProperties&quot;) || &quot;Inspect Properties&quot;;
+                },
+                doAction: (context) =&gt; {
+                    const objectId = context.entity.id;
+                    context.bimViewer.showObjectProperties(objectId);
+                }
+            }]);
+        }
+
+        showObjectItems.push(...[
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.showInTree&quot;) || &quot;Show in Explorer&quot;;
+                },
+                doAction: (context) =&gt; {
+                    const objectId = context.entity.id;
+                    context.showObjectInExplorers(objectId);
+                }
+            }
+        ]);
+
+        focusObjectItems.push(...[
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.viewFit&quot;) || &quot;View Fit&quot;;
+                },
+                doAction: (context) =&gt; {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const entity = context.entity;
+                    viewer.cameraFlight.flyTo({
+                        aabb: entity.aabb,
+                        duration: 0.5
+                    }, () =&gt; {
+                        setTimeout(function () {
+                            scene.setObjectsHighlighted(scene.highlightedObjectIds, false);
+                        }, 500);
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(entity.aabb);
+                }
+            },
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.viewFitAll&quot;) || &quot;View Fit All&quot;;
+                },
+                doAction: (context) =&gt; {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const sceneAABB = scene.getAABB(scene.visibleObjectIds);
+                    viewer.cameraFlight.flyTo({
+                        aabb: sceneAABB,
+                        duration: 0.5
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
+                }
+            }
+        ]);
+
+        this.items = [
+            showObjectItems,
+            focusObjectItems,
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.hide&quot;) || &quot;Hide&quot;;
                     },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.undoSelect&quot;) || &quot;Undo Select&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return context.entity.selected;
-                        },
-                        doAction: (context) =&gt; {
-                            context.entity.selected = false;
-                        }
+                    getEnabled: (context) =&gt; {
+                        return context.entity.visible;
                     },
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.selectNone&quot;) || &quot;Select None&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (context.viewer.scene.numSelectedObjects &gt; 0);
-                        },
-                        doAction: (context) =&gt; {
-                            context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
-                        }
+                    doAction: (context) =&gt; {
+                        context.entity.visible = false;
                     }
-                ],
-                [
-                    {
-                        getTitle: (context) =&gt; {
-                            return context.viewer.localeService.translate(&quot;objectContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
-                        },
-                        getEnabled: (context) =&gt; {
-                            return (context.bimViewer.getNumSections() &gt; 0);
-                        },
-                        doAction: (context) =&gt; {
-                            context.bimViewer.clearSections();
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.hideOthers&quot;) || &quot;Hide Others&quot;;
+                    },
+                    doAction: (context) =&gt; {
+                        const viewer = context.viewer;
+                        const scene = viewer.scene;
+                        const entity = context.entity;
+                        const metaObject = viewer.metaScene.metaObjects[entity.id];
+                        if (!metaObject) {
+                            return;
                         }
+                        scene.setObjectsVisible(scene.visibleObjectIds, false);
+                        metaObject.withMetaObjectsInSubtree((metaObject) =&gt; {
+                            const entity = scene.objects[metaObject.id];
+                            if (entity) {
+                                entity.visible = true;
+                            }
+                        });
                     }
-                ]
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.hideAll&quot;) || &quot;Hide All&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.viewer.scene.numVisibleObjects &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        context.viewer.scene.setObjectsVisible(context.viewer.scene.visibleObjectIds, false);
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.showAll&quot;) || &quot;Show All&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        const scene = context.viewer.scene;
+                        return ((scene.numVisibleObjects &lt; scene.numObjects) || (context.viewer.scene.numXRayedObjects &gt; 0));
+                    },
+                    doAction: (context) =&gt; {
+                        const scene = context.viewer.scene;
+                        scene.setObjectsVisible(scene.objectIds, true);
+                        scene.setObjectsPickable(scene.xrayedObjectIds, true);
+                        scene.setObjectsXRayed(scene.xrayedObjectIds, false);
+                    }
+                }
+            ],
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.xray&quot;) || &quot;X-Ray&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (!context.entity.xrayed);
+                    },
+                    doAction: (context) =&gt; {
+                        const entity = context.entity;
+                        entity.xrayed = true;
+                        entity.pickable = false;
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.xrayOthers&quot;) || &quot;X-Ray Others&quot;;
+                    },
+                    doAction: (context) =&gt; {
+                        const viewer = context.viewer;
+                        const scene = viewer.scene;
+                        const entity = context.entity;
+                        const metaObject = viewer.metaScene.metaObjects[entity.id];
+                        if (!metaObject) {
+                            return;
+                        }
+                        scene.setObjectsVisible(scene.objectIds, true);
+                        scene.setObjectsXRayed(scene.objectIds, true);
+                        scene.setObjectsPickable(scene.objectIds, false);
+                        metaObject.withMetaObjectsInSubtree((metaObject) =&gt; {
+                            const entity = scene.objects[metaObject.id];
+                            if (entity) {
+                                entity.xrayed = false;
+                                entity.pickable = true;
+                            }
+                        });
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.xrayAll&quot;) || &quot;X-Ray All&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        const scene = context.viewer.scene;
+                        return (scene.numXRayedObjects &lt; scene.numObjects);
+                    },
+                    doAction: (context) =&gt; {
+                        const scene = context.viewer.scene;
+                        scene.setObjectsVisible(scene.objectIds, true);
+                        scene.setObjectsPickable(scene.objectIds, false);
+                        scene.setObjectsXRayed(scene.objectIds, true);
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.xrayNone&quot;) || &quot;X-Ray None&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.viewer.scene.numXRayedObjects &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        const scene = context.viewer.scene;
+                        const xrayedObjectIds = scene.xrayedObjectIds;
+                        scene.setObjectsPickable(xrayedObjectIds, true);
+                        scene.setObjectsXRayed(xrayedObjectIds, false);
+                    }
+                }
+            ],
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.select&quot;) || &quot;Select&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (!context.entity.selected);
+                    },
+                    doAction: (context) =&gt; {
+                        context.entity.selected = true;
+
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.undoSelect&quot;) || &quot;Undo Select&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return context.entity.selected;
+                    },
+                    doAction: (context) =&gt; {
+                        context.entity.selected = false;
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.selectNone&quot;) || &quot;Select None&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.viewer.scene.numSelectedObjects &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        context.viewer.scene.setObjectsSelected(context.viewer.scene.selectedObjectIds, false);
+                    }
+                }
+            ],
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;objectContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.bimViewer.getNumSections() &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.clearSections();
+                    }
+                }
             ]
-        });
+        ];
     }
 }
 

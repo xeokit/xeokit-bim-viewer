@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/contextMenus/ModelsContextMenu.js | xeokit-bim-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-bim-viewer"><meta property="og:site_name" content="xeokit-bim-viewer"><meta property="og:title" content="xeokit-bim-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-bim-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-bim-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/contextMenus/ModelsContextMenu.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {ContextMenu} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+
+/**
+ * @private
+ * @param {*} cfg Configs
+ * @param {Boolean} [cfg.enableEditModels=false] Set true to show Add/Edit/Delete options in the menu.
+ */
+class ModelsContextMenu extends ContextMenu {
+
+    constructor(cfg = {}) {
+
+        const enableEditModels = (!!cfg.enableEditModels);
+
+        const items = [
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;modelsContextMenu.loadModel&quot;) || &quot;Load&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (!context.bimViewer.isModelLoaded(context.modelId));
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.loadModel(context.modelId);
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;modelsContextMenu.unloadModel&quot;) || &quot;Unload&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return context.bimViewer.isModelLoaded(context.modelId);
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.unloadModel(context.modelId);
+                    }
+                }
+            ]
+        ];
+
+        if (enableEditModels) {
+
+            items.push([
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;modelsContextMenu.editModel&quot;) || &quot;Edit&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return true;
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.editModel(context.modelId);
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;modelsContextMenu.deleteModel&quot;) || &quot;Delete&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return true;
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.deleteModel(context.modelId);
+                    }
+                }
+            ]);
+        }
+
+        items.push([
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;modelsContextMenu.loadAllModels&quot;) || &quot;Load All&quot;;
+                },
+                getEnabled: (context) =&gt; {
+                    const bimViewer = context.bimViewer;
+                    const modelIds = bimViewer.getModelIds();
+                    const loadedModelIds = bimViewer.getLoadedModelIds();
+                    return (loadedModelIds.length &lt; modelIds.length);
+                },
+                doAction: (context) =&gt; {
+                    context.bimViewer.loadAllModels();
+                }
+            },
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;modelsContextMenu.unloadAllModels&quot;) || &quot;Unload All&quot;;
+                },
+                getEnabled: (context) =&gt; {
+                    const loadedModelIds = context.bimViewer.getLoadedModelIds();
+                    return (loadedModelIds.length &gt; 0);
+                },
+                doAction: (context) =&gt; {
+                    context.bimViewer.unloadAllModels();
+                }
+            }
+        ]);
+
+        items.push([
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;modelsContextMenu.clearSlices&quot;) || &quot;Clear Slices&quot;;
+                },
+                getEnabled: (context) =&gt; {
+                    return (context.bimViewer.getNumSections() &gt; 0);
+                },
+                doAction: (context) =&gt; {
+                    context.bimViewer.clearSections();
+                }
+            }
+        ]);
+
+        super({
+            context: cfg.context,
+            items: items
+        });
+    }
+}
+
+export {ModelsContextMenu};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

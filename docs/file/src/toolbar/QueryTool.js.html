@@ -30,8 +30,6 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -47,86 +45,31 @@ class QueryTool extends Controller {
 
         super(parent);
 
-        if (!cfg.buttonElement) {
-            throw &quot;Missing config: buttonElement&quot;;
-        }
-
-        const buttonElement = cfg.buttonElement;
-
-        this.on(&quot;enabled&quot;, (enabled) =&gt; {
-            if (!enabled) {
-                buttonElement.classList.add(&quot;disabled&quot;);
-            } else {
-                buttonElement.classList.remove(&quot;disabled&quot;);
-            }
-        });
-
-        this.on(&quot;active&quot;, (active) =&gt; {
-            if (active) {
-
-                buttonElement.classList.add(&quot;active&quot;);
-
-                this._onPick = this.viewer.cameraControl.on(&quot;picked&quot;, (pickResult) =&gt; {
-                    if (!pickResult.entity) {
-                        return;
-                    }
-                    const entity = pickResult.entity;
-                    const model = entity.model;
-                    if (!model) { // OK to click on entities that don&apos;t belong to models - could be a navigation gizmo or helper
-                        return;
-                    }
-                    const projectId = this.bimViewer.getLoadedProjectId();
-                    if (!projectId) {
-                        this.error(&quot;Query tool: should be a project loaded - ignoring query-pick&quot;);
-                        return;
-                    }
-                    const modelId = model.id;
-                    const objectId = entity.id;
-                    const metaObject = this.viewer.metaScene.metaObjects[objectId];
-                    if (!metaObject) {
-                        return;
-                    }
-                    const objectName = metaObject.name;
-                    const objectType = metaObject.type;
-                    const objectQueryResult = {
-                        projectId: projectId,
-                        modelId: modelId,
-                        objectId: objectId,
-                        objectName: objectName,
-                        objectType: objectType
-                    };
-                    this.fire(&quot;queryPicked&quot;, objectQueryResult);
-                });
-
-                this._onPickedNothing = this.viewer.cameraControl.on(&quot;pickedNothing&quot;, (pickResult) =&gt; {
-                    this.fire(&quot;queryNotPicked&quot;, false);
-                });
-
-            } else {
-
-                buttonElement.classList.remove(&quot;active&quot;);
-
-                if (this._onPick !== undefined) {
-                    this.viewer.cameraControl.off(this._onPick);
-                    this.viewer.cameraControl.off(this._onPickedNothing);
-                    this._onPick = undefined;
-                    this._onPickedNothing = undefined;
-                }
-            }
-        });
-
-        buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
-            this.bimViewer._sectionTool.hideControl();
-            if (this.getEnabled()) {
-                const active = this.getActive();
-                this.setActive(!active);
-            }
-            event.preventDefault();
-        });
-
-        this.bimViewer.on(&quot;reset&quot;, () =&gt; {
-            this.setActive(false);
-        });
+       //  this.on(&quot;active&quot;, (active) =&gt; {
+       //      if (active) {
+       //          this._onPick = this.viewer.cameraControl.on(&quot;picked&quot;, (pickResult) =&gt; {
+       //              if (!pickResult.entity) {
+       //                  return;
+       //              }
+       // //             this.queryEntity(pickResult.entity);
+       //          });
+       //          this._onPickedNothing = this.viewer.cameraControl.on(&quot;pickedNothing&quot;, () =&gt; {
+       //              this.fire(&quot;queryNotPicked&quot;, false);
+       //          });
+       //      } else {
+       //
+       //          if (this._onPick !== undefined) {
+       //              this.viewer.cameraControl.off(this._onPick);
+       //              this.viewer.cameraControl.off(this._onPickedNothing);
+       //              this._onPick = undefined;
+       //              this._onPickedNothing = undefined;
+       //          }
+       //      }
+       //  });
+       //
+       //  this.bimViewer.on(&quot;reset&quot;, () =&gt; {
+       //      this.setActive(false);
+       //  });
     }
 }
 

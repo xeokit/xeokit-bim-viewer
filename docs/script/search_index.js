@@ -6,18 +6,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "@xeokit/xeokit-bim-viewer/src/ifcelementdescriptions/ifcelementdescriptions.js~ifcelementdescriptions",
-    "variable/index.html#static-variable-IFCElementDescriptions",
-    "<span>IFCElementDescriptions</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/IFCElementDescriptions/IFCElementDescriptions.js</span>",
-    "variable"
-  ],
-  [
-    "@xeokit/xeokit-bim-viewer/src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu",
-    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html",
-    "<span>SectionToolContextMenu</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/contextMenus/SectionToolContextMenu.js</span>",
-    "class"
-  ],
-  [
     "@xeokit/xeokit-bim-viewer/src/server/server.js~server",
     "class/src/server/Server.js~Server.html",
     "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/server/Server.js</span>",
@@ -624,6 +612,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#showobjectproperties",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-showObjectProperties",
+    "src/BIMViewer.js~BIMViewer#showObjectProperties",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#unshowobjectinexplorers",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-unShowObjectInExplorers",
     "src/BIMViewer.js~BIMViewer#unShowObjectInExplorers",
@@ -732,24 +726,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#constructor",
-    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-constructor-constructor",
-    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#constructor",
-    "method"
-  ],
-  [
-    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#destroy",
-    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-method-destroy",
-    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#destroy",
-    "method"
-  ],
-  [
-    "src/contextmenus/sectiontoolcontextmenu.js~sectiontoolcontextmenu#items",
-    "class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html#instance-member-items",
-    "src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu#items",
-    "member"
-  ],
-  [
     "src/contextmenus/treeviewcontextmenu.js",
     "file/src/contextMenus/TreeViewContextMenu.js.html",
     "src/contextMenus/TreeViewContextMenu.js",
@@ -777,6 +753,12 @@ window.esdocSearchIndex = [
     "src/explorer/storeysexplorer.js",
     "file/src/explorer/StoreysExplorer.js.html",
     "src/explorer/StoreysExplorer.js",
+    "file"
+  ],
+  [
+    "src/inspector/propertiesinspector.js",
+    "file/src/inspector/PropertiesInspector.js.html",
+    "src/inspector/PropertiesInspector.js",
     "file"
   ],
   [

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/inspector/PropertiesInspector.js | xeokit-bim-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-bim-viewer"><meta property="og:site_name" content="xeokit-bim-viewer"><meta property="og:title" content="xeokit-bim-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-bim-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-bim-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/inspector/PropertiesInspector.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+
+/** @private */
+class PropertiesInspector extends Controller {
+
+    constructor(parent, cfg = {}) {
+
+        super(parent);
+
+        if (!cfg.propertiesTabElement) {
+            throw &quot;Missing config: propertiesTabElement&quot;;
+        }
+
+        if (!cfg.propertiesElement) {
+            throw &quot;Missing config: propertiesElement&quot;;
+        }
+
+        this._metaObject = null;
+
+        this._propertiesTabElement = cfg.propertiesTabElement;
+        this._propertiesElement = cfg.propertiesElement;
+        this._propertiesTabButtonElement = this._propertiesTabElement.querySelector(&quot;.xeokit-tab-btn&quot;);
+
+        if (!this._propertiesTabButtonElement) {
+            throw &quot;Missing DOM element: ,xeokit-tab-btn&quot;;
+        }
+
+        this._onModelUnloaded = this.viewer.scene.on(&quot;modelUnloaded&quot;, (modelId) =&gt; {
+            if (this._metaObject &amp;&amp; this._metaObject.metaModel.id === modelId) {
+                this.clear();
+            }
+        });
+
+        this.bimViewer.on(&quot;reset&quot;, () =&gt; {
+            this.clear();
+        });
+
+        document.addEventListener(&apos;click&apos;, this._clickListener = (e) =&gt; {
+            if (!e.target.matches(&apos;.xeokit-accordion .xeokit-accordion-button&apos;)) {
+                return;
+            } else {
+                if (!e.target.parentElement.classList.contains(&apos;active&apos;)) {
+                    e.target.parentElement.classList.add(&apos;active&apos;);
+                } else {
+                    e.target.parentElement.classList.remove(&apos;active&apos;);
+                }
+            }
+        });
+    }
+
+    showObjectPropertySets(objectId) {
+        const metaObject = this.viewer.metaScene.metaObjects[objectId];
+        if (!metaObject) {
+            return;
+        }
+        const propertySets = metaObject.propertySets;
+        if (propertySets &amp;&amp; propertySets.length &gt; 0) {
+            this._setPropertySets(metaObject, propertySets);
+        } else {
+            this._setPropertySets(metaObject);
+        }
+        this._metaObject = metaObject;
+    }
+
+    clear() {
+        const html = [];
+        html.push(`&lt;div class=&quot;element-attributes&quot;&gt;`);
+        html.push(`&lt;p class=&quot;subsubtitle&quot;&gt;No object inspected. Right-click or long-tab an object and select \&apos;Inspect Properties\&apos; to view its properties here.&lt;/p&gt;`);
+        html.push(`&lt;/div&gt;`);
+        const htmlStr = html.join(&quot;&quot;);
+       this._propertiesElement.innerHTML = htmlStr;
+    }
+
+    _setPropertySets(metaObject, propertySets) {
+        const html = [];
+        html.push(`&lt;div class=&quot;element-attributes&quot;&gt;`);
+        if (!metaObject) {
+            html.push(`&lt;p class=&quot;subsubtitle&quot;&gt;No object selected&lt;/p&gt;`);
+        } else {
+            html.push(`&lt;p class=&quot;subsubtitle&quot;&gt;&quot;${metaObject.name}&quot;&lt;/p&gt;`);
+            if (metaObject.type) {
+                html.push(`&lt;p class=&quot;subtitle&quot;&gt;${metaObject.type}&lt;/p&gt;`);
+            }
+            if (!propertySets || propertySets.length === 0) {
+                html.push(`&lt;p class=&quot;subtitle&quot;&gt;No properties sets found for this object.&lt;/p&gt;`);
+                html.push(`&lt;/div&gt;`);
+            } else {
+                html.push(`&lt;/div&gt;`);
+                html.push(`&lt;div class=&quot;xeokit-accordion&quot;&gt;`);
+                for (let i = 0, len = propertySets.length; i &lt; len; i++) {
+                    const propertySet = propertySets[i];
+                    const properties = propertySet.properties || [];
+                    if (properties.length &gt; 0) {
+                        html.push(`&lt;div class=&quot;xeokit-accordion-container&quot;&gt;
+                                        &lt;p class=&quot;xeokit-accordion-button&quot;&gt;&lt;span&gt;&lt;/span&gt;${propertySet.name}&lt;/p&gt;                                       
+                                        &lt;div class=&quot;xeokit-accordion-panel&quot;&gt;                                           
+                                            &lt;table class=&quot;xeokit-table&quot;&gt;&lt;tbody&gt;`);
+                        for (let i = 0, len = properties.length; i &lt; len; i++) {
+                            const property = properties[i];
+                            html.push(`&lt;tr&gt;&lt;td class=&quot;td1&quot;&gt;${property.name || property.label}:&lt;/td&gt;&lt;td class=&quot;td2&quot;&gt;${property.value}&lt;/td&gt;&lt;/tr&gt;`);
+                        }
+                        html.push(`&lt;/tbody&gt;&lt;/table&gt;
+                        &lt;/div&gt;
+                        &lt;/div&gt;`);
+                    } else {
+                        //  html.push(`&lt;p class=&quot;subtitle&quot;&gt;No properties sets found.&lt;/p&gt;`);
+                    }
+                }
+                html.push(`&lt;/div&gt;`);
+            }
+        }
+        this._propertiesElement.innerHTML = html.join(&quot;&quot;);
+    }
+
+    setEnabled(enabled) {
+        if (!enabled) {
+            this._propertiesTabButtonElement.classList.add(&quot;disabled&quot;);
+        } else {
+            this._propertiesTabButtonElement.classList.remove(&quot;disabled&quot;);
+        }
+    }
+
+    destroy() {
+        super.destroy();
+        this.viewer.scene.off(this._onModelLoaded);
+        this.viewer.scene.off(this._onModelUnloaded);
+        document.removeEventListener(&apos;click&apos;, this._clickListener);
+    }
+}
+
+export {PropertiesInspector};</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

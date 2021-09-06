@@ -30,8 +30,6 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#ifcelementdescriptions">IFCElementDescriptions</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IFCElementDescriptions">IFCElementDescriptions</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#contextmenus">contextMenus</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/contextMenus/SectionToolContextMenu.js~SectionToolContextMenu.html">SectionToolContextMenu</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -955,10 +953,11 @@ export {IFCObjectDefaults};</code>
 <p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have
 configurations in there so that we can see through them.</p>
 <h3 id="localizing-a-viewer">Localizing a Viewer</h3><p>The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented 
-by a xeokit <a href>I18nLocaleService</a>. </p>
+by a xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html">LocaleService</a>. </p>
 <p>The snippet below shows how it&apos;s done, using a partial set of the translations expected by the components
 within the BIMViewer. We&apos;ll just show the translations for the faces of the NavCube. We&apos;ll also load the translations 
 inline, rather than fetch them from a separate JSON file, as we would in practice.</p>
+<p>We call translations &quot;messages&quot;. Our metaphor is that the UI &quot;conveys messages to the user&quot;. </p>
 <p>To see all the translations expected by a BIMViewer, take a look at the translations we&apos;ve configured for the bundled BIMViewer 
 demo application:  <a href="/app/locales/messages.js"><code>/app/locales/messages.js</code></a>.  </p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">myBIMViewer.localeService.loadMessages({
