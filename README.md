@@ -392,8 +392,7 @@ new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` i
 
 > **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.**
 
-The viewer is implemented by the
-JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html)
+The viewer is implemented by the JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html)
 class, which provides a complete set of methods to programmatically control it.
 
 Using these methods, we can:
