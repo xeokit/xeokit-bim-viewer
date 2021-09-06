@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.3.0-alpha.38",
+  "version": "2.3.0-alpha.39",
   "description": "BIM viewer built on xeokit",
   "main": "dist/xeokit-bim-viewer.es.js",
   "files": [
@@ -47,6 +47,6 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "2.0.0-beta.17"
+    "@xeokit/xeokit-sdk": "2.0.0-beta.21"
   }
 }
