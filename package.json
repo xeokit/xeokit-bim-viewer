@@ -1,15 +1,16 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.3.0-alpha.33",
+  "version": "2.3.0-alpha.37",
   "description": "BIM viewer built on xeokit",
   "main": "dist/xeokit-bim-viewer.es.js",
   "files": [
     "/dist/xeokit-bim-viewer.es.js",
-    "/dist/xeokit-bim-viewer.css"
+    "/dist/xeokit-bim-viewer.css",
+    "/dist/messages.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": " rollup -c",
+    "build": " rollup -c; cp locales/messages.js ./dist/.",
     "docs": "./node_modules/.bin/esdoc",
     "publish": "npm publish --access public"
   },

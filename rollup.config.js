@@ -10,6 +10,6 @@ export default {
     },
     plugins: [
         nodeResolve(),
-        terser()
+         terser()
     ]
 }

@@ -934,11 +934,13 @@ configurations in there so that we can see through them.
 ### Localizing a Viewer
 
 The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented 
-by a xeokit [LocaleService](http://localhost:8080/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html). 
+by a xeokit [LocaleService](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html). 
 
 The snippet below shows how it's done, using a partial set of the translations expected by the components
 within the BIMViewer. We'll just show the translations for the faces of the NavCube. We'll also load the translations 
 inline, rather than fetch them from a separate JSON file, as we would in practice.
+
+We call translations "messages". Our metaphor is that the UI "conveys messages to the user". 
 
 To see all the translations expected by a BIMViewer, take a look at the translations we've configured for the bundled BIMViewer 
 demo application:  [````/app/locales/messages.js````](/app/locales/messages.js).  
