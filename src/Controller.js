@@ -287,7 +287,7 @@ class Controller {
         this._events = null;
         this._eventCallDepth = 0;
         for (let i = 0, len = this._children.length; i < len; i++) {
-            this._children.destroy();
+            this._children[i].destroy();
         }
         this._children = [];
     }
