@@ -5,6 +5,8 @@
 
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
+* [Run demo](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
+
 ---
 
 **[xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer)** is an open source 2D/3D BIM viewer that runs in the
