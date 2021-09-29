@@ -906,7 +906,7 @@
 
 
 .xeokit-propertiesTab .element-attributes {
-    padding-left: 15px;
+    padding-left: 10px;
 }
 
 .xeokit-propertiesTab .xeokit-tab-btn {
@@ -1024,7 +1024,8 @@
     border-right: 1px solid #81819a;
     white-space: nowrap;
     font-weight: bold;
-    width: 30%;
+    width: 150px;
+    max-width: 150px;
 }
 
 .xeokit-table tr:first-child td {
@@ -1035,7 +1036,6 @@
     padding: .5em;
     vertical-align: top;
     border-top: 1px solid #81819a;
-    width: 70%;
 }
 
 .xeokit-table th {
@@ -1046,4 +1046,8 @@
     display: table-cell;
     vertical-align: inherit;
     font-weight: bold;
+}
+
+.xeokit-no-prop-set-warning {
+    visibility: visible
 }
