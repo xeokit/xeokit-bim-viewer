@@ -46,6 +46,8 @@ class PropertiesInspector extends Controller {
                 }
             }
         });
+
+        this.clear();
     }
 
     showObjectPropertySets(objectId) {
