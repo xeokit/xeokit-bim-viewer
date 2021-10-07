@@ -171,6 +171,7 @@ class BIMViewer extends Controller {
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
+     * @param {Boolean} [cfg.keyboardEventsElement] Optional reference to HTML element on which key events should be handled. Defaults to the HTML Document.
      */
     constructor(server, cfg = {}) {
 

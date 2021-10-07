@@ -61,13 +61,24 @@ class OrthoMode extends Controller {
 
         this._buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
             if (this.getEnabled()) {
-                this.setActive(!this.getActive(), ()=&gt;{});
+                this.setActive(!this.getActive(), () =&gt; {
+                });
             }
             event.preventDefault();
         });
 
         this.bimViewer.on(&quot;reset&quot;, () =&gt; {
             this.setActive(false);
+        });
+
+        this.viewer.camera.on(&quot;projection&quot;, () =&gt; {
+            const isOrtho = (this.viewer.camera.projection === &quot;ortho&quot;);
+            this._active = isOrtho;
+            if (this._active) {
+                this._buttonElement.classList.add(&quot;active&quot;);
+            } else {
+                this._buttonElement.classList.remove(&quot;active&quot;);
+            }
         });
 
         this._active = false;
