@@ -67,7 +67,7 @@ class PropertiesInspector extends Controller {
     clear() {
         const html = [];
         html.push(`<div class="element-attributes">`);
-        html.push(`<p class="subsubtitle">No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.</p>`);
+        html.push(`<p class="subsubtitle no-object-selected-warning">No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.</p>`);
         html.push(`</div>`);
         const htmlStr = html.join("");
        this._propertiesElement.innerHTML = htmlStr;
