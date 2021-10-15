@@ -213,7 +213,7 @@ class BIMViewer extends Controller {
         const viewer = new Viewer({
             localeService: cfg.localeService,
             canvasElement: canvasElement,
-            keyboardEventsElement:keyboardEventsElement,
+            keyboardEventsElement:cfg.keyboardEventsElement,
             transparent: false,
             backgroundColor: [1, 1, 1],
             backgroundColorFromAmbientLight: false,
