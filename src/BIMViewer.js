@@ -2,7 +2,8 @@ import {
     Viewer,
     BCFViewpointsPlugin,
     math,
-    FastNavPlugin
+    FastNavPlugin,
+    stats,
 } from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 import {Controller} from "./Controller.js";
@@ -26,6 +27,9 @@ import {ObjectContextMenu} from "./contextMenus/ObjectContextMenu.js";
 import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
 import {PropertiesInspector} from "./inspector/PropertiesInspector.js";
+
+const dynamicEdgesMaxDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit draw count is below this
+const dynamicFullResolutionMaxDrawCount = 15; // FastNavPlugin enables dynamic full canvas resolution when xeokit draw count is below this
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs"> 
@@ -158,6 +162,7 @@ function initTabs(containerElement) {
         }
     }
 }
+
 
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
@@ -451,7 +456,20 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer, {});
+        this._fastNavPlugin = new FastNavPlugin(viewer, {
+            dynamicEdges: false,
+            dynamicSAO: false,
+            dynamicPBR: false,
+            dynamicTransparent: true,
+            dynamicCanvasResolution: false,
+            dynamicCanvasResolutionScale: 0.6
+        });
+
+        this.viewer.scene.on("rendered", ()=> {
+            const fastNavPlugin = this._fastNavPlugin;
+            fastNavPlugin.dynamicEdges = ((stats.frame.drawElements + stats.frame.drawArrays) < dynamicEdgesMaxDrawCount);
+            fastNavPlugin.dynamicCanvasResolution = ((stats.frame.drawElements + stats.frame.drawArrays) > dynamicFullResolutionMaxDrawCount);
+        });
 
         this._initConfigs();
         this.setControlsEnabled(false);
