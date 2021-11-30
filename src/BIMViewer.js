@@ -28,8 +28,8 @@ import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
 import {PropertiesInspector} from "./inspector/PropertiesInspector.js";
 
-const dynamicEdgesMaxDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit draw count is below this
-const dynamicFullResolutionMaxDrawCount = 100; // FastNavPlugin enables dynamic full canvas resolution when xeokit draw count is below this
+const dynamicEdgesMaxDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit's per-frame draw count drops below this
+const dynamicFullResolutionMaxDrawCount = 1000; // FastNavPlugin switches to low-res canvas when xeokit's per-frame draw count rises above this
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs"> 
