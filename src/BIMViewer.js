@@ -28,8 +28,8 @@ import {CanvasContextMenu} from "./contextMenus/CanvasContextMenu.js";
 import {OrthoMode} from "./toolbar/OrthoMode.js";
 import {PropertiesInspector} from "./inspector/PropertiesInspector.js";
 
-const dynamicEdgesMaxDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit's per-frame draw count drops below this
-const dynamicFullResolutionMaxDrawCount = 1000; // FastNavPlugin switches to low-res canvas when xeokit's per-frame draw count rises above this
+const hideEdgesMinDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit's per-frame draw count drops below this
+const scaleCanvasResolutionMinDrawCount = 1000; // FastNavPlugin switches to low-res canvas when xeokit's per-frame draw count rises above this
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `<div class="xeokit-tabs"> 
@@ -218,7 +218,7 @@ class BIMViewer extends Controller {
         const viewer = new Viewer({
             localeService: cfg.localeService,
             canvasElement: canvasElement,
-            keyboardEventsElement:cfg.keyboardEventsElement,
+            keyboardEventsElement: cfg.keyboardEventsElement,
             transparent: false,
             backgroundColor: [1, 1, 1],
             backgroundColorFromAmbientLight: false,
@@ -457,22 +457,31 @@ class BIMViewer extends Controller {
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
         this._fastNavPlugin = new FastNavPlugin(viewer, {
-            dynamicEdges: false,
-            dynamicSAO: false,
-            dynamicPBR: false,
-            dynamicTransparent: true,
-            dynamicCanvasResolution: false,
-            dynamicCanvasResolutionScale: 0.6
+            hideEdges: true,
+            hideSAO: true,
+            hidePBR: false,
+            hideTransparentObjects: false,
+            scaleCanvasResolution: false,
+            scaleCanvasResolutionFactor: 0.6
         });
 
-        this.viewer.scene.on("rendered", ()=> {
+        this.viewer.scene.on("rendered", () => {
             const fastNavPlugin = this._fastNavPlugin;
-            fastNavPlugin.dynamicEdges = ((stats.frame.drawElements + stats.frame.drawArrays) < dynamicEdgesMaxDrawCount);
-            fastNavPlugin.dynamicCanvasResolution = ((stats.frame.drawElements + stats.frame.drawArrays) > dynamicFullResolutionMaxDrawCount);
+            fastNavPlugin.hideEdges = (hideEdgesMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
+            fastNavPlugin.scaleCanvasResolution = (scaleCanvasResolutionMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
         });
 
         this._initConfigs();
         this.setControlsEnabled(false);
+    }
+
+    /**
+     * Returns the LocaleService that was configured on this Viewer.
+     *
+     * @return {LocaleService} The LocaleService.
+     */
+    get localeService() {
+        return this.viewer.localeService;
     }
 
     _customizeViewer() {
@@ -595,15 +604,6 @@ class BIMViewer extends Controller {
             "objectColorSource": "model",
             "externalMetadata": false
         });
-    }
-
-    /**
-     * Returns the LocaleService that was configured on this Viewer.
-     *
-     * @return {LocaleService} The LocaleService.
-     */
-    get localeService() {
-        return this.viewer.localeService;
     }
 
     /**
