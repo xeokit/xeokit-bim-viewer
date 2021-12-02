@@ -1,52 +1,50 @@
 {
-    "id": "MAP",
-    "name": "MAP",
-    "models": [
-        {
-            "id": "MAPPointCloud",
-            "name": "Point Cloud Scan",
-            "rotation": [
-                0,
-                90,
-                0
-            ],
-            "saoEnabled": false
-        }
-    ],
-    "viewerConfigs": {
-        "externalMetadata": true,
-        "backgroundColor": [
-            0.95,
-            0.95,
-            1.0
-        ]
+  "id": "MAP",
+  "name": "MAP",
+  "models": [
+    {
+      "id": "MAPPointCloud",
+      "name": "Point Cloud Scan",
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "position": [
+        1842051,
+        0.0,
+        -5173310
+      ],
+      "saoEnabled": false
     },
-    "viewerContent": {
-        "modelsLoaded": [
-            "MAPPointCloud"
-        ]
-    },
-    "viewerState": {
-        "tabOpen": "objects",
-        "expandObjectsTree": 3,
-        "expandClassesTree": 1,
-        "expandStoreysTree": 1,
-        "setCamera": {
-            "eye": [
-                33.87,
-                25.24,
-                39.81
-            ],
-            "look": [
-                24.38,
-                4.06,
-                -4.31
-            ],
-            "up": [
-                -0.08,
-                0.9,
-                -0.41
-            ]
-        }
+    {
+      "id": "MAPFullPrecision",
+      "name": "Double-Precision IFC Model"
     }
+  ],
+  "viewerConfigs": {
+    "externalMetadata": true,
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "MAPPointCloud",
+      "MAPFullPrecision"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "objects",
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1,
+    "setCamera": {
+      "eye": [1842070.8594076033, 56.01670122249443, -5173214.553421429],
+      "look": [1842050.3038895482, 10.140423835076394, -5173310.118169226],
+      "up": [-0.08, 0.9, -0.41]
+    }
+  }
 }
