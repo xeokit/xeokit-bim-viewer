@@ -265,7 +265,7 @@ class ModelsExplorer extends Controller {
                     xkt: arraybuffer,
                     objectDefaults: objectDefaults,
                     excludeUnclassifiedObjects: true,
-                    position: modelInfo.position,
+                    origin: modelInfo.origin || modelInfo.position,
                     scale: modelInfo.scale,
                     rotation: modelInfo.rotation,
                     matrix: modelInfo.matrix,
