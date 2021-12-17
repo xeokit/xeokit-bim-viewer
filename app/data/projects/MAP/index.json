@@ -1,52 +1,62 @@
 {
-    "id": "MAP",
-    "name": "MAP",
-    "models": [
-        {
-            "id": "MAPFullPrecision",
-            "name": "Double-Precision Model"
-        },
-        {
-            "id": "MAPJitter",
-            "name": "Single-Precision Model",
-            "saoEnabled": false
-        }
-    ],
-    "viewerConfigs": {
-        "externalMetadata": true,
-        "backgroundColor": [
-            0.95,
-            0.95,
-            1.0
-        ]
+  "id": "MAP",
+  "name": "MAP",
+  "models": [
+    {
+      "id": "MAPFullPrecision",
+      "name": "Double-Precision IFC Model"
     },
-    "viewerContent": {
-        "modelsLoaded": [
-            "MAPFullPrecision"
-        ]
+    {
+      "id": "MAPJitter",
+      "name": "Single-Precision IFC Model",
+      "saoEnabled": false
     },
-    "viewerState": {
-        "tabOpen": "objects",
-        "expandObjectsTree": 3,
-        "expandClassesTree": 1,
-        "expandStoreysTree": 1,
-        "setCamera": {
-            "eye": [
-                1841982.5187600704,
-                19.207790938410042,
-                -5173303.042326414
-            ],
-            "look": [
-                1842011.793756829,
-                9.913817421536704,
-                -5173299.841616623
-            ],
-            "up": [
-                0.2991762376746394,
-                0.9536370664170352,
-                0.0327096983532173
-            ]
-        }
+    {
+      "id": "MAPPointCloud",
+      "name": "Double-Precision Point Cloud",
+      "saoEnabled": false,
+      "position": [
+        1842041,
+        0.0,
+        -5173299
+      ]
     }
+  ],
+  "viewerConfigs": {
+    "externalMetadata": true,
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "MAPFullPrecision"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "objects",
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1,
+    "setCamera": {
+      "eye": [
+        1841982.5187600704,
+        19.207790938410042,
+        -5173303.042326414
+      ],
+      "look": [
+        1842011.793756829,
+        9.913817421536704,
+        -5173299.841616623
+      ],
+      "up": [
+        0.2991762376746394,
+        0.9536370664170352,
+        0.0327096983532173
+      ]
+    }
+  }
 }
 
