@@ -279,6 +279,8 @@ with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer
 | "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
 | "externalMetadata"    | Boolean           |                       | ````false````     | Whether to load a metadata.json file with each geometry.xkt file |
 | "xrayPickable"        | Boolean           |                       | ````false````     | Whether we can interact with X-rayed objects using mouse/touch input |
+| "selectedGlowThrough" | Boolean           |                       | ````true````      | Whether selected objects appear to "glow through" other objects |
+| "highlightGlowThrough" | Boolean           |                       | ````true````      | Whether highlighted objects appear to "glow through" other objects |
 
 ### Viewer States
 
