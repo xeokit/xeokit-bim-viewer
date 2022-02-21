@@ -724,11 +724,19 @@ class BIMViewer extends Controller {
                     break;
 
                 case "selectedGlowThrough":
-                    this.viewer.scene.selectedMaterial.glowThrough = this._configs[name] = parseBool(value);
+                    const selectedGlowThrough = this._configs[name] = parseBool(value);
+                    const selectedMaterial = this.viewer.scene.selectedMaterial;
+                    selectedMaterial.glowThrough = selectedGlowThrough;
+                    selectedMaterial.fillAlpha = selectedGlowThrough ? 0.5 : 1.0;
+                    selectedMaterial.edgeAlpha = selectedGlowThrough ? 0.5 : 1.0;
                     break;
 
                 case "highlightGlowThrough":
-                    this.viewer.scene.highlightMaterial.glowThrough = this._configs[name] = parseBool(value);
+                    const highlightGlowThrough = this._configs[name] = parseBool(value);
+                    const highlightMaterial = this.viewer.scene.highlightMaterial;
+                    highlightMaterial.glowThrough = highlightGlowThrough;
+                    highlightMaterial.fillAlpha = highlightGlowThrough ? 0.5 : 1.0;
+                    highlightMaterial.edgeAlpha = highlightGlowThrough ? 0.5 : 1.0;
                     break;
 
                 case "externalMetadata":
