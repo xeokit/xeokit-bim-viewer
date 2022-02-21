@@ -230,7 +230,7 @@ class TreeViewContextMenu extends ContextMenu {
                                     entity.selected = false;
                                     entity.xrayed = true;
                                     entity.visible = true;
-                                    entity.pickable = false;
+                                    entity.pickable = context.bimViewer.getConfig("xrayPickable");
                                 }
                             }
                         });
@@ -259,7 +259,9 @@ class TreeViewContextMenu extends ContextMenu {
                     doAction: function (context) {
                         const scene = context.viewer.scene;
                         scene.setObjectsVisible(scene.objectIds, true);
-                        scene.setObjectsPickable(scene.objectIds, false);
+                        if (!context.bimViewer.getConfig("xrayPickable")) {
+                            scene.setObjectsPickable(scene.objectIds, false);
+                        }
                         scene.setObjectsXRayed(scene.objectIds, true);
                         scene.setObjectsSelected(scene.selectedObjectIds, false);
                         context.treeViewPlugin.withNodeTree(context.treeViewNode, (treeViewNode) => {

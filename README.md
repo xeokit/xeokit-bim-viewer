@@ -278,6 +278,7 @@ with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer
 | "perspectiveFOV"      | Number            | ````[10.0...70.0]```` | ````55````        | When in perspective projection, this is the field of view, in degrees, that the user sees |
 | "objectColorSource"   | String            | "model", "viewer"     | "model"           | Where the colors for model objects will be loaded from |
 | "externalMetadata"    | Boolean           |                       | ````false````     | Whether to load a metadata.json file with each geometry.xkt file |
+| "xrayPickable"        | Boolean           |                       | ````false````     | Whether we can interact with X-rayed objects using mouse/touch input |
 
 ### Viewer States
 

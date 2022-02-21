@@ -151,7 +151,7 @@ class ObjectContextMenu extends ContextMenu {
                     doAction: (context) => {
                         const entity = context.entity;
                         entity.xrayed = true;
-                        entity.pickable = false;
+                        entity.pickable = context.bimViewer.getConfig("xrayPickable");
                     }
                 },
                 {
@@ -168,7 +168,9 @@ class ObjectContextMenu extends ContextMenu {
                         }
                         scene.setObjectsVisible(scene.objectIds, true);
                         scene.setObjectsXRayed(scene.objectIds, true);
-                        scene.setObjectsPickable(scene.objectIds, false);
+                        if (!context.bimViewer.getConfig("xrayPickable")) {
+                            scene.setObjectsPickable(scene.objectIds, false);
+                        }
                         metaObject.withMetaObjectsInSubtree((metaObject) => {
                             const entity = scene.objects[metaObject.id];
                             if (entity) {
@@ -189,7 +191,9 @@ class ObjectContextMenu extends ContextMenu {
                     doAction: (context) => {
                         const scene = context.viewer.scene;
                         scene.setObjectsVisible(scene.objectIds, true);
-                        scene.setObjectsPickable(scene.objectIds, false);
+                        if (!context.bimViewer.getConfig("xrayPickable")) {
+                            scene.setObjectsPickable(scene.objectIds, false);
+                        }
                         scene.setObjectsXRayed(scene.objectIds, true);
                     }
                 },

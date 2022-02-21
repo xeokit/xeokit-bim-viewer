@@ -1,10 +1,4 @@
-import {
-    Viewer,
-    BCFViewpointsPlugin,
-    math,
-    FastNavPlugin,
-    stats,
-} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {BCFViewpointsPlugin, FastNavPlugin, math, stats, Viewer,} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 import {Controller} from "./Controller.js";
 import {BusyModal} from "./BusyModal.js";
@@ -600,6 +594,7 @@ class BIMViewer extends Controller {
             "saoKernelRadius": "100",
             "edgesEnabled": true,
             "xrayContext": true,
+            "xrayPickable": false,
             "backgroundColor": [1.0, 1.0, 1.0],
             "objectColorSource": "model",
             "externalMetadata": false
@@ -720,6 +715,10 @@ class BIMViewer extends Controller {
 
                 case "xrayContext":
                     this._configs[name] = value;
+                    break;
+
+                case "xrayPickable":
+                    this._configs[name] = parseBool(value);
                     break;
 
                 case "externalMetadata":

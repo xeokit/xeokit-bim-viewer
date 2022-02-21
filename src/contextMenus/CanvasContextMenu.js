@@ -65,7 +65,9 @@ class CanvasContextMenu extends ContextMenu {
                             const scene = context.viewer.scene;
                             scene.setObjectsVisible(scene.objectIds, true);
                             scene.setObjectsXRayed(scene.objectIds, true);
-                            scene.setObjectsPickable(scene.objectIds, false);
+                            if (!context.bimViewer.getConfig("xrayPickable")) {
+                                scene.setObjectsPickable(scene.objectIds, false);
+                            }
                         }
                     },
                     {
