@@ -36,12 +36,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/BIMViewer.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {
-    Viewer,
-    BCFViewpointsPlugin,
-    math,
-    FastNavPlugin
-} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {BCFViewpointsPlugin, FastNavPlugin, math, stats, Viewer,} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 import {Controller} from &quot;./Controller.js&quot;;
 import {BusyModal} from &quot;./BusyModal.js&quot;;
@@ -64,6 +59,9 @@ import {ObjectContextMenu} from &quot;./contextMenus/ObjectContextMenu.js&quot;;
 import {CanvasContextMenu} from &quot;./contextMenus/CanvasContextMenu.js&quot;;
 import {OrthoMode} from &quot;./toolbar/OrthoMode.js&quot;;
 import {PropertiesInspector} from &quot;./inspector/PropertiesInspector.js&quot;;
+
+const hideEdgesMinDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit&apos;s per-frame draw count drops below this
+const scaleCanvasResolutionMinDrawCount = 1000; // FastNavPlugin switches to low-res canvas when xeokit&apos;s per-frame draw count rises above this
 
 function createExplorerTemplate(cfg) {
     const explorerTemplate = `&lt;div class=&quot;xeokit-tabs&quot;&gt; 
@@ -197,6 +195,7 @@ function initTabs(containerElement) {
     }
 }
 
+
 /**
  * @desc A BIM viewer based on the [xeokit SDK](http://xeokit.io).
  *
@@ -251,6 +250,7 @@ class BIMViewer extends Controller {
         const viewer = new Viewer({
             localeService: cfg.localeService,
             canvasElement: canvasElement,
+            keyboardEventsElement: cfg.keyboardEventsElement,
             transparent: false,
             backgroundColor: [1, 1, 1],
             backgroundColorFromAmbientLight: false,
@@ -488,10 +488,32 @@ class BIMViewer extends Controller {
 
         this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
 
-        this._fastNavPlugin = new FastNavPlugin(viewer, {});
+        this._fastNavPlugin = new FastNavPlugin(viewer, {
+            hideEdges: true,
+            hideSAO: true,
+            hidePBR: false,
+            hideTransparentObjects: false,
+            scaleCanvasResolution: false,
+            scaleCanvasResolutionFactor: 0.6
+        });
+
+        this.viewer.scene.on(&quot;rendered&quot;, () =&gt; {
+            const fastNavPlugin = this._fastNavPlugin;
+            fastNavPlugin.hideEdges = (hideEdgesMinDrawCount &lt; (stats.frame.drawElements + stats.frame.drawArrays));
+            fastNavPlugin.scaleCanvasResolution = (scaleCanvasResolutionMinDrawCount &lt; (stats.frame.drawElements + stats.frame.drawArrays));
+        });
 
         this._initConfigs();
         this.setControlsEnabled(false);
+    }
+
+    /**
+     * Returns the LocaleService that was configured on this Viewer.
+     *
+     * @return {LocaleService} The LocaleService.
+     */
+    get localeService() {
+        return this.viewer.localeService;
     }
 
     _customizeViewer() {
@@ -610,19 +632,11 @@ class BIMViewer extends Controller {
             &quot;saoKernelRadius&quot;: &quot;100&quot;,
             &quot;edgesEnabled&quot;: true,
             &quot;xrayContext&quot;: true,
+            &quot;xrayPickable&quot;: false,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
             &quot;objectColorSource&quot;: &quot;model&quot;,
             &quot;externalMetadata&quot;: false
         });
-    }
-
-    /**
-     * Returns the LocaleService that was configured on this Viewer.
-     *
-     * @return {LocaleService} The LocaleService.
-     */
-    get localeService() {
-        return this.viewer.localeService;
     }
 
     /**
@@ -739,6 +753,10 @@ class BIMViewer extends Controller {
 
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
+                    break;
+
+                case &quot;xrayPickable&quot;:
+                    this._configs[name] = parseBool(value);
                     break;
 
                 case &quot;externalMetadata&quot;:
