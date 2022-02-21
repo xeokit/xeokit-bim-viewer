@@ -595,6 +595,8 @@ class BIMViewer extends Controller {
             "edgesEnabled": true,
             "xrayContext": true,
             "xrayPickable": false,
+            "selectedGlowThrough": true,
+            "highlightGlowThrough": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "objectColorSource": "model",
             "externalMetadata": false
@@ -719,6 +721,14 @@ class BIMViewer extends Controller {
 
                 case "xrayPickable":
                     this._configs[name] = parseBool(value);
+                    break;
+
+                case "selectedGlowThrough":
+                    this.viewer.scene.selectedMaterial.glowThrough = this._configs[name] = parseBool(value);
+                    break;
+
+                case "highlightGlowThrough":
+                    this.viewer.scene.highlightMaterial.glowThrough = this._configs[name] = parseBool(value);
                     break;
 
                 case "externalMetadata":
