@@ -47,7 +47,7 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "2.2.5",
+    "@xeokit/xeokit-sdk": "2.2.5-beta",
     "http-server": "^13.0.2"
   }
 }
