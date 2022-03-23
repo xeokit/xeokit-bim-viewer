@@ -34,7 +34,7 @@ class ShowSpacesMode extends Controller {
         });
 
         this.viewer.scene.on("modelLoaded", (modelId) => {
-            if (this._active) {
+            if (!this._active) {
                 const objectIds = this.viewer.metaScene.getObjectIDsByType("IfcSpace");
                 this.viewer.scene.setObjectsCulled(objectIds, true);
             }
