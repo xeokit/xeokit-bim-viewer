@@ -7,6 +7,7 @@ import {FitAction} from "./toolbar/FitAction.js";
 import {FirstPersonMode} from "./toolbar/FirstPersonMode.js";
 import {HideTool} from "./toolbar/HideTool.js";
 import {SelectionTool} from "./toolbar/SelectionTool.js";
+import {ShowSpacesMode} from "./toolbar/ShowSpacesMode.js";
 import {QueryTool} from "./toolbar/QueryTool.js";
 import {SectionTool} from "./toolbar/SectionTool.js";
 import {NavCubeMode} from "./toolbar/NavCubeMode.js";
@@ -86,6 +87,8 @@ function createToolbarTemplate() {
         <button type="button" class="xeokit-i18n xeokit-fit xeokit-btn fa fa-crop fa-2x disabled" data-xeokit-i18ntip="toolbar.viewFitTip" data-tippy-content="View fit"></button>
         <!-- First Person mode button -->
         <button type="button" class="xeokit-i18n xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled" data-xeokit-i18ntip="toolbar.firstPersonTip" data-tippy-content="Toggle first-person mode"></button>
+          <!-- Show/hide IFCSpaces -->
+        <button type="button" class="xeokit-i18n xeokit-showSpaces xeokit-btn fab fa-codepen fa-2x disabled" data-xeokit-i18ntip="toolbar.showSpacesTip" data-tippy-content="Show IFCSpaces"></button>   
     </div>
     <!-- Tools button group -->
     <div class="xeokit-btn-group" role="group">
@@ -347,6 +350,11 @@ class BIMViewer extends Controller {
 
         this._selectionTool = new SelectionTool(this, {
             buttonElement: toolbarElement.querySelector(".xeokit-select"),
+            active: false
+        });
+
+        this._showSpacesMode = new ShowSpacesMode(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-showSpaces"),
             active: false
         });
 
@@ -741,6 +749,11 @@ class BIMViewer extends Controller {
 
                 case "externalMetadata":
                     this._configs[name] = parseBool(value);
+                    break;
+
+                case "showSpaces":
+                    this._configs[name] = parseBool(value);
+                    this._showSpacesMode.setActive(value);
                     break;
 
                 default:
@@ -1611,6 +1624,23 @@ class BIMViewer extends Controller {
         return this._threeDMode.getActive();
     }
 
+    /**
+     * Sets whether IFCSpace types are ever shown.
+     *
+     * @param {Boolean} shown Set true to allow IFCSpaces to be shown, else false to always keep them hidden.
+     */
+    setSpacesShown(shown) {
+        this._showSpacesMode.setActive(shown);
+    }
+
+    /**
+     * Gets whether the viewer allows IFCSpace types to be shown.
+     *
+     * @returns {boolean} True to allow IFCSpaces to be shown, else false to always keep them hidden.
+     */
+    getSpacesShown() {
+        return this._showSpacesMode.getActive();
+    }
 
     /**
      * Sets whether the viewer is in orthographic viewing mode.
@@ -1814,6 +1844,7 @@ class BIMViewer extends Controller {
         this._queryTool.setEnabled(enabled);
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
+        this._showSpacesMode.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
 
         //
@@ -1851,7 +1882,7 @@ class BIMViewer extends Controller {
     /**
      * Clears sections.
      *
-     * Sections are the sliceing planes, that we use to section models in order to see interior structures.
+     * Sections are the slicing planes, that we use to section models in order to see interior structures.
      */
     clearSections() {
         this._sectionTool.clear();
@@ -1873,7 +1904,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * returns the number of sections that currently exist.
+     * Returns the number of sections that currently exist.
      *
      * sections are the sliceing planes, that we use to slice models in order to see interior structures.
      *

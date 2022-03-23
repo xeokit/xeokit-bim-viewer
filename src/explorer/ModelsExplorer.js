@@ -273,7 +273,6 @@ class ModelsExplorer extends Controller {
                     saoEnabled: modelInfo.saoEnabled,
                     pbrEnabled: modelInfo.pbrEnabled,
                     backfaces: modelInfo.backfaces,
-                    excludeTypes: ["IfcSpace"],
                     reuseGeometries: true
                 });
                 model.on("loaded", () => {
