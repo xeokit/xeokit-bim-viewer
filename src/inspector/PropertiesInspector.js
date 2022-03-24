@@ -84,7 +84,8 @@ class PropertiesInspector extends Controller {
             if (metaObject.type) {
                 html.push(`<tr><td class="td1">Class:</td><td class="td2">${metaObject.type}</td></tr>`);
             }
-            html.push(`<tr><td class="td1">UUID:</td><td class="td2">${metaObject.id}</td></tr>`);
+            html.push(`<tr><td class="td1">UUID:</td><td class="td2">${metaObject.originalSystemId}</td></tr>`);
+            html.push(`<tr><td class="td1">Viewer ID:</td><td class="td2">${metaObject.id}</td></tr>`);
             html.push('</table>');
             if (!propertySets || propertySets.length === 0) {
                 html.push(`<p class="subtitle xeokit-no-prop-set-warning">No properties sets found for this object.</p>`);

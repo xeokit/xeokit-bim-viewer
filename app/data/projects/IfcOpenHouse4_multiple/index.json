@@ -1,0 +1,31 @@
+{
+    "id": "IfcOpenHouse4",
+    "name": "IfcOpenHouse4",
+    "models": [
+        {
+            "id": "house1",
+            "name": "House 1",
+            "origin": [0,0,-5],
+            "globalizeObjectIds": true
+        },
+        {
+            "id": "house2",
+            "name": "House 2",
+            "origin": [0,0,10],
+            "globalizeObjectIds": true
+        }
+    ],
+    "viewerConfigs": {
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "house1", "house2"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 1,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 2
+    }
+}
