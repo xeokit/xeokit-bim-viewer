@@ -1,0 +1,24 @@
+{
+    "id": "HousePlan",
+    "name": "House Plan",
+    "models": [
+        {
+            "id": "design",
+            "name": "House Plan",
+            "pbrEnabled": true
+        }
+    ],
+    "viewerConfigs": {
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "classes",
+        "expandObjectsTree": 1,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
+    }
+}
