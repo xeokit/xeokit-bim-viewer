@@ -45,6 +45,7 @@ import {FitAction} from &quot;./toolbar/FitAction.js&quot;;
 import {FirstPersonMode} from &quot;./toolbar/FirstPersonMode.js&quot;;
 import {HideTool} from &quot;./toolbar/HideTool.js&quot;;
 import {SelectionTool} from &quot;./toolbar/SelectionTool.js&quot;;
+import {ShowSpacesMode} from &quot;./toolbar/ShowSpacesMode.js&quot;;
 import {QueryTool} from &quot;./toolbar/QueryTool.js&quot;;
 import {SectionTool} from &quot;./toolbar/SectionTool.js&quot;;
 import {NavCubeMode} from &quot;./toolbar/NavCubeMode.js&quot;;
@@ -124,6 +125,8 @@ function createToolbarTemplate() {
         &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-fit xeokit-btn fa fa-crop fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.viewFitTip&quot; data-tippy-content=&quot;View fit&quot;&gt;&lt;/button&gt;
         &lt;!-- First Person mode button --&gt;
         &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-firstPerson xeokit-btn fa fa-male fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.firstPersonTip&quot; data-tippy-content=&quot;Toggle first-person mode&quot;&gt;&lt;/button&gt;
+          &lt;!-- Show/hide IFCSpaces --&gt;
+        &lt;button type=&quot;button&quot; class=&quot;xeokit-i18n xeokit-showSpaces xeokit-btn fab fa-codepen fa-2x disabled&quot; data-xeokit-i18ntip=&quot;toolbar.showSpacesTip&quot; data-tippy-content=&quot;Show IFCSpaces&quot;&gt;&lt;/button&gt;   
     &lt;/div&gt;
     &lt;!-- Tools button group --&gt;
     &lt;div class=&quot;xeokit-btn-group&quot; role=&quot;group&quot;&gt;
@@ -385,6 +388,11 @@ class BIMViewer extends Controller {
 
         this._selectionTool = new SelectionTool(this, {
             buttonElement: toolbarElement.querySelector(&quot;.xeokit-select&quot;),
+            active: false
+        });
+
+        this._showSpacesMode = new ShowSpacesMode(this, {
+            buttonElement: toolbarElement.querySelector(&quot;.xeokit-showSpaces&quot;),
             active: false
         });
 
@@ -762,15 +770,28 @@ class BIMViewer extends Controller {
                     break;
 
                 case &quot;selectedGlowThrough&quot;:
-                    this.viewer.scene.selectedMaterial.glowThrough = this._configs[name] = parseBool(value);
+                    const selectedGlowThrough = this._configs[name] = parseBool(value);
+                    const selectedMaterial = this.viewer.scene.selectedMaterial;
+                    selectedMaterial.glowThrough = selectedGlowThrough;
+                    selectedMaterial.fillAlpha = selectedGlowThrough ? 0.5 : 1.0;
+                    selectedMaterial.edgeAlpha = selectedGlowThrough ? 0.5 : 1.0;
                     break;
 
                 case &quot;highlightGlowThrough&quot;:
-                    this.viewer.scene.highlightMaterial.glowThrough = this._configs[name] = parseBool(value);
+                    const highlightGlowThrough = this._configs[name] = parseBool(value);
+                    const highlightMaterial = this.viewer.scene.highlightMaterial;
+                    highlightMaterial.glowThrough = highlightGlowThrough;
+                    highlightMaterial.fillAlpha = highlightGlowThrough ? 0.5 : 1.0;
+                    highlightMaterial.edgeAlpha = highlightGlowThrough ? 0.5 : 1.0;
                     break;
 
                 case &quot;externalMetadata&quot;:
                     this._configs[name] = parseBool(value);
+                    break;
+
+                case &quot;showSpaces&quot;:
+                    this._configs[name] = parseBool(value);
+                    this._showSpacesMode.setActive(value);
                     break;
 
                 default:
@@ -1641,6 +1662,23 @@ class BIMViewer extends Controller {
         return this._threeDMode.getActive();
     }
 
+    /**
+     * Sets whether IFCSpace types are ever shown.
+     *
+     * @param {Boolean} shown Set true to allow IFCSpaces to be shown, else false to always keep them hidden.
+     */
+    setSpacesShown(shown) {
+        this._showSpacesMode.setActive(shown);
+    }
+
+    /**
+     * Gets whether the viewer allows IFCSpace types to be shown.
+     *
+     * @returns {boolean} True to allow IFCSpaces to be shown, else false to always keep them hidden.
+     */
+    getSpacesShown() {
+        return this._showSpacesMode.getActive();
+    }
 
     /**
      * Sets whether the viewer is in orthographic viewing mode.
@@ -1844,6 +1882,7 @@ class BIMViewer extends Controller {
         this._queryTool.setEnabled(enabled);
         this._hideTool.setEnabled(enabled);
         this._selectionTool.setEnabled(enabled);
+        this._showSpacesMode.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
 
         //
@@ -1881,7 +1920,7 @@ class BIMViewer extends Controller {
     /**
      * Clears sections.
      *
-     * Sections are the sliceing planes, that we use to section models in order to see interior structures.
+     * Sections are the slicing planes, that we use to section models in order to see interior structures.
      */
     clearSections() {
         this._sectionTool.clear();
@@ -1903,7 +1942,7 @@ class BIMViewer extends Controller {
     }
 
     /**
-     * returns the number of sections that currently exist.
+     * Returns the number of sections that currently exist.
      *
      * sections are the sliceing planes, that we use to slice models in order to see interior structures.
      *

@@ -426,6 +426,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getspacesshown",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getSpacesShown",
+    "src/BIMViewer.js~BIMViewer#getSpacesShown",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#hidesectioneditcontrol",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-hideSectionEditControl",
     "src/BIMViewer.js~BIMViewer#hideSectionEditControl",
@@ -591,6 +597,12 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#setorthoenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setOrthoEnabled",
     "src/BIMViewer.js~BIMViewer#setOrthoEnabled",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setspacesshown",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setSpacesShown",
+    "src/BIMViewer.js~BIMViewer#setSpacesShown",
     "method"
   ],
   [
@@ -861,6 +873,12 @@ window.esdocSearchIndex = [
     "src/toolbar/selectiontool.js",
     "file/src/toolbar/SelectionTool.js.html",
     "src/toolbar/SelectionTool.js",
+    "file"
+  ],
+  [
+    "src/toolbar/showspacesmode.js",
+    "file/src/toolbar/ShowSpacesMode.js.html",
+    "src/toolbar/ShowSpacesMode.js",
     "file"
   ],
   [
