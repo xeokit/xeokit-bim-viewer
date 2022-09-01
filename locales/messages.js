@@ -174,6 +174,9 @@ const messages = {
             "hideAll": "Alle ausblenden",
             "hideAllTip": "Alle Stockwerke ausblenden"
         },
+        "propertiesInspector": { // The "Properties" tab on the right of the canvas
+            "title": "Eigenschaften"
+        },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Explorer ein- und ausblenden", // Button to open or close the explorer panel on the left
             "resetViewTip": "Ansicht zurücksetzen", // Button to reset the viewer to initial state
@@ -297,6 +300,9 @@ const messages = {
             "showAllTip": "Afficher tous les étages",
             "hideAll": "Masquer tout",
             "hideAllTip": "Masquer tous les étages"
+        },
+        "propertiesInspector": { // The "Properties" tab on the right of the canvas
+            "title": "Propriétés"
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Afficher la structure", // Button to open or close the explorer panel on the left
