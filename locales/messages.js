@@ -495,6 +495,146 @@ const messages = {
             "flip": "Obróć", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Usuń" // Sub-menu option to delete a single slice
         }
+    },
+
+    // Russian
+
+    "ru": {
+        "busyModal": {
+            // The dialog that appears in the center of the canvas while we are loading a model
+            "loading": "Загрузка", // Loading <myModel>
+        },
+        "NavCube": {
+        	// The 3D navigation cube at the bottom right of the canvas
+        	"front": "Фронт",
+        	"back": "Тыл",
+        	"top": "Верх",
+        	"bottom": "Низ",
+        	"left": "Лево",
+        	"right": "Право",
+        },
+        "modelsExplorer": {
+            // The "Models" tab on the left of the canvas
+            "title": "Модели",
+            "loadAll": "Загрузить все",
+            "loadAllTip": "Загрузить все модели в этом проекте",
+            "unloadAll": "Выгрузить все",
+            "unloadAllTip": "Выгрузить все модели",
+            "add": "Добавить",
+            "addTip": "Добавить модель",
+        },
+        "objectsExplorer": {
+            // The "Objects" tab on the left of the canvas
+            "title": "Объекты",
+            "showAll": "Показать все",
+            "showAllTip": "Показать все объекты",
+            "hideAll": "Скрыть все",
+            "hideAllTip": "Скрыть все объекты",
+        },
+        "classesExplorer": {
+            // The "Classes" tab on the left of the canvas
+            "title": "Классы",
+            "showAll": "Показать все",
+            "showAllTip": "Показать все классы",
+            "hideAll": "Скрыть все",
+            "hideAllTip": "Скрыть все классы",
+        },
+        "storeysExplorer": {
+            // The "Storeys" tab on the left of the canvas
+            "title": "Этажи",
+            "showAll": "Показать все",
+            "showAllTip": "Показать все этажи",
+            "hideAll": "Скрыть все",
+            "hideAllTip": "Скрыть все этажи",
+        },
+        "propertiesInspector": {
+            // The "Properties" tab on the right of the canvas
+            "title": "Свойства",
+        },
+        "toolbar": {
+            // The toolbar at the top of the canvas
+            "toggleExplorer": "Переключить навигатор", // Button to open or close the explorer panel on the left
+            "resetViewTip": "Сбросить вид", // Button to reset the viewer to initial state
+            "toggle2d3dTip": "Переключить 2D/3D", // Button to toggle between 3D view and 2D plan view modes
+            "togglePerspectiveTip": "Переключить проекцию перспектива/орто", // Button to toggle between perspective and orthographic projection
+            "viewFitTip": "Показать всю модель", // Button to position the camera to fit all objects in view
+            "firstPersonTip": "Переключить режим навигации от первого лица", // Button to switch between first-person and orbit navigation modes
+            "hideObjectsTip": "Скрыть объекты", // Button to activate "Hide objects" tool
+            "selectObjectsTip": "Выбрать объекты", // Button to activate "Select objects" tool
+            "queryObjectsTip": "Выбрать объекты", // Button to activate "Query objects" tool
+            "sliceObjectsTip": "Рассечь объекты", // Button to activate "Slice objects" tool
+            "slicesMenuTip": "Меню сечений", // Button to open the pull-down menu of existing section planes
+            "numSlicesTip": "Количество существующих сечений", // Label shows number of sexisting section planes
+        },
+        "canvasContextMenu": {
+            // Context menu that appears when we right-click on empty canvas space
+            "viewFitAll": "Вид включающий все", // Menu option to position the camera to fit all objects in view
+            "hideAll": "Скрыть все", // Menu option to hide all objects
+            "showAll": "Показать все", // Menu option to show all objects
+            "xRayAll": "Рентген все", // Menu option to X-ray all objects
+            "xRayNone": "Очистить рентген", // Menu option to remove X-ray effect from all objects
+            "selectNone": "Очистить выбор", // Menu option to clear any currently selected objects
+            "resetView": "Сбросить вид", // Menu option to reset the view to initial state
+            "clearSlices": "Очистить сечения", // Menu option to delete all section planes created with the Slice tool
+        },
+        "modelsContextMenu": {
+            // Context menu that appears when we right-click on a model in the "Models" tab
+            "loadModel": "Загрузить",
+            "unloadModel": "Выгрузить",
+            "editModel": "Редактировать",
+            "deleteModel": "Удалить",
+            "loadAllModels": "Загрузить все",
+            "unloadAllModels": "Выгрузить все",
+            "clearSlices": "Очистить сечения",
+        },
+        "objectContextMenu": {
+            // Context menu that appears when we right-click on an object in the 3D view
+            "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
+            "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
+            "showInTree": "Показать в навигаторе", // Menu option to show the object in the Objects tab"s tree
+            "hide": "Скрыть", // Menu option to hide this object
+            "hideOthers": "Скрыть другие", // Menu option to hide other objects
+            "hideAll": "Скрыть все", // Menu option to hide all objects
+            "showAll": "Показать все", // Menu option to show all objects
+            "xray": "Рентген", // Menu option to X-ray this object
+            "xrayOthers": "Рентген остальные", // Menu option to undo X-ray on all other objects
+            "xrayAll": "Рентген все", // Menu option to X-ray all objects
+            "xrayNone": "Очистить рентген", // Menu option to remove X-ray effect from all objects
+            "select": "Выбрать", // Menu option to select this object
+            "undoSelect": "Отменить выбор", // Menu option to deselect this object
+            "selectNone": "Очистить выбор", // Menu option to deselect all objects
+            "clearSlices": "Очистить сечения", // Menu option to delete all slices made with the Slicing tool
+        },
+        "treeViewContextMenu": {
+            // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
+            "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
+            "isolate": "Изолировать", // Menu option to hide all other objects and fit this object in view
+            "hide": "Скрыть", // Menu option to hide this object
+            "hideOthers": "Скрыть другие", // Menu option to hide other objects
+            "hideAll": "Скрыть все", // Menu option to hide all objects
+            "show": "Показать", // Menu option to show this object
+            "showOthers": "Показать остальные", // Menu option to hide this object and show all others
+            "showAll": "Показать все", // Menu option to show all objects
+            "xray": "Рентген", // Menu option to X-ray this object
+            "undoXray": "Отменить рентген", // Menu option to undo X-ray on this object
+            "xrayOthers": "Рентген остальные", // Menu option to undo X-ray on all other objects
+            "xrayAll": "Ренген все", // Menu option to X-ray all objects
+            "xrayNone": "Очистить рентген", // Menu option to remove X-ray effect from all objects
+            "select": "Выбрать", // Menu option to select this object
+            "undoSelect": "Отменить выбор", // Menu option to deselect this object
+            "selectNone": "Очистить выбор", // Menu option to deselect all objects
+            "clearSlices": "Очистить сечения", // Menu option to delete all slices made with the Slicing tool
+        },
+        "sectionToolContextMenu": {
+            // Context menu that appears when we right-click an the Slicing tool
+            "slice": "Сечение", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
+            "clearSlices": "Очистить сечения", // Menu option to delete all slices
+            "flipSlices": "Развернуть сечения", // Menu option to reverse the cutting direction of all slices
+            "edit": "Редактировать", // Sub-menu option to edit a single slice
+            "flip": "Развернуть", // Sub-menu option to reverse the cutting direction of a single slice
+            "delete": "Удалить", // Sub-menu option to delete a single slice
+        },
     }
 };
 
