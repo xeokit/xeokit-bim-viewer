@@ -49,7 +49,8 @@ const messages = {
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
             "title": "Properties",
-            "noObjectSelectedWarning": "No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here."
+            "noObjectSelectedWarning": "No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.",
+            "noPropSetWarning": "No property sets found for this object."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Toggle explorer", // Button to open or close the explorer panel on the left
@@ -181,7 +182,8 @@ const messages = {
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
             "title": "Eigenschaften",
-            "noObjectSelectedWarning": "Kein Objekt inspiziert. Klicken Sie mit der rechten Maustaste auf ein Objekt oder führen Sie einen langen Tabulator aus und wählen Sie \'Eigenschaften prüfen\', um die Eigenschaften des Objekts anzuzeigen."
+            "noObjectSelectedWarning": "Kein Objekt inspiziert. Klicken Sie mit der rechten Maustaste auf ein Objekt oder führen Sie einen langen Tabulator aus und wählen Sie \'Eigenschaften prüfen\', um die Eigenschaften des Objekts anzuzeigen.",
+            "noPropSetWarning": "Keine Eigenschaftssätze für dieses Objekt gefunden."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Explorer ein- und ausblenden", // Button to open or close the explorer panel on the left
@@ -313,7 +315,8 @@ const messages = {
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
             "title": "Propriétés",
-            "noObjectSelectedWarning": "Aucun objet n'a été inspecté. Cliquez avec le bouton droit ou le bouton long sur un objet et sélectionnez \'Inspecter les propriétés\' pour afficher ses propriétés ici."
+            "noObjectSelectedWarning": "Aucun objet n'a été inspecté. Cliquez avec le bouton droit ou le bouton long sur un objet et sélectionnez \'Inspecter les propriétés\' pour afficher ses propriétés ici.",
+            "noPropSetWarning": "Aucun ensemble de propriétés n'a été trouvé pour cet objet."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Afficher la structure", // Button to open or close the explorer panel on the left
@@ -445,7 +448,8 @@ const messages = {
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
             "title": "Właściwości",
-            "noObjectSelectedWarning": "Nie sprawdzono żadnego obiektu. Kliknij prawym przyciskiem myszy lub kliknij długo na obiekcie i wybierz opcję \'Sprawdź właściwości\', aby wyświetlić jego właściwości."
+            "noObjectSelectedWarning": "Nie sprawdzono żadnego obiektu. Kliknij prawym przyciskiem myszy lub kliknij długo na obiekcie i wybierz opcję \'Sprawdź właściwości\', aby wyświetlić jego właściwości.",
+            "noPropSetWarning": "Nie znaleziono żadnych zestawów właściwości dla tego obiektu."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Przełączanie eksploratora", // Button to open or close the explorer panel on the left
@@ -583,7 +587,8 @@ const messages = {
         "propertiesInspector": {
             // The "Properties" tab on the right of the canvas
             "title": "Свойства",
-            "noObjectSelectedWarning": "Ни один объект не осмотрен. Щелкните правой кнопкой мыши или длинной меткой на объекте и выберите \'Осмотреть свойства\', чтобы просмотреть его свойства здесь."
+            "noObjectSelectedWarning": "Ни один объект не осмотрен. Щелкните правой кнопкой мыши или длинной меткой на объекте и выберите \'Осмотреть свойства\', чтобы просмотреть его свойства здесь.",
+            "noPropSetWarning": "Для этого объекта не найдено ни одного набора свойств."
         },
         "toolbar": {
             // The toolbar at the top of the canvas
