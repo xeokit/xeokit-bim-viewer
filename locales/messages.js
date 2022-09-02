@@ -53,6 +53,7 @@ const messages = {
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Toggle explorer", // Button to open or close the explorer panel on the left
+            "toggleProperties": "Toggle properties", // Button to open or close the properties panel on the right
             "resetViewTip": "Reset view", // Button to reset the viewer to initial state
             "toggle2d3dTip": "Toggle 2D/3D", // Button to toggle between 3D view and 2D plan view modes
             "togglePerspectiveTip": "Toggle Perspective/Ortho", // Button to toggle between perspective and orthographic projection
@@ -63,6 +64,7 @@ const messages = {
             "queryObjectsTip": "Query objects", // Button to activate "Query objects" tool
             "sliceObjectsTip": "Slice objects", // Button to activate "Slice objects" tool
             "slicesMenuTip": "Slices menu", // Button to open the pull-down menu of existing section planes
+            "showSpacesTip": "Show IFCSpaces", //Button to show IFC spaces
             "numSlicesTip": "Number of existing slices" // Label shows number of sexisting section planes
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
@@ -183,6 +185,7 @@ const messages = {
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Explorer ein- und ausblenden", // Button to open or close the explorer panel on the left
+            "toggleProperties": "Eigenschaften ein- und ausblenden", // Button to open or close the properties panel on the right
             "resetViewTip": "Ansicht zurücksetzen", // Button to reset the viewer to initial state
             "toggle2d3dTip": "2D/3D umschalten", // Button to toggle between 2D and 3D viewing modes
             "togglePerspectiveTip": "Orthogonale/Perspektivische Ansicht umschalten", // Buttons to toggle between orthographic and perspective projection modes
@@ -193,6 +196,7 @@ const messages = {
             "queryObjectsTip": "Abfrageobjekte", // Button to activate/deactivate "Query objects" tool
             "sliceObjectsTip": "Objekte schneiden", // Button to activate/deactivate "Slice objects" tool
             "slicesMenuTip": "Menü Schnittebenen", // Button to open the pull-down menu of existing section planes
+            "showSpacesTip": "IFC-Räume anzeigen", //Button to show IFC spaces
             "numSlicesTip": "Anzahl der Schnittebenen" // Label shows number of existing section planes
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
@@ -313,6 +317,7 @@ const messages = {
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Afficher la structure", // Button to open or close the explorer panel on the left
+            "toggleProperties": "Afficher les propriétés", // Button to open or close the properties panel on the right
             "resetViewTip": "Réinitialiser la vue", // Button to reset the viewer to initial state
             "toggle2d3dTip": "Activer 2D/3D", // Button to toggle between 3D view and 2D plan view modes
             "togglePerspectiveTip": "Activer Perspective/Ortho", // Button to toggle between perspective and orthographic projection
@@ -323,6 +328,7 @@ const messages = {
             "queryObjectsTip": "Informations objets", // Button to activate "Query objects" tool
             "sliceObjectsTip": "Coupes", // Button to activate "Slice objects" tool
             "slicesMenuTip": "Outils de coupe", // Button to open the pull-down menu of existing section planes
+            "showSpacesTip": "Afficher les espaces IFC", //Button to show IFC spaces
             "numSlicesTip": "Nombre de coupes" // Label shows number of sexisting section planes
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
@@ -442,6 +448,8 @@ const messages = {
             "noObjectSelectedWarning": "Nie sprawdzono żadnego obiektu. Kliknij prawym przyciskiem myszy lub kliknij długo na obiekcie i wybierz opcję \'Sprawdź właściwości\', aby wyświetlić jego właściwości."
         },
         "toolbar": { // The toolbar at the top of the canvas
+            "toggleExplorer": "Przełączanie eksploratora", // Button to open or close the explorer panel on the left
+            "toggleProperties": "Przełączanie właściwości", // Button to open or close the properties panel on the right
             "resetViewTip": "Resetuj widok", // Button to reset the voewer to initial state
             "toggle2d3dTip": "Widok 2D/3D", // Button to toggle between 2D and 3D viewing modes
             "togglePerspectiveTip": "Widok Ortograficzny/Perspektywiczny", // Buttons to toggle between orthographic and perspective projection modes
@@ -452,6 +460,7 @@ const messages = {
             "queryObjectsTip": "Wywołaj obiekt", // Button to activate/deactivate "Query objects" tool
             "sliceObjectsTip": "Przekroje obiektów", // Button to activate/deactivate "Slice objects" tool
             "slicesMenuTip": "Menu przekroi", // Button to open the pull-down menu of existing section planes
+            "showSpacesTip": "Pokaż przestrzenie IFC", //Button to show IFC spaces
             "numSlicesTip": "Liczba przekroi" // Label shows number of existing section planes
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
@@ -579,6 +588,7 @@ const messages = {
         "toolbar": {
             // The toolbar at the top of the canvas
             "toggleExplorer": "Переключить навигатор", // Button to open or close the explorer panel on the left
+            "toggleProperties": "Переключить Свойства", // Button to open or close the properties panel on the right
             "resetViewTip": "Сбросить вид", // Button to reset the viewer to initial state
             "toggle2d3dTip": "Переключить 2D/3D", // Button to toggle between 3D view and 2D plan view modes
             "togglePerspectiveTip": "Переключить проекцию перспектива/орто", // Button to toggle between perspective and orthographic projection
@@ -589,6 +599,7 @@ const messages = {
             "queryObjectsTip": "Выбрать объекты", // Button to activate "Query objects" tool
             "sliceObjectsTip": "Рассечь объекты", // Button to activate "Slice objects" tool
             "slicesMenuTip": "Меню сечений", // Button to open the pull-down menu of existing section planes
+            "showSpacesTip": "Показать места IFC", //Button to show IFC spaces
             "numSlicesTip": "Количество существующих сечений", // Label shows number of sexisting section planes
         },
         "canvasContextMenu": {
