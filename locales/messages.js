@@ -48,7 +48,8 @@ const messages = {
             "hideAllTip": "Hide all storeys"
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
-            "title": "Properties"
+            "title": "Properties",
+            "noObjectSelectedWarning": "No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Toggle explorer", // Button to open or close the explorer panel on the left
@@ -84,6 +85,7 @@ const messages = {
             "clearSlices": "Clear Slices"
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
+            "inspectProperties": "Inspect Properties", //menu option to inspect properties in the properties inspector
             "viewFit": "View Fit", // Menu option to position the camera to fit the object in view
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
             "showInTree": "Show in Explorer", // Menu option to show the object in the Objects tab's tree
@@ -101,6 +103,7 @@ const messages = {
             "clearSlices": "Clear Slices" // Menu option to delete all slices made with the Slicing tool
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "inspectProperties": "Inspect Properties", //menu option to inspect properties in the properties inspector
             "viewFit": "View Fit", // Menu option to position the camera to fit the object in view
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
             "isolate": "Isolate", // Menu option to hide all other objects and fit this object in view
@@ -175,7 +178,8 @@ const messages = {
             "hideAllTip": "Alle Stockwerke ausblenden"
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
-            "title": "Eigenschaften"
+            "title": "Eigenschaften",
+            "noObjectSelectedWarning": "Kein Objekt inspiziert. Klicken Sie mit der rechten Maustaste auf ein Objekt oder führen Sie einen langen Tabulator aus und wählen Sie \'Eigenschaften prüfen\', um die Eigenschaften des Objekts anzuzeigen."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Explorer ein- und ausblenden", // Button to open or close the explorer panel on the left
@@ -211,6 +215,7 @@ const messages = {
             "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
+            "inspectProperties": "Eigenschaften prüfen", //menu option to inspect properties in the properties inspector
             "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the right-clicked object in view
             "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "showInTree": "Im Baum anzeigen", // Menu option to show the right-clicked object in the Objects tab's tree
@@ -228,6 +233,7 @@ const messages = {
             "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "inspectProperties": "Eigenschaften prüfen", //menu option to inspect properties in the properties inspector
             "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "isolate": "Isolieren", // Menu option to hide all other objects and fit this object in view
@@ -302,7 +308,8 @@ const messages = {
             "hideAllTip": "Masquer tous les étages"
         },
         "propertiesInspector": { // The "Properties" tab on the right of the canvas
-            "title": "Propriétés"
+            "title": "Propriétés",
+            "noObjectSelectedWarning": "Aucun objet n'a été inspecté. Cliquez avec le bouton droit ou le bouton long sur un objet et sélectionnez \'Inspecter les propriétés\' pour afficher ses propriétés ici."
         },
         "toolbar": { // The toolbar at the top of the canvas
             "toggleExplorer": "Afficher la structure", // Button to open or close the explorer panel on the left
@@ -338,6 +345,7 @@ const messages = {
             "clearSlices": "Effacer les coupes"
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
+            "inspectProperties": "Inspecter les propriétés", //menu option to inspect properties in the properties inspector
             "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
             "showInTree": "Afficher arborescence", // Menu option to show the object in the Objects tab's tree
@@ -355,6 +363,7 @@ const messages = {
             "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "inspectProperties": "Inspecter les propriétés", //menu option to inspect properties in the properties inspector
             "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
             "isolate": "Isoler", // Menu option to hide all other objects and fit this object in view
@@ -383,6 +392,9 @@ const messages = {
             "delete": "Supprimer" // Sub-menu option to delete a single slice
         }
     },
+
+    //Polish
+
     "pl": {
         "busyModal": { // The dialog that appears in the center of the canvas while we are loading a model
             "loading": "Ładowanie" // Loading <myModel>
@@ -425,6 +437,10 @@ const messages = {
             "hideAll": "Ukryj",
             "hideAllTip": "Ukryj wszystkie piętra"
         },
+        "propertiesInspector": { // The "Properties" tab on the right of the canvas
+            "title": "Właściwości",
+            "noObjectSelectedWarning": "Nie sprawdzono żadnego obiektu. Kliknij prawym przyciskiem myszy lub kliknij długo na obiekcie i wybierz opcję \'Sprawdź właściwości\', aby wyświetlić jego właściwości."
+        },
         "toolbar": { // The toolbar at the top of the canvas
             "resetViewTip": "Resetuj widok", // Button to reset the voewer to initial state
             "toggle2d3dTip": "Widok 2D/3D", // Button to toggle between 2D and 3D viewing modes
@@ -458,6 +474,7 @@ const messages = {
             "clearSlices": "Usuń przekroje" // Menu option to delete all slices made with the Slicing tool
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
+            "inspectProperties": "Sprawdź właściwości", //menu option to inspect properties in the properties inspector
             "viewFit": "Dopasuj widok do obiektu", // Menu option to position the camera to fit the right-clicked object in view
             "viewFitAll": "Dopasuj widok do modelu", // Menu option to position the camera to fit all objects in view
             "showInTree": "Pokaż w widoku drzewa", // Menu option to show the right-clicked object in the Objects tab's tree
@@ -475,6 +492,7 @@ const messages = {
             "clearSlices": "Usuń przekroje" // Menu option to delete all slices
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "inspectProperties": "Sprawdź właściwości", //menu option to inspect properties in the properties inspector
             "viewFit": "Dopasuj widok do obiektu", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Dopasuj widok do modelu", // Menu option to position the camera to fit all objects in view
             "isolate": "Wyizoluj", // Menu option to hide all other objects and fit this object in view
@@ -511,13 +529,13 @@ const messages = {
             "loading": "Загрузка", // Loading <myModel>
         },
         "NavCube": {
-        	// The 3D navigation cube at the bottom right of the canvas
-        	"front": "Фронт",
-        	"back": "Тыл",
-        	"top": "Верх",
-        	"bottom": "Низ",
-        	"left": "Лево",
-        	"right": "Право",
+            // The 3D navigation cube at the bottom right of the canvas
+            "front": "Фронт",
+            "back": "Тыл",
+            "top": "Верх",
+            "bottom": "Низ",
+            "left": "Лево",
+            "right": "Право",
         },
         "modelsExplorer": {
             // The "Models" tab on the left of the canvas
@@ -556,6 +574,7 @@ const messages = {
         "propertiesInspector": {
             // The "Properties" tab on the right of the canvas
             "title": "Свойства",
+            "noObjectSelectedWarning": "Ни один объект не осмотрен. Щелкните правой кнопкой мыши или длинной меткой на объекте и выберите \'Осмотреть свойства\', чтобы просмотреть его свойства здесь."
         },
         "toolbar": {
             // The toolbar at the top of the canvas
@@ -595,6 +614,7 @@ const messages = {
         },
         "objectContextMenu": {
             // Context menu that appears when we right-click on an object in the 3D view
+            "inspectProperties": "Осмотреть свойства", //menu option to inspect properties in the properties inspector
             "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
             "showInTree": "Показать в навигаторе", // Menu option to show the object in the Objects tab"s tree
@@ -613,6 +633,7 @@ const messages = {
         },
         "treeViewContextMenu": {
             // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
+            "inspectProperties": "Осмотреть свойства", //menu option to inspect properties in the properties inspector
             "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
             "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
             "isolate": "Изолировать", // Menu option to hide all other objects and fit this object in view
@@ -640,8 +661,8 @@ const messages = {
             "edit": "Редактировать", // Sub-menu option to edit a single slice
             "flip": "Развернуть", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Удалить", // Sub-menu option to delete a single slice
-        },
+        }
     }
 };
 
-export {messages};
+export { messages };
