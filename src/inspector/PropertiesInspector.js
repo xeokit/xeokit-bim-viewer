@@ -65,9 +65,10 @@ class PropertiesInspector extends Controller {
     }
 
     clear() {
-        const html = [];
+        const html = [],
+            localizedText = this.viewer.localeService.translate('propertiesInspector.noObjectSelectedWarning') || 'No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.';
         html.push(`<div class="element-attributes">`);
-        html.push(`<p class="xeokit-i18n subsubtitle no-object-selected-warning" data-xeokit-i18n="propertiesInspector.noObjectSelectedWarning">No object inspected. Right-click or long-tab an object and select \'Inspect Properties\' to view its properties here.</p>`);
+        html.push(`<p class="xeokit-i18n subsubtitle no-object-selected-warning" data-xeokit-i18n="propertiesInspector.noObjectSelectedWarning">${localizedText}</p>`);
         html.push(`</div>`);
         const htmlStr = html.join("");
        this._propertiesElement.innerHTML = htmlStr;
@@ -88,7 +89,8 @@ class PropertiesInspector extends Controller {
             html.push(`<tr><td class="td1">Viewer ID:</td><td class="td2">${metaObject.id}</td></tr>`);
             html.push('</table>');
             if (!propertySets || propertySets.length === 0) {
-                html.push(`<p class="subtitle xeokit-no-prop-set-warning">No properties sets found for this object.</p>`);
+                const localizedText = this.viewer.localeService.translate('propertiesInspector.noPropSetWarning') || 'No properties sets found for this object';
+                html.push(`<p class="xeokit-i18n subtitle xeokit-no-prop-set-warning" data-xeokit-i18n="propertiesInspector.noPropSetWarning">${localizedText}</p>`);
                 html.push(`</div>`);
             } else {
                 html.push(`</div>`);
