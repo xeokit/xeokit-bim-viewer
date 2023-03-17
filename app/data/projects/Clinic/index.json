@@ -1,0 +1,26 @@
+{
+	"id": "Clinic",
+	"name": "Clinic",
+	"created": "Wed, 14 Jun 2017 07:00:00 GMT",
+	"models": [
+		{
+			"id": "model1",
+			"name": "Plumbing 1"
+		},
+		{
+			"id": "model2",
+			"name": "Plumbing 2"
+		},
+		{
+			"id": "model3",
+			"name": "Plumbing 3"
+		},
+		{
+			"id": "model4",
+			"name": "Plumbing 4"
+		}
+	],
+	"viewerConfigs": {},
+	"viewerContent": {},
+	"viewerState": {}
+}
