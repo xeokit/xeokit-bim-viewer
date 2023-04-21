@@ -23,6 +23,7 @@
     <canvas id="myCanvas"></canvas>
     <canvas id="myNavCubeCanvas"></canvas>
 </div>
+
 </body>
 
 <!-- Tooltips libraries -->
@@ -95,7 +96,10 @@
             });
         });
 
-        bimViewer.setConfigs({});
+        bimViewer.setConfigs({
+            "selectedGlowThrough": true,
+            "highlightGlowThrough": true
+        });
 
         bimViewer.on("openExplorer", () => {
             setExplorerOpen(true);
