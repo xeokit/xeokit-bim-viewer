@@ -61,32 +61,19 @@ export class ObjectsKdTree3 {
 
         const entityAABB = entity.aabb;
 
-        const reducedEntityAABB = entityAABB.slice();
-
-        reducedEntityAABB[0] = reducedEntityAABB[3] = (entityAABB[0] + entityAABB[3]) / 2;
-        reducedEntityAABB[1] = reducedEntityAABB[4] = (entityAABB[1] + entityAABB[4]) / 2;
-        reducedEntityAABB[2] = reducedEntityAABB[5] = (entityAABB[2] + entityAABB[5]) / 2;
-
-        // reducedEntityAABB[0] = entityAABB[0] + ((entityAABB[3] - entityAABB[0]) /5);
-        // reducedEntityAABB[1] = entityAABB[1] + ((entityAABB[4] - entityAABB[1]) / 5);
-        // reducedEntityAABB[2] = entityAABB[2] + ((entityAABB[5] - entityAABB[2]) / 5);
-        // reducedEntityAABB[3] = entityAABB[3] - ((entityAABB[3] - entityAABB[0]) / 5);
-        // reducedEntityAABB[4] = entityAABB[4] - ((entityAABB[4] - entityAABB[1]) / 5);
-        // reducedEntityAABB[5] = entityAABB[5] - ((entityAABB[5] - entityAABB[2]) / 5);
-
         if (depth >= this._maxTreeDepth) {
             node.entities = node.entities || [];
             node.entities.push(entity);
             return;
         }
         if (node.left) {
-            if (math.containsAABB3(node.left.aabb, reducedEntityAABB)) {
+            if (math.containsAABB3(node.left.aabb, entityAABB)) {
                 this._insertEntity(node.left, entity, depth + 1);
                 return;
             }
         }
         if (node.right) {
-            if (math.containsAABB3(node.right.aabb, reducedEntityAABB)) {
+            if (math.containsAABB3(node.right.aabb, entityAABB)) {
                 this._insertEntity(node.right, entity, depth + 1);
                 return;
             }
@@ -108,7 +95,7 @@ export class ObjectsKdTree3 {
             node.left = {
                 aabb: aabbLeft
             };
-            if (math.containsAABB3(aabbLeft, reducedEntityAABB)) {
+            if (math.containsAABB3(aabbLeft, entityAABB)) {
                 this._insertEntity(node.left, entity, depth + 1);
                 return;
             }
@@ -119,7 +106,7 @@ export class ObjectsKdTree3 {
             node.right = {
                 aabb: aabbRight
             };
-            if (math.containsAABB3(aabbRight, reducedEntityAABB)) {
+            if (math.containsAABB3(aabbRight, entityAABB)) {
                 this._insertEntity(node.right, entity, depth + 1);
                 return;
             }

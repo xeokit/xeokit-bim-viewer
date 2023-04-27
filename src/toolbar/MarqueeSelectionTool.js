@@ -1,14 +1,11 @@
 import {Controller} from "../Controller.js";
 import {Frustum, frustumIntersectsAABB3, math, setFrustum} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
-const tempAABB3 = math.AABB3();
-
 const LEFT_TO_RIGHT = 0;
 const RIGHT_TO_LEFT = 1;
 
-
 /** @private */
-export class MarqueeTool extends Controller {
+export class MarqueeSelectionTool extends Controller {
 
     constructor(parent, cfg) {
 
@@ -22,7 +19,7 @@ export class MarqueeTool extends Controller {
         this._marquee = math.AABB2();
         this._marqueeFrustum = new Frustum();
         this._marqueeFrustumProjMat = math.mat4();
-        this._marqueeDirection = false;
+        this._marqueeDir = false;
 
         const buttonElement = cfg.buttonElement;
 
@@ -73,79 +70,99 @@ export class MarqueeTool extends Controller {
         marqueeStyle["box-shadow"] = "0 2px 5px 0 #182A3D;";
         marqueeStyle["opacity"] = 1.0;
         marqueeStyle["pointer-events"] = "none";
-        let startX;
-        let startY;
-        let endX;
-        var endY;
+
+        let canvasDragStartX;
+        let canvasDragStartY;
+        let canvasDragEndX;
+        let canvasDragEndY;
 
         let canvasMarqueeStartX;
         let canvasMarqueeStartY;
         let canvasMarqueeEndX;
         let canvasMarqueeEndY;
 
-        let isDragging = false;
-        let mouseUpOffCanvas = false;
+        let isMouseDragging = false;
+        let mouseWasUpOffCanvas = false;
 
-        let doubleClick = false;
-        let timer = null;
+        canvas.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.code === "ControlLeft") {
+                console.log("CTRL key is pressed down!");
+                // do something here
+            }
+        });
+
+        canvas.addEventListener("keyup", (event) => {
+            if (event.ctrlKey && event.code === "ControlLeft") {
+                console.log("CTRL key is released!");
+                // do something here
+            }
+        });
 
         canvas.addEventListener("mousedown", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            scene.setObjectsSelected(scene.selectedObjectIds, false);
-            startX = e.pageX;
-            startY = e.pageY;
+            if (e.button !== 0) { // Left button only
+                return;
+            }
+            const input = this.bimViewer.viewer.scene.input;
+            if (!input.keyDown[input.KEY_CTRL]) { // Clear selection unless CTRL down
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+            }
+            canvasDragStartX = e.pageX;
+            canvasDragStartY = e.pageY;
             marqueeStyle.visibility = "visible";
-            marqueeStyle.left = startX + "px";
-            marqueeStyle.top = startY + "px";
+            marqueeStyle.left = `${canvasDragStartX}px`;
+            marqueeStyle.top = `${canvasDragStartY}px`;
             marqueeStyle.width = "0px";
             marqueeStyle.height = "0px";
             marqueeStyle.display = "block";
             canvasMarqueeStartX = e.offsetX;
             canvasMarqueeStartY = e.offsetY;
-            isDragging = true;
-            this.viewer.cameraControl.pointerEnabled = false;
-            doubleClick = false;
-            clearTimeout(timer);
+            isMouseDragging = true;
+            this.viewer.cameraControl.pointerEnabled = false; // Disable camera rotation
         });
-
 
         canvas.addEventListener("mouseup", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            if (!isDragging && !mouseUpOffCanvas) {
+            if (!isMouseDragging && !mouseWasUpOffCanvas) {
                 return
             }
-            endX = e.pageX;
-            endY = e.pageY;
-            const width = Math.abs(endX - startX);
-            const height = Math.abs(endY - startY);
-            marqueeStyle.width = width + "px";
-            marqueeStyle.height = height + "px";
-            marqueeStyle.visibility = "hidden";
-            isDragging = false;
-            this.viewer.cameraControl.pointerEnabled = true;
-            if (mouseUpOffCanvas) {
-                mouseUpOffCanvas = false;
+            if (e.button !== 0) {
+                return;
             }
-            if (width > 3 || height > 3) {
+            canvasDragEndX = e.pageX;
+            canvasDragEndY = e.pageY;
+            const width = Math.abs(canvasDragEndX - canvasDragStartX);
+            const height = Math.abs(canvasDragEndY - canvasDragStartY);
+            marqueeStyle.width = `${width}px`;
+            marqueeStyle.height = `${height}px`;
+            marqueeStyle.visibility = "hidden";
+            isMouseDragging = false;
+            this.viewer.cameraControl.pointerEnabled = true; // Enable camera rotation
+            if (mouseWasUpOffCanvas) {
+                mouseWasUpOffCanvas = false;
+            }
+            if (width > 3 || height > 3) { // Marquee pick if rectangle big enough
                 this._marqueePick();
             }
-
         }); // Bubbling
 
         document.addEventListener("mouseup", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            if (!isDragging) {
+            if (e.button !== 0) { // check if left button was clicked
+                return;
+            }
+            if (!isMouseDragging) {
                 return
             }
             marqueeStyle.visibility = "hidden";
-            isDragging = false;
-            mouseUpOffCanvas = true;
+            isMouseDragging = false;
+            mouseWasUpOffCanvas = true;
             this.viewer.cameraControl.pointerEnabled = true;
         }, true); // Capturing
 
@@ -153,39 +170,43 @@ export class MarqueeTool extends Controller {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
             }
-            if (!isDragging) {
+            if (e.button !== 0) { // check if left button was clicked
+                return;
+            }
+            if (!isMouseDragging) {
                 return
             }
             const x = e.pageX;
             const y = e.pageY;
-            const width = x - startX;
-            const height = y - startY;
-            marqueeStyle.width = Math.abs(width) + "px";
-            marqueeStyle.height = Math.abs(height) + "px";
-            marqueeStyle.left = Math.min(startX, x) + "px";
-            marqueeStyle.top = Math.min(startY, y) + "px";
+            const width = x - canvasDragStartX;
+            const height = y - canvasDragStartY;
+            marqueeStyle.width = `${Math.abs(width)}px`;
+            marqueeStyle.height = `${Math.abs(height)}px`;
+            marqueeStyle.left = `${Math.min(canvasDragStartX, x)}px`;
+            marqueeStyle.top = `${Math.min(canvasDragStartY, y)}px`;
             canvasMarqueeEndX = e.offsetX;
             canvasMarqueeEndY = e.offsetY;
-            const marqueeDirection = (canvasMarqueeStartX < canvasMarqueeEndX) ? LEFT_TO_RIGHT : RIGHT_TO_LEFT;
-            if (marqueeDirection !== this._marqueeDirection) {
-                marqueeStyle["background-image"] =
-                    marqueeDirection === LEFT_TO_RIGHT
-                        ? "url(\"data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='6' ry='6' stroke='%23333' stroke-width='4'/%3e%3c/svg%3e\")"
-                        : "url(\"data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='6' ry='6' stroke='%23333' stroke-width='4' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e\")";
-                this._marqueeDirection = marqueeDirection;
-            }
+            const marqueeDir = (canvasMarqueeStartX < canvasMarqueeEndX) ? LEFT_TO_RIGHT : RIGHT_TO_LEFT;
+            this._setMarqueeDir(marqueeDir);
             this._marquee[0] = Math.min(canvasMarqueeStartX, canvasMarqueeEndX);
             this._marquee[1] = Math.min(canvasMarqueeStartY, canvasMarqueeEndY);
             this._marquee[2] = Math.max(canvasMarqueeStartX, canvasMarqueeEndX);
             this._marquee[3] = Math.max(canvasMarqueeStartY, canvasMarqueeEndY);
-
-            console.log(this._marquee);
         });
     }
 
+    _setMarqueeDir(marqueeDir) {
+        if (marqueeDir !== this._marqueeDir) {
+            this._marqueeElement.style["background-image"] =
+                marqueeDir === LEFT_TO_RIGHT
+                    /* Solid */ ? "url(\"data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='6' ry='6' stroke='%23333' stroke-width='4'/%3e%3c/svg%3e\")"
+                    /* Dashed */ : "url(\"data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='6' ry='6' stroke='%23333' stroke-width='4' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e\")";
+            this._marqueeDir = marqueeDir;
+        }
+    }
 
     _marqueePick() {
-        this._rebuildFrustum();
+        this._buildMarqueeFrustum();
         const entities1 = [];
         const visitNode = (node, intersects = Frustum.INTERSECT) => {
             if (intersects === Frustum.INTERSECT) {
@@ -199,20 +220,14 @@ export class MarqueeTool extends Controller {
                 for (let i = 0, len = entities.length; i < len; i++) {
                     const entity = entities[i];
                     const entityAABB = entity.aabb;
-                    // const reducedEntityAABB = tempAABB3;
-                    // reducedEntityAABB[0] = entityAABB[0] + ((entityAABB[3] - entityAABB[0]) / 5);
-                    // reducedEntityAABB[1] = entityAABB[1] + ((entityAABB[4] - entityAABB[1]) / 5);
-                    // reducedEntityAABB[2] = entityAABB[2] + ((entityAABB[5] - entityAABB[2]) / 5);
-                    // reducedEntityAABB[3] = entityAABB[3] - ((entityAABB[3] - entityAABB[0]) / 5);
-                    // reducedEntityAABB[4] = entityAABB[4] - ((entityAABB[4] - entityAABB[1]) / 5);
-                    // reducedEntityAABB[5] = entityAABB[5] - ((entityAABB[5] - entityAABB[2]) / 5);
-
-                    if (this._marqueeDirection === LEFT_TO_RIGHT) { // Select entities that are completely inside marquee
+                    if (this._marqueeDir === LEFT_TO_RIGHT) {
+                        // Select entities that are completely inside marquee
                         const intersection = frustumIntersectsAABB3(this._marqueeFrustum, entityAABB);
                         if (intersection === Frustum.INSIDE) {
                             entities1.push(entity);
                         }
-                    } else {// Select entities that are partially inside marquee
+                    } else {
+                        // Select entities that are partially inside marquee
                         const intersection = frustumIntersectsAABB3(this._marqueeFrustum, entityAABB);
                         if (intersection !== Frustum.OUTSIDE) {
                             entities1.push(entity);
@@ -235,7 +250,7 @@ export class MarqueeTool extends Controller {
         return entities1;
     }
 
-    _rebuildFrustum() { // https://github.com/xeokit/xeokit-sdk/issues/869#issuecomment-1165375770
+    _buildMarqueeFrustum() { // https://github.com/xeokit/xeokit-sdk/issues/869#issuecomment-1165375770
         const canvas = this.viewer.scene.canvas.canvas;
         const canvasWidth = canvas.clientWidth;
         const canvasHeight = canvas.clientHeight;
