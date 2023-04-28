@@ -84,20 +84,6 @@ export class MarqueeSelectionTool extends Controller {
         let isMouseDragging = false;
         let mouseWasUpOffCanvas = false;
 
-        canvas.addEventListener("keydown", (event) => {
-            if (event.ctrlKey && event.code === "ControlLeft") {
-                console.log("CTRL key is pressed down!");
-                // do something here
-            }
-        });
-
-        canvas.addEventListener("keyup", (event) => {
-            if (event.ctrlKey && event.code === "ControlLeft") {
-                console.log("CTRL key is released!");
-                // do something here
-            }
-        });
-
         canvas.addEventListener("mousedown", (e) => {
             if (!this.getActive() || !this.getEnabled()) {
                 return;
