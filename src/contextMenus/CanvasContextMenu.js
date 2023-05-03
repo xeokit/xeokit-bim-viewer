@@ -6,6 +6,7 @@ import {math, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 class CanvasContextMenu extends ContextMenu {
     constructor(cfg = {}) {
         super({
+            hideOnAction: cfg.hideOnAction,
             context: cfg.context,
             items: [
                 [

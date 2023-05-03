@@ -42,7 +42,8 @@ class ModelsExplorer extends Controller {
         });
 
         this._modelsContextMenu = new ModelsContextMenu({
-            enableEditModels: cfg.enableEditModels
+            enableEditModels: cfg.enableEditModels,
+            hideOnAction: true
         });
 
         this._modelsInfo = {};

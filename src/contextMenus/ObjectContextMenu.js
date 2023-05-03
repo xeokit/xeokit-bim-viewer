@@ -5,8 +5,8 @@ import {math, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
  */
 class ObjectContextMenu extends ContextMenu {
 
-    constructor(bimViewer) {
-        super();
+    constructor(bimViewer, cfg={}) {
+        super(cfg);
         this._bimViewer = bimViewer;
         this._buildMenu();
     }

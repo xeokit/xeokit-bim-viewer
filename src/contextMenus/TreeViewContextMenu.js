@@ -7,8 +7,8 @@ const tempVec3 = math.vec3();
  */
 class TreeViewContextMenu extends ContextMenu {
 
-    constructor(bimViewer) {
-        super();
+    constructor(bimViewer, cfg={}) {
+        super(cfg);
         this._bimViewer = bimViewer;
         this._buildMenu();
     }

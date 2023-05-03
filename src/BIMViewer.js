@@ -572,8 +572,12 @@ class BIMViewer extends Controller {
 
     _initCanvasContextMenus() {
 
-        this._canvasContextMenu = new CanvasContextMenu(this);
-        this._objectContextMenu = new ObjectContextMenu(this);
+        this._canvasContextMenu = new CanvasContextMenu(this, {
+            hideOnAction: true
+        });
+        this._objectContextMenu = new ObjectContextMenu(this, {
+            hideOnAction: true
+        });
 
         this.viewer.cameraControl.on("rightClick", (e) => {
 

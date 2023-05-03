@@ -1,4 +1,4 @@
-import {math, utils, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {ContextMenu, math, utils} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 const tempAABB = math.AABB3();
 const tempVec3 = math.vec3();
@@ -60,7 +60,20 @@ class SectionToolContextMenu extends ContextMenu {
                     [ // Group
                         {
                             getTitle: (context) => {
+                                return sectionPlane.active
+                                    ? context.viewer.localeService.translate("sectionToolContextMenu.deactivate") || "Disable"
+                                    : context.viewer.localeService.translate("sectionToolContextMenu.activate") || "Enable";
+                            },
+                            doAction: (context) => {
+                                sectionPlane.active = !sectionPlane.active;
+                            }
+                        },
+                        {
+                            getTitle: (context) => {
                                 return context.viewer.localeService.translate("sectionToolContextMenu.edit") || "Edit";
+                            },
+                            getEnabled() {
+                              return sectionPlane.active;
                             },
                             doAction: (context) => {
 
@@ -87,10 +100,14 @@ class SectionToolContextMenu extends ContextMenu {
                             getTitle: (context) => {
                                 return context.viewer.localeService.translate("sectionToolContextMenu.flip") || "Flip";
                             },
+                            getEnabled() {
+                                return sectionPlane.active;
+                            },
                             doAction: (context) => {
                                 sectionPlane.flipDir();
                             }
                         },
+
                         {
                             getTitle: (context) => {
                                 return context.viewer.localeService.translate("sectionToolContextMenu.delete") || "Delete";

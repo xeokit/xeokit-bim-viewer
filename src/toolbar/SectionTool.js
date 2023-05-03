@@ -26,7 +26,8 @@ class SectionTool extends Controller { // XX
 
         this._sectionToolContextMenu = new SectionToolContextMenu({
             sectionPlanesPlugin: this._sectionPlanesPlugin,
-            hideOnMouseDown: false
+            hideOnMouseDown: false,
+            hideOnAction: false
         });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
