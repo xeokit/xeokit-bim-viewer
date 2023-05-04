@@ -1,6 +1,6 @@
 import {Controller} from "../Controller.js";
 import {SectionToolContextMenu} from "./../contextMenus/SectionToolContextMenu.js";
-import {SectionPlanesPlugin, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {math, SectionPlanesPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /** @private */
 class SectionTool extends Controller { // XX
@@ -128,11 +128,11 @@ class SectionTool extends Controller { // XX
             this.setActive(false);
         });
 
-        this.viewer.scene.on("sectionPlaneCreated", ()=> {
+        this.viewer.scene.on("sectionPlaneCreated", () => {
             this._updateSectionPlanesCount();
         });
 
-        this.viewer.scene.on("sectionPlaneDestroyed", ()=> {
+        this.viewer.scene.on("sectionPlaneDestroyed", () => {
             this._updateSectionPlanesCount();
         });
 
@@ -183,6 +183,22 @@ class SectionTool extends Controller { // XX
 
     flipSections() {
         this._sectionPlanesPlugin.flipSectionPlanes();
+    }
+
+    enableSections() {
+        const sectionPlanes = this.viewer.scene.sectionPlanes;
+        for (let id in sectionPlanes) {
+            const sectionPlane = sectionPlanes[id];
+            sectionPlane.active = true;
+        }
+    }
+
+    disableSections() {
+        const sectionPlanes = this.viewer.scene.sectionPlanes;
+        for (let id in sectionPlanes) {
+            const sectionPlane = sectionPlanes[id];
+            sectionPlane.active = false;
+        }
     }
 
     hideControl() {

@@ -147,6 +147,30 @@ class SectionToolContextMenu extends ContextMenu {
                 }
             ],
 
+            [
+                {
+                    getTitle: (context) => {
+                        return context.viewer.localeService.translate("sectionToolContextMenu.disableAllSlices") || "Disable all Slices";
+                    },
+                    getEnabled: (context) => {
+                        return (context.bimViewer.getNumSections() > 0);
+                    },
+                    doAction: (context) => {
+                        context.bimViewer.disableSections();
+                    }
+                },
+                {
+                    getTitle: (context) => {
+                        return context.viewer.localeService.translate("sectionToolContextMenu.enableAllSlices") || "Enable all Slices";
+                    },
+                    getEnabled: (context) => {
+                        return (context.bimViewer.getNumSections() > 0);
+                    },
+                    doAction: (context) => {
+                        context.bimViewer.enableSections();
+                    }
+                }
+            ],
             sectionPlanesMenuItems
         ];
     }

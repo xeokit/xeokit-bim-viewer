@@ -1914,6 +1914,19 @@ class BIMViewer extends Controller {
         this._sectionTool.clear();
     }
 
+    /**
+     * Disables all sections.
+     */
+    disableSections() {
+        this._sectionTool.disableSections();
+    }
+
+    /**
+     * Enables all sections.
+     */
+    enableSections() {
+        this._sectionTool.enableSections();
+    }
 
     /**
      * Inverts the direction of sections.
