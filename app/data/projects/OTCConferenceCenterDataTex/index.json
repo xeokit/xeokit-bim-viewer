@@ -1,0 +1,34 @@
+{
+    "id": "otcConferenceCenter",
+    "name": "OTC Conference Center",
+    "models": [
+        {
+            "id": "design",
+            "name": "OTC Conference Center Design",
+            "useDataTextures": {
+                "enableViewFrustumCulling": true,
+                "targetLodFps": 20,
+                "disableVertexWelding": true,
+                "disableIndexRebucketing": true
+            }
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "objects",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
+    }
+}
