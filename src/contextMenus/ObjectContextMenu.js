@@ -62,6 +62,24 @@ class ObjectContextMenu extends ContextMenu {
             },
             {
                 getTitle: (context) => {
+                    return context.viewer.localeService.translate("canvasContextMenu.viewFitSelection") || "View Fit Selected";
+                },
+                getEnabled: (context) => {
+                    return (context.viewer.scene.numSelectedObjects > 0);
+                },
+                doAction: (context) => {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const sceneAABB = scene.getAABB(scene.selectedObjectIds);
+                    viewer.cameraFlight.flyTo({
+                        aabb: sceneAABB,
+                        duration: 0.5
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
+                }
+            },
+            {
+                getTitle: (context) => {
                     return context.viewer.localeService.translate("objectContextMenu.viewFitAll") || "View Fit All";
                 },
                 doAction: (context) => {
