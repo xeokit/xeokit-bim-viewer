@@ -205,6 +205,9 @@ export class MarqueeSelectionTool extends Controller {
                 const entities = node.entities;
                 for (let i = 0, len = entities.length; i < len; i++) {
                     const entity = entities[i];
+                    if (!entity.visible) {
+                        continue;
+                    }
                     const entityAABB = entity.aabb;
                     if (this._marqueeDir === LEFT_TO_RIGHT) {
                         // Select entities that are completely inside marquee
