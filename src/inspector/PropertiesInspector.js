@@ -26,8 +26,14 @@ class PropertiesInspector extends Controller {
         }
 
         this._onModelUnloaded = this.viewer.scene.on("modelUnloaded", (modelId) => {
-            if (this._metaObject && this._metaObject.metaModel.id === modelId) {
-                this.clear();
+            if (this._metaObject) {
+                const metaModels = this._metaObject.metaModels;
+                for (let i = 0, len = metaModels.length; i < len; i++) {
+                    if (metaModels[i].id === modelId) {
+                        this.clear();
+                        return;
+                    }
+                }
             }
         });
 
