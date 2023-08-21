@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.4.9-alpha-21",
+  "version": "2.4.9-alpha-22",
   "description": "BIM viewer built on xeokit",
   "main": "dist/xeokit-bim-viewer.es.js",
   "files": [
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": " rollup -c; cp locales/messages.js ./dist/.",
+    "build": "rollup --config rollup.config.js; rollup --config rollup.dev.config.js;  cp locales/messages.js ./dist/.",
     "docs": "./node_modules/.bin/esdoc",
     "publish": "npm publish --access public"
   },
@@ -47,7 +47,7 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "2.4.0-alpha-51",
+    "@xeokit/xeokit-sdk": "2.4.0-alpha-54",
     "http-server": "^13.0.2"
   }
 }
