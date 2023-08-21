@@ -2,8 +2,9 @@
   "name": "@xeokit/xeokit-bim-viewer",
   "version": "2.4.9-alpha-22",
   "description": "BIM viewer built on xeokit",
-  "main": "dist/xeokit-bim-viewer.es.js",
+  "main": "dist/xeokit-bim-viewer.min.es.js",
   "files": [
+    "/dist/xeokit-bim-viewer.min.es.js",
     "/dist/xeokit-bim-viewer.es.js",
     "/dist/xeokit-bim-viewer.css",
     "/dist/messages.js"
