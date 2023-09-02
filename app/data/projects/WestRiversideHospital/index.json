@@ -9,7 +9,8 @@
         },
         {
             "id": "structure",
-            "name": "Hospital Structure"
+            "name": "Hospital Structure",
+            "saoEnabled": true
         },
         {
             "id": "electrical",
@@ -34,7 +35,8 @@
     ],
     "viewerConfigs": {
         "backgroundColor": [0.9, 0.9, 1.0],
-        "objectColorSource": "model"
+        "objectColorSource": "model",
+        "externalMetadata": true
     },
     "viewerContent": {
         "modelsLoaded": [
