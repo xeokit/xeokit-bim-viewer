@@ -39,7 +39,12 @@
     "viewerContent": {
         "modelsLoaded": [
             "structure",
-            "architectural"
+            "architectural",
+            "mechanical",
+            "fireAlarms",
+            "sprinklers",
+            "plumbing",
+            "electrical"
         ]
     },
     "viewerState": {
