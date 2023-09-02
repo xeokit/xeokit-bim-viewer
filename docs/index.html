@@ -30,13 +30,13 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p><a href="https://twitter.com/xeolabs"><img src="https://img.shields.io/twitter/follow/xeolabs?style=social" alt="Twitter Follow"></a> <a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a>
-<a href="https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer"><img src="https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge" alt></a></p>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="xeokit-bim-viewer">xeokit-bim-viewer</h1><p> <a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" alt="npm version"></a> <a href="https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer"><img src="https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge" alt></a></p>
 <p><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys"><img src="https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png" alt="Screenshot"></a></p>
 <ul>
 <li><a href="https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&amp;tab=storeys">Run demo</a></li>
@@ -442,6 +442,13 @@ with <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewe
 <td style="text-align:left"></td>
 <td style="text-align:left"><code>true</code></td>
 <td style="text-align:left">Whether highlighted objects appear to &quot;glow through&quot; other objects</td>
+</tr>
+<tr>
+<td style="text-align:left">&quot;dtxEnabled&quot;</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Whether to enable xeokit&apos;s data texture-based (DTX) scene representation and rendering mode. This has a lower memory footprint than the standard vertex buffer object-based (VBO) mode, and loads fast, but may be slower on low-spec GPUs.</td>
 </tr>
 </tbody>
 </table>

@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -45,8 +46,8 @@ const tempVec3 = math.vec3();
  */
 class TreeViewContextMenu extends ContextMenu {
 
-    constructor(bimViewer) {
-        super();
+    constructor(bimViewer, cfg={}) {
+        super(cfg);
         this._bimViewer = bimViewer;
         this._buildMenu();
     }
@@ -97,6 +98,24 @@ class TreeViewContextMenu extends ContextMenu {
                         }, 500);
                     });
                     viewer.cameraControl.pivotPos = math.getAABB3Center(aabb);
+                }
+            },
+            {
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;canvasContextMenu.viewFitSelection&quot;) || &quot;View Fit Selected&quot;;
+                },
+                getEnabled: (context) =&gt; {
+                    return (context.viewer.scene.numSelectedObjects &gt; 0);
+                },
+                doAction: (context) =&gt; {
+                    const viewer = context.viewer;
+                    const scene = viewer.scene;
+                    const sceneAABB = scene.getAABB(scene.selectedObjectIds);
+                    viewer.cameraFlight.flyTo({
+                        aabb: sceneAABB,
+                        duration: 0.5
+                    });
+                    viewer.cameraControl.pivotPos = math.getAABB3Center(sceneAABB);
                 }
             },
             {

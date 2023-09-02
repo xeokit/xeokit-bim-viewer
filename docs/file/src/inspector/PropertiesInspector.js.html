@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -64,8 +65,14 @@ class PropertiesInspector extends Controller {
         }
 
         this._onModelUnloaded = this.viewer.scene.on(&quot;modelUnloaded&quot;, (modelId) =&gt; {
-            if (this._metaObject &amp;&amp; this._metaObject.metaModel.id === modelId) {
-                this.clear();
+            if (this._metaObject) {
+                const metaModels = this._metaObject.metaModels;
+                for (let i = 0, len = metaModels.length; i &lt; len; i++) {
+                    if (metaModels[i].id === modelId) {
+                        this.clear();
+                        return;
+                    }
+                }
             }
         });
 
@@ -103,9 +110,10 @@ class PropertiesInspector extends Controller {
     }
 
     clear() {
-        const html = [];
+        const html = [],
+            localizedText = this.viewer.localeService.translate(&apos;propertiesInspector.noObjectSelectedWarning&apos;) || &apos;No object inspected. Right-click or long-tab an object and select \&apos;Inspect Properties\&apos; to view its properties here.&apos;;
         html.push(`&lt;div class=&quot;element-attributes&quot;&gt;`);
-        html.push(`&lt;p class=&quot;subsubtitle no-object-selected-warning&quot;&gt;No object inspected. Right-click or long-tab an object and select \&apos;Inspect Properties\&apos; to view its properties here.&lt;/p&gt;`);
+        html.push(`&lt;p class=&quot;xeokit-i18n subsubtitle no-object-selected-warning&quot; data-xeokit-i18n=&quot;propertiesInspector.noObjectSelectedWarning&quot;&gt;${localizedText}&lt;/p&gt;`);
         html.push(`&lt;/div&gt;`);
         const htmlStr = html.join(&quot;&quot;);
        this._propertiesElement.innerHTML = htmlStr;
@@ -126,7 +134,8 @@ class PropertiesInspector extends Controller {
             html.push(`&lt;tr&gt;&lt;td class=&quot;td1&quot;&gt;Viewer ID:&lt;/td&gt;&lt;td class=&quot;td2&quot;&gt;${metaObject.id}&lt;/td&gt;&lt;/tr&gt;`);
             html.push(&apos;&lt;/table&gt;&apos;);
             if (!propertySets || propertySets.length === 0) {
-                html.push(`&lt;p class=&quot;subtitle xeokit-no-prop-set-warning&quot;&gt;No properties sets found for this object.&lt;/p&gt;`);
+                const localizedText = this.viewer.localeService.translate(&apos;propertiesInspector.noPropSetWarning&apos;) || &apos;No properties sets found for this object&apos;;
+                html.push(`&lt;p class=&quot;xeokit-i18n subtitle xeokit-no-prop-set-warning&quot; data-xeokit-i18n=&quot;propertiesInspector.noPropSetWarning&quot;&gt;${localizedText}&lt;/p&gt;`);
                 html.push(`&lt;/div&gt;`);
             } else {
                 html.push(`&lt;/div&gt;`);

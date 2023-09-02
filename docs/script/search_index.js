@@ -6,6 +6,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-bim-viewer/src/collision/objectskdtree3.js~objectskdtree3",
+    "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html",
+    "<span>ObjectsKdTree3</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/collision/ObjectsKdTree3.js</span>",
+    "class"
+  ],
+  [
     "@xeokit/xeokit-bim-viewer/src/server/server.js~server",
     "class/src/server/Server.js~Server.html",
     "<span>Server</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/server/Server.js</span>",
@@ -330,9 +336,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#disablesections",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-disableSections",
+    "src/BIMViewer.js~BIMViewer#disableSections",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#editmodel",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-editModel",
     "src/BIMViewer.js~BIMViewer#editModel",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#enablesections",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-enableSections",
+    "src/BIMViewer.js~BIMViewer#enableSections",
     "method"
   ],
   [
@@ -714,6 +732,36 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/collision/objectskdtree3.js",
+    "file/src/collision/ObjectsKdTree3.js.html",
+    "src/collision/ObjectsKdTree3.js",
+    "file"
+  ],
+  [
+    "src/collision/objectskdtree3.js~objectskdtree3#constructor",
+    "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html#instance-constructor-constructor",
+    "src/collision/ObjectsKdTree3.js~ObjectsKdTree3#constructor",
+    "method"
+  ],
+  [
+    "src/collision/objectskdtree3.js~objectskdtree3#destroy",
+    "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html#instance-method-destroy",
+    "src/collision/ObjectsKdTree3.js~ObjectsKdTree3#destroy",
+    "method"
+  ],
+  [
+    "src/collision/objectskdtree3.js~objectskdtree3#root",
+    "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html#instance-get-root",
+    "src/collision/ObjectsKdTree3.js~ObjectsKdTree3#root",
+    "member"
+  ],
+  [
+    "src/collision/objectskdtree3.js~objectskdtree3#viewer",
+    "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html#instance-member-viewer",
+    "src/collision/ObjectsKdTree3.js~ObjectsKdTree3#viewer",
+    "member"
+  ],
+  [
     "src/contextmenus/canvascontextmenu.js",
     "file/src/contextMenus/CanvasContextMenu.js.html",
     "src/contextMenus/CanvasContextMenu.js",
@@ -837,6 +885,12 @@ window.esdocSearchIndex = [
     "src/toolbar/hidetool.js",
     "file/src/toolbar/HideTool.js.html",
     "src/toolbar/HideTool.js",
+    "file"
+  ],
+  [
+    "src/toolbar/marqueeselectiontool.js",
+    "file/src/toolbar/MarqueeSelectionTool.js.html",
+    "src/toolbar/MarqueeSelectionTool.js",
     "file"
   ],
   [

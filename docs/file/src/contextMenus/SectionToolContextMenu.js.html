@@ -30,13 +30,14 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/contextMenus/SectionToolContextMenu.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {math, utils, ContextMenu} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {ContextMenu, math, utils} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 const tempAABB = math.AABB3();
 const tempVec3 = math.vec3();
@@ -98,7 +99,20 @@ class SectionToolContextMenu extends ContextMenu {
                     [ // Group
                         {
                             getTitle: (context) =&gt; {
+                                return sectionPlane.active
+                                    ? context.viewer.localeService.translate(&quot;sectionToolContextMenu.deactivate&quot;) || &quot;Disable&quot;
+                                    : context.viewer.localeService.translate(&quot;sectionToolContextMenu.activate&quot;) || &quot;Enable&quot;;
+                            },
+                            doAction: (context) =&gt; {
+                                sectionPlane.active = !sectionPlane.active;
+                            }
+                        },
+                        {
+                            getTitle: (context) =&gt; {
                                 return context.viewer.localeService.translate(&quot;sectionToolContextMenu.edit&quot;) || &quot;Edit&quot;;
+                            },
+                            getEnabled() {
+                              return sectionPlane.active;
                             },
                             doAction: (context) =&gt; {
 
@@ -125,10 +139,14 @@ class SectionToolContextMenu extends ContextMenu {
                             getTitle: (context) =&gt; {
                                 return context.viewer.localeService.translate(&quot;sectionToolContextMenu.flip&quot;) || &quot;Flip&quot;;
                             },
+                            getEnabled() {
+                                return sectionPlane.active;
+                            },
                             doAction: (context) =&gt; {
                                 sectionPlane.flipDir();
                             }
                         },
+
                         {
                             getTitle: (context) =&gt; {
                                 return context.viewer.localeService.translate(&quot;sectionToolContextMenu.delete&quot;) || &quot;Delete&quot;;
@@ -168,6 +186,30 @@ class SectionToolContextMenu extends ContextMenu {
                 }
             ],
 
+            [
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;sectionToolContextMenu.disableAllSlices&quot;) || &quot;Disable all Slices&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.bimViewer.getNumSections() &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.disableSections();
+                    }
+                },
+                {
+                    getTitle: (context) =&gt; {
+                        return context.viewer.localeService.translate(&quot;sectionToolContextMenu.enableAllSlices&quot;) || &quot;Enable all Slices&quot;;
+                    },
+                    getEnabled: (context) =&gt; {
+                        return (context.bimViewer.getNumSections() &gt; 0);
+                    },
+                    doAction: (context) =&gt; {
+                        context.bimViewer.enableSections();
+                    }
+                }
+            ],
             sectionPlanesMenuItems
         ];
     }

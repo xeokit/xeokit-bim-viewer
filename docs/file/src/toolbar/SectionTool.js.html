@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -38,7 +39,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/SectionTool.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
 import {SectionToolContextMenu} from &quot;./../contextMenus/SectionToolContextMenu.js&quot;;
-import {SectionPlanesPlugin, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+import {math, SectionPlanesPlugin} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 /** @private */
 class SectionTool extends Controller { // XX
@@ -64,7 +65,8 @@ class SectionTool extends Controller { // XX
 
         this._sectionToolContextMenu = new SectionToolContextMenu({
             sectionPlanesPlugin: this._sectionPlanesPlugin,
-            hideOnMouseDown: false
+            hideOnMouseDown: false,
+            hideOnAction: false
         });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
@@ -165,11 +167,11 @@ class SectionTool extends Controller { // XX
             this.setActive(false);
         });
 
-        this.viewer.scene.on(&quot;sectionPlaneCreated&quot;, ()=&gt; {
+        this.viewer.scene.on(&quot;sectionPlaneCreated&quot;, () =&gt; {
             this._updateSectionPlanesCount();
         });
 
-        this.viewer.scene.on(&quot;sectionPlaneDestroyed&quot;, ()=&gt; {
+        this.viewer.scene.on(&quot;sectionPlaneDestroyed&quot;, () =&gt; {
             this._updateSectionPlanesCount();
         });
 
@@ -220,6 +222,22 @@ class SectionTool extends Controller { // XX
 
     flipSections() {
         this._sectionPlanesPlugin.flipSectionPlanes();
+    }
+
+    enableSections() {
+        const sectionPlanes = this.viewer.scene.sectionPlanes;
+        for (let id in sectionPlanes) {
+            const sectionPlane = sectionPlanes[id];
+            sectionPlane.active = true;
+        }
+    }
+
+    disableSections() {
+        const sectionPlanes = this.viewer.scene.sectionPlanes;
+        for (let id in sectionPlanes) {
+            const sectionPlane = sectionPlanes[id];
+            sectionPlane.active = false;
+        }
     }
 
     hideControl() {

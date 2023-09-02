@@ -30,6 +30,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
 </ul>
 </div>
@@ -83,7 +84,9 @@ class StoreysExplorer extends Controller {
             autoExpandDepth: 1
         });
 
-        this._treeViewContextMenu = new TreeViewContextMenu(this.bimViewer);
+        this._treeViewContextMenu = new TreeViewContextMenu(this.bimViewer, {
+            hideOnAction: true
+        });
 
         this._treeView.on(&quot;contextmenu&quot;, (e) =&gt; {
             this._treeViewContextMenu.context = {
