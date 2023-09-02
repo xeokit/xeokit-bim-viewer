@@ -632,7 +632,8 @@ class BIMViewer extends Controller {
             "highlightGlowThrough": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "objectColorSource": "model",
-            "externalMetadata": false
+            "externalMetadata": false,
+            "dtxEnabled" : false
         });
     }
 
@@ -779,6 +780,11 @@ class BIMViewer extends Controller {
                 case "showSpaces":
                     this._configs[name] = parseBool(value);
                     this._showSpacesMode.setActive(value);
+                    break;
+
+                case "dtxEnabled":
+                    this._configs[name] = parseBool(value);
+                    this.viewer.scene.dtxEnabled = value;
                     break;
 
                 default:
