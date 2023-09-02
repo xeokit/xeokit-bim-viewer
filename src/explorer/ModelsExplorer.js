@@ -275,8 +275,7 @@ class ModelsExplorer extends Controller {
                     pbrEnabled: modelInfo.pbrEnabled,
                     backfaces: modelInfo.backfaces,
                     globalizeObjectIds: modelInfo.globalizeObjectIds,
-                    reuseGeometries: (modelInfo.reuseGeometries !== false),
-                    useDataTextures: modelInfo.useDataTextures
+                    reuseGeometries: (modelInfo.reuseGeometries !== false)
                 });
                 model.on("loaded", () => {
                     const checkbox = document.getElementById("" + modelId);
