@@ -450,6 +450,13 @@ with <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewe
 <td style="text-align:left"><code>false</code></td>
 <td style="text-align:left">Whether to enable xeokit&apos;s data texture-based (DTX) scene representation and rendering mode. This has a lower memory footprint than the standard vertex buffer object-based (VBO) mode, and loads fast, but may be slower on low-spec GPUs.</td>
 </tr>
+<tr>
+<td style="text-align:left">&quot;showSpaces&quot;</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Whether to enable the visibility of IfcSpace elements. When this is <code>false</code>, then even though we can instruct BIMViewer to make IfcSpaces visible in the tree view or context menus, they will remain invisible. This config is also dynamically controlled by the &quot;Show IfcSpaces&quot; tool in the toolbar.</td>
+</tr>
 </tbody>
 </table>
 <h3 id="viewer-states">Viewer States</h3><p>In <a href="#model-database">Model Database</a> we saw how a project can specify directives for how the viewer should set up the
