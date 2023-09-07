@@ -1,0 +1,11 @@
+{
+  "inputFile": "results/SGD_BODO_ifc/SGD_BODO_Eng-HVAC-Plumbing/ifcCXConverterPipeline1/model.glb.manifest.json",
+  "converterApplication": "convert2xkt",
+  "converterApplicationVersion": "v1.1.10",
+  "conversionDate": "07-09-2023- 14-13-13",
+  "outputDir": "results/SGD_BODO_ifc/SGD_BODO_Eng-HVAC-Plumbing/ifcCXConverterPipeline1/",
+  "xktFiles": [
+    "model.xkt",
+    "model_1.xkt"
+  ]
+}

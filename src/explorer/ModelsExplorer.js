@@ -1,10 +1,43 @@
-import {XKTLoaderPlugin, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {math, XKTLoaderPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 import {Controller} from "../Controller.js";
 import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js";
 import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
 import {ModelsContextMenu} from "../contextMenus/ModelsContextMenu.js";
 
 const tempVec3a = math.vec3();
+
+
+/**
+ * Custom data access strategy for {@link XKTLoaderPlugin}.
+ * @private
+ */
+class BIMViewerDataSource {
+
+    constructor(server) {
+        this._server = server;
+    }
+
+    setProjectId(projectId) {
+        this._projectId = projectId;
+    }
+
+    setModelId(modelId) {
+        this._modelId = modelId;
+    }
+
+    getManifest(src, ok, error) {
+        this._server.getSplitModelManifest(this._projectId, this._modelId, src, ok, error);
+    }
+
+    getMetaModel(src, ok, error) {
+        this._server.getSplitModelMetadata(this._projectId, this._modelId, src, ok, error);
+    }
+
+    getXKT(src, ok, error) {
+        this._server.getSplitModelGeometry(this._projectId, this._modelId, src, ok, error)
+    }
+}
+
 
 /** @private */
 class ModelsExplorer extends Controller {
@@ -37,7 +70,10 @@ class ModelsExplorer extends Controller {
             throw "Missing DOM element: ,xeokit-tab-btn";
         }
 
+        this._dataSource = new BIMViewerDataSource(this.server);
+
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
+            dataSource: this._dataSource,
             objectDefaults: ModelIFCObjectColors
         });
 
@@ -257,60 +293,99 @@ class ModelsExplorer extends Controller {
     }
 
     _loadGeometry(modelId, modelInfo, json, done, error) {
-        this.server.getGeometry(this._projectId, modelId, (arraybuffer) => {
-                const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
-                const objectDefaults = (objectColorSource === "model") ? ModelIFCObjectColors : ViewerIFCObjectColors;
-                const model = this._xktLoader.load({
-                    id: modelId,
-                    metaModelData: json,
-                    xkt: arraybuffer,
-                    objectDefaults: objectDefaults,
-                    excludeUnclassifiedObjects: true,
-                    origin: modelInfo.origin || modelInfo.position,
-                    scale: modelInfo.scale,
-                    rotation: modelInfo.rotation,
-                    matrix: modelInfo.matrix,
-                    edges: (modelInfo.edges !== false),
-                    saoEnabled: modelInfo.saoEnabled,
-                    pbrEnabled: modelInfo.pbrEnabled,
-                    backfaces: modelInfo.backfaces,
-                    globalizeObjectIds: modelInfo.globalizeObjectIds,
-                    reuseGeometries: (modelInfo.reuseGeometries !== false)
-                });
-                model.on("loaded", () => {
-                    const checkbox = document.getElementById("" + modelId);
-                    checkbox.checked = true;
-                    const scene = this.viewer.scene;
-                    this._numModelsLoaded++;
-                    this._unloadModelsButtonElement.classList.remove("disabled");
-                    if (this._numModelsLoaded < this._numModels) {
-                        this._loadModelsButtonElement.classList.remove("disabled");
-                    } else {
-                        this._loadModelsButtonElement.classList.add("disabled");
-                    }
-                    if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
-                        this._jumpToInitialCamera();
-                        this.fire("modelLoaded", modelId);
-                        this.bimViewer._busyModal.hide();
-                        if (done) {
-                            done();
-                        }
-                    } else {
-                        this.fire("modelLoaded", modelId);
-                        this.bimViewer._busyModal.hide();
-                        if (done) {
-                            done();
-                        }
-                    }
-                });
-            },
-            (errMsg) => {
+
+        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+        const objectDefaults = (objectColorSource === "model") ? ModelIFCObjectColors : ViewerIFCObjectColors;
+
+        const modelLoaded = () => {
+            const checkbox = document.getElementById("" + modelId);
+            checkbox.checked = true;
+            this._numModelsLoaded++;
+            this._unloadModelsButtonElement.classList.remove("disabled");
+            if (this._numModelsLoaded < this._numModels) {
+                this._loadModelsButtonElement.classList.remove("disabled");
+            } else {
+                this._loadModelsButtonElement.classList.add("disabled");
+            }
+            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
+                this._jumpToInitialCamera();
+                this.fire("modelLoaded", modelId);
                 this.bimViewer._busyModal.hide();
-                this.error(errMsg);
-                if (error) {
-                    error(errMsg);
+                if (done) {
+                    done();
                 }
+            } else {
+                this.fire("modelLoaded", modelId);
+                this.bimViewer._busyModal.hide();
+                if (done) {
+                    done();
+                }
+            }
+        };
+
+        const loadError = (errMsg) => {
+            this.bimViewer._busyModal.hide();
+            this.error(errMsg);
+            if (error) {
+                error(errMsg);
+            }
+        };
+
+        if (modelInfo.manifest) {
+
+            // Load multi-part split model;
+            // Uses the BIMViewerDataSource, which then uses the BIMViewer's Server strategy
+
+            this._dataSource.setProjectId(this._projectId);
+            this._dataSource.setModelId(modelId);
+
+            const model = this._xktLoader.load({
+                id: modelId,
+                manifestSrc: modelInfo.manifest,
+                objectDefaults,
+                excludeUnclassifiedObjects: true,
+                origin: modelInfo.origin || modelInfo.position,
+                scale: modelInfo.scale,
+                rotation: modelInfo.rotation,
+                matrix: modelInfo.matrix,
+                edges: (modelInfo.edges !== false),
+                saoEnabled: modelInfo.saoEnabled,
+                pbrEnabled: modelInfo.pbrEnabled,
+                backfaces: modelInfo.backfaces,
+                globalizeObjectIds: modelInfo.globalizeObjectIds,
+                reuseGeometries: (modelInfo.reuseGeometries !== false)
             });
+
+            model.on("loaded", modelLoaded);
+            model.on("error", loadError);
+
+        } else {
+
+            // Load single XKT/Metamodel file model;
+            // Uses the BIMViewer's Server strategy directly
+
+            this.server.getGeometry(this._projectId, modelId, (arraybuffer) => {
+                    const model = this._xktLoader.load({
+                        id: modelId,
+                        metaModelData: json,
+                        xkt: arraybuffer,
+                        objectDefaults,
+                        excludeUnclassifiedObjects: true,
+                        origin: modelInfo.origin || modelInfo.position,
+                        scale: modelInfo.scale,
+                        rotation: modelInfo.rotation,
+                        matrix: modelInfo.matrix,
+                        edges: (modelInfo.edges !== false),
+                        saoEnabled: modelInfo.saoEnabled,
+                        pbrEnabled: modelInfo.pbrEnabled,
+                        backfaces: modelInfo.backfaces,
+                        globalizeObjectIds: modelInfo.globalizeObjectIds,
+                        reuseGeometries: (modelInfo.reuseGeometries !== false)
+                    });
+                    model.on("loaded", modelLoaded);
+                    model.on("error", loadError);
+                }, loadError);
+        }
     }
 
     _jumpToInitialCamera() {

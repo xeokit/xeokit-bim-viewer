@@ -1,0 +1,21 @@
+{
+  "id": "Karhumaki-Bridge",
+  "name": "Karhumaki-Bridge",
+  "created": "Wed, 14 Jun 2023 07:00:00 GMT",
+  "models": [
+    {
+      "id": "Karhumaki-Bridge",
+      "name": "Karhumaki Bridge",
+      "manifest": "manifest.json"
+    }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ]
+  },
+  "viewerContent": {},
+  "viewerState": {}
+}

@@ -1,0 +1,13 @@
+{
+  "inputFile": "",
+  "converterApplication": "convert2xkt",
+  "converterApplicationVersion": "v1.1.10",
+  "conversionDate": "07-09-2023- 14-12-57",
+  "outputDir": "",
+  "xktFiles": [
+    "geometry.xkt",
+    "geometry2.xkt",
+    "geometry3.xkt",
+    "geometry4.xkt"
+  ]
+}
