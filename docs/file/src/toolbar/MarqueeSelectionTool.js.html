@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/toolbar/MarqueeSelectionTool.js | xeokit-bim-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-bim-viewer"><meta property="og:site_name" content="xeokit-bim-viewer"><meta property="og:title" content="xeokit-bim-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-bim-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-bim-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/toolbar/MarqueeSelectionTool.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Controller} from &quot;../Controller.js&quot;;
+import {Frustum, frustumIntersectsAABB3, math, setFrustum} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+
+const LEFT_TO_RIGHT = 0;
+const RIGHT_TO_LEFT = 1;
+
+/** @private */
+export class MarqueeSelectionTool extends Controller {
+
+    constructor(parent, cfg) {
+
+        super(parent);
+
+        if (!cfg.buttonElement) {
+            throw &quot;Missing config: buttonElement&quot;;
+        }
+
+        this._objectsKdTree3 = cfg.objectsKdTree3;
+        this._marquee = math.AABB2();
+        this._marqueeFrustum = new Frustum();
+        this._marqueeFrustumProjMat = math.mat4();
+        this._marqueeDir = false;
+
+        const buttonElement = cfg.buttonElement;
+
+        this.on(&quot;enabled&quot;, (enabled) =&gt; {
+            if (!enabled) {
+                buttonElement.classList.add(&quot;disabled&quot;);
+            } else {
+                buttonElement.classList.remove(&quot;disabled&quot;);
+            }
+        });
+
+        this.on(&quot;active&quot;, (active) =&gt; {
+            if (active) {
+                buttonElement.classList.add(&quot;active&quot;);
+                const nop = this._objectsKdTree3.root; // Lazy-build the kd-tree
+            } else {
+                buttonElement.classList.remove(&quot;active&quot;);
+            }
+        });
+
+        buttonElement.addEventListener(&quot;click&quot;, (event) =&gt; {
+            if (this.getEnabled()) {
+                const active = this.getActive();
+                this.setActive(!active);
+            }
+            event.preventDefault();
+        });
+
+        this.bimViewer.on(&quot;reset&quot;, () =&gt; {
+            this.setActive(false);
+        });
+
+        const scene = this.viewer.scene;
+        const canvas = scene.canvas.canvas;
+
+        this._marqueeElement = document.createElement(&apos;div&apos;);
+        document.body.appendChild(this._marqueeElement);
+
+        const marqueeElement = this._marqueeElement;
+        const marqueeStyle = marqueeElement.style;
+        marqueeStyle.position = &quot;absolute&quot;;
+        marqueeStyle[&quot;z-index&quot;] = &quot;40000005&quot;;
+        marqueeStyle.width = 8 + &quot;px&quot;;
+        marqueeStyle.height = 8 + &quot;px&quot;;
+        marqueeStyle.visibility = &quot;hidden&quot;;
+        marqueeStyle.top = 0 + &quot;px&quot;;
+        marqueeStyle.left = 0 + &quot;px&quot;;
+        marqueeStyle[&quot;box-shadow&quot;] = &quot;0 2px 5px 0 #182A3D;&quot;;
+        marqueeStyle[&quot;opacity&quot;] = 1.0;
+        marqueeStyle[&quot;pointer-events&quot;] = &quot;none&quot;;
+
+        let canvasDragStartX;
+        let canvasDragStartY;
+        let canvasDragEndX;
+        let canvasDragEndY;
+
+        let canvasMarqueeStartX;
+        let canvasMarqueeStartY;
+        let canvasMarqueeEndX;
+        let canvasMarqueeEndY;
+
+        let isMouseDragging = false;
+        let mouseWasUpOffCanvas = false;
+
+        canvas.addEventListener(&quot;mousedown&quot;, (e) =&gt; {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (e.button !== 0) { // Left button only
+                return;
+            }
+            const input = this.bimViewer.viewer.scene.input;
+            if (!input.keyDown[input.KEY_CTRL]) { // Clear selection unless CTRL down
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+            }
+            canvasDragStartX = e.pageX;
+            canvasDragStartY = e.pageY;
+            marqueeStyle.visibility = &quot;visible&quot;;
+            marqueeStyle.left = `${canvasDragStartX}px`;
+            marqueeStyle.top = `${canvasDragStartY}px`;
+            marqueeStyle.width = &quot;0px&quot;;
+            marqueeStyle.height = &quot;0px&quot;;
+            marqueeStyle.display = &quot;block&quot;;
+            canvasMarqueeStartX = e.offsetX;
+            canvasMarqueeStartY = e.offsetY;
+            isMouseDragging = true;
+            this.viewer.cameraControl.pointerEnabled = false; // Disable camera rotation
+        });
+
+        canvas.addEventListener(&quot;mouseup&quot;, (e) =&gt; {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (!isMouseDragging &amp;&amp; !mouseWasUpOffCanvas) {
+                return
+            }
+            if (e.button !== 0) {
+                return;
+            }
+            canvasDragEndX = e.pageX;
+            canvasDragEndY = e.pageY;
+            const width = Math.abs(canvasDragEndX - canvasDragStartX);
+            const height = Math.abs(canvasDragEndY - canvasDragStartY);
+            marqueeStyle.width = `${width}px`;
+            marqueeStyle.height = `${height}px`;
+            marqueeStyle.visibility = &quot;hidden&quot;;
+            isMouseDragging = false;
+            this.viewer.cameraControl.pointerEnabled = true; // Enable camera rotation
+            if (mouseWasUpOffCanvas) {
+                mouseWasUpOffCanvas = false;
+            }
+            if (width &gt; 3 || height &gt; 3) { // Marquee pick if rectangle big enough
+                this._marqueePick();
+            }
+        }); // Bubbling
+
+        document.addEventListener(&quot;mouseup&quot;, (e) =&gt; {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (e.button !== 0) { // check if left button was clicked
+                return;
+            }
+            if (!isMouseDragging) {
+                return
+            }
+            marqueeStyle.visibility = &quot;hidden&quot;;
+            isMouseDragging = false;
+            mouseWasUpOffCanvas = true;
+            this.viewer.cameraControl.pointerEnabled = true;
+        }, true); // Capturing
+
+        canvas.addEventListener(&quot;mousemove&quot;, (e) =&gt; {
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (e.button !== 0) { // check if left button was clicked
+                return;
+            }
+            if (!isMouseDragging) {
+                return
+            }
+            const x = e.pageX;
+            const y = e.pageY;
+            const width = x - canvasDragStartX;
+            const height = y - canvasDragStartY;
+            marqueeStyle.width = `${Math.abs(width)}px`;
+            marqueeStyle.height = `${Math.abs(height)}px`;
+            marqueeStyle.left = `${Math.min(canvasDragStartX, x)}px`;
+            marqueeStyle.top = `${Math.min(canvasDragStartY, y)}px`;
+            canvasMarqueeEndX = e.offsetX;
+            canvasMarqueeEndY = e.offsetY;
+            const marqueeDir = (canvasMarqueeStartX &lt; canvasMarqueeEndX) ? LEFT_TO_RIGHT : RIGHT_TO_LEFT;
+            this._setMarqueeDir(marqueeDir);
+            this._marquee[0] = Math.min(canvasMarqueeStartX, canvasMarqueeEndX);
+            this._marquee[1] = Math.min(canvasMarqueeStartY, canvasMarqueeEndY);
+            this._marquee[2] = Math.max(canvasMarqueeStartX, canvasMarqueeEndX);
+            this._marquee[3] = Math.max(canvasMarqueeStartY, canvasMarqueeEndY);
+        });
+    }
+
+    _setMarqueeDir(marqueeDir) {
+        if (marqueeDir !== this._marqueeDir) {
+            this._marqueeElement.style[&quot;background-image&quot;] =
+                marqueeDir === LEFT_TO_RIGHT
+                    /* Solid */ ? &quot;url(\&quot;data:image/svg+xml,%3csvg width=&apos;100%25&apos; height=&apos;100%25&apos; xmlns=&apos;http://www.w3.org/2000/svg&apos;%3e%3crect width=&apos;100%25&apos; height=&apos;100%25&apos; fill=&apos;none&apos; rx=&apos;6&apos; ry=&apos;6&apos; stroke=&apos;%23333&apos; stroke-width=&apos;4&apos;/%3e%3c/svg%3e\&quot;)&quot;
+                    /* Dashed */ : &quot;url(\&quot;data:image/svg+xml,%3csvg width=&apos;100%25&apos; height=&apos;100%25&apos; xmlns=&apos;http://www.w3.org/2000/svg&apos;%3e%3crect width=&apos;100%25&apos; height=&apos;100%25&apos; fill=&apos;none&apos; rx=&apos;6&apos; ry=&apos;6&apos; stroke=&apos;%23333&apos; stroke-width=&apos;4&apos; stroke-dasharray=&apos;6%2c 14&apos; stroke-dashoffset=&apos;0&apos; stroke-linecap=&apos;square&apos;/%3e%3c/svg%3e\&quot;)&quot;;
+            this._marqueeDir = marqueeDir;
+        }
+    }
+
+    _marqueePick() {
+        this._buildMarqueeFrustum();
+        const entities1 = [];
+        const visitNode = (node, intersects = Frustum.INTERSECT) =&gt; {
+            if (intersects === Frustum.INTERSECT) {
+                intersects = frustumIntersectsAABB3(this._marqueeFrustum, node.aabb);
+            }
+            if (intersects === Frustum.OUTSIDE) {
+                return;
+            }
+            if (node.entities) {
+                const entities = node.entities;
+                for (let i = 0, len = entities.length; i &lt; len; i++) {
+                    const entity = entities[i];
+                    if (!entity.visible) {
+                        continue;
+                    }
+                    const entityAABB = entity.aabb;
+                    if (this._marqueeDir === LEFT_TO_RIGHT) {
+                        // Select entities that are completely inside marquee
+                        const intersection = frustumIntersectsAABB3(this._marqueeFrustum, entityAABB);
+                        if (intersection === Frustum.INSIDE) {
+                            entities1.push(entity);
+                        }
+                    } else {
+                        // Select entities that are partially inside marquee
+                        const intersection = frustumIntersectsAABB3(this._marqueeFrustum, entityAABB);
+                        if (intersection !== Frustum.OUTSIDE) {
+                            entities1.push(entity);
+                        }
+                    }
+                }
+            }
+            //    }
+            if (node.left) {
+                visitNode(node.left, intersects);
+            }
+            if (node.right) {
+                visitNode(node.right, intersects);
+            }
+        }
+        visitNode(this._objectsKdTree3.root);
+        for (let i = 0, len = entities1.length; i &lt; len; i++) {
+            entities1[i].selected = true;
+        }
+        return entities1;
+    }
+
+    _buildMarqueeFrustum() { // https://github.com/xeokit/xeokit-sdk/issues/869#issuecomment-1165375770
+        const canvas = this.viewer.scene.canvas.canvas;
+        const canvasWidth = canvas.clientWidth;
+        const canvasHeight = canvas.clientHeight;
+        const xCanvasToClip = 2.0 / canvasWidth;
+        const yCanvasToClip = 2.0 / canvasHeight;
+        const NEAR_SCALING = 17;
+        const ratio = canvas.clientHeight / canvas.clientWidth;
+        const FAR_PLANE = 10000;
+        const left = this._marquee[0] * xCanvasToClip + -1;
+        const right = this._marquee[2] * xCanvasToClip + -1;
+        const bottom = -this._marquee[3] * yCanvasToClip + 1;
+        const top = -this._marquee[1] * yCanvasToClip + 1;
+        const near = this.viewer.scene.camera.frustum.near * (NEAR_SCALING * ratio);
+        const far = FAR_PLANE;
+        math.frustumMat4(
+            left,
+            right,
+            bottom * ratio,
+            top * ratio,
+            near,
+            far,
+            this._marqueeFrustumProjMat,
+        );
+        setFrustum(this._marqueeFrustum, this.viewer.scene.camera.viewMatrix, this._marqueeFrustumProjMat);
+    }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
