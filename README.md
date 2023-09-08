@@ -44,16 +44,18 @@ Read the documentation below to get started.
 
 ---
 
-## Contents
+# Contents
 
 - [Features](#features)
 - [Demos](#demos)
 - [License](#license)
 - [The Viewer Application](#the-viewer-application)
 - [Model Database](#model-database)
-    * [Viewer Configurations](#viewer-configurations)
+- [Viewer Configurations](#viewer-configurations)
     * [Viewer States](#viewer-states)
 - [Deploying XKT V7 and Earlier](#deploying-xkt-v7-and-earlier)
+- [Support for Multi-Part (Split) Models](#support-for-multi-part--split--models)
+- [Split Model with Separate Metadata Files](#split-model-with-separate-metadata-files)
 - [Programming API](#programming-api)
     * [Creating a Viewer](#creating-a-viewer)
     * [Configuring the Viewer](#configuring-the-viewer)
@@ -70,7 +72,7 @@ Read the documentation below to get started.
     * [Modal Busy Dialog](#modal-busy-dialog)
     * [Tooltips](#tooltips)
     * [Customizing Appearances of IFC Types](#customizing-appearances-of-ifc-types)
-- [Localizing a Viewer](#localizing-a-viewer)
+    * [Localizing a Viewer](#localizing-a-viewer)
 - [xeokit Components Used in the Viewer](#xeokit-components-used-in-the-viewer)
 - [Building the Viewer](#building-the-viewer)
     * [Installing from NPM](#installing-from-npm)
@@ -79,7 +81,7 @@ Read the documentation below to get started.
 
 ---
 
-## Features
+# Features
 
 * Uses [xeokit](https://xeokit.io) for efficient model loading and rendering.
 * Works in all major browsers, including mobile.
@@ -96,7 +98,7 @@ Read the documentation below to get started.
 * Localization support.
 * JavaScript programming API for all viewer functions.
 
-## Demos
+# Demos
 
 Click the links below to run some demos.
 
@@ -112,12 +114,12 @@ Click the links below to run some demos.
 | [Schependomlaan Ground Floor](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Schependomlaan_selectedStorey&tab=storeys)| [Details](https://github.com/openBIMstandards/DataSetSchependomlaan) |
 | [Duplex](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=Duplex&tab=storeys)| [Details](http://openifcmodel.cs.auckland.ac.nz/Model/Details/274) |
 
-## License
+# License
 
 xeokit-bim-viewer is bundled within the [xeokit SDK](http://xeokit.io), which is licensed under the AGPL3. See
 our [Pricing](https://xeokit.io/index.html#pricing) page for custom licensing options.
 
-## The Viewer Application
+# The Viewer Application
 
 The [````./app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/index.html) page provides a
 ready-to-use instance of xeokit-bim-viewer. We'll just call it *viewer* from now on.
@@ -129,7 +131,7 @@ To view a project, load the viewer with the project's ID on the URL:
 
 [````https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital````](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=WestRiversideHospital)
 
-## Model Database
+# Model Database
 
 > **This section shows how to add your own models to the viewer application. These instructions rely on the most
 > recent versions of XKT (V8 or later) and the conversion tools, which you can learn about
@@ -253,6 +255,151 @@ create those files
 in *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
 .
 
+# Viewer Configurations
+
+The table below lists the complete set of available configurations. Think of these as user preferences. These may be
+provided to the viewer within project info files, as described in [Model Database](#model-database), or set
+programmatically on the viewer
+with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs)
+, as described in [Configuring the Viewer](#configuring-the-viewer).
+
+| Property               | Type              | Range                 | Default Value          | Description                                                                                                                                                                                                                                                                                                    |
+|:-----------------------|:------------------|:----------------------|:-----------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| "backgroundColor"      | Array             |                       | ````[1.0,1.0,1.0]````  | Canvas background color                                                                                                                                                                                                                                                                                        |     
+| "cameraNear"           | Number            | ````[0.01-0.1]````    | ````0.05````           | Distance to the near clipping plane                                                                                                                                                                                                                                                                            |
+| "cameraFar"            | Number            | ````[1-100000000]```` | ````3000.0````         | Distance to the far clipping plane                                                                                                                                                                                                                                                                             |
+| "smartPivot"           | Boolean           |                       | ````true````           | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.                                                                                                                                                                                                            |
+| "saoEnabled"           | Boolean           |                       | ````true````           | Whether or not to enable Scalable Ambient Obscurance (SAO)                                                                                                                                                                                                                                                     |
+| "saoBias"              | Number            | ````[0.0...10.0]````  | ````0.5````            | SAO bias                                                                                                                                                                                                                                                                                                       |
+| "saoIntensity"         | Number            | ````[0.0...200.0]```` | ````100.0````          | SAO intensity factor                                                                                                                                                                                                                                                                                           |
+| "saoScale"             | Number            | ````[0.0...1000.0]````| ````500.0````          | SAO scale factor                                                                                                                                                                                                                                                                                               |
+| "saoKernelRadius"      | Number            | ````[0.0...200.0]```` | ````100.0````          | The maximum area that SAO takes into account when checking for possible occlusion                                                                                                                                                                                                                              |
+| "saoBlur"              | Boolean           |                       | ````true````           | Whether Guassian blur is enabled for SAO                                                                                                                                                                                                                                                                       |
+| "edgesEnabled"         | Boolean           |                       | ````true````           | Whether or not to enhance edges on objects                                                                                                                                                                                                                                                                     |
+| "pbrEnabled"           | Boolean           |                       | ````false````          | Whether or not to enable Physically Based rendering (PBR)                                                                                                                                                                                                                                                      |
+| "viewFitFOV"           | Number            | ````[10.0...70.0]```` | ````30````             | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view                                                                                                                                                                                               |
+| "viewFitDuration"      | Number            | ````[0..5]````        | ````0.5````            | When fitting objects to view with an animated transition, this is the duration of the transition in seconds                                                                                                                                                                                                    |
+| "perspectiveFOV"       | Number            | ````[10.0...70.0]```` | ````55````             | When in perspective projection, this is the field of view, in degrees, that the user sees                                                                                                                                                                                                                      |
+| "objectColorSource"    | String            | "model", "viewer"     | "model"                | Where the colors for model objects will be loaded from                                                                                                                                                                                                                                                         |
+| "externalMetadata"     | Boolean           |                       | ````false````          | Whether to load a metadata.json file with each geometry.xkt file                                                                                                                                                                                                                                               |
+| "xrayPickable"         | Boolean           |                       | ````false````          | Whether we can interact with X-rayed objects using mouse/touch input                                                                                                                                                                                                                                           |
+| "selectedGlowThrough"  | Boolean           |                       | ````true````           | Whether selected objects appear to "glow through" other objects                                                                                                                                                                                                                                                |
+| "highlightGlowThrough" | Boolean           |                       | ````true````           | Whether highlighted objects appear to "glow through" other objects                                                                                                                                                                                                                                             |
+| "dtxEnabled"           | Boolean           |                       | ````false````          | Whether to enable xeokit's data texture-based (DTX) scene representation and rendering mode. This has a lower memory footprint than the standard vertex buffer object-based (VBO) mode, and loads fast, but may be slower on low-spec GPUs.                                                                    |
+| "showSpaces"           | Boolean           |                       | ````false````          | Whether to enable the visibility of IfcSpace elements. When this is ````false````, then even though we can instruct BIMViewer to make IfcSpaces visible in the tree view or context menus, they will remain invisible. This config is also dynamically controlled by the "Show IfcSpaces" tool in the toolbar. |
+
+## Viewer States
+
+In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the
+initial state of its UI, right after the project has loaded. The table below lists the available directives. These can
+also be set on the viewer
+using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState)
+. So far, we have:
+
+| Property              | Type              | Range                 | Default Value     | Description                      |
+|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
+| "focusObject"         | String            |                       |                   | ID of object to focus on        |     
+| "tabOpen"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
+| "expandObjectsTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "objects" tree |
+| "expandClassesTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "classes" tree |
+| "expandStoreysTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "storeys" tree |
+| "setCamera"           | { eye: Number[], look: Number[], up: Number[] } |  | 0        | Camera position |
+
+# Deploying XKT V7 and Earlier
+
+> **This section describes how to deploy models that use older versions of XKT that don't combine geometry and metadata.
+For those older versions,
+> we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
+
+The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
+metadata into the same XKT file, and was introduced in the
+[xeokit v1.9 release](https://www.notion.so/xeokit/What-s-New-in-xeokit-1-9-b7503ca7647e43e4b9c76e1505fa4484).
+
+XKT versions prior to V8 only contained geometry, and needed to be accompanied by a JSON file that contained the model's
+IFC metadata. In this section, we'll describe how to deploy models that use XKT versions prior to V8.
+
+Let's imagine that we want to deploy the Duplex and West Riverside Hospital projects, using XKT V7. For each model
+within our database, we'll deploy a ````geometry.xkt````, which is an XKT V7 file containing the model's geometry, and
+a ````metadata.json ````, containing IFC metadata for the model.
+
+We'll just assume that you've got those files already, and are not ready to convert their original IFC files into XKT
+V8+.
+
+Here's our database files again, this time with XKT V7 and accompanying metadata files:
+
+````
+.app/data/projects
+  │
+  ├── index.json
+  │
+  ├── Duplex
+  │     │
+  │     ├── index.json
+  │     │
+  │     └── models
+  │           └── design
+  │                   ├── geometry.xkt
+  │                   └── metadata.json
+  │
+  └── WestRiversideHospital
+        │
+        ├── index.json
+        │
+        └── models
+              ├── architecture             
+              │       ├── geometry.xkt
+              │       └── metadata.json
+              ├── structure            
+              │       ├── geometry.xkt
+              │       └── metadata.json
+              └── electrical
+                      ├── geometry.xkt 
+                      └── metadata.json                 
+````
+
+To make BIMViewer load both the ````geometry.xkt```` and ````metadata.json```` files for each model, we need to add a
+new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` in the project's ````index.json```` file:
+
+````json
+{
+  "id": "WestRiversideHospital",
+  "name": "West Riverside Hospital",
+  "models": [
+    {
+      "id": "architectural",
+      "name": "Hospital Architecture"
+    },
+    {
+      "id": "structure",
+      "name": "Hospital Structure"
+    },
+    {
+      "id": "electrical",
+      "name": "Hospital Electrical",
+      "saoEnabled": false
+    }
+  ],
+  "viewerConfigs": {
+    "externalMetadata": true,
+    // <<------------ ADD THIS
+    "backgroundColor": [
+      0.9,
+      0.9,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "structure",
+      "architectural"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "models"
+  }
+}
+````
+
 # Support for Multi-Part (Split) Models
 
 Since xeokit-bim-viewer 2.4, we can deploy models that are split into multiple XKT files (with optional external JSON
@@ -357,11 +504,11 @@ In `viewerContent`, we specify that our multipart model gets loaded immediately,
 }
 ````
 
-# Backwards Compatibility with Separate Metadata files
+# Split Model with Separate Metadata Files
 
 In recent versions of xeokit, we combine the geometry and metadata into the XKT files, for simplicity within the pipeline, as we've done in the example above.
 
-In older versions, we would have the metadata in separate JSON files, so that each XKT file would have the geometry, and would be accompanied by a JSON file containing its IFC metadata.
+In older versions of XKT, as mentioned above, we would have the metadata in separate JSON files, so that each XKT file would have the geometry, and would be accompanied by a JSON file containing its IFC metadata.
 
 BIMViewer, and the rest of the xeokit SDK, remains backwardly compatible with this XKT+JSON separation. The split-model loading feature also remains backwardly-compatible, as demonstrated in the "WestRiversideHospital_Combined" example project, described below.
 
@@ -462,152 +609,7 @@ In `viewerContent`, we specify that our multipart model gets loaded immediately,
 }
 ````
 
-## Viewer Configurations
-
-The table below lists the complete set of available configurations. Think of these as user preferences. These may be
-provided to the viewer within project info files, as described in [Model Database](#model-database), or set
-programmatically on the viewer
-with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs)
-, as described in [Configuring the Viewer](#configuring-the-viewer).
-
-| Property               | Type              | Range                 | Default Value          | Description                                                                                                                                                                                                                                                                                                    |
-|:-----------------------|:------------------|:----------------------|:-----------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| "backgroundColor"      | Array             |                       | ````[1.0,1.0,1.0]````  | Canvas background color                                                                                                                                                                                                                                                                                        |     
-| "cameraNear"           | Number            | ````[0.01-0.1]````    | ````0.05````           | Distance to the near clipping plane                                                                                                                                                                                                                                                                            |
-| "cameraFar"            | Number            | ````[1-100000000]```` | ````3000.0````         | Distance to the far clipping plane                                                                                                                                                                                                                                                                             |
-| "smartPivot"           | Boolean           |                       | ````true````           | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.                                                                                                                                                                                                            |
-| "saoEnabled"           | Boolean           |                       | ````true````           | Whether or not to enable Scalable Ambient Obscurance (SAO)                                                                                                                                                                                                                                                     |
-| "saoBias"              | Number            | ````[0.0...10.0]````  | ````0.5````            | SAO bias                                                                                                                                                                                                                                                                                                       |
-| "saoIntensity"         | Number            | ````[0.0...200.0]```` | ````100.0````          | SAO intensity factor                                                                                                                                                                                                                                                                                           |
-| "saoScale"             | Number            | ````[0.0...1000.0]````| ````500.0````          | SAO scale factor                                                                                                                                                                                                                                                                                               |
-| "saoKernelRadius"      | Number            | ````[0.0...200.0]```` | ````100.0````          | The maximum area that SAO takes into account when checking for possible occlusion                                                                                                                                                                                                                              |
-| "saoBlur"              | Boolean           |                       | ````true````           | Whether Guassian blur is enabled for SAO                                                                                                                                                                                                                                                                       |
-| "edgesEnabled"         | Boolean           |                       | ````true````           | Whether or not to enhance edges on objects                                                                                                                                                                                                                                                                     |
-| "pbrEnabled"           | Boolean           |                       | ````false````          | Whether or not to enable Physically Based rendering (PBR)                                                                                                                                                                                                                                                      |
-| "viewFitFOV"           | Number            | ````[10.0...70.0]```` | ````30````             | When fitting objects to view, this is the amount in degrees of how much they should fit the user's field of view                                                                                                                                                                                               |
-| "viewFitDuration"      | Number            | ````[0..5]````        | ````0.5````            | When fitting objects to view with an animated transition, this is the duration of the transition in seconds                                                                                                                                                                                                    |
-| "perspectiveFOV"       | Number            | ````[10.0...70.0]```` | ````55````             | When in perspective projection, this is the field of view, in degrees, that the user sees                                                                                                                                                                                                                      |
-| "objectColorSource"    | String            | "model", "viewer"     | "model"                | Where the colors for model objects will be loaded from                                                                                                                                                                                                                                                         |
-| "externalMetadata"     | Boolean           |                       | ````false````          | Whether to load a metadata.json file with each geometry.xkt file                                                                                                                                                                                                                                               |
-| "xrayPickable"         | Boolean           |                       | ````false````          | Whether we can interact with X-rayed objects using mouse/touch input                                                                                                                                                                                                                                           |
-| "selectedGlowThrough"  | Boolean           |                       | ````true````           | Whether selected objects appear to "glow through" other objects                                                                                                                                                                                                                                                |
-| "highlightGlowThrough" | Boolean           |                       | ````true````           | Whether highlighted objects appear to "glow through" other objects                                                                                                                                                                                                                                             |
-| "dtxEnabled"           | Boolean           |                       | ````false````          | Whether to enable xeokit's data texture-based (DTX) scene representation and rendering mode. This has a lower memory footprint than the standard vertex buffer object-based (VBO) mode, and loads fast, but may be slower on low-spec GPUs.                                                                    |
-| "showSpaces"           | Boolean           |                       | ````false````          | Whether to enable the visibility of IfcSpace elements. When this is ````false````, then even though we can instruct BIMViewer to make IfcSpaces visible in the tree view or context menus, they will remain invisible. This config is also dynamically controlled by the "Show IfcSpaces" tool in the toolbar. |
-
-### Viewer States
-
-In [Model Database](#model-database) we saw how a project can specify directives for how the viewer should set up the
-initial state of its UI, right after the project has loaded. The table below lists the available directives. These can
-also be set on the viewer
-using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setViewerState)
-. So far, we have:
-
-| Property              | Type              | Range                 | Default Value     | Description                      |
-|:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
-| "focusObject"         | String            |                       |                   | ID of object to focus on        |     
-| "tabOpen"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
-| "expandObjectsTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "objects" tree |
-| "expandClassesTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "classes" tree |
-| "expandStoreysTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "storeys" tree |
-| "setCamera"           | { eye: Number[], look: Number[], up: Number[] } |  | 0        | Camera position |
-
-## Deploying XKT V7 and Earlier
-
-> **This section describes how to deploy models that use older versions of XKT that don't combine geometry and metadata.
-For those older versions,
-> we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
-
-The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
-metadata into the same XKT file, and was introduced in the
-[xeokit v1.9 release](https://www.notion.so/xeokit/What-s-New-in-xeokit-1-9-b7503ca7647e43e4b9c76e1505fa4484).
-
-XKT versions prior to V8 only contained geometry, and needed to be accompanied by a JSON file that contained the model's
-IFC metadata. In this section, we'll describe how to deploy models that use XKT versions prior to V8.
-
-Let's imagine that we want to deploy the Duplex and West Riverside Hospital projects, using XKT V7. For each model
-within our database, we'll deploy a ````geometry.xkt````, which is an XKT V7 file containing the model's geometry, and
-a ````metadata.json ````, containing IFC metadata for the model.
-
-We'll just assume that you've got those files already, and are not ready to convert their original IFC files into XKT
-V8+.
-
-Here's our database files again, this time with XKT V7 and accompanying metadata files:
-
-````
-.app/data/projects
-  │
-  ├── index.json
-  │
-  ├── Duplex
-  │     │
-  │     ├── index.json
-  │     │
-  │     └── models
-  │           └── design
-  │                   ├── geometry.xkt
-  │                   └── metadata.json
-  │
-  └── WestRiversideHospital
-        │
-        ├── index.json
-        │
-        └── models
-              ├── architecture             
-              │       ├── geometry.xkt
-              │       └── metadata.json
-              ├── structure            
-              │       ├── geometry.xkt
-              │       └── metadata.json
-              └── electrical
-                      ├── geometry.xkt 
-                      └── metadata.json                 
-````
-
-To make BIMViewer load both the ````geometry.xkt```` and ````metadata.json```` files for each model, we need to add a
-new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` in the project's ````index.json```` file:
-
-````json
-{
-  "id": "WestRiversideHospital",
-  "name": "West Riverside Hospital",
-  "models": [
-    {
-      "id": "architectural",
-      "name": "Hospital Architecture"
-    },
-    {
-      "id": "structure",
-      "name": "Hospital Structure"
-    },
-    {
-      "id": "electrical",
-      "name": "Hospital Electrical",
-      "saoEnabled": false
-    }
-  ],
-  "viewerConfigs": {
-    "externalMetadata": true,
-    // <<------------ ADD THIS
-    "backgroundColor": [
-      0.9,
-      0.9,
-      1.0
-    ]
-  },
-  "viewerContent": {
-    "modelsLoaded": [
-      "structure",
-      "architectural"
-    ]
-  },
-  "viewerState": {
-    "tabOpen": "models"
-  }
-}
-````
-
-## Programming API
+# Programming API
 
 > **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
 programming API.**
@@ -626,7 +628,7 @@ Using these methods, we can:
 * control the various viewer tools, and
 * drive the state of the viewer's UI.
 
-### Creating a Viewer
+## Creating a Viewer
 
 In the example below, we'll create
 a [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html), with
@@ -684,7 +686,7 @@ Also
 see [````dist/xeokit-bim-viewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/dist/xeokit-bim-viewer.css)
 for the CSS styles that BIMViewer applies to the elements it creates internally.
 
-### Configuring the Viewer
+## Configuring the Viewer
 
 With our viewer created, let's
 use [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html#instance-method-setConfigs)
@@ -700,11 +702,11 @@ myBIMViewer.setConfigs({
 
 See [Viewer Configurations](#viewer-configurations) for the list of available configurations.
 
-### Querying Projects, Models and Objects
+## Querying Projects, Models and Objects
 
 With our viewer created and configured, let's find out what content is available.
 
-#### Getting Info on Available Projects
+### Getting Info on Available Projects
 
 Let's query what projects are available.
 
@@ -743,7 +745,7 @@ The projects info will look similar to:
 }
 ````
 
-#### Getting Info on a Project
+### Getting Info on a Project
 
 Now we know what projects are available, we'll get info on one of those projects.
 
@@ -820,7 +822,7 @@ In the ````viewerConfigs```` we're enabling the viewer's Scalable Ambient Obscur
 shadows in the crevices of our models. This is an expensive effect for the viewer to render, so we've disabled it for
 the "electrical" model, which contains many long, thin wire objects that don't show the SAO effect well.
 
-#### Getting Info on an Object
+### Getting Info on an Object
 
 Let's attempt to get some info on an object within one of our project's models.
 
@@ -872,11 +874,11 @@ Since our object info exists, we'll get a result similar to this:
 > our [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) constructs
 > from the project, model and object IDs we supplied to the viewer's query methods.
 
-### Loading Projects and Models
+## Loading Projects and Models
 
 Let's now load some of the projects and models that we queried in the previous section.
 
-#### Loading a Project
+### Loading a Project
 
 Let's start by loading the project we just queried info on.
 
@@ -916,7 +918,7 @@ The result would be:
 ]
 ````
 
-#### Loading a Model
+### Loading a Model
 
 With our project loaded, let's load another of its models.
 
@@ -964,7 +966,7 @@ myBIMViewer.unloadProject();
 
 Note that we can only load one project at a time.
 
-### Controlling Viewer State
+## Controlling Viewer State
 
 [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html) has various
 methods with which we can programmatically control the state of its UI.
@@ -996,7 +998,7 @@ myBIMViewer.flyToObject("1fOVjSd7T40PyRtVEklS6X", () => { /* Done */
 
 TODO: Complete this section once API methods are finalized
 
-### Saving and Loading BCF Viewpoints
+## Saving and Loading BCF Viewpoints
 
 [Bim Collaborative Format](https://en.wikipedia.org/wiki/BIM_Collaboration_Format) (BCF) is a format for managing issues
 on a BIM project. A BCF record captures the visual state of a BIM viewer, which includes the camera position, the
@@ -1066,12 +1068,12 @@ bimViewer.loadBCFViewpoint(viewpoint, {
 });
 ````
 
-## Customizing Viewer Style
+# Customizing Viewer Style
 
 The [````app/index.html````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the
 standalone viewer contains CSS rules for the various viewer elements, which you can modify as required.
 
-### Modal Busy Dialog
+## Modal Busy Dialog
 
 The viewer displays a modal dialog box whenever we load a model. The dialog box has a backdrop element, which overlays
 the viewer. Whenever the dialog becomes visible, the backdrop will block interaction events on the viewer's UI.
@@ -1103,7 +1105,7 @@ the backdrop gets the following style, which allows the dialog to position itsel
 If you need to tweak CSS relating to the dialog, search for "xeokit-busy-dialog"
 within [````css/BIMViewer.css````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/css/BIMViewer.css).
 
-### Tooltips
+## Tooltips
 
 Tooltips are not part of the core JavaScript for the viewer. Instead, viewer HTML elements are marked
 with ````data-tippy-content```` attributes that provide strings to show in their tooltips.
@@ -1119,7 +1121,7 @@ In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/
 viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those
 elements.
 
-### Customizing Appearances of IFC Types
+## Customizing Appearances of IFC Types
 
 TODO: Correct this section - viewer can load from model and viewer
 
@@ -1154,7 +1156,7 @@ export {IFCObjectDefaults};
 Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have
 configurations in there so that we can see through them.
 
-### Localizing a Viewer
+## Localizing a Viewer
 
 The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented
 by a
@@ -1226,7 +1228,7 @@ Once we've loaded our translations, we can switch the BIMViewer between locales 
 myBIMViewer.localeService.locale = "jp";
 ````
 
-## xeokit Components Used in the Viewer
+# xeokit Components Used in the Viewer
 
 The viewer is built on various [xeokit SDK](http://xeokit.io) components and plugins that are designed to accelerate the
 development of BIM and CAD visualization apps.
@@ -1243,9 +1245,9 @@ The table below lists the main ones used in this viewer.
 | [````BCFViewpointsPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/BCFViewpointsPlugin/BCFViewpointsPlugin.js~BCFViewpointsPlugin.html) | Saves and loads BCF viewpoints. |
 | [````ContextMenu````](https://xeokit.github.io/xeokit-sdk/docs/class/src/extras/ContextMenu/ContextMenu.js~ContextMenu.html)  | Implements the context menus for the explorer tree views and 3D canvas. |
 
-## Building the Viewer
+# Building the Viewer
 
-### Installing from NPM
+## Installing from NPM
 
 To install the npm package:
 
@@ -1253,7 +1255,7 @@ To install the npm package:
 npm i @xeokit/xeokit-bim-viewer
 ````
 
-### Building the Binary
+## Building the Binary
 
 Run the command below to build the ES6 module in ````/dist/xeokit-bim-viewer.es.js````.
 
@@ -1261,7 +1263,7 @@ Run the command below to build the ES6 module in ````/dist/xeokit-bim-viewer.es.
 npm run build
 ````
 
-### Building the Documentation
+## Building the Documentation
 
 To build the API documentation in ````/docs/````:
 
