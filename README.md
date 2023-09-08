@@ -1,6 +1,6 @@
 # xeokit-bim-viewer
 
- [![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer) [![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
+[![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer) [![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
 
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
@@ -93,7 +93,7 @@ Read the documentation below to get started.
 * Point clouds.
 * Supports IFC2x3 and IFC4.
 * Customize viewer appearance with your own CSS.
-* Localization support.  
+* Localization support.
 * JavaScript programming API for all viewer functions.
 
 ## Demos
@@ -132,7 +132,9 @@ To view a project, load the viewer with the project's ID on the URL:
 ## Model Database
 
 > **This section shows how to add your own models to the viewer application. These instructions rely on the most
-> recent versions of XKT (V8 or later) and the conversion tools, which you can learn about in  *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*.**
+> recent versions of XKT (V8 or later) and the conversion tools, which you can learn about
+in  *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
+.**
 
 Let's examine the structure of
 the [````./app/data/projects````](https://github.com/xeokit/xeokit-bim-viewer/tree/master/app/data) directory, where the
@@ -180,17 +182,17 @@ Within this file, the ````id```` of each project matches the name of that projec
 
 ````json
 {
-    "projects": [
-        {
-            "id": "Duplex",
-            "name": "Duplex"
-        },
-        {
-            "id": "WestRiversideHospital",
-            "name": "West Riverside Hospital"
-        }
-        //..
-    ]
+  "projects": [
+    {
+      "id": "Duplex",
+      "name": "Duplex"
+    },
+    {
+      "id": "WestRiversideHospital",
+      "name": "West Riverside Hospital"
+    }
+    //..
+  ]
 }
 ````
 
@@ -201,39 +203,39 @@ is the human-readable name that's displayed in the viewers Models tab.
 
 ````json
 {
-    "id": "WestRiversideHospital",
-    "name": "West Riverside Hospital",
-    "models": [
-        {
-            "id": "architectural",
-            "name": "Hospital Architecture"
-        },
-        {
-            "id": "structure",
-            "name": "Hospital Structure"
-        },
-        {
-            "id": "electrical",
-            "name": "Hospital Electrical",
-            "saoEnabled": false
-        }
-    ],
-    "viewerConfigs": {
-        "backgroundColor": [
-            0.9,
-            0.9,
-            1.0
-        ]
+  "id": "WestRiversideHospital",
+  "name": "West Riverside Hospital Project",
+  "models": [
+    {
+      "id": "architectural",
+      "name": "Hospital Architecture"
     },
-    "viewerContent": {
-        "modelsLoaded": [
-            "structure",
-            "architectural"
-        ]
+    {
+      "id": "structure",
+      "name": "Hospital Structure"
     },
-    "viewerState": {
-        "tabOpen": "models"
+    {
+      "id": "electrical",
+      "name": "Hospital Electrical",
+      "saoEnabled": false
     }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.9,
+      0.9,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "structure",
+      "architectural"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "models"
+  }
 }
 ````
 
@@ -251,7 +253,216 @@ create those files
 in *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
 .
 
-### Viewer Configurations
+# Support for Multi-Part (Split) Models
+
+Since xeokit-bim-viewer 2.4, we can deploy models that are split into multiple XKT files (with optional external JSON
+metadadata files).
+
+The `ifc2gltf` tool from Creoox, which converts IFC files into glTF geometry and JSON metadata files, has the option to
+split its output into multiple pairs of glTF and JSON files, accompanied by a JSON manifest that lists the files.
+
+To integrate with that option, the `convert2xkt` tool, which converts glTF geometry and JSON metadata files into XKT
+files, also has the option to batch-convert the glTF+JSON files in the manifest, in one invocation.
+
+When we use this option, convert2xkt will output a bunch of XKT files, along with a JSON manifest file that lists those
+XKT files.
+
+This feature extends BIMViewer with the option to load models comprised of multiple XKT files, combining the XKT files into a single tree view for each model, and enabling the unloading of the model to unload all its XKT files in one shot. In other words, instead of having a separate model and tree view for each XKT, we can now group a bunch of XKT files together to behave as one model in BIMViewer.
+
+Learn more about the conversion of IFC models into multiple XKT files in [this tutorial](https://www.notion.so/xeokit/Importing-Huge-IFC-Models-as-Multiple-XKT-Files-165fc022e94742cf966ee50003572259).
+
+To show how to deploy one of these multi-XKT models in BIMViewer, let's examine the Karhumaki project.
+
+---
+* [Load the Karhumaki Project in BIMViewer](https://xeokit.io/demo.html?projectId=Karhumaki)
+---
+
+````
+.app/data/projects
+  │
+  ├── index.json
+  │
+  └── Karhumaki
+        │
+        ├── index.json
+        │
+        └── models
+              └──  KarhumakiBridge 
+                      ├── manifest.json 
+                      ├── model.xkt                             
+                      ├── model_1.xkt
+                      ├── model_2.xkt
+                      ├── model_3.xkt
+                      ├── model_4.xkt
+                      ├── model_5.xkt
+                      ├── model_6.xkt
+                      ├── model_7.xkt
+                      ├── model_8.xkt
+                      └── model_9.xkt                      
+````
+
+The `manifest.json` XKT manifest looks like this:
+
+````json
+{
+  "xktFiles": [
+    "model.xkt",
+    "model_1.xkt",
+    "model_2.xkt",
+    "model_3.xkt",
+    "model_4.xkt",
+    "model_5.xkt",
+    "model_6.xkt",
+    "model_7.xkt",
+    "model_8.xkt",
+    "model_9.xkt"
+  ]
+}
+````
+
+The ````index.json```` for the "Karhumaki" project is shown below.
+
+Within this file, as usual, the ````id```` of each model matches the name of that model's subdirectory. Each model's ````name```` is the human-readable name that's displayed in the viewers Models tab.
+
+To indicate that the model is a multi-part model, with multiple XKTs, the model entry gets a ````manifest```` property containing the file name of our `manifest.json` file.
+
+In `viewerContent`, we specify that our multipart model gets loaded immediately, as soon as the project is loaded.
+
+````json
+{
+  "id": "Karhumaki",
+  "name": "Karhumaki",
+  "models": [
+    {
+      "id": "Karhumaki-Bridge",
+      "name": "Karhumaki Bridge",
+      "manifest": "manifest.json"
+    }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.9,
+      0.9,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "Karhumaki-Bridge"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "models"
+  }
+}
+````
+
+# Backwards Compatibility with Separate Metadata files
+
+In recent versions of xeokit, we combine the geometry and metadata into the XKT files, for simplicity within the pipeline, as we've done in the example above.
+
+In older versions, we would have the metadata in separate JSON files, so that each XKT file would have the geometry, and would be accompanied by a JSON file containing its IFC metadata.
+
+BIMViewer, and the rest of the xeokit SDK, remains backwardly compatible with this XKT+JSON separation. The split-model loading feature also remains backwardly-compatible, as demonstrated in the "WestRiversideHospital_Combined" example project, described below.
+
+---
+* [Load the WestRiversideHospital_Combined Project in BIMViewer](https://xeokit.io/demo.html?projectId=WestRiversideHospital_Combined)
+---
+
+We have our separated XKT and JSON metadata files in the `models` directory:
+
+````
+.app/data/projects
+  │
+  ├── index.json
+  │
+  └── WestRiversideHospital_Combined
+    ├── index.json
+    │
+    └── models
+        │
+        └── WestRiversideHospital
+            ├── architectural.json
+            ├── architectural.xkt
+            ├── electrical.json
+            ├── electrical.xkt
+            ├── fireAlarms.json
+            ├── fireAlarms.xkt
+            ├── manifest.json
+            ├── mechanical.json
+            ├── mechanical.xkt
+            ├── plumbing.json
+            ├── plumbing.xkt
+            ├── sprinklers.json
+            ├── sprinklers.xkt
+            ├── structure.json
+            └── structure.xkt
+````
+
+The `manifest.json` XKT manifest looks as below. Notice the additional `metaModelFiles` property, which lists the JSON files that comprise the metamodel for the "WestRiversideHospital" model:
+
+````
+{
+  "xktFiles": [
+    "architectural.xkt",
+    "electrical.xkt",
+    "fireAlarms.xkt",
+    "mechanical.xkt",
+    "plumbing.xkt",
+    "sprinklers.xkt",
+    "structure.xkt"
+  ],
+  "metaModelFiles": [
+    "architectural.json",
+    "electrical.json",
+    "fireAlarms.json",
+    "mechanical.json",
+    "plumbing.json",
+    "sprinklers.json",
+    "structure.json"
+  ]
+}
+````
+
+Finally, the ````index.json```` for the "WestRiversideHospital_Combined" project is shown below.
+
+Within this file, as before, the ````id```` of each model matches the name of that model's subdirectory, and Each model's ````name```` is the human-readable name that's displayed in the viewers Models tab.
+
+As before, to indicate that the model is a multi-part model, with multiple XKTs, the model entry gets a ````manifest```` property containing the file name of our `manifest.json` file.
+
+In `viewerContent`, we specify that our multipart model gets loaded immediately, as soon as the project is loaded.
+
+````json
+{
+    "id": "WestRiversideHospital_Combined",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "WestRiversideHospital",
+            "name": "West Riverside Hospital",
+            "saoEnabled": true,
+            "manifest": "manifest.json"
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [0.9, 0.9, 1.0],
+        "objectColorSource": "model",
+        "externalMetadata": true
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "WestRiversideHospital"
+        ]
+    },
+    "viewerState": {
+        "viewCubeEnabled": true,
+        "threeDEnabled": true,
+        "tabOpen": "models"
+    }
+}
+````
+
+## Viewer Configurations
 
 The table below lists the complete set of available configurations. Think of these as user preferences. These may be
 provided to the viewer within project info files, as described in [Model Database](#model-database), or set
@@ -303,7 +514,8 @@ using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-v
 
 ## Deploying XKT V7 and Earlier
 
-> **This section describes how to deploy models that use older versions of XKT that don't combine geometry and metadata. For those older versions,
+> **This section describes how to deploy models that use older versions of XKT that don't combine geometry and metadata.
+For those older versions,
 > we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
 
 The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
@@ -357,49 +569,51 @@ new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` i
 
 ````json
 {
-    "id": "WestRiversideHospital",
-    "name": "West Riverside Hospital",
-    "models": [
-        {
-            "id": "architectural",
-            "name": "Hospital Architecture"
-        },
-        {
-            "id": "structure",
-            "name": "Hospital Structure"
-        },
-        {
-            "id": "electrical",
-            "name": "Hospital Electrical",
-            "saoEnabled": false
-        }
-    ],
-    "viewerConfigs": {
-        "externalMetadata": true,
-        // <<------------ ADD THIS
-        "backgroundColor": [
-            0.9,
-            0.9,
-            1.0
-        ]
+  "id": "WestRiversideHospital",
+  "name": "West Riverside Hospital",
+  "models": [
+    {
+      "id": "architectural",
+      "name": "Hospital Architecture"
     },
-    "viewerContent": {
-        "modelsLoaded": [
-            "structure",
-            "architectural"
-        ]
+    {
+      "id": "structure",
+      "name": "Hospital Structure"
     },
-    "viewerState": {
-        "tabOpen": "models"
+    {
+      "id": "electrical",
+      "name": "Hospital Electrical",
+      "saoEnabled": false
     }
+  ],
+  "viewerConfigs": {
+    "externalMetadata": true,
+    // <<------------ ADD THIS
+    "backgroundColor": [
+      0.9,
+      0.9,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "structure",
+      "architectural"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "models"
+  }
 }
 ````
 
 ## Programming API
 
-> **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript programming API.**
+> **This section goes deeper into the viewer, describing how to instantiate a viewer, and how to use its JavaScript
+programming API.**
 
-The viewer is implemented by the JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html)
+The viewer is implemented by the
+JavaScript [````BIMViewer````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewer.js~BIMViewer.html)
 class, which provides a complete set of methods to programmatically control it.
 
 Using these methods, we can:
@@ -512,20 +726,20 @@ The projects info will look similar to:
 
 ````json
 {
-    "projects": [
-        {
-            "id": "Duplex",
-            "name": "Duplex"
-        },
-        {
-            "id": "Schependomlaan",
-            "name": "Schependomlaan"
-        },
-        {
-            "id": "WestRiversideHospital",
-            "name": "West Riverside Hospital"
-        }
-    ]
+  "projects": [
+    {
+      "id": "Duplex",
+      "name": "Duplex"
+    },
+    {
+      "id": "Schependomlaan",
+      "name": "Schependomlaan"
+    },
+    {
+      "id": "WestRiversideHospital",
+      "name": "West Riverside Hospital"
+    }
+  ]
 }
 ````
 
@@ -551,40 +765,40 @@ The project info will be similar to:
 
 ````json
 {
-    "id": "WestRiversideHospital",
-    "name": "West Riverside Hospital",
-    "models": [
-        {
-            "id": "architectural",
-            "name": "Hospital Architecture"
-        },
-        {
-            "id": "structure",
-            "name": "Hospital Structure"
-        },
-        {
-            "id": "electrical",
-            "name": "Hospital Electrical",
-            "saoEnabled": false
-        }
-    ],
-    "viewerConfigs": {
-        "backgroundColor": [
-            0.9,
-            0.9,
-            1.0
-        ],
-        "saoEnabled": true
+  "id": "WestRiversideHospital",
+  "name": "West Riverside Hospital",
+  "models": [
+    {
+      "id": "architectural",
+      "name": "Hospital Architecture"
     },
-    "viewerContent": {
-        "modelsLoaded": [
-            "structure",
-            "architectural"
-        ]
+    {
+      "id": "structure",
+      "name": "Hospital Structure"
     },
-    "viewerState": {
-        "tabOpen": "models"
+    {
+      "id": "electrical",
+      "name": "Hospital Electrical",
+      "saoEnabled": false
     }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.9,
+      0.9,
+      1.0
+    ],
+    "saoEnabled": true
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "structure",
+      "architectural"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "models"
+  }
 }
 ````
 
@@ -644,16 +858,19 @@ Since our object info exists, we'll get a result similar to this:
 
 ````json
 {
-    "id": "2HaS6zNOX8xOGjmaNi_r6b",
-    "projectId": "WestRiversideHospital",
-    "modelId": "architectural",
-    "name": "Basic Wall:Exterior - Metal Panel on Mtl. Stud:187578",
-    "type": "IfcWall",
-    "parent": "2hExBg8jj4NRG6zzD0RZML"
+  "id": "2HaS6zNOX8xOGjmaNi_r6b",
+  "projectId": "WestRiversideHospital",
+  "modelId": "architectural",
+  "name": "Basic Wall:Exterior - Metal Panel on Mtl. Stud:187578",
+  "type": "IfcWall",
+  "parent": "2hExBg8jj4NRG6zzD0RZML"
 }
 ```` 
 
-> By now, you've probably noticed that our file system database is structured to support [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) URIs, which our [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) constructs from the project, model and object IDs we supplied to the viewer's query methods.
+> By now, you've probably noticed that our file system database is structured to
+> support [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) URIs, which
+> our [````Server````](https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/server/Server.js~Server.html) constructs
+> from the project, model and object IDs we supplied to the viewer's query methods.
 
 ### Loading Projects and Models
 
@@ -694,8 +911,8 @@ The result would be:
 
 ````json
 [
-    "architectural",
-    "structure"
+  "architectural",
+  "structure"
 ]
 ````
 
@@ -715,9 +932,9 @@ The result would be:
 
 ````json
 [
-    "architectural",
-    "structure",
-    "electrical"
+  "architectural",
+  "structure",
+  "electrical"
 ]
 ````
 
@@ -939,17 +1156,20 @@ configurations in there so that we can see through them.
 
 ### Localizing a Viewer
 
-The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented 
-by a xeokit [LocaleService](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html). 
+The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented
+by a
+xeokit [LocaleService](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html)
+.
 
 The snippet below shows how it's done, using a partial set of the translations expected by the components
-within the BIMViewer. We'll just show the translations for the faces of the NavCube. We'll also load the translations 
+within the BIMViewer. We'll just show the translations for the faces of the NavCube. We'll also load the translations
 inline, rather than fetch them from a separate JSON file, as we would in practice.
 
-We call translations "messages". Our metaphor is that the UI "conveys messages to the user". 
+We call translations "messages". Our metaphor is that the UI "conveys messages to the user".
 
-To see all the translations expected by a BIMViewer, take a look at the translations we've configured for the bundled BIMViewer 
-demo application:  [````/app/locales/messages.js````](/app/locales/messages.js).  
+To see all the translations expected by a BIMViewer, take a look at the translations we've configured for the bundled
+BIMViewer
+demo application:  [````/app/locales/messages.js````](/app/locales/messages.js).
 
 ````javascript
 myBIMViewer.localeService.loadMessages({
