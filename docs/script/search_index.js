@@ -870,6 +870,24 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/server/server.js~server#getsplitmodelgeometry",
+    "class/src/server/Server.js~Server.html#instance-method-getSplitModelGeometry",
+    "src/server/Server.js~Server#getSplitModelGeometry",
+    "method"
+  ],
+  [
+    "src/server/server.js~server#getsplitmodelmanifest",
+    "class/src/server/Server.js~Server.html#instance-method-getSplitModelManifest",
+    "src/server/Server.js~Server#getSplitModelManifest",
+    "method"
+  ],
+  [
+    "src/server/server.js~server#getsplitmodelmetadata",
+    "class/src/server/Server.js~Server.html#instance-method-getSplitModelMetadata",
+    "src/server/Server.js~Server#getSplitModelMetadata",
+    "method"
+  ],
+  [
     "src/toolbar/firstpersonmode.js",
     "file/src/toolbar/FirstPersonMode.js.html",
     "src/toolbar/FirstPersonMode.js",

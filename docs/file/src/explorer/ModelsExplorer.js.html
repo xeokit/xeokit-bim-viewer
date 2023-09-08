@@ -37,13 +37,46 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/explorer/ModelsExplorer.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {XKTLoaderPlugin, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {math, XKTLoaderPlugin} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 import {Controller} from &quot;../Controller.js&quot;;
 import {ModelIFCObjectColors} from &quot;../IFCObjectDefaults/ModelIFCObjectColors.js&quot;;
 import {ViewerIFCObjectColors} from &quot;../IFCObjectDefaults/ViewerIFCObjectColors.js&quot;;
 import {ModelsContextMenu} from &quot;../contextMenus/ModelsContextMenu.js&quot;;
 
 const tempVec3a = math.vec3();
+
+
+/**
+ * Custom data access strategy for {@link XKTLoaderPlugin}.
+ * @private
+ */
+class BIMViewerDataSource {
+
+    constructor(server) {
+        this._server = server;
+    }
+
+    setProjectId(projectId) {
+        this._projectId = projectId;
+    }
+
+    setModelId(modelId) {
+        this._modelId = modelId;
+    }
+
+    getManifest(src, ok, error) {
+        this._server.getSplitModelManifest(this._projectId, this._modelId, src, ok, error);
+    }
+
+    getMetaModel(src, ok, error) {
+        this._server.getSplitModelMetadata(this._projectId, this._modelId, src, ok, error);
+    }
+
+    getXKT(src, ok, error) {
+        this._server.getSplitModelGeometry(this._projectId, this._modelId, src, ok, error)
+    }
+}
+
 
 /** @private */
 class ModelsExplorer extends Controller {
@@ -76,7 +109,10 @@ class ModelsExplorer extends Controller {
             throw &quot;Missing DOM element: ,xeokit-tab-btn&quot;;
         }
 
+        this._dataSource = new BIMViewerDataSource(this.server);
+
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
+            dataSource: this._dataSource,
             objectDefaults: ModelIFCObjectColors
         });
 
@@ -279,7 +315,7 @@ class ModelsExplorer extends Controller {
 
         const externalMetadata = this.bimViewer.getConfig(&quot;externalMetadata&quot;);
 
-        if (externalMetadata) {
+        if (externalMetadata &amp;&amp; !modelInfo.manifest) {
             this.server.getMetadata(this._projectId, modelId, (json) =&gt; {
                     this._loadGeometry(modelId, modelInfo, json, done, error);
                 },
@@ -296,60 +332,99 @@ class ModelsExplorer extends Controller {
     }
 
     _loadGeometry(modelId, modelInfo, json, done, error) {
-        this.server.getGeometry(this._projectId, modelId, (arraybuffer) =&gt; {
-                const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
-                const objectDefaults = (objectColorSource === &quot;model&quot;) ? ModelIFCObjectColors : ViewerIFCObjectColors;
-                const model = this._xktLoader.load({
-                    id: modelId,
-                    metaModelData: json,
-                    xkt: arraybuffer,
-                    objectDefaults: objectDefaults,
-                    excludeUnclassifiedObjects: true,
-                    origin: modelInfo.origin || modelInfo.position,
-                    scale: modelInfo.scale,
-                    rotation: modelInfo.rotation,
-                    matrix: modelInfo.matrix,
-                    edges: (modelInfo.edges !== false),
-                    saoEnabled: modelInfo.saoEnabled,
-                    pbrEnabled: modelInfo.pbrEnabled,
-                    backfaces: modelInfo.backfaces,
-                    globalizeObjectIds: modelInfo.globalizeObjectIds,
-                    reuseGeometries: (modelInfo.reuseGeometries !== false)
-                });
-                model.on(&quot;loaded&quot;, () =&gt; {
-                    const checkbox = document.getElementById(&quot;&quot; + modelId);
-                    checkbox.checked = true;
-                    const scene = this.viewer.scene;
-                    this._numModelsLoaded++;
-                    this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
-                    if (this._numModelsLoaded &lt; this._numModels) {
-                        this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
-                    } else {
-                        this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
-                    }
-                    if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
-                        this._jumpToInitialCamera();
-                        this.fire(&quot;modelLoaded&quot;, modelId);
-                        this.bimViewer._busyModal.hide();
-                        if (done) {
-                            done();
-                        }
-                    } else {
-                        this.fire(&quot;modelLoaded&quot;, modelId);
-                        this.bimViewer._busyModal.hide();
-                        if (done) {
-                            done();
-                        }
-                    }
-                });
-            },
-            (errMsg) =&gt; {
+
+        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
+        const objectDefaults = (objectColorSource === &quot;model&quot;) ? ModelIFCObjectColors : ViewerIFCObjectColors;
+
+        const modelLoaded = () =&gt; {
+            const checkbox = document.getElementById(&quot;&quot; + modelId);
+            checkbox.checked = true;
+            this._numModelsLoaded++;
+            this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+            if (this._numModelsLoaded &lt; this._numModels) {
+                this._loadModelsButtonElement.classList.remove(&quot;disabled&quot;);
+            } else {
+                this._loadModelsButtonElement.classList.add(&quot;disabled&quot;);
+            }
+            if (this._numModelsLoaded === 1) { // Jump camera to view-fit first model loaded
+                this._jumpToInitialCamera();
+                this.fire(&quot;modelLoaded&quot;, modelId);
                 this.bimViewer._busyModal.hide();
-                this.error(errMsg);
-                if (error) {
-                    error(errMsg);
+                if (done) {
+                    done();
                 }
+            } else {
+                this.fire(&quot;modelLoaded&quot;, modelId);
+                this.bimViewer._busyModal.hide();
+                if (done) {
+                    done();
+                }
+            }
+        };
+
+        const loadError = (errMsg) =&gt; {
+            this.bimViewer._busyModal.hide();
+            this.error(errMsg);
+            if (error) {
+                error(errMsg);
+            }
+        };
+
+        if (modelInfo.manifest) {
+
+            // Load multi-part split model;
+            // Uses the BIMViewerDataSource, which then uses the BIMViewer&apos;s Server strategy
+
+            this._dataSource.setProjectId(this._projectId);
+            this._dataSource.setModelId(modelId);
+
+            const model = this._xktLoader.load({
+                id: modelId,
+                manifestSrc: modelInfo.manifest,
+                objectDefaults,
+                excludeUnclassifiedObjects: true,
+                origin: modelInfo.origin || modelInfo.position,
+                scale: modelInfo.scale,
+                rotation: modelInfo.rotation,
+                matrix: modelInfo.matrix,
+                edges: (modelInfo.edges !== false),
+                saoEnabled: modelInfo.saoEnabled,
+                pbrEnabled: modelInfo.pbrEnabled,
+                backfaces: modelInfo.backfaces,
+                globalizeObjectIds: modelInfo.globalizeObjectIds,
+                reuseGeometries: (modelInfo.reuseGeometries !== false)
             });
+
+            model.on(&quot;loaded&quot;, modelLoaded);
+            model.on(&quot;error&quot;, loadError);
+
+        } else {
+
+            // Load single XKT/Metamodel file model;
+            // Uses the BIMViewer&apos;s Server strategy directly
+
+            this.server.getGeometry(this._projectId, modelId, (arraybuffer) =&gt; {
+                    const model = this._xktLoader.load({
+                        id: modelId,
+                        metaModelData: json,
+                        xkt: arraybuffer,
+                        objectDefaults,
+                        excludeUnclassifiedObjects: true,
+                        origin: modelInfo.origin || modelInfo.position,
+                        scale: modelInfo.scale,
+                        rotation: modelInfo.rotation,
+                        matrix: modelInfo.matrix,
+                        edges: (modelInfo.edges !== false),
+                        saoEnabled: modelInfo.saoEnabled,
+                        pbrEnabled: modelInfo.pbrEnabled,
+                        backfaces: modelInfo.backfaces,
+                        globalizeObjectIds: modelInfo.globalizeObjectIds,
+                        reuseGeometries: (modelInfo.reuseGeometries !== false)
+                    });
+                    model.on(&quot;loaded&quot;, modelLoaded);
+                    model.on(&quot;error&quot;, loadError);
+                }, loadError);
+        }
     }
 
     _jumpToInitialCamera() {
