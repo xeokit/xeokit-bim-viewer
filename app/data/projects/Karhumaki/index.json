@@ -1,0 +1,31 @@
+{
+  "id": "Karhumaki",
+  "name": "Karhumaki",
+  "created": "Wed, 14 Jun 2023 07:00:00 GMT",
+  "models": [
+    {
+      "id": "Karhumaki-Bridge",
+      "name": "Karhumaki Bridge",
+      "manifest": "manifest.json"
+    },
+    {
+      "id": "Karhumaki-Terrains",
+      "name": "Karhumaki Terrains",
+      "manifest": "manifest.json",
+      "edges": false
+    }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ]
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "Karhumaki-Bridge"
+    ]
+  },
+  "viewerState": {}
+}
