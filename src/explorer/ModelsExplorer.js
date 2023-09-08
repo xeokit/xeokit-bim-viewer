@@ -276,7 +276,7 @@ class ModelsExplorer extends Controller {
 
         const externalMetadata = this.bimViewer.getConfig("externalMetadata");
 
-        if (externalMetadata) {
+        if (externalMetadata && !modelInfo.manifest) {
             this.server.getMetadata(this._projectId, modelId, (json) => {
                     this._loadGeometry(modelId, modelInfo, json, done, error);
                 },
