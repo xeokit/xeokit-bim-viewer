@@ -94,6 +94,52 @@ class Server {
         const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/issues.json";
         utils.loadJSON(url, done, error);
     }
+
+
+    /**
+     * Gets a JSON manifest file for a model that's split into multiple XKT files (and maybe also JSON metadata files).
+     *
+     * The manifest can have an arbitrary name, and will list all the XKT (and maybe separate JSON metada files)
+     * that comprise the model.
+     *
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {String} manifestName Filename of the manifest.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
+     */
+    getSplitModelManifest(projectId, modelId, manifestName, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/" + manifestName;
+        utils.loadJSON(url, done, error);
+    }
+
+    /**
+     * Gets one of the metadata files within a split model within a project.
+     *
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     * @param {String} metadataFileName Filename of the metadata file.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
+     */
+    getSplitModelMetadata(projectId, modelId, metadataFileName, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/" + metadataFileName;
+        utils.loadJSON(url, done, error);
+    }
+
+    /**
+     * Gets one of the XKT geometry files within a split model within a project.
+     *
+     * @param {String} projectId ID of the project.
+     * @param {String} modelId ID of the model.
+     *  @param {String} geometryFileName Filename of the XKT geometry file.
+     * @param {Function} done Callback through which the JSON result is returned.
+     * @param {Function} error Callback through which an error message is returned on error.
+     */
+    getSplitModelGeometry(projectId, modelId, geometryFileName, done, error) {
+        const url = this._dataDir + "/projects/" + projectId + "/models/" + modelId + "/" + geometryFileName;
+        utils.loadArraybuffer(url, done, error);
+    }
 }
 
 export {Server};

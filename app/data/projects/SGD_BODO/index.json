@@ -1,0 +1,31 @@
+{
+  "id": "SGD_BODO",
+  "name": "Karhumaki-Bridge",
+  "created": "Wed, 14 Jun 2023 07:00:00 GMT",
+  "models": [
+    {
+      "id": "SGD_BODO_Arch-3",
+      "name": "SGD_BODO_Arch-3",
+      "manifest": "manifest.json"
+    },
+    {
+      "id": "SGD_BODO_Eng-HVAC-Plumbing",
+      "name": "SGD_BODO_Eng-HVAC-Plumbing",
+      "manifest": "manifest.json"
+    },
+    {
+      "id": "SGD_BODO_Eng-HVAC-Ventilation",
+      "name": "SGD_BODO_Eng-HVAC-Ventilation",
+      "manifest": "manifest.json"
+    }
+  ],
+  "viewerConfigs": {
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ]
+  },
+  "viewerContent": {},
+  "viewerState": {}
+}
