@@ -1,0 +1,27 @@
+{
+    "id": "WestRiversideHospital_Combined",
+    "name": "West Riverside Hospital",
+    "models": [
+        {
+            "id": "WestRiversideHospital",
+            "name": "West Riverside Hospital",
+            "saoEnabled": true,
+            "manifest": "manifest.json"
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [0.9, 0.9, 1.0],
+        "objectColorSource": "model",
+        "externalMetadata": true
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "WestRiversideHospital"
+        ]
+    },
+    "viewerState": {
+        "viewCubeEnabled": true,
+        "threeDEnabled": true,
+        "tabOpen": "models"
+    }
+}

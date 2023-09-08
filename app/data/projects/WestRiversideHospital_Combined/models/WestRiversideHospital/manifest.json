@@ -1,0 +1,20 @@
+{
+  "xktFiles": [
+    "architectural.xkt",
+    "electrical.xkt",
+    "fireAlarms.xkt",
+    "mechanical.xkt",
+    "plumbing.xkt",
+    "sprinklers.xkt",
+    "structure.xkt"
+  ],
+  "metaModelFiles": [
+    "architectural.json",
+    "electrical.json",
+    "fireAlarms.json",
+    "mechanical.json",
+    "plumbing.json",
+    "sprinklers.json",
+    "structure.json"
+  ]
+}
