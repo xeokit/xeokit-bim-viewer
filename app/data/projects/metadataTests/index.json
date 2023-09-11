@@ -9,6 +9,10 @@
 		}
 	],
 	"viewerConfigs": {},
-	"viewerContent": {},
+	"viewerContent": {
+		"modelsLoaded": [
+			"psetTest1"
+		]
+	},
 	"viewerState": {}
 }
