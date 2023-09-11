@@ -1,0 +1,14 @@
+{
+	"id": "MetadataTests",
+	"name": "Metadata Tests",
+	"created": "Wed, 14 Jun 2017 07:00:00 GMT",
+	"models": [
+		{
+			"id": "psetTest1",
+			"name": "psetTest1"
+		}
+	],
+	"viewerConfigs": {},
+	"viewerContent": {},
+	"viewerState": {}
+}
