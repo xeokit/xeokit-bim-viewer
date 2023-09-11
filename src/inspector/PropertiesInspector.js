@@ -93,6 +93,12 @@ class PropertiesInspector extends Controller {
             }
             html.push(`<tr><td class="td1">UUID:</td><td class="td2">${metaObject.originalSystemId}</td></tr>`);
             html.push(`<tr><td class="td1">Viewer ID:</td><td class="td2">${metaObject.id}</td></tr>`);
+            const attributes = metaObject.attributes;
+            if (attributes) {
+                for (let key in attributes) {
+                    html.push(`<tr><td class="td1">${capitalizeFirstChar(key)}:</td><td class="td2">${attributes[key]}</td></tr>`);
+                }
+            }
             html.push('</table>');
             if (!propertySets || propertySets.length === 0) {
                 const localizedText = this.viewer.localeService.translate('propertiesInspector.noPropSetWarning') || 'No properties sets found for this object';
@@ -140,6 +146,13 @@ class PropertiesInspector extends Controller {
         this.viewer.scene.off(this._onModelUnloaded);
         document.removeEventListener('click', this._clickListener);
     }
+}
+
+function capitalizeFirstChar(str) {
+    if (!str) {
+        return str;
+    }
+   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export {PropertiesInspector};

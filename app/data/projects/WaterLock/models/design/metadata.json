@@ -28,6 +28,9 @@
       "id": "1oZ0wPs_PE8ANCPg3bIs4j",
       "name": "Lower CanalBed",
       "type": "IfcBuildingStorey",
+      "attributes": {
+        "elevation": "0.001"
+      },
       "parent": "00tMo7QcxqWdIGvc4sMN2A"
     },
     {
@@ -178,7 +181,10 @@
       "id": "2F0V3QPDDFMRTpJqxqPeZR",
       "name": "1. Geschoss",
       "type": "IfcBuildingStorey",
-      "parent": "00tMo7QcxqWdIGvc4sMN2A"
+      "parent": "00tMo7QcxqWdIGvc4sMN2A",
+      "attributes": {
+        "elevation": "0.001"
+      }
     },
     {
       "id": "0nBSBje2H6hwTWA2UXsBwP",
@@ -358,7 +364,10 @@
       "id": "3y21AUC9X4yAqzLGUny16E",
       "name": "Upper CanalBed",
       "type": "IfcBuildingStorey",
-      "parent": "00tMo7QcxqWdIGvc4sMN2A"
+      "parent": "00tMo7QcxqWdIGvc4sMN2A",
+      "attributes": {
+        "elevation": "0.001"
+      }
     },
     {
       "id": "1Dj9RKQb5DmglcKiNAuIBQ",
@@ -592,6 +601,9 @@
       "id": "3LWQo5PgT5evQ1Fv5qAAA3",
       "name": "Upper WaterLevel",
       "type": "IfcBuildingStorey",
+      "attributes": {
+        "elevation": "0.001"
+      },
       "parent": "00tMo7QcxqWdIGvc4sMN2A"
     },
     {
