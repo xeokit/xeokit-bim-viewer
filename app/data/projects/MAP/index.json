@@ -28,7 +28,21 @@
       0.95,
       0.95,
       1.0
-    ]
+    ],
+    "objectColors": {
+      "IfcSpace": {
+        "opacity": 0.3
+      },
+      "IfcWindow": {
+        "opacity": 0.4
+      },
+      "IfcOpeningElement": {
+        "opacity": 0.3
+      },
+      "IfcPlate": {
+        "opacity": 0.3
+      }
+    }
   },
   "viewerContent": {
     "modelsLoaded": [

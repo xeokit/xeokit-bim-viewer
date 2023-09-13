@@ -1,7 +1,5 @@
 import {math, XKTLoaderPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 import {Controller} from "../Controller.js";
-import {ModelIFCObjectColors} from "../IFCObjectDefaults/ModelIFCObjectColors.js";
-import {ViewerIFCObjectColors} from "../IFCObjectDefaults/ViewerIFCObjectColors.js";
 import {ModelsContextMenu} from "../contextMenus/ModelsContextMenu.js";
 
 const tempVec3a = math.vec3();
@@ -73,8 +71,7 @@ class ModelsExplorer extends Controller {
         this._dataSource = new BIMViewerDataSource(this.server);
 
         this._xktLoader = new XKTLoaderPlugin(this.viewer, {
-            dataSource: this._dataSource,
-            objectDefaults: ModelIFCObjectColors
+            dataSource: this._dataSource
         });
 
         this._modelsContextMenu = new ModelsContextMenu({
@@ -86,6 +83,10 @@ class ModelsExplorer extends Controller {
         this._numModels = 0;
         this._numModelsLoaded = 0;
         this._projectId = null;
+    }
+
+    setObjectColors(objectColors) {
+        this._xktLoader.objectDefaults = objectColors;
     }
 
     loadProject(projectId, done, error) {
@@ -294,9 +295,6 @@ class ModelsExplorer extends Controller {
 
     _loadGeometry(modelId, modelInfo, json, done, error) {
 
-        const objectColorSource = (modelInfo.objectColorSource || this.bimViewer.getObjectColorSource());
-        const objectDefaults = (objectColorSource === "model") ? ModelIFCObjectColors : ViewerIFCObjectColors;
-
         const modelLoaded = () => {
             const checkbox = document.getElementById("" + modelId);
             checkbox.checked = true;
@@ -342,7 +340,6 @@ class ModelsExplorer extends Controller {
             const model = this._xktLoader.load({
                 id: modelId,
                 manifestSrc: modelInfo.manifest,
-                objectDefaults,
                 excludeUnclassifiedObjects: true,
                 origin: modelInfo.origin || modelInfo.position,
                 scale: modelInfo.scale,
@@ -369,7 +366,6 @@ class ModelsExplorer extends Controller {
                         id: modelId,
                         metaModelData: json,
                         xkt: arraybuffer,
-                        objectDefaults,
                         excludeUnclassifiedObjects: true,
                         origin: modelInfo.origin || modelInfo.position,
                         scale: modelInfo.scale,

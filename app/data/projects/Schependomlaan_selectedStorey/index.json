@@ -17,7 +17,21 @@
     "viewerContent": {
         "modelsLoaded": [
             "design"
-        ]
+        ],
+        "objectColors": {
+            "IfcSpace": {
+                "opacity": 0.3
+            },
+            "IfcWindow": {
+                "opacity": 0.4
+            },
+            "IfcOpeningElement": {
+                "opacity": 0.3
+            },
+            "IfcPlate": {
+                "opacity": 0.3
+            }
+        }
     },
     "viewerState": {
         "threeDEnabled": true,

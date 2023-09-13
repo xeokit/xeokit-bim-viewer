@@ -744,11 +744,6 @@ class BIMViewer extends Controller {
                     this._configs[name] = parseBool(value);
                     break;
 
-                case "objectColorSource":
-                    this.setObjectColorSource(value);
-                    this._configs[name] = value;
-                    break;
-
                 case "xrayContext":
                     this._configs[name] = value;
                     break;
@@ -785,6 +780,11 @@ class BIMViewer extends Controller {
                 case "dtxEnabled":
                     this._configs[name] = parseBool(value);
                     this.viewer.scene.dtxEnabled = value;
+                    break;
+
+                case "objectColors":
+                    this._configs[name] = value;
+                    this._modelsExplorer.setObjectColors(value);
                     break;
 
                 default:
