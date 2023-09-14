@@ -380,8 +380,7 @@ new  ````externalMetadata: true```` configuration to the ````viewerConfigs```` i
     }
   ],
   "viewerConfigs": {
-    "externalMetadata": true,
-    // <<------------ ADD THIS
+    "externalMetadata": true, // <<------------ ADD THIS
     "backgroundColor": [
       0.9,
       0.9,
@@ -593,7 +592,6 @@ In `viewerContent`, we specify that our multipart model gets loaded immediately,
     ],
     "viewerConfigs": {
         "backgroundColor": [0.9, 0.9, 1.0],
-        "objectColorSource": "model",
         "externalMetadata": true
     },
     "viewerContent": {
@@ -1123,38 +1121,104 @@ elements.
 
 ## Customizing Appearances of IFC Types
 
-TODO: Correct this section - viewer can load from model and viewer
+By default, BIMViewer loads whatever object colors and opacities are in the XKT model files, without changing them.
+Sometimes, however, certain types of objects may have colors that make it hard for us to view the model. 
 
-The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are
-defined in the configuration
-file [````./src/IFCObjectDefaults/ViewerIFCObjectColors.js````](https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js)
-.
+For example, in some IFC models, ````IfcPlate```` types may be used to represent windows, and those types are often given opaque 
+colors. That results in the windows of our model being opaque. For this example, we can make the windows transparent 
+by configuring the BIMViewer, or just that model, with a custom color or opacity, for that ````IfcPlate```` type. That would make
+all ````IfcPlate```` types transparent again. There are two ways we can do this - programmatically via ````BIMViewer.setConfigs````, or 
+for each project individually, via the project's `index.json` file.
 
-You can add or remove configurations in that file if you need to customize the color and pickability of specific IFC
-types.
+In the code below, we'll configure all ````IfcSpace````, ````IfcWindow````, ````IfcOpeningElement```` and ````IfcPlate```` types 
+to be transparent, and while we're at it, we'll make ````IfcWindow```` types to be always blue. Note that all values are in range ````[0..1]````. 
 
-For example, to ensure that ````IfcWindow```` and ````IfcSpace```` types are initially visible, transparent and
-pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:
+---
+
+ Note that prior to v2.4, BIMViewer did change the colors and opacities of `IfcOpening`, `IfcSpace`, `IfcWindow` and `IfcPlate` by 
+ default. We've removed that in v2.4, because it was confusing 
+ and users wondered why those object types did not have the colors/opacities defined for them in the model.
+
+---
 
 ````javascript
-const IFCObjectDefaults = {
-    IfcSpace: {
-        visible: true,
-        pickable: true,
-        opacity: 0.2
+// In case the model has opaque colors for IfcSpace, IfcWindow, IfcOpeningElement and IfcPlate 
+// objects, let's make those objects always transparent. To make the model look extra nice,
+// let's force IfcWindows to always be blue, while we're at it. This will apply to all models,
+// except where we override the settings per-project, as shown next.
+
+bimViewer.setConfigs({
+      "objectColors": {
+            "IfcSpace": {
+                "opacity": 0.3
+            },
+            "IfcWindow": {
+                "opacity": 0.4,
+                "color": [0, 0, 1]
+            },
+            "IfcOpeningElement": {
+                "opacity": 0.3
+            },
+            "IfcPlate": {
+                "opacity": 0.3
+            }
+        }
+});
+````
+
+The other way we can set these color/opacity customizations is per-project, within the ````viewerConfigs```` section of 
+a project's ````index.json```` file. If we've also set them via ````BIMViewer.setConFigs````, then these will override 
+the ones set via that method.
+
+As an example, we've done this for the `OTCConferenceCenter` demo model, which otherwise has its windows opaque, which would make it hard 
+for us to navigate around that model. Therefore, we provide a custom map of colors and opacities for certain IFC types via 
+the ```viewerConfigs``` in the [project ````index.json```` for that model](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/data/projects/OTCConferenceCenter/index.json), as shown below.
+
+````json
+{
+    "id": "otcConferenceCenter",
+    "name": "OTC Conference Center",
+    "models": [
+        {
+            "id": "design",
+            "name": "OTC Conference Center Design"
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ],
+        "objectColors": {
+            "IfcSpace": {
+                "opacity": 0.3
+            },
+            "IfcWindow": {
+                "opacity": 0.4
+            },
+            "IfcOpeningElement": {
+                "opacity": 0.3
+            },
+            "IfcPlate": {
+                "opacity": 0.3
+            }
+        }
     },
-    IfcWindow: {
-        visible: true,
-        pickable: true,
-        opacity: 0.5
+    "viewerContent": {
+        "modelsLoaded": [
+            "design"
+        ]
+    },
+    "viewerState": {
+        "tabOpen": "objects",
+        "expandObjectsTree": 3,
+        "expandClassesTree": 1,
+        "expandStoreysTree": 1
     }
-};
+}
+````
 
-export {IFCObjectDefaults};
-```` 
-
-Sometimes IFC models have opaque ````IfcWindow```` and ````IfcSpace```` elements, so it's a good idea to have
-configurations in there so that we can see through them.
 
 ## Localizing a Viewer
 
