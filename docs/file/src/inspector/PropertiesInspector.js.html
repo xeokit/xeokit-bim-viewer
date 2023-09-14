@@ -132,6 +132,12 @@ class PropertiesInspector extends Controller {
             }
             html.push(`&lt;tr&gt;&lt;td class=&quot;td1&quot;&gt;UUID:&lt;/td&gt;&lt;td class=&quot;td2&quot;&gt;${metaObject.originalSystemId}&lt;/td&gt;&lt;/tr&gt;`);
             html.push(`&lt;tr&gt;&lt;td class=&quot;td1&quot;&gt;Viewer ID:&lt;/td&gt;&lt;td class=&quot;td2&quot;&gt;${metaObject.id}&lt;/td&gt;&lt;/tr&gt;`);
+            const attributes = metaObject.attributes;
+            if (attributes) {
+                for (let key in attributes) {
+                    html.push(`&lt;tr&gt;&lt;td class=&quot;td1&quot;&gt;${capitalizeFirstChar(key)}:&lt;/td&gt;&lt;td class=&quot;td2&quot;&gt;${attributes[key]}&lt;/td&gt;&lt;/tr&gt;`);
+                }
+            }
             html.push(&apos;&lt;/table&gt;&apos;);
             if (!propertySets || propertySets.length === 0) {
                 const localizedText = this.viewer.localeService.translate(&apos;propertiesInspector.noPropSetWarning&apos;) || &apos;No properties sets found for this object&apos;;
@@ -179,6 +185,13 @@ class PropertiesInspector extends Controller {
         this.viewer.scene.off(this._onModelUnloaded);
         document.removeEventListener(&apos;click&apos;, this._clickListener);
     }
+}
+
+function capitalizeFirstChar(str) {
+    if (!str) {
+        return str;
+    }
+   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export {PropertiesInspector};</code></pre>

@@ -670,7 +670,6 @@ class BIMViewer extends Controller {
             &quot;selectedGlowThrough&quot;: true,
             &quot;highlightGlowThrough&quot;: true,
             &quot;backgroundColor&quot;: [1.0, 1.0, 1.0],
-            &quot;objectColorSource&quot;: &quot;model&quot;,
             &quot;externalMetadata&quot;: false,
             &quot;dtxEnabled&quot; : false
         });
@@ -783,11 +782,6 @@ class BIMViewer extends Controller {
                     this._configs[name] = parseBool(value);
                     break;
 
-                case &quot;objectColorSource&quot;:
-                    this.setObjectColorSource(value);
-                    this._configs[name] = value;
-                    break;
-
                 case &quot;xrayContext&quot;:
                     this._configs[name] = value;
                     break;
@@ -826,8 +820,13 @@ class BIMViewer extends Controller {
                     this.viewer.scene.dtxEnabled = value;
                     break;
 
+                case &quot;objectColors&quot;:
+                    this._configs[name] = value;
+                    this._modelsExplorer.setObjectColors(value);
+                    break;
+
                 default:
-                    this.error(&quot;setConfig() - unsupported configuration: &apos;&quot; + name + &quot;&apos;&quot;);
+                    this.warn(&quot;setConfig() - unsupported configuration: &apos;&quot; + name + &quot;&apos;&quot;);
             }
 
         } catch (e) {
@@ -1150,20 +1149,12 @@ class BIMViewer extends Controller {
      *
      * This is &quot;model&quot; by default.
      *
+     * @deprecated
      * @param {String} source Where colors will be loaded from - &quot;model&quot; or &quot;viewer&quot;.
      */
     setObjectColorSource(source) {
-        switch (source) {
-            case &quot;model&quot;:
-                break;
-            case &quot;viewer&quot;:
-                break;
-            default:
-                source = &quot;model&quot;;
-                this.error(&quot;setObjectColorSource() - Unsupported value - accepted values are &apos;model&apos; and &apos;viewer&apos; - defaulting to &apos;model&apos;&quot;);
-                return;
-        }
-        this._objectColorSource = source;
+        console.log(&quot;BIMViewer.setObjectColorSource() is now deprecated and no longer functional. By default, &quot; +
+            &quot;BIMViewer.getObjectColorSource() will now always return the (formerly) default value of `model`.&quot;);
     }
 
     /**
@@ -1171,10 +1162,11 @@ class BIMViewer extends Controller {
      *
      * This is &quot;model&quot; by default.
      *
+     * @deprecated
      * @return {String} Where colors will be loaded from - &quot;model&quot; to get colors from the model, or &quot;viewer&quot; to get them from the viewer&apos;s built-in table of colors for IFC types.
      */
     getObjectColorSource() {
-        return this._objectColorSource || &quot;model&quot;;
+        return &quot;model&quot;;
     }
 
     /**

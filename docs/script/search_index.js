@@ -714,18 +714,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/ifcobjectdefaults/modelifcobjectcolors.js",
-    "file/src/IFCObjectDefaults/ModelIFCObjectColors.js.html",
-    "src/IFCObjectDefaults/ModelIFCObjectColors.js",
-    "file"
-  ],
-  [
-    "src/ifcobjectdefaults/viewerifcobjectcolors.js",
-    "file/src/IFCObjectDefaults/ViewerIFCObjectColors.js.html",
-    "src/IFCObjectDefaults/ViewerIFCObjectColors.js",
-    "file"
-  ],
-  [
     "src/map.js",
     "file/src/Map.js.html",
     "src/Map.js",

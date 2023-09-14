@@ -413,11 +413,11 @@ with <a href="https://xeokit.github.io/xeokit-bim-viewer/docs/class/src/BIMViewe
 <td style="text-align:left">When in perspective projection, this is the field of view, in degrees, that the user sees</td>
 </tr>
 <tr>
-<td style="text-align:left">&quot;objectColorSource&quot;</td>
-<td style="text-align:left">String</td>
-<td style="text-align:left">&quot;model&quot;, &quot;viewer&quot;</td>
-<td style="text-align:left">&quot;model&quot;</td>
-<td style="text-align:left">Where the colors for model objects will be loaded from</td>
+<td style="text-align:left">&quot;objectColors&quot;</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>undefined</code></td>
+<td style="text-align:left">A map of custom attributes for various IFC types</td>
 </tr>
 <tr>
 <td style="text-align:left">&quot;externalMetadata&quot;</td>
@@ -587,8 +587,7 @@ new  <code>externalMetadata: true</code> configuration to the <code>viewerConfig
     }
   ],
   &quot;viewerConfigs&quot;: {
-    &quot;externalMetadata&quot;: true,
-    // &lt;&lt;------------ ADD THIS
+    &quot;externalMetadata&quot;: true, // &lt;&lt;------------ ADD THIS
     &quot;backgroundColor&quot;: [
       0.9,
       0.9,
@@ -762,7 +761,6 @@ XKT files.</p>
     ],
     &quot;viewerConfigs&quot;: {
         &quot;backgroundColor&quot;: [0.9, 0.9, 1.0],
-        &quot;objectColorSource&quot;: &quot;model&quot;,
         &quot;externalMetadata&quot;: true
     },
     &quot;viewerContent&quot;: {
@@ -1145,32 +1143,92 @@ with <code>data-tippy-content</code> attributes that provide strings to show in 
 <p>In the <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html">app/index.html</a> file for the standalone
 viewer, we&apos;re using <a href="https://github.com/atomiks/tippyjs">tippy.js</a>, which automatically creates tooltips for those
 elements.</p>
-<h2 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h2><p>TODO: Correct this section - viewer can load from model and viewer</p>
-<p>The viewer loads colors for the various IFC element types straight from the IFC model, except where overrides are
-defined in the configuration
-file <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/src/IFCObjectDefaults/ViewerIFCObjectColors.js"><code>./src/IFCObjectDefaults/ViewerIFCObjectColors.js</code></a>
-.</p>
-<p>You can add or remove configurations in that file if you need to customize the color and pickability of specific IFC
-types.</p>
-<p>For example, to ensure that <code>IfcWindow</code> and <code>IfcSpace</code> types are initially visible, transparent and
-pickable (ie. able to be selected by clicking on them), you might configure that file as shown below:</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">const IFCObjectDefaults = {
-    IfcSpace: {
-        visible: true,
-        pickable: true,
-        opacity: 0.2
-    },
-    IfcWindow: {
-        visible: true,
-        pickable: true,
-        opacity: 0.5
-    }
-};
+<h2 id="customizing-appearances-of-ifc-types">Customizing Appearances of IFC Types</h2><p>By default, BIMViewer loads whatever object colors and opacities are in the XKT model files, without changing them.
+Sometimes, however, certain types of objects may have colors that make it hard for us to view the model. </p>
+<p>For example, in some IFC models, <code>IfcPlate</code> types may be used to represent windows, and those types are often given opaque 
+colors. That results in the windows of our model being opaque. For this example, we can make the windows transparent 
+by configuring the BIMViewer, or just that model, with a custom color or opacity, for that <code>IfcPlate</code> type. That would make
+all <code>IfcPlate</code> types transparent again. There are two ways we can do this - programmatically via <code>BIMViewer.setConfigs</code>, or 
+for each project individually, via the project&apos;s <code>index.json</code> file.</p>
+<p>In the code below, we&apos;ll configure all <code>IfcSpace</code>, <code>IfcWindow</code>, <code>IfcOpeningElement</code> and <code>IfcPlate</code> types 
+to be transparent, and while we&apos;re at it, we&apos;ll make <code>IfcWindow</code> types to be always blue. Note that all values are in range <code>[0..1]</code>. </p>
+<hr>
+<p> Note that prior to v2.4, BIMViewer did change the colors and opacities of <code>IfcOpening</code>, <code>IfcSpace</code>, <code>IfcWindow</code> and <code>IfcPlate</code> by 
+ default. We&apos;ve removed that in v2.4, because it was confusing 
+ and users wondered why those object types did not have the colors/opacities defined for them in the model.</p>
+<hr>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// In case the model has opaque colors for IfcSpace, IfcWindow, IfcOpeningElement and IfcPlate 
+// objects, let&apos;s make those objects always transparent. To make the model look extra nice,
+// let&apos;s force IfcWindows to always be blue, while we&apos;re at it. This will apply to all models,
+// except where we override the settings per-project, as shown next.
 
-export {IFCObjectDefaults};</code>
+bimViewer.setConfigs({
+      &quot;objectColors&quot;: {
+            &quot;IfcSpace&quot;: {
+                &quot;opacity&quot;: 0.3
+            },
+            &quot;IfcWindow&quot;: {
+                &quot;opacity&quot;: 0.4,
+                &quot;color&quot;: [0, 0, 1]
+            },
+            &quot;IfcOpeningElement&quot;: {
+                &quot;opacity&quot;: 0.3
+            },
+            &quot;IfcPlate&quot;: {
+                &quot;opacity&quot;: 0.3
+            }
+        }
+});</code>
 </code></pre>
-<p>Sometimes IFC models have opaque <code>IfcWindow</code> and <code>IfcSpace</code> elements, so it&apos;s a good idea to have
-configurations in there so that we can see through them.</p>
+<p>The other way we can set these color/opacity customizations is per-project, within the <code>viewerConfigs</code> section of 
+a project&apos;s <code>index.json</code> file. If we&apos;ve also set them via <code>BIMViewer.setConFigs</code>, then these will override 
+the ones set via that method.</p>
+<p>As an example, we&apos;ve done this for the <code>OTCConferenceCenter</code> demo model, which otherwise has its windows opaque, which would make it hard 
+for us to navigate around that model. Therefore, we provide a custom map of colors and opacities for certain IFC types via 
+the <code>viewerConfigs</code> in the <a href="https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/data/projects/OTCConferenceCenter/index.json">project <code>index.json</code> for that model</a>, as shown below.</p>
+<pre><code class="lang-json"><code class="source-code prettyprint">{
+    &quot;id&quot;: &quot;otcConferenceCenter&quot;,
+    &quot;name&quot;: &quot;OTC Conference Center&quot;,
+    &quot;models&quot;: [
+        {
+            &quot;id&quot;: &quot;design&quot;,
+            &quot;name&quot;: &quot;OTC Conference Center Design&quot;
+        }
+    ],
+    &quot;viewerConfigs&quot;: {
+        &quot;backgroundColor&quot;: [
+            0.95,
+            0.95,
+            1.0
+        ],
+        &quot;objectColors&quot;: {
+            &quot;IfcSpace&quot;: {
+                &quot;opacity&quot;: 0.3
+            },
+            &quot;IfcWindow&quot;: {
+                &quot;opacity&quot;: 0.4
+            },
+            &quot;IfcOpeningElement&quot;: {
+                &quot;opacity&quot;: 0.3
+            },
+            &quot;IfcPlate&quot;: {
+                &quot;opacity&quot;: 0.3
+            }
+        }
+    },
+    &quot;viewerContent&quot;: {
+        &quot;modelsLoaded&quot;: [
+            &quot;design&quot;
+        ]
+    },
+    &quot;viewerState&quot;: {
+        &quot;tabOpen&quot;: &quot;objects&quot;,
+        &quot;expandObjectsTree&quot;: 3,
+        &quot;expandClassesTree&quot;: 1,
+        &quot;expandStoreysTree&quot;: 1
+    }
+}</code>
+</code></pre>
 <h2 id="localizing-a-viewer">Localizing a Viewer</h2><p>The easiest way to localize a BIMViewer is by loading translation strings into its locale service, which is implemented
 by a
 xeokit <a href="https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/localization/LocaleService.js~LocaleService.html">LocaleService</a>
