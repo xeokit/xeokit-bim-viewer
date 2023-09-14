@@ -631,7 +631,6 @@ class BIMViewer extends Controller {
             "selectedGlowThrough": true,
             "highlightGlowThrough": true,
             "backgroundColor": [1.0, 1.0, 1.0],
-            "objectColorSource": "model",
             "externalMetadata": false,
             "dtxEnabled" : false
         });
@@ -788,7 +787,7 @@ class BIMViewer extends Controller {
                     break;
 
                 default:
-                    this.error("setConfig() - unsupported configuration: '" + name + "'");
+                    this.warn("setConfig() - unsupported configuration: '" + name + "'");
             }
 
         } catch (e) {
@@ -1111,20 +1110,12 @@ class BIMViewer extends Controller {
      *
      * This is "model" by default.
      *
+     * @deprecated
      * @param {String} source Where colors will be loaded from - "model" or "viewer".
      */
     setObjectColorSource(source) {
-        switch (source) {
-            case "model":
-                break;
-            case "viewer":
-                break;
-            default:
-                source = "model";
-                this.error("setObjectColorSource() - Unsupported value - accepted values are 'model' and 'viewer' - defaulting to 'model'");
-                return;
-        }
-        this._objectColorSource = source;
+        console.log("BIMViewer.setObjectColorSource() is now deprecated and no longer functional. By default, " +
+            "BIMViewer.getObjectColorSource() will now always return the (formerly) default value of `model`.");
     }
 
     /**
@@ -1132,10 +1123,11 @@ class BIMViewer extends Controller {
      *
      * This is "model" by default.
      *
+     * @deprecated
      * @return {String} Where colors will be loaded from - "model" to get colors from the model, or "viewer" to get them from the viewer's built-in table of colors for IFC types.
      */
     getObjectColorSource() {
-        return this._objectColorSource || "model";
+        return "model";
     }
 
     /**
