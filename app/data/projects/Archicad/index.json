@@ -1,0 +1,22 @@
+{
+	"id": "Archicad",
+	"name": "Archicad Demos",
+	"created": "Wed, 14 Jun 2017 07:00:00 GMT",
+	"models": [
+		{
+			"id": "AR-Demo_Sample_Single_Building_01",
+			"name": "AR-Demo_Sample_Single_Building_01"
+		},
+		{
+			"id": "ME-Demo_Sample_Single_Building_01",
+			"name": "ME-Demo_Sample_Single_Building_01"
+		},
+		{
+			"id": "ST-Demo_Sample_Single_Building_01",
+			"name": "ST-Demo_Sample_Single_Building_01"
+		}
+	],
+	"viewerConfigs": {},
+	"viewerContent": {},
+	"viewerState": {}
+}
