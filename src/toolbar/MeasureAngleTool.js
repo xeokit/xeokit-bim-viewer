@@ -1,5 +1,5 @@
 import {Controller} from "../Controller.js";
-import {AngleMeasurementsPlugin, AngleMeasurementsMouseControl} from "@xeokit/xeokit-sdk";
+import {AngleMeasurementsPlugin, AngleMeasurementsMouseControl, ContextMenu} from "@xeokit/xeokit-sdk";
 
 /** @private */
 export class MeasureAngleTool extends Controller {
@@ -14,8 +14,56 @@ export class MeasureAngleTool extends Controller {
 
         const buttonElement = cfg.buttonElement;
 
+        this._contextMenu = new ContextMenu({
+            items: [
+                [
+                    {
+                        getTitle: (context) => {
+                            return context.measurement.labelsVisible ? "Hide Measurement Label" : "Show Measurement Label";
+                        },
+                        doAction: function (context) {
+                            context.measurement.labelsVisible = !context.measurement.labelsVisible;
+                        }
+                    }
+                ], [
+                    {
+                        title: "Delete Measurement",
+                        doAction: function (context) {
+                            context.measurement.destroy();
+                        }
+                    }
+                ]
+            ]
+        });
+
+        this._contextMenu.on("hidden", () => {
+            if (this._contextMenu.context.measurement) {
+                this._contextMenu.context.measurement.setHighlighted(false);
+            }
+        });
+
         this._angleMeasurementsPlugin = new AngleMeasurementsPlugin(this.viewer, {});
-        
+
+        this._angleMeasurementsPlugin.on("mouseOver", (e) => {
+            e.measurement.setHighlighted(true);
+        });
+
+        this._angleMeasurementsPlugin.on("mouseLeave", (e) => {
+            if (this._contextMenu.shown && this._contextMenu.context.measurement.id === e.measurement.id) {
+                return;
+            }
+            e.measurement.setHighlighted(false);
+        });
+
+        this._angleMeasurementsPlugin.on("contextMenu", (e) => {
+            this._contextMenu.context = { // Must set context before showing menu
+                distanceMeasurementsPlugin: this._angleMeasurementsPlugin,
+                measurement: e.measurement
+            };
+            this._contextMenu.show(e.event.clientX, e.event.clientY);
+            e.event.preventDefault();
+        });
+
         this._angleMeasurementsMouseControl  = new AngleMeasurementsMouseControl(this._angleMeasurementsPlugin, {
          //   pointerLens : new PointerLens(viewer)
         })
@@ -73,6 +121,7 @@ export class MeasureAngleTool extends Controller {
     destroy() {
         this._angleMeasurementsPlugin.destroy();
         this._angleMeasurementsMouseControl.destroy();
+        this._contextMenu.destroy();
         super.destroy();
     }
 }

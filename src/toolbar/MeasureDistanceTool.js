@@ -1,5 +1,5 @@
 import {Controller} from "../Controller.js";
-import {DistanceMeasurementsMouseControl, DistanceMeasurementsPlugin} from "@xeokit/xeokit-sdk";
+import {ContextMenu, DistanceMeasurementsMouseControl, DistanceMeasurementsPlugin} from "@xeokit/xeokit-sdk";
 
 /** @private */
 export class MeasureDistanceTool extends Controller {
@@ -14,8 +14,64 @@ export class MeasureDistanceTool extends Controller {
 
         const buttonElement = cfg.buttonElement;
 
+        this._contextMenu = new ContextMenu({
+            items: [
+                [
+                    {
+                        getTitle: (context) => {
+                            return context.measurement.axisVisible ? "Hide Measurement Axis" : "Show Measurement Axis";
+                        },
+                        doAction: function (context) {
+                            context.measurement.axisVisible = !context.measurement.axisVisible;
+                        }
+                    },
+                    {
+                        getTitle: (context) => {
+                            return context.measurement.labelsVisible ? "Hide Measurement Labels" : "Show Measurement Labels";
+                        },
+                        doAction: function (context) {
+                            context.measurement.labelsVisible = !context.measurement.labelsVisible;
+                        }
+                    }
+                ], [
+                    {
+                        title: "Delete Measurement",
+                        doAction: function (context) {
+                            context.measurement.destroy();
+                        }
+                    }
+                ]
+            ]
+        });
+
+        this._contextMenu.on("hidden", () => {
+            if (this._contextMenu.context.measurement) {
+                this._contextMenu.context.measurement.setHighlighted(false);
+            }
+        });
+
         this._distanceMeasurementsPlugin = new DistanceMeasurementsPlugin(this.viewer, {
             defaultAxisVisible: false
+        });
+
+        this._distanceMeasurementsPlugin.on("mouseOver", (e) => {
+            e.measurement.setHighlighted(true);
+        });
+
+        this._distanceMeasurementsPlugin.on("mouseLeave", (e) => {
+            if (this._contextMenu.shown && this._contextMenu.context.measurement.id === e.measurement.id) {
+                return;
+            }
+            e.measurement.setHighlighted(false);
+        });
+
+        this._distanceMeasurementsPlugin.on("contextMenu", (e) => {
+            this._contextMenu.context = { // Must set context before showing menu
+                distanceMeasurementsPlugin: this._distanceMeasurementsPlugin,
+                measurement: e.measurement
+            };
+            this._contextMenu.show(e.event.clientX, e.event.clientY);
+            e.event.preventDefault();
         });
 
         this._distanceMeasurementsMouseControl = new DistanceMeasurementsMouseControl(this._distanceMeasurementsPlugin, {
@@ -83,6 +139,7 @@ export class MeasureDistanceTool extends Controller {
     destroy() {
         this._distanceMeasurementsPlugin.destroy();
         this._distanceMeasurementsMouseControl.destroy();
+        this._contextMenu.destroy();
         super.destroy();
     }
 }
