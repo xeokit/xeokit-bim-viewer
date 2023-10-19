@@ -24,6 +24,8 @@ import {OrthoMode} from "./toolbar/OrthoMode.js";
 import {PropertiesInspector} from "./inspector/PropertiesInspector.js";
 import {ObjectsKdTree3} from "./collision/ObjectsKdTree3.js";
 import {MarqueeSelectionTool} from "./toolbar/MarqueeSelectionTool.js";
+import {MeasureDistanceTool} from "./toolbar/MeasureDistanceTool.js";
+import {MeasureAngleTool} from "./toolbar/MeasureAngleTool.js";
 
 
 const hideEdgesMinDrawCount = 5; // FastNavPlugin enables dynamic edges when xeokit's per-frame draw count drops below this
@@ -75,7 +77,7 @@ function createExplorerTemplate(cfg) {
     return explorerTemplate;
 }
 
-function createToolbarTemplate() {
+function createToolbarTemplate(cfg = {}) {
     const toolbarTemplate = `<div class="xeokit-toolbar">
     <!-- Reset button -->
     <div class="xeokit-btn-group">
@@ -100,8 +102,13 @@ function createToolbarTemplate() {
         <!-- Select tool button -->
         <button type="button" class="xeokit-i18n xeokit-select xeokit-btn fa fa-mouse-pointer fa-2x disabled" data-xeokit-i18ntip="toolbar.selectObjectsTip" data-tippy-content="Select objects"></button>    
           <!-- Marquee select tool button -->
-        <button type="button" class="xeokit-i18n xeokit-marquee xeokit-btn fas fa-object-group fa-2x disabled" data-xeokit-i18ntip="toolbar.marqueeSelectTip" data-tippy-content="Marquee select objects"></button>    
-        <!-- section tool button -->
+        <button type="button" class="xeokit-i18n xeokit-marquee xeokit-btn fas fa-object-group fa-2x disabled" data-xeokit-i18ntip="toolbar.marqueeSelectTip" data-tippy-content="Marquee select objects"></button>`
+        + (cfg.enableMeasurements ? `<!-- Measure distance tool button -->
+        <button type="button" class="xeokit-i18n xeokit-measure-distance xeokit-btn fa fa-ruler fa-2x disabled" data-xeokit-i18ntip="toolbar.measureDistanceTip" data-tippy-content="Measure distance"></button>  
+          <!-- Measure angle tool button -->
+        <button type="button" class="xeokit-i18n xeokit-measure-angle xeokit-btn fa fa-chevron-left fa-2x disabled" data-xeokit-i18ntip="toolbar.measureAngleTip" data-tippy-content="Measure angle"></button>`
+            : ` `)
+        + `<!-- section tool button -->
         <button type="button" class="xeokit-i18n xeokit-section xeokit-btn fa fa-cut fa-2x disabled" data-xeokit-i18ntip="toolbar.sliceObjectsTip" data-tippy-content="Slice objects">
             <div class="xeokit-i18n xeokit-section-menu-button disabled" data-xeokit-i18ntip="toolbar.slicesMenuTip"  data-tippy-content="Slices menu">
                 <span class="xeokit-arrow-down xeokit-section-menu-button-arrow"></span>
@@ -178,6 +185,7 @@ class BIMViewer extends Controller {
      * @param {Server} server Data access strategy.
      * @param {*} cfg Configuration.
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
+     * @param {Boolean} [cfg.enableMeasurements=true] Set ````true```` to enable distance and angle measurements with the BIMViewer.
      * @param {Boolean} [cfg.keyboardEventsElement] Optional reference to HTML element on which key events should be handled. Defaults to the HTML Document.
      */
     constructor(server, cfg = {}) {
@@ -234,6 +242,7 @@ class BIMViewer extends Controller {
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
+        this._enableMeasurements = (cfg.enableMeasurements !== false);
         this._enablePropertiesInspector = !!cfg.inspectorElement;
 
         /**
@@ -251,7 +260,7 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
 
         explorerElement.innerHTML = createExplorerTemplate(cfg);
-        toolbarElement.innerHTML = createToolbarTemplate();
+        toolbarElement.innerHTML = createToolbarTemplate({enableMeasurements: this._enableMeasurements});
         if (this._enablePropertiesInspector) {
             inspectorElement.innerHTML = createInspectorTemplate();
         }
@@ -265,6 +274,7 @@ class BIMViewer extends Controller {
         }
 
         this._modelsExplorer = new ModelsExplorer(this, {
+            enableMeasurements: this._enableMeasurements,
             modelsTabElement: explorerElement.querySelector(".xeokit-modelsTab"),
             loadModelsButtonElement: explorerElement.querySelector(".xeokit-loadAllModels"), // Can be undefined
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
@@ -274,6 +284,7 @@ class BIMViewer extends Controller {
         });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
+            enableMeasurements: this._enableMeasurements,
             objectsTabElement: explorerElement.querySelector(".xeokit-objectsTab"),
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
@@ -281,6 +292,7 @@ class BIMViewer extends Controller {
         });
 
         this._classesExplorer = new ClassesExplorer(this, {
+            enableMeasurements: this._enableMeasurements,
             classesTabElement: explorerElement.querySelector(".xeokit-classesTab"),
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
@@ -288,6 +300,7 @@ class BIMViewer extends Controller {
         });
 
         this._storeysExplorer = new StoreysExplorer(this, {
+            enableMeasurements: this._enableMeasurements,
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
@@ -390,6 +403,16 @@ class BIMViewer extends Controller {
             active: false
         });
 
+        this._measureDistanceTool = new MeasureDistanceTool(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-measure-distance"),
+            active: false
+        });
+
+        this._measureAngleTool = new MeasureAngleTool(this, {
+            buttonElement: toolbarElement.querySelector(".xeokit-measure-angle"),
+            active: false
+        });
+
         this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
             active: true
@@ -422,7 +445,14 @@ class BIMViewer extends Controller {
             this.fire("reset", true);
         });
 
-        this._mutexActivation([this._hideTool, this._selectionTool, this._marqueeSelectionTool, this._sectionTool]);
+        this._mutexActivation([
+            this._hideTool,
+            this._selectionTool,
+            this._marqueeSelectionTool,
+            this._sectionTool,
+            this._measureDistanceTool,
+            this._measureAngleTool
+        ]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
             this.setAllObjectsVisible(true);
@@ -573,10 +603,12 @@ class BIMViewer extends Controller {
     _initCanvasContextMenus() {
 
         this._canvasContextMenu = new CanvasContextMenu(this, {
-            hideOnAction: true
+            hideOnAction: true,
+            enableMeasurements: this._enableMeasurements
         });
         this._objectContextMenu = new ObjectContextMenu(this, {
-            hideOnAction: true
+            hideOnAction: true,
+            enableMeasurements: this._enableMeasurements
         });
 
         this.viewer.cameraControl.on("rightClick", (e) => {
@@ -632,7 +664,7 @@ class BIMViewer extends Controller {
             "highlightGlowThrough": true,
             "backgroundColor": [1.0, 1.0, 1.0],
             "externalMetadata": false,
-            "dtxEnabled" : false
+            "dtxEnabled": false
         });
     }
 
@@ -1869,9 +1901,10 @@ class BIMViewer extends Controller {
         this._selectionTool.setEnabled(enabled);
         this._marqueeSelectionTool.setEnabled(enabled);
         this._showSpacesMode.setEnabled(enabled);
+        this._measureDistanceTool.setEnabled(enabled);
+        this._measureAngleTool.setEnabled(enabled);
         this._sectionTool.setEnabled(enabled);
 
-        //
         if (this._enablePropertiesInspector) {
             this._propertiesInspector.setEnabled(enabled);
         }
@@ -1949,6 +1982,72 @@ class BIMViewer extends Controller {
      */
     getNumSections() {
         return this._sectionTool.getNumSections();
+    }
+
+    /**
+     * Gets if measurements are enabled for this BIMViewer.
+     * This is immutable and is set via the BIMViewer constructor.
+     * @returns {boolean}
+     */
+    getEnableMeasurements() {
+        return this._enableMeasurements;
+    }
+
+    /**
+     * Clears measurements.
+     */
+    clearMeasurements() {
+        this._measureDistanceTool.clear();
+        this._measureAngleTool.clear();
+    }
+
+    /**
+     * Returns the number of measurements that currently exist.
+     *
+     * @returns {Number} The number of measurements.
+     */
+    getNumMeasurements() {
+        return this._measureDistanceTool.getNumMeasurements() + this._measureAngleTool.getNumMeasurements();
+    }
+
+    /**
+     * Sets the visibility of axis lines for measurements.
+     *
+     * So far, this only includes distance measurements. This is not relevant for angle measurements.
+     *
+     * @param {Boolean} axisVisible Set `true` to show axis wires, else `false` to hide them.
+     */
+    setMeasurementsAxisVisible(axisVisible) {
+        this._measureDistanceTool.setMeasurementsAxisVisible(axisVisible);
+    }
+
+    /**
+     * Gets the visibility of axis lines for measurements.
+     *
+     * So far, this only includes distance measurements. This is not relevant for angle measurements.
+     *
+     * @returns {Boolean}  `true` if axis wires are visible, else `false` if hidden.
+     */
+    getMeasurementsAxisVisible() {
+        return this._measureDistanceTool.getMeasurementsAxisVisible();
+    }
+
+    /**
+     * Sets whether pointer snapping is enabled for measurements.
+     *
+     * @param {Boolean} snappingEnabled Set `true` to enable snapping, else `false` to disable.
+     */
+    setMeasurementsSnappingEnabled(snappingEnabled) {
+        this._measureDistanceTool.setSnappingEnabled(snappingEnabled);
+    }
+
+    /**
+     * Gets whether pointer snapping is enabled for measurements.
+     *
+     * @returns {Boolean} `true` if snapping is enabled, else `false` if disabled.
+     */
+    getMeasurementsSnappingEnabled() {
+        return this._measureDistanceTool.getSnappingEnabled();
     }
 
     /**
