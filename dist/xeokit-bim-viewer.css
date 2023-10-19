@@ -539,7 +539,7 @@
     border: 1px solid black;
     border-radius: 6px;
     padding: 0;
-    width: 200px;
+    width: 220px;
 }
 
 .xeokit-context-menu ul {
@@ -596,7 +596,7 @@
     border: 1px solid black;
     border-radius: 0 6px 6px 6px !important;
     padding: 0;
-    width: 200px;
+    width: 220px;
 }
 
 /* Busy modal dialog */
