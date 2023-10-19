@@ -14,7 +14,9 @@ export class MeasureDistanceTool extends Controller {
 
         const buttonElement = cfg.buttonElement;
 
-        this._distanceMeasurementsPlugin = new DistanceMeasurementsPlugin(this.viewer, {});
+        this._distanceMeasurementsPlugin = new DistanceMeasurementsPlugin(this.viewer, {
+            defaultAxisVisible: false
+        });
 
         this._distanceMeasurementsMouseControl = new DistanceMeasurementsMouseControl(this._distanceMeasurementsPlugin, {
             //   pointerLens : new PointerLens(viewer)
