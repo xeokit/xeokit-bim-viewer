@@ -76,6 +76,7 @@ class ModelsExplorer extends Controller {
 
         this._modelsContextMenu = new ModelsContextMenu({
             enableEditModels: cfg.enableEditModels,
+            enableMeasurements: cfg.enableMeasurements,
             hideOnAction: true
         });
 

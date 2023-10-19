@@ -10,6 +10,7 @@ class ModelsContextMenu extends ContextMenu {
     constructor(cfg = {}) {
 
         const enableEditModels = (!!cfg.enableEditModels);
+        const enableMeasurements = (!!cfg.enableMeasurements);
 
         const items = [
             [
@@ -108,6 +109,43 @@ class ModelsContextMenu extends ContextMenu {
                 }
             }
         ]);
+
+        if (enableMeasurements) {
+            items.push([{
+                getTitle: (context) => {
+                    return context.viewer.localeService.translate("canvasContextMenu.measurements") || "Measurements";
+                },
+                doAction: function (context) {
+                    // Does nothing
+                },
+                items: [ // Sub-menu
+                    [{
+                        getTitle: (context) => {
+                            return context.viewer.localeService.translate("canvasContextMenu.clearMeasurements") || "Clear";
+                        }, getEnabled: (context) => {
+                            return (context.bimViewer.getNumMeasurements() > 0);
+                        }, doAction: (context) => {
+                            context.bimViewer.clearMeasurements();
+                        }
+                    }, {
+                        getTitle: (context) => {
+                            return context.bimViewer.getMeasurementsAxisVisible() ? context.viewer.localeService.translate("canvasContextMenu.hideMeasurementAxisWires") || "Hide Axis Wires" : context.viewer.localeService.translate("canvasContextMenu.showMeasurementAxisWires") || "Show Axis Wires"
+                        }, getEnabled: (context) => {
+                            return (context.bimViewer.getNumMeasurements() > 0);
+                        }, doAction: (context) => {
+                            context.bimViewer.setMeasurementsAxisVisible(!context.bimViewer.getMeasurementsAxisVisible());
+                        }
+                    }, {
+                        getTitle: (context) => {
+                            return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate("canvasContextMenu.disableMeasurementSnapping") || "Disable Snapping" : context.viewer.localeService.translate("canvasContextMenu.enableMeasurementSnapping") || "Enable Snapping"
+                        }, getEnabled: (context) => {
+                            return (context.bimViewer.getNumMeasurements() > 0);
+                        }, doAction: (context) => {
+                            context.bimViewer.setMeasurementsSnappingEnabled(!context.bimViewer.getMeasurementsSnappingEnabled());
+                        }
+                    }]]
+            }]);
+        }
 
         super({
             hideOnAction: cfg.hideOnAction,

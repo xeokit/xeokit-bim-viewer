@@ -1,10 +1,10 @@
-import {math, ContextMenu} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {ContextMenu, math} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /**
  * @private
  */
 class CanvasContextMenu extends ContextMenu {
-    constructor(cfg = {}) {
+    constructor(bimViewer, cfg = {}) {
         super({
             hideOnAction: cfg.hideOnAction,
             context: cfg.context,
@@ -138,7 +138,57 @@ class CanvasContextMenu extends ContextMenu {
                             context.bimViewer.clearSections();
                         }
                     }
-                ]
+                ],
+                cfg.enableMeasurements ? [
+                    { // Item
+
+                        getTitle: (context) => {
+                            return "Measurements";
+                        },
+
+                        doAction: function (context) {
+                            // Does nothing
+                        },
+
+                        items: [ // Sub-menu
+                            [
+                                {
+                                    getTitle: (context) => {
+                                        return context.viewer.localeService.translate("canvasContextMenu.clearMeasurements") || "Clear";
+                                    },
+                                    getEnabled: (context) => {
+                                        return (context.bimViewer.getNumMeasurements() > 0);
+                                    },
+                                    doAction: (context) => {
+                                        context.bimViewer.clearMeasurements();
+                                    }
+                                },
+                                {
+                                    getTitle: (context) => {
+                                        return context.bimViewer.getMeasurementsAxisVisible()
+                                            ? context.viewer.localeService.translate("canvasContextMenu.hideMeasurementAxisWires") || "Hide Axis Wires"
+                                            : context.viewer.localeService.translate("canvasContextMenu.showMeasurementAxisWires") || "Show Axis Wires"
+                                    },
+                                    getEnabled: (context) => {
+                                        return (context.bimViewer.getNumMeasurements() > 0);
+                                    },
+                                    doAction: (context) => {
+                                        context.bimViewer.setMeasurementsAxisVisible(!context.bimViewer.getMeasurementsAxisVisible());
+                                    }
+                                },
+                                {
+                                    getTitle: (context) => {
+                                        return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate("canvasContextMenu.disableMeasurementSnapping") || "Disable Snapping" : context.viewer.localeService.translate("canvasContextMenu.enableMeasurementSnapping") || "Enable Snapping"
+                                    }, getEnabled: (context) => {
+                                        return (context.bimViewer.getNumMeasurements() > 0);
+                                    }, doAction: (context) => {
+                                        context.bimViewer.setMeasurementsSnappingEnabled(!context.bimViewer.getMeasurementsSnappingEnabled());
+                                    }
+                                }
+                            ]
+                        ]
+                    }
+                ] : []
             ]
         });
     }

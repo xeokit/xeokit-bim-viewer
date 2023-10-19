@@ -46,7 +46,8 @@ class StoreysExplorer extends Controller {
         });
 
         this._treeViewContextMenu = new TreeViewContextMenu(this.bimViewer, {
-            hideOnAction: true
+            hideOnAction: true,
+            enableMeasurements: cfg.enableMeasurements
         });
 
         this._treeView.on("contextmenu", (e) => {
