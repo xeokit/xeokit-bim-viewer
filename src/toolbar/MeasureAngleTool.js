@@ -57,7 +57,7 @@ export class MeasureAngleTool extends Controller {
 
         this._angleMeasurementsPlugin.on("contextMenu", (e) => {
             this._contextMenu.context = { // Must set context before showing menu
-                distanceMeasurementsPlugin: this._angleMeasurementsPlugin,
+                angleMeasurementsPlugin: this._angleMeasurementsPlugin,
                 measurement: e.measurement
             };
             this._contextMenu.show(e.event.clientX, e.event.clientY);
