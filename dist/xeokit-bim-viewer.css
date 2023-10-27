@@ -1055,3 +1055,16 @@
 .no-object-selected-warning {
 
 }
+
+.viewer-ruler-wire-highlighted {
+    border: 2px solid white !important;
+}
+
+.viewer-ruler-label-highlighted {
+    border: 2px solid white !important;
+}
+
+.viewer-ruler-dot-highlighted {
+    border: 2px solid white !important;
+}
+
