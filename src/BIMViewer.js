@@ -551,11 +551,18 @@ class BIMViewer extends Controller {
         scene.xrayMaterial.edgeColor = [0, 0, 0];
 
         scene.highlightMaterial.edges = true;
-        scene.highlightMaterial.edgeColor = [1, 1, 0];
-        scene.highlightMaterial.edgeAlpha = 0.9;
+        scene.highlightMaterial.edgeColor = [1, 1, 1];
+        scene.highlightMaterial.edgeAlpha = 1.0;
         scene.highlightMaterial.fill = true;
         scene.highlightMaterial.fillAlpha = 0.1;
         scene.highlightMaterial.fillColor = [1, 0, 0];
+
+        scene.selectedMaterial.edges = true;
+        scene.selectedMaterial.edgeColor = [1, 1, 1];
+        scene.selectedMaterial.edgeAlpha = 1.0;
+        scene.selectedMaterial.fill = true;
+        scene.selectedMaterial.fillAlpha = 0.1;
+        scene.selectedMaterial.fillColor = [0, 1, 0];
 
         //------------------------------------------------------------------------------------------------------------------
         // Configure points material
