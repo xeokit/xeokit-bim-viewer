@@ -506,7 +506,9 @@ class BIMViewer extends Controller {
             });
         }
 
-        this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {});
+        this._bcfViewpointsPlugin = new BCFViewpointsPlugin(this.viewer, {
+            xrayAsZeroAlpha: true
+        });
 
         this._fastNavPlugin = new FastNavPlugin(viewer, {
             hideEdges: true,
