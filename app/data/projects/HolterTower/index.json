@@ -3,9 +3,10 @@
     "name": "HolterTower",
     "models": [
         {
-            "id": "design",
+            "id": "ifcCXConverterPipeline1",
             "name": "Holter Tower",
-            "backfaces": false
+            "backfaces": false,
+            "manifest": "manifest.json"
         }
     ],
     "viewerConfigs": {
@@ -17,7 +18,7 @@
     },
     "viewerContent": {
         "modelsLoaded": [
-            "design"
+            "ifcCXConverterPipeline1"
         ]
     },
     "viewerState": {
