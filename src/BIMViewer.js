@@ -531,11 +531,11 @@ class BIMViewer extends Controller {
             scaleCanvasResolutionFactor: 0.6
         });
 
-        this.viewer.scene.on("rendered", () => {
-            const fastNavPlugin = this._fastNavPlugin;
-            fastNavPlugin.hideEdges = (hideEdgesMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
-            fastNavPlugin.scaleCanvasResolution = (scaleCanvasResolutionMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
-        });
+        // this.viewer.scene.on("rendered", () => {
+        //     const fastNavPlugin = this._fastNavPlugin;
+        //     fastNavPlugin.hideEdges = (hideEdgesMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
+        //     fastNavPlugin.scaleCanvasResolution = (scaleCanvasResolutionMinDrawCount < (stats.frame.drawElements + stats.frame.drawArrays));
+        // });
 
         this._initConfigs();
         this.setControlsEnabled(false);
@@ -670,13 +670,14 @@ class BIMViewer extends Controller {
         this.setConfigs({
             "cameraNear": "0.05",
             "cameraFar": "3000.0",
-            "smartPivot": "true",
-            "saoEnabled": "true",
-            "pbrEnabled": "false",
-            "saoBias": "0.5",
-            "saoIntensity": "0.15",
-            "saoNumSamples": "40",
-            "saoKernelRadius": "100",
+            "smartPivot": true,
+            "saoEnabled": true,
+            "pbrEnabled": false,
+            "scaleCanvasResolution": false,
+            "saoBias": 0.5,
+            "saoIntensity": 0.15,
+            "saoNumSamples": 40,
+            "saoKernelRadius": 100,
             "edgesEnabled": true,
             "xrayContext": true,
             "xrayPickable": false,
@@ -777,6 +778,10 @@ class BIMViewer extends Controller {
 
                 case "pbrEnabled":
                     this._fastNavPlugin.pbrEnabled = this._configs[name] = parseBool(value);
+                    break;
+
+                case "scaleCanvasResolution":
+                    this._fastNavPlugin.scaleCanvasResolution = this._configs[name] = parseBool(value);
                     break;
 
                 case "viewFitFOV":
