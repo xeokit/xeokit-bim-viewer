@@ -5,13 +5,18 @@
         {
             "id": "design",
             "name": "Duplex Design"
+        },
+        {
+            "id": "mep",
+            "name": "Duplex MEP"
         }
     ],
     "viewerConfigs": {
     },
     "viewerContent": {
         "modelsLoaded": [
-            "design"
+            "design",
+            "mep"
         ]
     },
     "viewerState": {

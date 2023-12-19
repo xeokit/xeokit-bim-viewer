@@ -4,12 +4,41 @@
 	"created": "Wed, 14 Jun 2017 07:00:00 GMT",
 	"models": [
 		{
-			"id": "Clinic",
-			"name": "Clinic",
+			"id": "architectural",
+			"name": "Clinic Architecture",
 			"manifest": "manifest.json"
+		},
+		{
+			"id": "electrical",
+			"name": "Clinic Electrical",
+			"manifest": "manifest.json"
+		},
+		{
+			"id": "hvac",
+			"name": "Clinic HVAC",
+			"manifest": "manifest.json"
+		},
+		{
+			"id": "plumbing",
+			"name": "Clinic Plumbing",
+			"manifest": "manifest.json"
+		},
+		{
+			"id": "structural",
+			"name": "Clinic Structure",
+			"manifest": "manifest.json",
+			"xrayed": true
 		}
 	],
 	"viewerConfigs": {},
-	"viewerContent": {},
+	"viewerContent": {
+		"modelsLoaded": [
+			"architectural",
+			"electrical",
+			"hvac",
+			"plumbing",
+			"structural"
+		]
+	},
 	"viewerState": {}
 }

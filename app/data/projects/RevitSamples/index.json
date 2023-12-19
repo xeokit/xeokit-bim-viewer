@@ -3,8 +3,13 @@
     "name": "Revit Samples",
     "models": [
         {
+            "id": "rac",
+            "name": "RAC House Sample Project"
+        },
+        {
             "id": "rac_advanced_sample_project",
-            "name": "RAC Advanced Sample Project"
+            "name": "RAC Advanced Sample Project",
+            "manifest": "manifest.json"
         },
         {
             "id": "rme_advanced_sample_project",
