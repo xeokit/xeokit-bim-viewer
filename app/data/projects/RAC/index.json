@@ -1,0 +1,29 @@
+{
+    "id": "RevitSamples",
+    "name": "Revit Samples",
+    "models": [
+        {
+            "id": "rac",
+            "name": "RAC House Sample Project"
+        }
+    ],
+    "viewerConfigs": {
+        "backgroundColor": [
+            0.95,
+            0.95,
+            1.0
+        ]
+    },
+    "viewerContent": {
+        "modelsLoaded": [
+            "rac"
+        ]
+    },
+    "viewerState": {
+        "setCamera": {
+            "eye": [-24.922208391474733, 7.724285093881156, 44.21141920495865],
+            "look": [-17.410164435219464, 2.4885901415523763, 21.584983198113253],
+            "up": [0.06758662493996474, 0.9767242939035395, -0.20357235035204685]
+        }
+    }
+}
