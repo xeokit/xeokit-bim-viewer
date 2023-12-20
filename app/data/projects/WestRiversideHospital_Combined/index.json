@@ -22,6 +22,7 @@
     "viewerState": {
         "viewCubeEnabled": true,
         "threeDEnabled": true,
-        "tabOpen": "models"
+        "tabOpen": "models",
+        "scaleCanvasResolution": true
     }
 }

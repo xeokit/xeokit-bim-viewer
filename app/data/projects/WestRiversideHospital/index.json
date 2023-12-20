@@ -36,7 +36,8 @@
     "viewerConfigs": {
         "backgroundColor": [0.9, 0.9, 1.0],
         "objectColorSource": "model",
-        "externalMetadata": true
+        "externalMetadata": true,
+        "scaleCanvasResolution": true
     },
     "viewerContent": {
         "modelsLoaded": [
