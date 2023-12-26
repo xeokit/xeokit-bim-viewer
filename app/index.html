@@ -52,7 +52,7 @@
         const enableEditModels = (requestParams.enableEditModels === "true");
 
         const server = new Server({
-            dataDir: "./data"
+            dataDir: requestParams.dataDir || "./data"
         });
 
         const bimViewer = new BIMViewer(server, {
