@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup --config rollup.config.js; rollup --config rollup.dev.config.js;  cp locales/messages.js ./dist/.",
+    "build": "rollup --config rollup.config.js && rollup --config rollup.dev.config.js && copyfiles locales/messages.js ./dist/.",
     "docs": "./node_modules/.bin/esdoc",
     "publish": "npm publish --access public"
   },
@@ -41,6 +41,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.2.1",
     "autoprefixer": "^9.8.6",
+    "copyfiles": "^2.4.1",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "puppeteer": "^10.1.0",
