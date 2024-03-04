@@ -1,0 +1,44 @@
+{
+  "id": "OpenProject",
+  "name": "OpenProject",
+  "models": [
+    {
+      "id": "Test",
+      "name": "Test Model"
+    }
+  ],
+  "viewerConfigs": {
+    "externalMetadata": false,
+    "backgroundColor": [
+      0.95,
+      0.95,
+      1.0
+    ],
+    "objectColors": {
+      "IfcSpace": {
+        "opacity": 0.3
+      },
+      "IfcWindow": {
+        "opacity": 0.4
+      },
+      "IfcOpeningElement": {
+        "opacity": 0.3
+      },
+      "IfcPlate": {
+        "opacity": 0.3
+      }
+    }
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "Test"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "objects",
+    "expandObjectsTree": 3,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
+  }
+}
+
