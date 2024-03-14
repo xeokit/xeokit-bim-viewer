@@ -6,23 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>xeokit BIM Viewer</title>
-    <link rel="stylesheet" href="./lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../dist/xeokit-bim-viewer.css" type="text/css"/>
-    <link rel="stylesheet" href="./css/style.css"/>
+    <link rel="stylesheet" href="./lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="../dist/xeokit-bim-viewer.css" type="text/css" />
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
 
 <body>
-<input type="checkbox" id="explorer_toggle"/>
-<label for="explorer_toggle" class="xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap" data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
-<input type="checkbox" id="inspector_toggle"/>
-<label id="inspector_toggle_label" for="inspector_toggle" class="xeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x" data-xeokit-i18ntip="toolbar.toggleProperties" data-tippy-content="Toggle properties"></label>
-<div id="myExplorer"></div>
-<div id="myToolbar"></div>
-<div id="myInspector"></div>
-<div id="myViewer">
-    <canvas id="myCanvas"></canvas>
-    <canvas id="myNavCubeCanvas"></canvas>
-</div>
+    <input type="checkbox" id="explorer_toggle" />
+    <label for="explorer_toggle" class="xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap"
+        data-xeokit-i18ntip="toolbar.toggleExplorer" data-tippy-content="Toggle explorer"></label>
+    <input type="checkbox" id="inspector_toggle" />
+    <label id="inspector_toggle_label" for="inspector_toggle"
+        class="xeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x"
+        data-xeokit-i18ntip="toolbar.toggleProperties" data-tippy-content="Toggle properties"></label>
+    <div id="myExplorer"></div>
+    <div id="myToolbar"></div>
+    <div id="myInspector"></div>
+    <div id="myViewer">
+        <canvas id="myCanvas"></canvas>
+        <canvas id="myNavCubeCanvas"></canvas>
+    </div>
 
 </body>
 
@@ -32,9 +35,9 @@
 
 <script type="module">
 
-    import {Server, BIMViewer, LocaleService} from "../dist/xeokit-bim-viewer.min.es.js";
+    import { Server, BIMViewer, LocaleService } from "../dist/xeokit-bim-viewer.min.es.js";
 
-    import {messages as localeMessages} from "../dist/messages.js";
+    import { messages as localeMessages } from "../dist/messages.js";
 
     window.onload = function () {
 
@@ -134,22 +137,22 @@
                 bimViewer.setConfig(configName, configVal);
             }
         }
-        
+
         bimViewer.loadProject(projectId, () => {
-                const modelId = requestParams.modelId;
-                if (modelId) {
-                    bimViewer.loadModel(modelId);
-                }
-                const tab = requestParams.tab;
-                if (tab) {
-                    bimViewer.openTab(tab);
-                }
-                watchHashParams();
-            },
+            const modelId = requestParams.modelId;
+            if (modelId) {
+                bimViewer.loadModel(modelId);
+            }
+            const tab = requestParams.tab;
+            if (tab) {
+                bimViewer.openTab(tab);
+            }
+            watchHashParams();
+        },
             (errorMsg) => {
                 console.error(errorMsg);
             });
-        
+
         function watchHashParams() {
             let lastHash = "";
             window.setInterval(() => {
@@ -160,7 +163,7 @@
                 }
             }, 400);
         }
-        
+
         function parseHashParams() {
             const params = getHashParams();
             const actionsStr = params.actions;

@@ -13,6 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config rollup.config.js && rollup --config rollup.dev.config.js && copyfiles locales/messages.js ./dist/.",
     "docs": "./node_modules/.bin/esdoc",
+    "serve": "http-server . -p 8080 ",
     "publish": "npm publish --access public"
   },
   "repository": {
