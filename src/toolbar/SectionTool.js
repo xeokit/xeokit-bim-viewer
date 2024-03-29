@@ -79,22 +79,6 @@ class SectionTool extends Controller { // XX
                 return;
             }
             if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
-                return;
-            }
-            const active = this.getActive();
-            this.setActive(!active);
-            e.preventDefault();
-        });
-
-        document.addEventListener("mousedown", (e) => {
-
-            if (e.target.classList.contains("xeokit-context-menu-item")) {
-                // Allow click on menu item
-                return;
-            }
-
-            if (e.target === this._menuButtonElement || e.target.parentNode === this._menuButtonElement) {
-                e.preventDefault();
                 if (this._sectionToolContextMenu.shown) {
                     this._sectionToolContextMenu.hide();
                 } else {
@@ -108,9 +92,11 @@ class SectionTool extends Controller { // XX
 
                     this._sectionToolContextMenu.show(rect.left, rect.bottom + 5);
                 }
-            } else {
-                this._sectionToolContextMenu.hide();
+                return;
             }
+            const active = this.getActive();
+            this.setActive(!active);
+            e.preventDefault();
         });
 
         this._sectionToolContextMenu.on("shown", () => {
@@ -141,25 +127,30 @@ class SectionTool extends Controller { // XX
 
     _initSectionMode() {
 
-        this.viewer.scene.input.on("mouseclicked", (coords) => {
+        document.addEventListener('mouseup', (e) => {
 
-            if (!this.getActive() || !this.getEnabled()) {
-                return;
-            }
+            if (e.which === 1) {
 
-            const pickResult = this.viewer.scene.pick({
-                canvasPos: coords,
-                pickSurface: true  // <<------ This causes picking to find the intersection point on the entity
-            });
+                const coords = getMouseCanvasPos(e);
 
-            if (pickResult) {
+                if (!this.getActive() || !this.getEnabled()) {
+                    return;
+                }
 
-                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
-                    pos: pickResult.worldPos,
-                    dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
+                const pickResult = this.viewer.scene.pick({
+                    canvasPos: coords,
+                    pickSurface: true  // <<------ This causes picking to find the intersection point on the entity
                 });
 
-                this._sectionPlanesPlugin.showControl(sectionPlane.id);
+                if (pickResult) {
+
+                    const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
+                        pos: pickResult.worldPos,
+                        dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
+                    });
+
+                    this._sectionPlanesPlugin.showControl(sectionPlane.id);
+                }
             }
         });
 
@@ -209,6 +200,24 @@ class SectionTool extends Controller { // XX
         this._sectionPlanesPlugin.destroy();
         this._sectionToolContextMenu.destroy();
         super.destroy();
+    }
+}
+
+function getMouseCanvasPos(event) {
+    if (!event) {
+        event = window.event;
+        this.mouseCanvasPos[0] = event.x;
+        this.mouseCanvasPos[1] = event.y;
+    } else {
+        let element = event.target;
+        let totalOffsetLeft = 0;
+        let totalOffsetTop = 0;
+        while (element.offsetParent) {
+            totalOffsetLeft += element.offsetLeft;
+            totalOffsetTop += element.offsetTop;
+            element = element.offsetParent;
+        }
+        return [event.pageX - totalOffsetLeft, event.pageY - totalOffsetTop];
     }
 }
 
