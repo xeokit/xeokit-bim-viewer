@@ -245,7 +245,7 @@ class BIMViewer extends Controller {
             // It is important to consider that each SectionPlane imposes rendering performance, so it is
             // recommended to set this value to a quantity that aligns with your expected usage.
 
-            numCachedSectionPlanes :4
+            numCachedSectionPlanes: 4
         });
 
         super(null, cfg, server, viewer);
@@ -414,15 +414,18 @@ class BIMViewer extends Controller {
             active: false
         });
 
-        this._measureDistanceTool = new MeasureDistanceTool(this, {
-            buttonElement: toolbarElement.querySelector(".xeokit-measure-distance"),
-            active: false
-        });
+        if (this._enableMeasurements) {
 
-        this._measureAngleTool = new MeasureAngleTool(this, {
-            buttonElement: toolbarElement.querySelector(".xeokit-measure-angle"),
-            active: false
-        });
+            this._measureDistanceTool = new MeasureDistanceTool(this, {
+                buttonElement: toolbarElement.querySelector(".xeokit-measure-distance"),
+                active: false
+            });
+
+            this._measureAngleTool = new MeasureAngleTool(this, {
+                buttonElement: toolbarElement.querySelector(".xeokit-measure-angle"),
+                active: false
+            });
+        }
 
         this._navCubeMode = new NavCubeMode(this, {
             navCubeCanvasElement: navCubeCanvasElement,
@@ -461,8 +464,8 @@ class BIMViewer extends Controller {
             this._selectionTool,
             this._marqueeSelectionTool,
             this._sectionTool,
-            this._measureDistanceTool,
-            this._measureAngleTool
+            this._enableMeasurements ? this._measureDistanceTool : null,
+            this._enableMeasurements ? this._measureAngleTool: null
         ]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -1926,8 +1929,10 @@ class BIMViewer extends Controller {
         this._selectionTool.setEnabled(enabled);
         this._marqueeSelectionTool.setEnabled(enabled);
         this._showSpacesMode.setEnabled(enabled);
-        this._measureDistanceTool.setEnabled(enabled);
-        this._measureAngleTool.setEnabled(enabled);
+        if (this._enableMeasurements) {
+            this._measureDistanceTool.setEnabled(enabled);
+            this._measureAngleTool.setEnabled(enabled);
+        }
         this._sectionTool.setEnabled(enabled);
 
         if (this._enablePropertiesInspector) {
@@ -2022,8 +2027,10 @@ class BIMViewer extends Controller {
      * Clears measurements.
      */
     clearMeasurements() {
-        this._measureDistanceTool.clear();
-        this._measureAngleTool.clear();
+        if (this._enableMeasurements) {
+            this._measureDistanceTool.clear();
+            this._measureAngleTool.clear();
+        }
     }
 
     /**
@@ -2043,7 +2050,9 @@ class BIMViewer extends Controller {
      * @param {Boolean} axisVisible Set `true` to show axis wires, else `false` to hide them.
      */
     setMeasurementsAxisVisible(axisVisible) {
-        this._measureDistanceTool.setMeasurementsAxisVisible(axisVisible);
+        if (this._enableMeasurements) {
+            this._measureDistanceTool.setMeasurementsAxisVisible(axisVisible);
+        }
     }
 
     /**
@@ -2054,7 +2063,7 @@ class BIMViewer extends Controller {
      * @returns {Boolean}  `true` if axis wires are visible, else `false` if hidden.
      */
     getMeasurementsAxisVisible() {
-        return this._measureDistanceTool.getMeasurementsAxisVisible();
+        return (this._enableMeasurements) ? this._measureDistanceTool.getMeasurementsAxisVisible() : false;
     }
 
     /**
@@ -2063,7 +2072,9 @@ class BIMViewer extends Controller {
      * @param {Boolean} snappingEnabled Set `true` to enable snapping, else `false` to disable.
      */
     setMeasurementsSnappingEnabled(snappingEnabled) {
-        this._measureDistanceTool.setSnappingEnabled(snappingEnabled);
+        if (this._enableMeasurements) {
+            this._measureDistanceTool.setSnappingEnabled(snappingEnabled);
+        }
     }
 
     /**
@@ -2072,7 +2083,7 @@ class BIMViewer extends Controller {
      * @returns {Boolean} `true` if snapping is enabled, else `false` if disabled.
      */
     getMeasurementsSnappingEnabled() {
-        return this._measureDistanceTool.getSnappingEnabled();
+        return (this._enableMeasurements) ? this._measureDistanceTool.getSnappingEnabled() : false;
     }
 
     /**

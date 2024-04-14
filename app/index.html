@@ -35,7 +35,7 @@
 
 <script type="module">
 
-    import { Server, BIMViewer, LocaleService } from "../dist/xeokit-bim-viewer.min.es.js";
+    import { Server, BIMViewer, LocaleService } from "../dist/xeokit-bim-viewer.es.js";
 
     import { messages as localeMessages } from "../dist/messages.js";
 
@@ -63,6 +63,7 @@
                 messages: localeMessages,
                 locale: locale
             }),
+            enableMeasurements: false,
             canvasElement: document.getElementById("myCanvas"), // WebGL canvas
             keyboardEventsElement: document, // Optional, defaults to document
             explorerElement: document.getElementById("myExplorer"), // Left panel

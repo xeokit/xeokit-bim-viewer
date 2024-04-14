@@ -194,20 +194,22 @@ class Controller {
         const numControllers = controllers.length;
         for (let i = 0; i < numControllers; i++) {
             const controller = controllers[i];
-            controller.on("active", (function () {
-                const _i = i;
-                return function (active) {
-                    if (!active) {
-                        return;
-                    }
-                    for (let j = 0; j < numControllers; j++) {
-                        if (j === _i) {
-                            continue;
+            if (controller) {
+                controller.on("active", (function () {
+                    const _i = i;
+                    return function (active) {
+                        if (!active) {
+                            return;
                         }
-                        controllers[j].setActive(false);
-                    }
-                };
-            })());
+                        for (let j = 0; j < numControllers; j++) {
+                            if (j === _i) {
+                                continue;
+                            }
+                            controllers[j].setActive(false);
+                        }
+                    };
+                })());
+            }
         }
     }
 
