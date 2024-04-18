@@ -142,7 +142,7 @@ class SectionTool extends Controller { // XX
                     pickSurface: true  // <<------ This causes picking to find the intersection point on the entity
                 });
 
-                if (pickResult) {
+                if (pickResult && pickResult.entity && pickResult.entity.isObject) { // Only slice model objects, not 3D UI helpers
 
                     const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({
                         pos: pickResult.worldPos,
