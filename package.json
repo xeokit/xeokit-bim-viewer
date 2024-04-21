@@ -14,11 +14,18 @@
     "build": "rollup --config rollup.config.js && rollup --config rollup.dev.config.js && copyfiles locales/messages.js ./dist/.",
     "docs": "./node_modules/.bin/esdoc",
     "serve": "http-server . -p 8080 ",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "changelog": "auto-changelog --commit-limit false --package --template changelog-template.hbs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xeokit/xeokit-bim-viewer.git"
+  },
+  "auto-changelog": {
+    "output": "CHANGELOG.md",
+    "template": "keepachangelog",
+    "unreleased": true,
+    "commitLimit": false
   },
   "keywords": [
     "OpenProject",
@@ -47,7 +54,8 @@
     "esdoc-standard-plugin": "^1.0.0",
     "puppeteer": "^10.1.0",
     "rollup": "^2.70.2",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "auto-changelog": "^2.4.0"
   },
   "dependencies": {
     "@xeokit/xeokit-sdk": "2.6.0",

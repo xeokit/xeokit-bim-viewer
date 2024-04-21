@@ -1,0 +1,19 @@
+## xeokit-bim-viewer Changelog
+
+{{#each releases}}
+
+    {{#if merges}}
+
+        # [{{title}}]({{href}})
+
+        ### {{niceDate}}
+
+        {{#if summary}}
+            {{summary}}
+        {{/if}}
+
+        {{#each merges}}
+            - {{#if commit.breaking}}**Breaking change:** {{/if}} {{message}} - [{{id}}]({{href}})
+        {{/each}}
+    {{/if}}
+{{/each}}
