@@ -1,9 +1,10 @@
 ## xeokit-bim-viewer Changelog
 
-# [v2.5.1-beta-29](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-3...v2.5.1-beta-29)
+# [v2.5.1-beta-30](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-3...v2.5.1-beta-30)
 
-### 21 April 2024
+### 22 April 2024
 
+-  [FIX] Interference between context menus on measurements and canvas  - [#187](https://github.com/xeokit/xeokit-bim-viewer/pull/187)
 -  Upgrade xeokit-sdk to 2.6.0 - [#185](https://github.com/xeokit/xeokit-bim-viewer/pull/185)
 -  Don't allow user to slice SectionPlane Controls - [#184](https://github.com/xeokit/xeokit-bim-viewer/pull/184)
 -  Upgrade xeokit-sdk to add initial measurement touch handlers - [#183](https://github.com/xeokit/xeokit-bim-viewer/pull/183)
