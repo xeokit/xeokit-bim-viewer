@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.5.1-beta-29",
+  "version": "2.5.1-beta-30",
   "description": "BIM viewer built on xeokit",
   "main": "dist/xeokit-bim-viewer.min.es.js",
   "files": [
@@ -58,7 +58,7 @@
     "auto-changelog": "^2.4.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "2.6.0",
+    "@xeokit/xeokit-sdk": "*",
     "http-server": "^13.0.2"
   }
 }
