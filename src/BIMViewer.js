@@ -634,12 +634,37 @@ class BIMViewer extends Controller {
             enableMeasurements: this._enableMeasurements
         });
 
-        this.viewer.cameraControl.on("rightClick", (e) => {
+        const getCanvasPosFromEvent = function (event) {
+            const canvasPos = [];
+            if (!event) {
+                event = window.event;
+                canvasPos[0] = event.x;
+                canvasPos[1] = event.y;
+            } else {
+                let element = event.target;
+                let totalOffsetLeft = 0;
+                let totalOffsetTop = 0;
+                let totalScrollX = 0;
+                let totalScrollY = 0;
+                while (element.offsetParent) {
+                    totalOffsetLeft += element.offsetLeft;
+                    totalOffsetTop += element.offsetTop;
+                    totalScrollX += element.scrollLeft;
+                    totalScrollY += element.scrollTop;
+                    element = element.offsetParent;
+                }
+                canvasPos[0] = event.pageX + totalScrollX - totalOffsetLeft;
+                canvasPos[1] = event.pageY + totalScrollY - totalOffsetTop;
+            }
+            return canvasPos;
+        };
 
-            const event = e.event;
+        this.viewer.scene.canvas.canvas.addEventListener('contextmenu', (event) => {
+
+            const canvasPos = getCanvasPosFromEvent(event);
 
             const hit = this.viewer.scene.pick({
-                canvasPos: e.canvasPos
+                canvasPos
             });
 
             if (hit && hit.entity.isObject) {
@@ -657,14 +682,14 @@ class BIMViewer extends Controller {
                     },
                     entity: hit.entity
                 };
-                this._objectContextMenu.show(e.pagePos[0], e.pagePos[1]);
+                this._objectContextMenu.show(event.pageX, event.pageY);
             } else {
                 this._objectContextMenu.hide();
                 this._canvasContextMenu.context = {
                     viewer: this.viewer,
                     bimViewer: this
                 };
-                this._canvasContextMenu.show(e.pagePos[0], e.pagePos[1]);
+                this._canvasContextMenu.show(event.pageX, event.pageY);
             }
         });
     }
