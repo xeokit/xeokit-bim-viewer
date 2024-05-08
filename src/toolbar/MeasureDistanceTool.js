@@ -51,7 +51,8 @@ export class MeasureDistanceTool extends Controller {
         });
 
         this._distanceMeasurementsPlugin = new DistanceMeasurementsPlugin(this.viewer, {
-            defaultAxisVisible: false
+            defaultAxisVisible: false,
+            defaultLabelsOnWires : false
         });
 
         this._distanceMeasurementsPlugin.on("mouseOver", (e) => {
