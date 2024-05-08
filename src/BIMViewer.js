@@ -592,7 +592,7 @@ class BIMViewer extends Controller {
 
         // Camera control
 
-        this.viewer.cameraControl.panRightClick = true;
+        this.viewer.cameraControl.panRightClick = false;
         this.viewer.cameraControl.followPointer = true;
         this.viewer.cameraControl.doublePickFlyTo = false;
         this.viewer.cameraControl.smartPivot = true;
