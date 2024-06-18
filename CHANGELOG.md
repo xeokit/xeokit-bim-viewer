@@ -1,5 +1,45 @@
 ## xeokit-bim-viewer Changelog
 
+# [v2.5.1-beta-33](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-33)
+
+### 18 June 2024
+
+-  [FIX] Fix split JSON property sets - [#192](https://github.com/xeokit/xeokit-bim-viewer/pull/192)
+-  Fix mouse pick misalignment - [#191](https://github.com/xeokit/xeokit-bim-viewer/pull/191)
+-  Measurement fixes; camera panning with middle button - [#189](https://github.com/xeokit/xeokit-bim-viewer/pull/189)
+-  [FIX] Interference between context menus on measurements and canvas  - [#187](https://github.com/xeokit/xeokit-bim-viewer/pull/187)
+-  Upgrade xeokit-sdk to 2.6.0 - [#185](https://github.com/xeokit/xeokit-bim-viewer/pull/185)
+-  Don't allow user to slice SectionPlane Controls - [#184](https://github.com/xeokit/xeokit-bim-viewer/pull/184)
+-  Upgrade xeokit-sdk to add initial measurement touch handlers - [#183](https://github.com/xeokit/xeokit-bim-viewer/pull/183)
+-  Fix enableMeasurements: false - [#182](https://github.com/xeokit/xeokit-bim-viewer/pull/182)
+-  [FIX] Fix bug where SectionPlanes are clipping DistanceMeasurements too coarsely - [#180](https://github.com/xeokit/xeokit-bim-viewer/pull/180)
+-  Section tool mouse click fixes - [#179](https://github.com/xeokit/xeokit-bim-viewer/pull/179)
+-  xeokit-sdk fix: Add selection glowThrough support to DTX triangles renderer layer - [#178](https://github.com/xeokit/xeokit-bim-viewer/pull/178)
+-  Fix measurement dot placement - [#174](https://github.com/xeokit/xeokit-bim-viewer/pull/174)
+-  Some fix about using example - [#173](https://github.com/xeokit/xeokit-bim-viewer/pull/173)
+-  [FIX] No default metaobjects when loading XKTs and JSONs from manifest - [#172](https://github.com/xeokit/xeokit-bim-viewer/pull/172)
+-  Bump xeokit-sdk to 2.6.0-beta-5 - [#171](https://github.com/xeokit/xeokit-bim-viewer/pull/171)
+-  Fix memory spike when loading - [#170](https://github.com/xeokit/xeokit-bim-viewer/pull/170)
+-  fix: build script repair, use of ampersands - [#167](https://github.com/xeokit/xeokit-bim-viewer/pull/167)
+
+# [v2.5.1-beta-33](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-32...v2.5.1-beta-33)
+
+### 18 June 2024
+
+-  [FIX] Fix split JSON property sets - [#192](https://github.com/xeokit/xeokit-bim-viewer/pull/192)
+
+# [v2.5.1-beta-32](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-31...v2.5.1-beta-32)
+
+### 15 May 2024
+
+-  Fix mouse pick misalignment - [#191](https://github.com/xeokit/xeokit-bim-viewer/pull/191)
+
+# [v2.5.1-beta-31](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-30...v2.5.1-beta-31)
+
+### 8 May 2024
+
+-  Measurement fixes; camera panning with middle button - [#189](https://github.com/xeokit/xeokit-bim-viewer/pull/189)
+
 # [v2.5.1-beta-30](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-3...v2.5.1-beta-30)
 
 ### 22 April 2024
@@ -17,6 +57,68 @@
 -  [FIX] No default metaobjects when loading XKTs and JSONs from manifest - [#172](https://github.com/xeokit/xeokit-bim-viewer/pull/172)
 -  Bump xeokit-sdk to 2.6.0-beta-5 - [#171](https://github.com/xeokit/xeokit-bim-viewer/pull/171)
 -  Fix memory spike when loading - [#170](https://github.com/xeokit/xeokit-bim-viewer/pull/170)
+-  fix: build script repair, use of ampersands - [#167](https://github.com/xeokit/xeokit-bim-viewer/pull/167)
+
+# [v2.5.1-beta-28](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-26...v2.5.1-beta-28)
+
+### 18 April 2024
+
+-  Don't allow user to slice SectionPlane Controls - [#184](https://github.com/xeokit/xeokit-bim-viewer/pull/184)
+-  Upgrade xeokit-sdk to add initial measurement touch handlers - [#183](https://github.com/xeokit/xeokit-bim-viewer/pull/183)
+
+# [v2.5.1-beta-26](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-25...v2.5.1-beta-26)
+
+### 15 April 2024
+
+-  Fix enableMeasurements: false - [#182](https://github.com/xeokit/xeokit-bim-viewer/pull/182)
+
+# [v2.5.1-beta-25](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-24...v2.5.1-beta-25)
+
+### 1 April 2024
+
+-  [FIX] Fix bug where SectionPlanes are clipping DistanceMeasurements too coarsely - [#180](https://github.com/xeokit/xeokit-bim-viewer/pull/180)
+
+# [v2.5.1-beta-24](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-23...v2.5.1-beta-24)
+
+### 30 March 2024
+
+-  Section tool mouse click fixes - [#179](https://github.com/xeokit/xeokit-bim-viewer/pull/179)
+
+# [v2.5.1-beta-23](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-22...v2.5.1-beta-23)
+
+### 28 March 2024
+
+-  xeokit-sdk fix: Add selection glowThrough support to DTX triangles renderer layer - [#178](https://github.com/xeokit/xeokit-bim-viewer/pull/178)
+
+# [v2.5.1-beta-22](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-21...v2.5.1-beta-22)
+
+### 17 March 2024
+
+-  Fix measurement dot placement - [#174](https://github.com/xeokit/xeokit-bim-viewer/pull/174)
+-  Some fix about using example - [#173](https://github.com/xeokit/xeokit-bim-viewer/pull/173)
+
+# [v2.5.1-beta-21](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-20...v2.5.1-beta-21)
+
+### 14 March 2024
+
+-  [FIX] No default metaobjects when loading XKTs and JSONs from manifest - [#172](https://github.com/xeokit/xeokit-bim-viewer/pull/172)
+
+# [v2.5.1-beta-20](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-19...v2.5.1-beta-20)
+
+### 13 March 2024
+
+-  Bump xeokit-sdk to 2.6.0-beta-5 - [#171](https://github.com/xeokit/xeokit-bim-viewer/pull/171)
+
+# [v2.5.1-beta-19](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-18...v2.5.1-beta-19)
+
+### 13 March 2024
+
+-  Fix memory spike when loading - [#170](https://github.com/xeokit/xeokit-bim-viewer/pull/170)
+
+# [v2.5.1-beta-13](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-12...v2.5.1-beta-13)
+
+### 25 February 2024
+
 -  fix: build script repair, use of ampersands - [#167](https://github.com/xeokit/xeokit-bim-viewer/pull/167)
 
 # [v2.4.18](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.4.12...v2.4.18)
