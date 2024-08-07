@@ -1,9 +1,10 @@
 ## xeokit-bim-viewer Changelog
 
-# [v2.5.1-beta-33](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-33)
+# [v2.5.1-beta-35](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-35)
 
-### 18 June 2024
+### 7 August 2024
 
+-  Bump xeokit to 2.6.32 - [#195](https://github.com/xeokit/xeokit-bim-viewer/pull/195)
 -  [FIX] Fix split JSON property sets - [#192](https://github.com/xeokit/xeokit-bim-viewer/pull/192)
 -  Fix mouse pick misalignment - [#191](https://github.com/xeokit/xeokit-bim-viewer/pull/191)
 -  Measurement fixes; camera panning with middle button - [#189](https://github.com/xeokit/xeokit-bim-viewer/pull/189)
