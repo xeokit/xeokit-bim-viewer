@@ -1,9 +1,10 @@
 ## xeokit-bim-viewer Changelog
 
-# [v2.5.1-beta-35](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-35)
+# [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
-### 7 August 2024
+### 9 September 2024
 
+-  [BREAKING] ContextMenu - Add separator as an independent li tag - [#196](https://github.com/xeokit/xeokit-bim-viewer/pull/196)
 -  Bump xeokit to 2.6.32 - [#195](https://github.com/xeokit/xeokit-bim-viewer/pull/195)
 -  [FIX] Fix split JSON property sets - [#192](https://github.com/xeokit/xeokit-bim-viewer/pull/192)
 -  Fix mouse pick misalignment - [#191](https://github.com/xeokit/xeokit-bim-viewer/pull/191)
@@ -22,6 +23,18 @@
 -  Bump xeokit-sdk to 2.6.0-beta-5 - [#171](https://github.com/xeokit/xeokit-bim-viewer/pull/171)
 -  Fix memory spike when loading - [#170](https://github.com/xeokit/xeokit-bim-viewer/pull/170)
 -  fix: build script repair, use of ampersands - [#167](https://github.com/xeokit/xeokit-bim-viewer/pull/167)
+
+# [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-35...v2.5.1-beta-37)
+
+### 9 September 2024
+
+-  [BREAKING] ContextMenu - Add separator as an independent li tag - [#196](https://github.com/xeokit/xeokit-bim-viewer/pull/196)
+
+# [v2.5.1-beta-35](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-34...v2.5.1-beta-35)
+
+### 7 August 2024
+
+-  Bump xeokit to 2.6.32 - [#195](https://github.com/xeokit/xeokit-bim-viewer/pull/195)
 
 # [v2.5.1-beta-33](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-32...v2.5.1-beta-33)
 
@@ -192,7 +205,7 @@
 -  Bump postcss from 7.0.35 to 7.0.36 - [#74](https://github.com/xeokit/xeokit-bim-viewer/pull/74)
 -  Bump path-parse from 1.0.6 to 1.0.7 - [#86](https://github.com/xeokit/xeokit-bim-viewer/pull/86)
 -  Bump browserslist from 4.14.7 to 4.17.0 - [#90](https://github.com/xeokit/xeokit-bim-viewer/pull/90)
--  Fixed a bug in Controller.destroy - [#89](https://github.com/xeokit/xeokit-bim-viewer/pull/89)
+-  Fixed a bug in Controller#destroy - [#89](https://github.com/xeokit/xeokit-bim-viewer/pull/89)
 -  Element property sets - [#77](https://github.com/xeokit/xeokit-bim-viewer/pull/77)
 
 # [2.0.0](https://github.com/xeokit/xeokit-bim-viewer/compare/1.9.57...2.0.0)
