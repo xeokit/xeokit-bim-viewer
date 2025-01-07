@@ -1,0 +1,30 @@
+
+name: Build
+on:
+  push:
+    branches:
+      - master     # Build on every push to main
+
+jobs:
+  # -------------------------------------
+  # 1. Build job (for pushes to main)
+  # -------------------------------------
+  build:
+    # Only run this job when *not* publishing a tag
+    if: startsWith(github.ref, 'refs/tags/') != true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
