@@ -1,0 +1,11 @@
+{
+    "include-v-in-tag": true,
+    "pull-request-title-pattern": "chore(release): release \\d+\\.\\d+\\.\\d+",
+    "packages": {
+      "xeokit-bim-viewer": {
+        "path": ".",
+        "release-type": "node"
+      }
+    },
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+  }
