@@ -7,6 +7,10 @@
 * [Run demo](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
 ---
+If you are interested in a **ready-to-use 3D/BIM Viewing Ecosystem for Your Own Solution**, be sure to also check out:
+* [xeoVision - view your models now!](https://xeo.vision/)
+* [xeoServices](https://docs.xeo.vision/)
+---
 
 **[xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer)** is an open source 2D/3D BIM viewer that runs in the
 browser and loads models from your file system.
