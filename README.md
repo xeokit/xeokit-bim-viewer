@@ -1,6 +1,8 @@
 # xeokit-bim-viewer
 
-[![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer) [![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
+[![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer)
+[![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
+[![@xeokit/xeokit-bim-viewer](https://snyk.io/advisor/npm-package/@xeokit/xeokit-bim-viewer/badge.svg)](/advisor/npm-package/@xeokit/xeokit-bim-viewer)
 
 [![Screenshot](https://github.com/xeokit/xeokit-bim-viewer/raw/master/images/xeokit-bim-viewer.png)](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
@@ -17,12 +19,24 @@ browser and loads models from your file system.
 
 The viewer is built on **[xeokit](http://xeokit.io)**, and is bundled as part of the **[xeokit SDK](http://xeokit.io)**.
 
-The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/), and is
-integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later.
+The viewer is developed by [xeolabs](http://xeolabs.com) and [OpenProject](https://www.openproject.org/), and is currently supported by [Creoox AG](https://creoox.com/).
+It is integrated within [OpenProject BIM 10.4](https://www.openproject.org/openproject-bim-10-4/) and later.
 
 The viewer can be used as a stand-alone JavaScript application. In combination with open source CLI model conversion
 tools, it represents a low-cost, high-performance way to get your IFC models on the Web, that allows you the freedom to
-convert and host your models on your own server or GitHub repository.
+convert and host your models on your own server or GitHub repository. For the most robust and performing IFC conversion we recommend
+checking out [IFC -> binary glTF (GLB) cxConverter](https://github.com/Creoox/creoox-ifc2gltfcxconverter/releases).
+
+## 📜 Licensing & Commercial Use
+
+xeokit SDK is licensed under **AGPLv3**, which requires that any modifications or integrations of xeokit SDK into a project must also be open-sourced under AGPLv3.
+
+🪧 **Need a commercial license?** If your company requires xeokit SDK under a different licensing model for **proprietary or closed-source** applications, we offer **flexible commercial licensing options**.
+
+📩 **Contact us** at [contact@creoox.com](mailto:contact@creoox.com) or visit [xeokit.io](https://xeokit.io/index.html#pricing) for more information.
+---
+
+## Usage
 
 To view your models with this viewer:
 
