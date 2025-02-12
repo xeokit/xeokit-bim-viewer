@@ -2,6 +2,13 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.5.2-beta-7](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.2-beta-7) (2025-02-12)
+
+
+### Bug Fixes
+
+* build script repair, use of ampersands ([67e5a46](https://github.com/xeokit/xeokit-bim-viewer/commit/67e5a4630ca0fcc72971a2281ce432a07902d1c3))
+
 ### 9 September 2024
 
 -  [BREAKING] ContextMenu - Add separator as an independent li tag - [#196](https://github.com/xeokit/xeokit-bim-viewer/pull/196)
