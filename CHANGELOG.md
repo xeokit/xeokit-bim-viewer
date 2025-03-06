@@ -2,6 +2,13 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.6.0](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.2-beta-7...v2.6.0) (2025-03-06)
+
+
+### Miscellaneous Chores
+
+* release 2.6.0 ([7c2def6](https://github.com/xeokit/xeokit-bim-viewer/commit/7c2def63b3083daf8a0396acecbfb2c9a01532c4))
+
 ## [2.5.2-beta-7](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.2-beta-7) (2025-03-06)
 
 
