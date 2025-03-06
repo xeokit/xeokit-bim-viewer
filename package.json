@@ -14,7 +14,6 @@
     "build": "rollup --config rollup.config.js && rollup --config rollup.dev.config.js && copyfiles -f locales/messages.js ./dist && copyfiles -f xeokit-bim-viewer.css ./dist",
     "docs": "./node_modules/.bin/esdoc",
     "serve": "http-server . -p 8080 ",
-    "publish": "npm publish --access public",
     "changelog": "auto-changelog --commit-limit false --package --template changelog-template.hbs"
   },
   "repository": {
