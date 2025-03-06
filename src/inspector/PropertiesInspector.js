@@ -45,12 +45,53 @@ class PropertiesInspector extends Controller {
             if (!e.target.matches('.xeokit-accordion .xeokit-accordion-button')) {
                 return;
             } else {
-                if (!e.target.parentElement.classList.contains('active')) {
-                    e.target.parentElement.classList.add('active');
+                const container = e.target.parentElement;
+                const panel = container.querySelector('.xeokit-accordion-panel');
+
+                if (!container.classList.contains('active')) {
+                    // Opening the panel
+                    container.classList.add('active');
+
+                    // Calculate the full height of the content
+                    const scrollHeight = panel.scrollHeight;
+
+                    // Set the height to the full content height
+                    panel.style.height = scrollHeight + 'px';
                 } else {
-                    e.target.parentElement.classList.remove('active');
+                    // Closing the panel
+                    // First set explicit height based on current height
+                    panel.style.height = panel.scrollHeight + 'px';
+
+                    // Force a reflow
+                    panel.offsetHeight;
+
+                    // Now set height to 0 for smooth animation
+                    panel.style.height = '0px';
+
+                    // Remove active class after transition completes
+                    panel.addEventListener('transitionend', function removeActive() {
+                        container.classList.remove('active');
+                        panel.removeEventListener('transitionend', removeActive);
+                    }, { once: true });
                 }
             }
+        });
+
+        // Add a resize listener to handle content changes
+        window.addEventListener('resize', () => {
+            const activeContainers = document.querySelectorAll('.xeokit-accordion-container.active');
+
+            activeContainers.forEach(container => {
+                const panel = container.querySelector('.xeokit-accordion-panel');
+
+                // Temporarily set height to auto to measure true height
+                const originalHeight = panel.style.height;
+                panel.style.height = 'auto';
+                const scrollHeight = panel.scrollHeight;
+
+                // Set back to calculated height
+                panel.style.height = scrollHeight + 'px';
+            });
         });
 
         this.clear();
