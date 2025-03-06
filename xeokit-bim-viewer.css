@@ -827,15 +827,20 @@
     border-color: #99A4AD transparent transparent transparent !important;
 }
 
-
+.xeokit-properties {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 2em - 30px);
+}
 
 .xeokit-accordion {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     width: 100%;
-    height: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
+    
 }
 .xeokit-accordion .xeokit-accordion-container {
     display: flex;
@@ -885,12 +890,13 @@
     transition: all 0.3s ease-in-out;
 }
 .xeokit-accordion .xeokit-accordion-container .xeokit-accordion-panel {
+    display: none;
     width: 100%;
     color: #cfcfcf;
-    transition: all 0.2s ease-in-out;
+    transition: height 0.3s ease-in-out, opacity 0.2s ease-in-out;
     opacity: 0;
     height: auto;
-    max-height: 0;
+    height: 0;
     padding: 0 10px;
 }
 .xeokit-accordion .xeokit-accordion-container.active .xeokit-accordion-button {
@@ -900,15 +906,17 @@
     transform: rotate(0deg);
 }
 .xeokit-accordion .xeokit-accordion-container.active .xeokit-accordion-panel {
+    display: block;
     padding: 0;
     opacity: 1;
-    max-height: 500px;
 }
 
 
 
 
 .xeokit-propertiesTab .element-attributes {
+    display: flex;
+    flex: 0 0 auto;
     padding-left: 10px;
 }
 
