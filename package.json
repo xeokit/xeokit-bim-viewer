@@ -62,7 +62,7 @@
     "copyfiles": "^2.4.1",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "puppeteer": "^10.1.0",
+    "puppeteer": "^24.4.0",
     "rollup": "^2.70.2",
     "rollup-plugin-terser": "^7.0.2",
     "auto-changelog": "^2.4.0"
