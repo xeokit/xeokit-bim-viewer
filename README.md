@@ -51,7 +51,7 @@ Then users can view your models in their browsers, with URLs like this:
 
 [````https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys````](https://xeokit.github.io/xeokit-bim-viewer/app/index.html?projectId=OTCConferenceCenter&tab=storeys)
 
-Remember to add the `projectId` parameter to your URL as in the example: 
+Remember to add the `projectId` parameter to your URL as in the example:
 `https://user.github.io/xeokit-bim-viewer/app/index.html?projectId=<your projectID here>`
 
 **Method 2**
@@ -74,9 +74,18 @@ npm run serve
 
 5. Go to `http://localhost:8080/app/index.html?projectId=<your projectID here>`
 
+## Version compatibility with xeokit-sdk
+
+Starting with version 2.6.0, releases of xeokit-bim-viewer have been aligned with xeokit-sdk by matching their major and minor version numbers.
+This means that for any xeokit-sdk release with version 2.6.x, the corresponding xeokit-bim-viewer release will follow the 2.6.y numbering.
+Please note that the patch version numbers between the two projects are managed independently. For instance, xeokit-bim-viewer 2.6.0 is built on xeokit-sdk 2.6.67.
+
+
+## Next steps
+
 Read the documentation below to get started.
 
---- 
+---
 
 * [Releases / Changelog](https://github.com/xeokit/xeokit-bim-viewer/releases)
 * [Source Code](https://github.com/xeokit/xeokit-bim-viewer)
@@ -211,12 +220,12 @@ Within a model directory, we have the ````.XKT```` file which contains the model
         ├── index.json
         │
         └── models
-              ├── architecture             
+              ├── architecture
               │       └── geometry.xkt
-              ├── structure            
+              ├── structure
               │       └── geometry.xkt
               └── electrical
-                      └── geometry.xkt                  
+                      └── geometry.xkt
 ````
 
 The ````index.json```` at the root of ````./app/data/projects```` is shown below.
@@ -306,7 +315,7 @@ with [````BIMViewer#setConfigs()````](https://xeokit.github.io/xeokit-bim-viewer
 
 | Property               | Type    | Range                  | Default Value         | Description                                                                                                                                                                                                                                                                                                    |
 |:-----------------------|:--------|:-----------------------|:----------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| "backgroundColor"      | Array   |                        | ````[1.0,1.0,1.0]```` | Canvas background color                                                                                                                                                                                                                                                                                        |     
+| "backgroundColor"      | Array   |                        | ````[1.0,1.0,1.0]```` | Canvas background color                                                                                                                                                                                                                                                                                        |
 | "cameraNear"           | Number  | ````[0.01-0.1]````     | ````0.05````          | Distance to the near clipping plane                                                                                                                                                                                                                                                                            |
 | "cameraFar"            | Number  | ````[1-100000000]````  | ````3000.0````        | Distance to the far clipping plane                                                                                                                                                                                                                                                                             |
 | "smartPivot"           | Boolean |                        | ````true````          | Enables a better pivot-orbiting experience when click-dragging on empty space in camera orbit mode.                                                                                                                                                                                                            |
@@ -339,8 +348,8 @@ using [````BIMViewer#setViewerState()````](https://xeokit.github.io/xeokit-bim-v
 
 | Property              | Type              | Range                 | Default Value     | Description                      |
 |:----------------------|:------------------|:----------------------|:------------------|:----------------------------------|
-| "focusObject"         | String            |                       |                   | ID of object to focus on        |     
-| "tabOpen"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |     
+| "focusObject"         | String            |                       |                   | ID of object to focus on        |
+| "tabOpen"             | String            |  "objects", "classes" or "storeys"  |                   | Which explorer tab to open           |
 | "expandObjectsTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "objects" tree |
 | "expandClassesTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "classes" tree |
 | "expandStoreysTree"   | Number            |  [0..*]               | 0                 | How deep to expand the "storeys" tree |
@@ -387,15 +396,15 @@ Here's our database files again, this time with XKT V7 and accompanying metadata
         ├── index.json
         │
         └── models
-              ├── architecture             
+              ├── architecture
               │       ├── geometry.xkt
               │       └── metadata.json
-              ├── structure            
+              ├── structure
               │       ├── geometry.xkt
               │       └── metadata.json
               └── electrical
-                      ├── geometry.xkt 
-                      └── metadata.json                 
+                      ├── geometry.xkt
+                      └── metadata.json
 ````
 
 To make BIMViewer load both the ````geometry.xkt```` and ````metadata.json```` files for each model, we need to add a
@@ -474,9 +483,9 @@ To show how to deploy one of these multi-XKT models in BIMViewer, let's examine 
         ├── index.json
         │
         └── models
-              └──  KarhumakiBridge 
-                      ├── manifest.json 
-                      ├── model.xkt                             
+              └──  KarhumakiBridge
+                      ├── manifest.json
+                      ├── model.xkt
                       ├── model_1.xkt
                       ├── model_2.xkt
                       ├── model_3.xkt
@@ -485,7 +494,7 @@ To show how to deploy one of these multi-XKT models in BIMViewer, let's examine 
                       ├── model_6.xkt
                       ├── model_7.xkt
                       ├── model_8.xkt
-                      └── model_9.xkt                      
+                      └── model_9.xkt
 ````
 
 The `manifest.json` XKT manifest looks like this:
@@ -906,7 +915,7 @@ Since our object info exists, we'll get a result similar to this:
   "type": "IfcWall",
   "parent": "2hExBg8jj4NRG6zzD0RZML"
 }
-```` 
+````
 
 > By now, you've probably noticed that our file system database is structured to
 > support [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) URIs, which
@@ -1154,7 +1163,7 @@ For example, the *Toggle 2D/3D* button's element looks like this:
 ````html
 
 <button type="button" class="xeokit-threeD xeokit-btn fa fa-cube fa-2x" data-tippy-content="Toggle 2D/3D"></button>
-```` 
+````
 
 In the [app/index.html](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/index.html) file for the standalone
 viewer, we're using [tippy.js](https://github.com/atomiks/tippyjs), which automatically creates tooltips for those
@@ -1163,27 +1172,27 @@ elements.
 ## Customizing Appearances of IFC Types
 
 By default, BIMViewer loads whatever object colors and opacities are in the XKT model files, without changing them.
-Sometimes, however, certain types of objects may have colors that make it hard for us to view the model. 
+Sometimes, however, certain types of objects may have colors that make it hard for us to view the model.
 
-For example, in some IFC models, ````IfcPlate```` types may be used to represent windows, and those types are often given opaque 
-colors. That results in the windows of our model being opaque. For this example, we can make the windows transparent 
+For example, in some IFC models, ````IfcPlate```` types may be used to represent windows, and those types are often given opaque
+colors. That results in the windows of our model being opaque. For this example, we can make the windows transparent
 by configuring the BIMViewer, or just that model, with a custom color or opacity, for that ````IfcPlate```` type. That would make
-all ````IfcPlate```` types transparent again. There are two ways we can do this - programmatically via ````BIMViewer.setConfigs````, or 
+all ````IfcPlate```` types transparent again. There are two ways we can do this - programmatically via ````BIMViewer.setConfigs````, or
 for each project individually, via the project's `index.json` file.
 
-In the code below, we'll configure all ````IfcSpace````, ````IfcWindow````, ````IfcOpeningElement```` and ````IfcPlate```` types 
-to be transparent, and while we're at it, we'll make ````IfcWindow```` types to be always blue. Note that all values are in range ````[0..1]````. 
+In the code below, we'll configure all ````IfcSpace````, ````IfcWindow````, ````IfcOpeningElement```` and ````IfcPlate```` types
+to be transparent, and while we're at it, we'll make ````IfcWindow```` types to be always blue. Note that all values are in range ````[0..1]````.
 
 ---
 
- Note that prior to v2.4, BIMViewer did change the colors and opacities of `IfcOpening`, `IfcSpace`, `IfcWindow` and `IfcPlate` by 
- default. We've removed that in v2.4, because it was confusing 
+ Note that prior to v2.4, BIMViewer did change the colors and opacities of `IfcOpening`, `IfcSpace`, `IfcWindow` and `IfcPlate` by
+ default. We've removed that in v2.4, because it was confusing
  and users wondered why those object types did not have the colors/opacities defined for them in the model.
 
 ---
 
 ````javascript
-// In case the model has opaque colors for IfcSpace, IfcWindow, IfcOpeningElement and IfcPlate 
+// In case the model has opaque colors for IfcSpace, IfcWindow, IfcOpeningElement and IfcPlate
 // objects, let's make those objects always transparent. To make the model look extra nice,
 // let's force IfcWindows to always be blue, while we're at it. This will apply to all models,
 // except where we override the settings per-project, as shown next.
@@ -1207,12 +1216,12 @@ bimViewer.setConfigs({
 });
 ````
 
-The other way we can set these color/opacity customizations is per-project, within the ````viewerConfigs```` section of 
-a project's ````index.json```` file. If we've also set them via ````BIMViewer.setConFigs````, then these will override 
+The other way we can set these color/opacity customizations is per-project, within the ````viewerConfigs```` section of
+a project's ````index.json```` file. If we've also set them via ````BIMViewer.setConFigs````, then these will override
 the ones set via that method.
 
-As an example, we've done this for the `OTCConferenceCenter` demo model, which otherwise has its windows opaque, which would make it hard 
-for us to navigate around that model. Therefore, we provide a custom map of colors and opacities for certain IFC types via 
+As an example, we've done this for the `OTCConferenceCenter` demo model, which otherwise has its windows opaque, which would make it hard
+for us to navigate around that model. Therefore, we provide a custom map of colors and opacities for certain IFC types via
 the ```viewerConfigs``` in the [project ````index.json```` for that model](https://github.com/xeokit/xeokit-bim-viewer/blob/master/app/data/projects/OTCConferenceCenter/index.json), as shown below.
 
 ````json
@@ -1340,7 +1349,7 @@ development of BIM and CAD visualization apps.
 
 The table below lists the main ones used in this viewer.
 
-| Component              | Purpose          | 
+| Component              | Purpose          |
 |:-----------------------|:------------------|
 | [````Viewer````](https://xeokit.github.io/xeokit-sdk/docs/class/src/viewer/Viewer.js~Viewer.html) | The WebGL-based viewer at the heart of ````BIMViewer````. |
 | [````XKTLoaderPlugin````](https://xeokit.github.io/xeokit-sdk/docs/class/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js~XKTLoaderPlugin.html)  | Loads model geometry and metadata. |
