@@ -2,6 +2,13 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.6.1](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.6.0...v2.6.1) (2025-03-07)
+
+
+### Bug Fixes
+
+* Overlapping Properties ([309cf37](https://github.com/xeokit/xeokit-bim-viewer/commit/309cf3751ebe64c7ec2ff93a38a6f3ccac0b78ee))
+
 ## [2.6.0](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.2-beta-7...v2.6.0) (2025-03-06)
 
 
