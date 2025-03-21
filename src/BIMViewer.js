@@ -188,7 +188,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} [cfg.enableMeasurements=true] Set ````true```` to enable distance and angle measurements with the BIMViewer.
      * @param {Boolean} [cfg.keyboardEventsElement] Optional reference to HTML element on which key events should be handled. Defaults to the HTML Document.
      */
-    constructor(server, cfg = {}) {
+    constructor(server, cfg = {}, rootDOMNode = document) {
 
         if (!cfg.canvasElement) {
             throw "Config expected: canvasElement";
@@ -250,6 +250,7 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
+        this.rootDOMNode = rootDOMNode;
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
@@ -271,7 +272,7 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
 
         explorerElement.innerHTML = createExplorerTemplate(cfg);
-        toolbarElement.innerHTML = createToolbarTemplate({enableMeasurements: this._enableMeasurements});
+        toolbarElement.innerHTML = createToolbarTemplate({ enableMeasurements: this._enableMeasurements });
         if (this._enablePropertiesInspector) {
             inspectorElement.innerHTML = createInspectorTemplate();
         }
@@ -292,7 +293,7 @@ class BIMViewer extends Controller {
             addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
             modelsElement: explorerElement.querySelector(".xeokit-models"),
             enableEditModels: this._enableAddModels
-        });
+        }, this.rootDOMNode);
 
         this._objectsExplorer = new ObjectsExplorer(this, {
             enableMeasurements: this._enableMeasurements,
@@ -300,7 +301,7 @@ class BIMViewer extends Controller {
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
             objectsElement: explorerElement.querySelector(".xeokit-objects")
-        });
+        }, this.rootDOMNode);
 
         this._classesExplorer = new ClassesExplorer(this, {
             enableMeasurements: this._enableMeasurements,
@@ -308,7 +309,7 @@ class BIMViewer extends Controller {
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
             classesElement: explorerElement.querySelector(".xeokit-classes")
-        });
+        }, this.rootDOMNode);
 
         this._storeysExplorer = new StoreysExplorer(this, {
             enableMeasurements: this._enableMeasurements,
@@ -316,7 +317,7 @@ class BIMViewer extends Controller {
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys")
-        });
+        }, this.rootDOMNode);
 
         if (this._enablePropertiesInspector) {
             this._propertiesInspector = new PropertiesInspector(this, {
@@ -465,7 +466,7 @@ class BIMViewer extends Controller {
             this._marqueeSelectionTool,
             this._sectionTool,
             this._enableMeasurements ? this._measureDistanceTool : null,
-            this._enableMeasurements ? this._measureAngleTool: null
+            this._enableMeasurements ? this._measureAngleTool : null
         ]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {

@@ -40,7 +40,7 @@ class BIMViewerDataSource {
 /** @private */
 class ModelsExplorer extends Controller {
 
-    constructor(parent, cfg) {
+    constructor(parent, cfg, rootDOMNode = document) {
 
         super(parent, cfg);
 
@@ -56,6 +56,7 @@ class ModelsExplorer extends Controller {
             throw "Missing config: modelsElement";
         }
 
+        this.rootDOMNode = rootDOMNode;
         this._enableAddModels = !!cfg.enableEditModels;
         this._modelsTabElement = cfg.modelsTabElement;
         this._loadModelsButtonElement = cfg.loadModelsButtonElement;
@@ -140,8 +141,8 @@ class ModelsExplorer extends Controller {
         for (let i = 0, len = modelsInfo.length; i < len; i++) {
             const modelInfo = modelsInfo[i];
             const modelId = modelInfo.id;
-            const checkBox = document.getElementById("" + modelId);
-            const span = document.getElementById("span-" + modelId);
+            const checkBox = this.rootDOMNode.getElementById("" + modelId);
+            const span = this.rootDOMNode.getElementById("span-" + modelId);
             checkBox.addEventListener("click", () => {
                 if (checkBox.checked) {
                     this.loadModel(modelId);
@@ -280,8 +281,8 @@ class ModelsExplorer extends Controller {
 
         if (externalMetadata && !modelInfo.manifest) {
             this.server.getMetadata(this._projectId, modelId, (json) => {
-                    this._loadGeometry(modelId, modelInfo, json, done, error);
-                },
+                this._loadGeometry(modelId, modelInfo, json, done, error);
+            },
                 (errMsg) => {
                     this.bimViewer._busyModal.hide();
                     this.error(errMsg);
@@ -297,7 +298,7 @@ class ModelsExplorer extends Controller {
     _loadGeometry(modelId, modelInfo, json, done, error) {
 
         const modelLoaded = () => {
-            const checkbox = document.getElementById("" + modelId);
+            const checkbox = this.rootDOMNode.getElementById("" + modelId);
             checkbox.checked = true;
             this._numModelsLoaded++;
             this._unloadModelsButtonElement.classList.remove("disabled");
@@ -363,25 +364,25 @@ class ModelsExplorer extends Controller {
             // Uses the BIMViewer's Server strategy directly
 
             this.server.getGeometry(this._projectId, modelId, (arraybuffer) => {
-                    const model = this._xktLoader.load({
-                        id: modelId,
-                        metaModelData: json,
-                        xkt: arraybuffer,
-                        excludeUnclassifiedObjects: true,
-                        origin: modelInfo.origin || modelInfo.position,
-                        scale: modelInfo.scale,
-                        rotation: modelInfo.rotation,
-                        matrix: modelInfo.matrix,
-                        edges: (modelInfo.edges !== false),
-                        saoEnabled: modelInfo.saoEnabled,
-                        pbrEnabled: modelInfo.pbrEnabled,
-                        backfaces: modelInfo.backfaces,
-                        globalizeObjectIds: modelInfo.globalizeObjectIds,
-                        reuseGeometries: (modelInfo.reuseGeometries !== false)
-                    });
-                    model.on("loaded", modelLoaded);
-                    model.on("error", loadError);
-                }, loadError);
+                const model = this._xktLoader.load({
+                    id: modelId,
+                    metaModelData: json,
+                    xkt: arraybuffer,
+                    excludeUnclassifiedObjects: true,
+                    origin: modelInfo.origin || modelInfo.position,
+                    scale: modelInfo.scale,
+                    rotation: modelInfo.rotation,
+                    matrix: modelInfo.matrix,
+                    edges: (modelInfo.edges !== false),
+                    saoEnabled: modelInfo.saoEnabled,
+                    pbrEnabled: modelInfo.pbrEnabled,
+                    backfaces: modelInfo.backfaces,
+                    globalizeObjectIds: modelInfo.globalizeObjectIds,
+                    reuseGeometries: (modelInfo.reuseGeometries !== false)
+                });
+                model.on("loaded", modelLoaded);
+                model.on("error", loadError);
+            }, loadError);
         }
     }
 
@@ -413,9 +414,9 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const checkbox = document.getElementById("" + modelId);
+        const checkbox = this.rootDOMNode.getElementById("" + modelId);
         checkbox.checked = false;
-        const span = document.getElementById("span-" + modelId);
+        const span = this.rootDOMNode.getElementById("span-" + modelId);
         this._numModelsLoaded--;
         if (this._numModelsLoaded > 0) {
             this._unloadModelsButtonElement.classList.remove("disabled");
