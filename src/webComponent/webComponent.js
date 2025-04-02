@@ -275,6 +275,15 @@ class BimViewerWebComponent extends HTMLElement {
         this.shadowRoot.innerHTML = innerHtml;
     }
 
+    /**
+     * Register a custom HTMLElement.
+     *
+     * @param {String} name Element's name, defaults to 'xeokit-bim-viewer', must be lowercase and contain at least one hyphen.
+    */
+    static register(name = "xeokit-bim-viewer") {
+        customElements.define(name, this);
+    }
+
     connectedCallback() {
         const requestParams = this.getRequestParams();
         const projectId = requestParams.projectId;
