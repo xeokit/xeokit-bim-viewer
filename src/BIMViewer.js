@@ -187,8 +187,9 @@ class BIMViewer extends Controller {
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
      * @param {Boolean} [cfg.enableMeasurements=true] Set ````true```` to enable distance and angle measurements with the BIMViewer.
      * @param {Boolean} [cfg.keyboardEventsElement] Optional reference to HTML element on which key events should be handled. Defaults to the HTML Document.
+     * @param {Node | undefined} [cfg.containerElement] Optional reference of an existing DOM Node (e.g. ShadowRoot), which encapsulates all HTML elements related to viewer plugins, defaults to ````document.body````. 
      */
-    constructor(server, cfg = {}, rootDOMNode = document) {
+    constructor(server, cfg = {}) {
 
         if (!cfg.canvasElement) {
             throw "Config expected: canvasElement";
@@ -250,7 +251,7 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
-        this.rootDOMNode = rootDOMNode;
+        this._containerElement = cfg.containerElemet || document.body;
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
@@ -292,32 +293,36 @@ class BIMViewer extends Controller {
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
             addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
             modelsElement: explorerElement.querySelector(".xeokit-models"),
-            enableEditModels: this._enableAddModels
-        }, this.rootDOMNode);
+            enableEditModels: this._enableAddModels,
+            containerElement: this._explorerElement
+        });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
             enableMeasurements: this._enableMeasurements,
             objectsTabElement: explorerElement.querySelector(".xeokit-objectsTab"),
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
-            objectsElement: explorerElement.querySelector(".xeokit-objects")
-        }, this.rootDOMNode);
+            objectsElement: explorerElement.querySelector(".xeokit-objects"),
+            containerElement: this._explorerElement
+        });
 
         this._classesExplorer = new ClassesExplorer(this, {
             enableMeasurements: this._enableMeasurements,
             classesTabElement: explorerElement.querySelector(".xeokit-classesTab"),
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
-            classesElement: explorerElement.querySelector(".xeokit-classes")
-        }, this.rootDOMNode);
+            classesElement: explorerElement.querySelector(".xeokit-classes"),
+            containerElement: this._explorerElement
+        });
 
         this._storeysExplorer = new StoreysExplorer(this, {
             enableMeasurements: this._enableMeasurements,
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
-            storeysElement: explorerElement.querySelector(".xeokit-storeys")
-        }, this.rootDOMNode);
+            storeysElement: explorerElement.querySelector(".xeokit-storeys"),
+            containerElement: this._explorerElement
+        });
 
         if (this._enablePropertiesInspector) {
             this._propertiesInspector = new PropertiesInspector(this, {
@@ -628,11 +633,13 @@ class BIMViewer extends Controller {
 
         this._canvasContextMenu = new CanvasContextMenu(this, {
             hideOnAction: true,
-            enableMeasurements: this._enableMeasurements
+            enableMeasurements: this._enableMeasurements,
+            parentNode: this._container
         });
         this._objectContextMenu = new ObjectContextMenu(this, {
             hideOnAction: true,
-            enableMeasurements: this._enableMeasurements
+            enableMeasurements: this._enableMeasurements,
+            parentNode: this._container
         });
 
         const getCanvasPosFromEvent = function (event) {

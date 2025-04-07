@@ -1,5 +1,37 @@
 import { BIMViewer } from '../../src/BIMViewer.js';
 import { Server } from '../../src/server/Server.js';
+import faRegularWoff from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2';
+import faSolidWoff from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2';
+import faRegularTtf from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf';
+import faSolidTtf from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf';
+import style from '@fortawesome/fontawesome-free/css/fontawesome.css';
+
+const headStyleinnerHtml = `
+    @font-face {
+        font-family: 'Font Awesome 6 Free';
+        font-display: block;
+        font-weight: 900;
+        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype"); 
+    }
+    @font-face {
+        font-family: 'Font Awesome 6 Free';
+        font-display: block;
+        font-weight: 400;
+        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype")
+    }; 
+    @font-face {
+        font-family: 'Font Awesome 5 Free';
+        font-display: block;
+        font-weight: 900;
+        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype"); 
+    }
+    @font-face {
+        font-family: 'Font Awesome 5 Free';
+        font-display: block;
+        font-weight: 400;
+        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype")
+    }; 
+`
 
 const innerHtml = `
     <input type="checkbox" id="explorer_toggle" />
@@ -18,33 +50,24 @@ const innerHtml = `
     </div>
     <link
       rel="stylesheet"
-      href="./app/lib/fontawesome-free-5.11.2-web/css/all.min.css"
-      type="text/css"
-    />
-    <link
-      rel="stylesheet"
       href="./xeokit-bim-viewer.css"
       type="text/css"
     />
-    <style>
-        xeokit-bim-viewer {
-            width: 100vw;
-            height: 100vh;
-        }
+    <style type="text/css">
+        ${style}
 
-        html,
-        body {
+        :host {
+            display: block;
+            position: relative;
+            width: 100%;
             height: 100%;
-            background: #f2f2f2;
-            touch-action: none;
-        }
-
-        body {
             font-family: "Roboto", sans-serif;
             font-size: 14px;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             margin: 0;
+            overflow: hidden;
+            background: #f2f2f2;
             overflow: hidden;
         }
 
@@ -64,6 +87,7 @@ const innerHtml = `
         }
 
         :host #myToolbar {
+            font-family: 'Font Awesome 6 Free';
             min-width: 400px;
             top: 0;
             align-items: center;
@@ -71,7 +95,7 @@ const innerHtml = `
             padding: 0;
             z-index: 100000;
             pointer-events: none;
-            position: fixed;
+            position: absolute;
             left: 95px;
             transition: all 300ms ease-in-out;
         }
@@ -96,7 +120,7 @@ const innerHtml = `
         }
 
         :host #myExplorer {
-            position: fixed;
+            position: absolute;
             height: 100%;
             color: #fff;
             background: #03103f;
@@ -291,7 +315,9 @@ class BimViewerWebComponent extends HTMLElement {
         if (!projectId) {
             return;
         }
-
+        const style = document.createElement('style');
+        style.innerHTML = headStyleinnerHtml;
+        document.getElementsByTagName('head')[0].appendChild(style);
         const openExplorer = requestParams.openExplorer;
         this.setExplorerOpen(openExplorer === "true");
 
@@ -310,8 +336,9 @@ class BimViewerWebComponent extends HTMLElement {
             inspectorElement: this.shadowRoot.getElementById("myInspector"), // Right panel
             navCubeCanvasElement: this.shadowRoot.getElementById("myNavCubeCanvas"),
             busyModelBackdropElement: this.shadowRoot.getElementById("myViewer"),
-            enableEditModels: enableEditModels
-        }, this.shadowRoot);
+            enableEditModels: enableEditModels,
+            containerElement: this.shadowRoot
+        });
 
         bimViewer.setConfigs({
             "showSpaces": false, // Default

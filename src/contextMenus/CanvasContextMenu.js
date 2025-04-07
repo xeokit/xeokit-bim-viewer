@@ -189,7 +189,8 @@ class CanvasContextMenu extends ContextMenu {
                         ]
                     }
                 ] : []
-            ]
+            ],
+            parentNode: cfg.parentNode
         });
     }
 }

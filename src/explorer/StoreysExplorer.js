@@ -27,6 +27,7 @@ class StoreysExplorer extends Controller {
             throw "Missing config: storeysElement";
         }
 
+        this._containerElement = cfg.containerElement;
         this._storeysTabElement = cfg.storeysTabElement;
         this._showAllStoreysButtonElement = cfg.showAllStoreysButtonElement;
         this._hideAllStoreysButtonElement = cfg.hideAllStoreysButtonElement;
@@ -47,7 +48,8 @@ class StoreysExplorer extends Controller {
 
         this._treeViewContextMenu = new TreeViewContextMenu(this.bimViewer, {
             hideOnAction: true,
-            enableMeasurements: cfg.enableMeasurements
+            enableMeasurements: cfg.enableMeasurements,
+            parentNode: cfg.containerElement
         });
 
         this._treeView.on("contextmenu", (e) => {

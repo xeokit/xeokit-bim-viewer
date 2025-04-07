@@ -25,6 +25,7 @@ class ClassesExplorer extends Controller {
             throw "Missing config: classesElement";
         }
 
+        this._containerElement = cfg.containerElement;
         this._classesTabElement = cfg.classesTabElement;
         this._showAllClassesButtonElement = cfg.showAllClassesButtonElement;
         this._hideAllClassesButtonElement = cfg.hideAllClassesButtonElement;
@@ -45,7 +46,8 @@ class ClassesExplorer extends Controller {
 
         this._treeViewContextMenu = new TreeViewContextMenu(this.bimViewer, {
             hideOnAction: true,
-            enableMeasurements: cfg.enableMeasurements
+            enableMeasurements: cfg.enableMeasurements,
+            parentNode: cfg.containerElement
         });
 
         this._treeView.on("contextmenu", (e) => {
