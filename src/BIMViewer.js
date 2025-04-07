@@ -251,7 +251,7 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
-        this._containerElement = cfg.containerElemet || document.body;
+        this._containerElement = cfg.containerElement || document.body;
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
@@ -634,12 +634,12 @@ class BIMViewer extends Controller {
         this._canvasContextMenu = new CanvasContextMenu(this, {
             hideOnAction: true,
             enableMeasurements: this._enableMeasurements,
-            parentNode: this._container
+            parentNode: this._containerElement
         });
         this._objectContextMenu = new ObjectContextMenu(this, {
             hideOnAction: true,
             enableMeasurements: this._enableMeasurements,
-            parentNode: this._container
+            parentNode: this._containerElement
         });
 
         const getCanvasPosFromEvent = function (event) {
