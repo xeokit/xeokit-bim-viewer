@@ -67,7 +67,7 @@
     "auto-changelog": "^2.4.0"
   },
   "dependencies": {
-    "@xeokit/xeokit-sdk": "2.6.67",
+    "@xeokit/xeokit-sdk": "2.6.68",
     "http-server": "^13.0.2"
   }
 }
