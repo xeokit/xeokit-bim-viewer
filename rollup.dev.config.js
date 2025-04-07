@@ -1,5 +1,4 @@
 import {nodeResolve} from '@rollup/plugin-node-resolve';
-import terser from "@rollup/plugin-terser";
 import css from "rollup-plugin-import-css";
 import url from "@rollup/plugin-url";
 
@@ -13,7 +12,6 @@ export default {
     plugins: [
         css(),
         nodeResolve(),
-        terser(),
         url(
             {
                 include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
