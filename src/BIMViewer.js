@@ -294,7 +294,7 @@ class BIMViewer extends Controller {
             addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
             modelsElement: explorerElement.querySelector(".xeokit-models"),
             enableEditModels: this._enableAddModels,
-            containerElement: this._explorerElement
+            containerElement: this._containerElement
         });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
@@ -303,7 +303,7 @@ class BIMViewer extends Controller {
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
             objectsElement: explorerElement.querySelector(".xeokit-objects"),
-            containerElement: this._explorerElement
+            containerElement: this._containerElement
         });
 
         this._classesExplorer = new ClassesExplorer(this, {
@@ -312,7 +312,7 @@ class BIMViewer extends Controller {
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
             classesElement: explorerElement.querySelector(".xeokit-classes"),
-            containerElement: this._explorerElement
+            containerElement: this._containerElement
         });
 
         this._storeysExplorer = new StoreysExplorer(this, {
@@ -321,7 +321,7 @@ class BIMViewer extends Controller {
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
             storeysElement: explorerElement.querySelector(".xeokit-storeys"),
-            containerElement: this._explorerElement
+            containerElement: this._containerElement
         });
 
         if (this._enablePropertiesInspector) {
