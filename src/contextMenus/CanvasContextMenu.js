@@ -143,7 +143,7 @@ class CanvasContextMenu extends ContextMenu {
                     { // Item
 
                         getTitle: (context) => {
-                            return "Measurements";
+                            return context.viewer.localeService.translate("canvasContextMenu.measurements") || "Measurements";
                         },
 
                         doAction: function (context) {
