@@ -66,9 +66,13 @@ const messages = {
             "sliceObjectsTip": "Slice objects", // Button to activate "Slice objects" tool
             "slicesMenuTip": "Slices menu", // Button to open the pull-down menu of existing section planes
             "showSpacesTip": "Show IFCSpaces", //Button to show IFC spaces
-            "numSlicesTip": "Number of existing slices" // Label shows number of sexisting section planes
+            "numSlicesTip": "Number of existing slices", // Label shows number of sexisting section planes
+            "measureDistanceTip": "Measure Distance", // **** added
+            "measureAngleTip": "Measure Angle", // **** added
+            "marqueeSelectTip": "Marquee Select" // **** added
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "View Fit Selected", // **** added
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
             "hideAll": "Hide All", // Menu option to hide all objects
             "showAll": "Show All", // Menu option to show all objects
@@ -76,7 +80,13 @@ const messages = {
             "xRayNone": "X-Ray None", // Menu option to remove X-ray effect from all objects
             "selectNone": "Select None", // Menu option to clear any currently selected objects
             "resetView": "Reset View", // Menu option to reset the view to initial state
-            "clearSlices": "Clear Slices" // Menu option to delete all section planes created with the Slice tool
+            "clearSlices": "Clear Slices", // Menu option to delete all section planes created with the Slice tool
+            "measurements": "Measure", // **** added
+            "clearMeasurements": "Clear Measurements", // **** added
+            "hideMeasurementAxisWires": "Hide Measurement Axis", // **** added
+            "showMeasurementAxisWires": "Show Measurement Axis", // **** added
+            "disableMeasurementSnapping": "Dsiable Snapping", // **** added
+            "enableMeasurementSnapping": "Enable Snapping" // **** added
         },
         "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
             "loadModel": "Load",
@@ -85,11 +95,18 @@ const messages = {
             "deleteModel": "Delete",
             "loadAllModels": "Load All",
             "unloadAllModels": "Unload All",
-            "clearSlices": "Clear Slices"
+            "clearSlices": "Clear Slices",
+            "measurements": "Measure", // **** added
+            "clearMeasurements": "Clear Measurements", // **** added
+            "hideMeasurementAxisWires": "Hide Measurement Axis", // **** added
+            "showMeasurementAxisWires": "Show Measurement Axis", // **** added
+            "disableMeasurementSnapping": "Dsiable Snapping", // **** added
+            "enableMeasurementSnapping": "Enable Snapping" // **** added
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
             "inspectProperties": "Inspect Properties", //menu option to inspect properties in the properties inspector
             "viewFit": "View Fit", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "View Fit Selected", // **** added
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
             "showInTree": "Show in Explorer", // Menu option to show the object in the Objects tab's tree
             "hide": "Hide", // Menu option to hide this object
@@ -103,11 +120,18 @@ const messages = {
             "select": "Select", // Menu option to select this object
             "undoSelect": "Undo Select", // Menu option to deselect this object
             "selectNone": "Select None", // Menu option to deselect all objects
-            "clearSlices": "Clear Slices" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Clear Slices", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Measure", // **** added
+            "clearMeasurements": "Clear Measurements", // **** added
+            "hideMeasurementAxisWires": "Hide Measurement Axis", // **** added
+            "showMeasurementAxisWires": "Show Measurement Axis", // **** added
+            "disableMeasurementSnapping": "Dsiable Snapping", // **** added
+            "enableMeasurementSnapping": "Enable Snapping" // **** added
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
             "inspectProperties": "Inspect Properties", //menu option to inspect properties in the properties inspector
             "viewFit": "View Fit", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "View Fit Selected", // **** added
             "viewFitAll": "View Fit All", // Menu option to position the camera to fit all objects in view
             "isolate": "Isolate", // Menu option to hide all other objects and fit this object in view
             "hide": "Hide", // Menu option to hide this object
@@ -124,7 +148,13 @@ const messages = {
             "select": "Select", // Menu option to select this object
             "undoSelect": "Undo Select", // Menu option to deselect this object
             "selectNone": "Select None", // Menu option to deselect all objects
-            "clearSlices": "Clear Slices" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Clear Slices", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Measure", // **** added
+            "clearMeasurements": "Clear Measurements", // **** added
+            "hideMeasurementAxisWires": "Hide Measurement Axis", // **** added
+            "showMeasurementAxisWires": "Show Measurement Axis", // **** added
+            "disableMeasurementSnapping": "Dsiable Snapping", // **** added
+            "enableMeasurementSnapping": "Enable Snapping" // **** added
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "slice": "Slice", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
@@ -199,9 +229,13 @@ const messages = {
             "sliceObjectsTip": "Objekte schneiden", // Button to activate/deactivate "Slice objects" tool
             "slicesMenuTip": "Menü Schnittebenen", // Button to open the pull-down menu of existing section planes
             "showSpacesTip": "IFC-Räume anzeigen", //Button to show IFC spaces
-            "numSlicesTip": "Anzahl der Schnittebenen" // Label shows number of existing section planes
+            "numSlicesTip": "Anzahl der Schnittebenen", // Label shows number of existing section planes
+            "measureDistanceTip": "Entfernung messen", // **** added
+            "measureAngleTip": "Winkel messen", // **** added
+            "marqueeSelectTip": "Auswahlrechteck" // **** added
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "Ausgewählte Passform anzeigen", // **** added
             "viewFitAll": "In Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "hideAll": "Alle ausblenden", // Menu option to hide all objects
             "showAll": "Alle anzeigen", // Menu option to show all objects
@@ -209,7 +243,13 @@ const messages = {
             "xRayNone": "Röntgenansicht (keine)", // Menu option to remove X-ray effect from all objects
             "selectNone": "Alle abwählen", // Menu option to clear any currently selected objects
             "resetView": "Ansicht zurücksetzen", // Menu option to reset the view to initial state
-            "clearSlices": "Schnittebenen löschen" // Menu option to delete all section planes created with the Slice tool
+            "clearSlices": "Schnittebenen löschen", // Menu option to delete all section planes created with the Slice tool
+            "measurements": "Messen", // **** added
+            "clearMeasurements": "Klare Messungen", // **** added
+            "hideMeasurementAxisWires": "Messachse ausblenden", // **** added
+            "showMeasurementAxisWires": "Messachse anzeigen", // **** added
+            "disableMeasurementSnapping": "Ausrichten deaktivieren", // **** added
+            "enableMeasurementSnapping": "Einrasten aktivieren" // **** added
         },
         "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
             "loadModel": "Laden", // Menu option to load a model
@@ -218,11 +258,18 @@ const messages = {
             "deleteModel": "Löschen", // Menu option to delete a model
             "loadAllModels": "Alle laden", // Menu option to load all available models
             "unloadAllModels": "Alle abwählen", // Menu option to unload all available models
-            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Schnittebenen löschen", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Messen", // **** added
+            "clearMeasurements": "Klare Messungen", // **** added
+            "hideMeasurementAxisWires": "Messachse ausblenden", // **** added
+            "showMeasurementAxisWires": "Messachse anzeigen", // **** added
+            "disableMeasurementSnapping": "Ausrichten deaktivieren", // **** added
+            "enableMeasurementSnapping": "Einrasten aktivieren" // **** added
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
             "inspectProperties": "Eigenschaften prüfen", //menu option to inspect properties in the properties inspector
             "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the right-clicked object in view
+            "viewFitSelection": "Ausgewählte Passform anzeigen", // **** added
             "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "showInTree": "Im Baum anzeigen", // Menu option to show the right-clicked object in the Objects tab's tree
             "hide": "Ausblenden", // Menu option to hide the right-clicked object
@@ -236,11 +283,18 @@ const messages = {
             "select": "Auswählen",  // Menu option to select the right-clicked object
             "undoSelect": "Abwählen",  // Menu option to unselect the right-clicked object
             "selectNone": "Alle abwählen", // Menu option to unselect all objects
-            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices
+            "clearSlices": "Schnittebenen löschen", // Menu option to delete all slices
+            "measurements": "Messen", // **** added
+            "clearMeasurements": "Klare Messungen", // **** added
+            "hideMeasurementAxisWires": "Messachse ausblenden", // **** added
+            "showMeasurementAxisWires": "Messachse anzeigen", // **** added
+            "disableMeasurementSnapping": "Ausrichten deaktivieren", // **** added
+            "enableMeasurementSnapping": "Einrasten aktivieren" // **** added
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
             "inspectProperties": "Eigenschaften prüfen", //menu option to inspect properties in the properties inspector
             "viewFit": "Objekt in Ansicht einpassen", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Ausgewählte Passform anzeigen", // **** added
             "viewFitAll": "Alle in Ansicht einpassen", // Menu option to position the camera to fit all objects in view
             "isolate": "Isolieren", // Menu option to hide all other objects and fit this object in view
             "hide": "Ausblenden", // Menu option to hide this object
@@ -257,7 +311,13 @@ const messages = {
             "select": "Auswählen", // Menu option to select this object
             "undoSelect": "Abwählen", // Menu option to deselect this object
             "selectNone": "Alle abwählen", // Menu option to deselect all objects
-            "clearSlices": "Schnittebenen löschen" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Schnittebenen löschen", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Messen", // **** added
+            "clearMeasurements": "Klare Messungen", // **** added
+            "hideMeasurementAxisWires": "Messachse ausblenden", // **** added
+            "showMeasurementAxisWires": "Messachse anzeigen", // **** added
+            "disableMeasurementSnapping": "Ausrichten deaktivieren", // **** added
+            "enableMeasurementSnapping": "Einrasten aktivieren" // **** added
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "slice": "Schnitte", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
@@ -332,9 +392,13 @@ const messages = {
             "sliceObjectsTip": "Coupes", // Button to activate "Slice objects" tool
             "slicesMenuTip": "Outils de coupe", // Button to open the pull-down menu of existing section planes
             "showSpacesTip": "Afficher les espaces IFC", //Button to show IFC spaces
-            "numSlicesTip": "Nombre de coupes" // Label shows number of sexisting section planes
+            "numSlicesTip": "Nombre de coupes", // Label shows number of sexisting section planes
+            "measureDistanceTip": "Mesurer la distance", // **** added
+            "measureAngleTip": "Mesurer l'angle", // **** added
+            "marqueeSelectTip": "Sélection de chapiteau" // **** added
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "Voir l'ajustement sélectionné", // **** added
             "viewFitAll": "Recadrer tout", // Menu option to position the camera to fit all objects in view
             "hideAll": "Masquer tout", // Menu option to hide all objects
             "showAll": "Afficher tout", // Menu option to show all objects
@@ -342,7 +406,13 @@ const messages = {
             "xRayNone": "X-Ray aucun", // Menu option to remove X-ray effect from all objects
             "selectNone": "Réinitialiser sélection", // Menu option to clear any currently selected objects
             "resetView": "Réinitialiser la vue", // Menu option to reset the view to initial state
-            "clearSlices": "Effacer les coupes" // Menu option to delete all section planes created with the Slice tool
+            "clearSlices": "Effacer les coupes", // Menu option to delete all section planes created with the Slice tool
+            "measurements": "Mesure", // **** added
+            "clearMeasurements": "Mesures claires", // **** added
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added
+            "showMeasurementAxisWires": "Afficher l'axe de mesure", // **** added
+            "disableMeasurementSnapping": "Désactiver l'accrochage", // **** added
+            "enableMeasurementSnapping": "Activer l'accrochage" // **** added
         },
         "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
             "loadModel": "Charger",
@@ -351,11 +421,18 @@ const messages = {
             "deleteModel": "Supprimer",
             "loadAllModels": "Tout charger",
             "unloadAllModels": "Tout retirer",
-            "clearSlices": "Effacer les coupes"
+            "clearSlices": "Effacer les coupes",
+            "measurements": "Mesure", // **** added
+            "clearMeasurements": "Mesures claires", // **** added
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added
+            "showMeasurementAxisWires": "Afficher l'axe de mesure", // **** added
+            "disableMeasurementSnapping": "Désactiver l'accrochage", // **** added
+            "enableMeasurementSnapping": "Activer l'accrochage" // **** added
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
             "inspectProperties": "Inspecter les propriétés", //menu option to inspect properties in the properties inspector
             "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Voir l'ajustement sélectionné", // **** added
             "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
             "showInTree": "Afficher arborescence", // Menu option to show the object in the Objects tab's tree
             "hide": "Masquer", // Menu option to hide this object
@@ -369,11 +446,18 @@ const messages = {
             "select": "Sélectionner", // Menu option to select this object
             "undoSelect": "Annuler sélection", // Menu option to deselect this object
             "selectNone": "Réinitialiser sélection", // Menu option to deselect all objects
-            "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Effacer les coupes", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Mesure", // **** added
+            "clearMeasurements": "Mesures claires", // **** added
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added
+            "showMeasurementAxisWires": "Afficher l'axe de mesure", // **** added
+            "disableMeasurementSnapping": "Désactiver l'accrochage", // **** added
+            "enableMeasurementSnapping": "Activer l'accrochage" // **** added
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
             "inspectProperties": "Inspecter les propriétés", //menu option to inspect properties in the properties inspector
             "viewFit": "Recadrer objet", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Voir l'ajustement sélectionné", // **** added
             "viewFitAll": "Recadrer la vue", // Menu option to position the camera to fit all objects in view
             "isolate": "Isoler", // Menu option to hide all other objects and fit this object in view
             "hide": "Masquer", // Menu option to hide this object
@@ -390,7 +474,12 @@ const messages = {
             "select": "Sélectionner", // Menu option to select this object
             "undoSelect": "Annuler sélection", // Menu option to deselect this object
             "selectNone": "Réinitialiser sélection", // Menu option to deselect all objects
-            "clearSlices": "Effacer les coupes" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Effacer les coupes", // Menu option to delete all slices made with the Slicing tool
+            "clearMeasurements": "Mesures claires", // **** added
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added
+            "showMeasurementAxisWires": "Afficher l'axe de mesure", // **** added
+            "disableMeasurementSnapping": "Désactiver l'accrochage", // **** added
+            "enableMeasurementSnapping": "Activer l'accrochage" // **** added
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "slice": "Coupe", // Title of submenu for each slice, eg. "Slice #0, Slice #1" etc
@@ -465,9 +554,13 @@ const messages = {
             "sliceObjectsTip": "Przekroje obiektów", // Button to activate/deactivate "Slice objects" tool
             "slicesMenuTip": "Menu przekroi", // Button to open the pull-down menu of existing section planes
             "showSpacesTip": "Pokaż przestrzenie IFC", //Button to show IFC spaces
-            "numSlicesTip": "Liczba przekroi" // Label shows number of existing section planes
+            "numSlicesTip": "Liczba przekroi", // Label shows number of existing section planes
+            "measureDistanceTip": "Zmierz odległość", // **** added
+            "measureAngleTip": "Zmierz kąt", // **** added
+            "marqueeSelectTip": "Wybierz markizę" // **** added
         },
         "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "Wyświetl dopasowanie wybrane", // **** added
             "viewFitAll": "Dopasuj widok do modelu", // Menu option to position the camera to fit all objects in view
             "hideAll": "Ukryj wszystkie", // Menu option to hide all objects
             "showAll": "Pokaż wszystkie", // Menu option to show all objects
@@ -475,7 +568,13 @@ const messages = {
             "xRayNone": "Usuń prześwietlenia", // Menu option to remove X-ray effect from all objects
             "selectNone": "Usuń zaznaczenia", // Menu option to clear any currently selected objects
             "resetView": "Zresetuj widok", // Menu option to reset the view to initial state
-            "clearSlices": "Usuń przekroje" // Menu option to delete all section planes created with the Slice tool
+            "clearSlices": "Usuń przekroje", // Menu option to delete all section planes created with the Slice tool
+            "measurements": "Mierzyć", // **** added
+            "clearMeasurements": "Wyraźne pomiary", // **** added
+            "hideMeasurementAxisWires": "Ukryj oś pomiaru", // **** added
+            "showMeasurementAxisWires": "Pokaż oś pomiaru", // **** added
+            "disableMeasurementSnapping": "Wyłącz przyciąganie", // **** added
+            "enableMeasurementSnapping": "Włącz przyciąganie" // **** added
         },
         "modelsContextMenu": { // Context menu that appears when we right-click on a model in the "Models" tab
             "loadModel": "Załaduj", // Menu option to load a model
@@ -484,11 +583,18 @@ const messages = {
             "deleteModel": "Usuń", // Menu option to delete a model
             "loadAllModels": "Załaduj wszystkie", // Menu option to load all available models
             "unloadAllModels": "Zamknij wszystkie", // Menu option to unload all available models
-            "clearSlices": "Usuń przekroje" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Usuń przekroje", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Mierzyć", // **** added
+            "clearMeasurements": "Wyraźne pomiary", // **** added
+            "hideMeasurementAxisWires": "Ukryj oś pomiaru", // **** added
+            "showMeasurementAxisWires": "Pokaż oś pomiaru", // **** added
+            "disableMeasurementSnapping": "Wyłącz przyciąganie", // **** added
+            "enableMeasurementSnapping": "Włącz przyciąganie" // **** added
         },
         "objectContextMenu": { // Context menu that appears when we right-click on an object in the 3D view
             "inspectProperties": "Sprawdź właściwości", //menu option to inspect properties in the properties inspector
             "viewFit": "Dopasuj widok do obiektu", // Menu option to position the camera to fit the right-clicked object in view
+            "viewFitSelection": "Wyświetl dopasowanie wybrane", // **** added
             "viewFitAll": "Dopasuj widok do modelu", // Menu option to position the camera to fit all objects in view
             "showInTree": "Pokaż w widoku drzewa", // Menu option to show the right-clicked object in the Objects tab's tree
             "hide": "Ukryj", // Menu option to hide the right-clicked object
@@ -502,11 +608,18 @@ const messages = {
             "select": "Zaznacz",  // Menu option to select the right-clicked object
             "undoSelect": "Usuń zaznaczenie",  // Menu option to unselect the right-clicked object
             "selectNone": "Usuń wszystkie zaznaczenia", // Menu option to unselect all objects
-            "clearSlices": "Usuń przekroje" // Menu option to delete all slices
+            "clearSlices": "Usuń przekroje", // Menu option to delete all slices
+            "measurements": "Mierzyć", // **** added
+            "clearMeasurements": "Wyraźne pomiary", // **** added
+            "hideMeasurementAxisWires": "Ukryj oś pomiaru", // **** added
+            "showMeasurementAxisWires": "Pokaż oś pomiaru", // **** added
+            "disableMeasurementSnapping": "Wyłącz przyciąganie", // **** added
+            "enableMeasurementSnapping": "Włącz przyciąganie" // **** added
         },
         "treeViewContextMenu": { // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
             "inspectProperties": "Sprawdź właściwości", //menu option to inspect properties in the properties inspector
             "viewFit": "Dopasuj widok do obiektu", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Wyświetl dopasowanie wybrane", // **** added
             "viewFitAll": "Dopasuj widok do modelu", // Menu option to position the camera to fit all objects in view
             "isolate": "Wyizoluj", // Menu option to hide all other objects and fit this object in view
             "hide": "Ukryj", // Menu option to hide this object
@@ -523,7 +636,13 @@ const messages = {
             "select": "Wählen", // Menu option to select this object
             "undoSelect": "Zaznacz", // Menu option to deselect this object
             "selectNone": "Usuń wszystkie zaznaczenia", // Menu option to deselect all objects
-            "clearSlices": "Usuń przekroje" // Menu option to delete all slices made with the Slicing tool
+            "clearSlices": "Usuń przekroje", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Mierzyć", // **** added
+            "clearMeasurements": "Wyraźne pomiary", // **** added
+            "hideMeasurementAxisWires": "Ukryj oś pomiaru", // **** added
+            "showMeasurementAxisWires": "Pokaż oś pomiaru", // **** added
+            "disableMeasurementSnapping": "Wyłącz przyciąganie", // **** added
+            "enableMeasurementSnapping": "Włącz przyciąganie" // **** added
         },
         "sectionToolContextMenu": { // Context menu that appears when we right-click an the Slicing tool
             "clearSlices": "Usuń przekroje", // Menu option to delete all slices
@@ -606,9 +725,13 @@ const messages = {
             "slicesMenuTip": "Меню сечений", // Button to open the pull-down menu of existing section planes
             "showSpacesTip": "Показать места IFC", //Button to show IFC spaces
             "numSlicesTip": "Количество существующих сечений", // Label shows number of sexisting section planes
+            "measureDistanceTip": "Измерить расстояние", // **** added
+            "measureAngleTip": "Измерение угла", // **** added
+            "marqueeSelectTip": "Выбрать марку" // **** added
         },
         "canvasContextMenu": {
             // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "Посмотреть Fit Выбрано", // **** added
             "viewFitAll": "Вид включающий все", // Menu option to position the camera to fit all objects in view
             "hideAll": "Скрыть все", // Menu option to hide all objects
             "showAll": "Показать все", // Menu option to show all objects
@@ -617,6 +740,12 @@ const messages = {
             "selectNone": "Очистить выбор", // Menu option to clear any currently selected objects
             "resetView": "Сбросить вид", // Menu option to reset the view to initial state
             "clearSlices": "Очистить сечения", // Menu option to delete all section planes created with the Slice tool
+            "measurements": "Мера", // **** added
+            "clearMeasurements": "Очистить измерение", // **** added
+            "hideMeasurementAxisWires": "Скрыть ось измерения", // **** added
+            "showMeasurementAxisWires": "Показать ось измерения", // **** added
+            "disableMeasurementSnapping": "Отключить привязку", // **** added
+            "enableMeasurementSnapping": "Включить привязку" // **** added
         },
         "modelsContextMenu": {
             // Context menu that appears when we right-click on a model in the "Models" tab
@@ -627,11 +756,18 @@ const messages = {
             "loadAllModels": "Загрузить все",
             "unloadAllModels": "Выгрузить все",
             "clearSlices": "Очистить сечения",
+            "measurements": "Мера", // **** added
+            "clearMeasurements": "Очистить измерение", // **** added
+            "hideMeasurementAxisWires": "Скрыть ось измерения", // **** added
+            "showMeasurementAxisWires": "Показать ось измерения", // **** added
+            "disableMeasurementSnapping": "Отключить привязку", // **** added
+            "enableMeasurementSnapping": "Включить привязку" // **** added
         },
         "objectContextMenu": {
             // Context menu that appears when we right-click on an object in the 3D view
             "inspectProperties": "Осмотреть свойства", //menu option to inspect properties in the properties inspector
             "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Посмотреть Fit Выбрано", // **** added
             "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
             "showInTree": "Показать в навигаторе", // Menu option to show the object in the Objects tab"s tree
             "hide": "Скрыть", // Menu option to hide this object
@@ -646,11 +782,18 @@ const messages = {
             "undoSelect": "Отменить выбор", // Menu option to deselect this object
             "selectNone": "Очистить выбор", // Menu option to deselect all objects
             "clearSlices": "Очистить сечения", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Мера", // **** added
+            "clearMeasurements": "Очистить измерение", // **** added
+            "hideMeasurementAxisWires": "Скрыть ось измерения", // **** added
+            "showMeasurementAxisWires": "Показать ось измерения", // **** added
+            "disableMeasurementSnapping": "Отключить привязку", // **** added
+            "enableMeasurementSnapping": "Включить привязку" // **** added
         },
         "treeViewContextMenu": {
             // Context menu that appears when we right-click an object node in the tree within in the "Objects" tab
             "inspectProperties": "Осмотреть свойства", //menu option to inspect properties in the properties inspector
             "viewFit": "Показать весь объект", // Menu option to position the camera to fit the object in view
+            "viewFitSelection": "Посмотреть Fit Выбрано", // **** added
             "viewFitAll": "Показать все объекты", // Menu option to position the camera to fit all objects in view
             "isolate": "Изолировать", // Menu option to hide all other objects and fit this object in view
             "hide": "Скрыть", // Menu option to hide this object
@@ -668,6 +811,12 @@ const messages = {
             "undoSelect": "Отменить выбор", // Menu option to deselect this object
             "selectNone": "Очистить выбор", // Menu option to deselect all objects
             "clearSlices": "Очистить сечения", // Menu option to delete all slices made with the Slicing tool
+            "measurements": "Мера", // **** added
+            "clearMeasurements": "Очистить измерение", // **** added
+            "hideMeasurementAxisWires": "Скрыть ось измерения", // **** added
+            "showMeasurementAxisWires": "Показать ось измерения", // **** added
+            "disableMeasurementSnapping": "Отключить привязку", // **** added
+            "enableMeasurementSnapping": "Включить привязку" // **** added
         },
         "sectionToolContextMenu": {
             // Context menu that appears when we right-click an the Slicing tool
@@ -677,6 +826,169 @@ const messages = {
             "edit": "Редактировать", // Sub-menu option to edit a single slice
             "flip": "Развернуть", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Удалить", // Sub-menu option to delete a single slice
+        }
+    },
+
+    // Chinese
+
+    "ch": {
+        "busyModal": { // The dialog that appears in the center of the canvas while we are loading a model
+            "loading": "載入中"
+        },
+        "NavCube": { // The 3D navigation cube at the bottom right of the canvas
+            "front": "前",
+            "back": "後",
+            "top": "上",
+            "bottom": "下",
+            "left": "左",
+            "right": "右"
+        },
+        "modelsExplorer": { // The "Models" tab on the left of the canvas
+            "title": "模組",
+            "loadAll": "全部載入",
+            "loadAllTip": "載入專案中的所有模組",
+            "unloadAll": "全部卸載",
+            "unloadAllTip": "卸載專案中的所有模組",
+            "add": "加載",
+            "addTip": "加載模組"
+        },
+        "objectsExplorer": { // The "Objects" tab on the left of the canvas
+        "title": "物件",
+        "showAll": "全部顯示",
+        "showAllTip": "顯示所有物件",
+        "hideAll": "全部隱藏",
+        "hideAllTip": "隱藏所有物件"
+        },
+        "classesExplorer": { // The "Classes" tab on the left of the canvas
+            "title": "類別",
+            "showAll": "全部顯示",
+            "showAllTip": "顯示所有類別",
+            "hideAll": "全部隱藏",
+            "hideAllTip": "隱藏所有類別"
+        },
+        "storeysExplorer": { // The "Storeys" tab on the left of the canvas
+            "title": "樓層",
+            "showAll": "全部顯示",
+            "showAllTip": "顯示所有樓層",
+            "hideAll": "全部隱藏",
+            "hideAllTip": "隱藏所有樓層"
+        },
+        "propertiesInspector": { // The "Properties" tab on the right of the canvas
+            "title": "屬性",
+            "noObjectSelectedWarning": "未選擇物件進行檢查。右鍵點擊或長按物件並選擇「檢查屬性」以查看其屬性。",
+            "noPropSetWarning": "未找到此物件的屬性集。"
+        },
+        "toolbar": { // The toolbar at the top of the canvas
+            "toggleExplorer": "專案樹狀檢視器",
+            "toggleProperties": "物件屬性查看",
+            "resetViewTip": "重置視角",
+            "toggle2d3dTip": "切換二維/三維視角",
+            "togglePerspectiveTip": "切換透視/平行視圖",
+            "viewFitTip": "全盤視角顯示",
+            "firstPersonTip": "切換第一身漫遊模式",
+            "hideObjectsTip": "隱藏物件",
+            "selectObjectsTip": "選擇物件",
+            "queryObjectsTip": "檢查物件",
+            "sliceObjectsTip": "創建剖面",
+            "slicesMenuTip": "剖面工具",
+            "showSpacesTip": "顯示 IFCSpace 物件",
+            "numSlicesTip": "現有剖面數量",
+            "measureDistanceTip": "量度距離", // **** added
+            "measureAngleTip": "量度角度", // **** added
+            "marqueeSelectTip": "框選物件" // **** added
+        },
+        "canvasContextMenu": { // Context menu that appears when we right-click on empty canvas space
+            "viewFitSelection": "選擇集視角顯示", // **** added
+            "viewFitAll": "全盤視角顯示",
+            "hideAll": "隱藏所有",
+            "showAll": "顯示所有",
+            "xRayAll": "全盤X光顯示",
+            "xRayNone": "取消X光顯示",
+            "selectNone": "取消所有選擇",
+            "resetView": "重置視圖",
+            "clearSlices": "取消剖面",
+            "measurements": "量度", // **** added
+            "clearMeasurements": "取消量度", // **** added
+            "hideMeasurementAxisWires": "隱藏量度軸線", // **** added
+            "showMeasurementAxisWires": "顯示量度軸線", // **** added
+            "disableMeasurementSnapping": "不用邊角對準", // **** added
+            "enableMeasurementSnapping": "選用邊角對準", // **** added
+        },
+        "modelsContextMenu": {
+            "loadModel": "載入模型",
+            "unloadModel": "模型卸載",
+            "editModel": "編輯模型",
+            "deleteModel": "刪除模型",
+            "loadAllModels": "載入所有模型",
+            "unloadAllModels": "卸載所有模型",
+            "clearSlices": "取消剖面",
+            "measurements": "量度", // **** added
+            "clearMeasurements": "取消量度", // **** added
+            "hideMeasurementAxisWires": "隱藏量度軸線", // **** added
+            "showMeasurementAxisWires": "顯示量度軸線", // **** added
+            "disableMeasurementSnapping": "不用邊角對準", // **** added
+            "enableMeasurementSnapping": "選用邊角對準", // **** added
+        },
+        "objectContextMenu": {
+            "inspectProperties": "檢查屬性",
+            "viewFit": "物件視角顯示",
+            "viewFitSelection": "選擇集視角顯示", // **** added
+            "viewFitAll": "全盤物件視角顯示",
+            "showInTree": "在樹狀檢視器中顯示",
+            "hide": "隱藏",
+            "hideOthers": "隱藏其他物件",
+            "hideAll": "隱藏所有物件",
+            "showAll": "顯示所有物件",
+            "xray": "X光",
+            "xrayOthers": "對其他物件進行X光",
+            "xrayAll": "X光所有物件",
+            "xrayNone": "取消所有X光",
+            "select": "選擇",
+            "undoSelect": "取消選擇",
+            "selectNone": "取消全部選擇",
+            "clearSlices": "取消剖面",
+            "measurements": "量度", // **** added
+            "clearMeasurements": "取消量度", // **** added
+            "hideMeasurementAxisWires": "隱藏量度軸線", // **** added
+            "showMeasurementAxisWires": "顯示量度軸線", // **** added
+            "disableMeasurementSnapping": "不用邊角對準", // **** added
+            "enableMeasurementSnapping": "選用邊角對準", // **** added
+        },
+        "treeViewContextMenu": {
+            "inspectProperties": "檢查屬性",
+            "viewFit": "集中視角顯示",
+            "viewFitSelection": "選擇集視角顯示",  // **** added
+            "viewFitAll": "全盤視角顯示",
+            "isolate": "孤立",
+            "hide": "隱藏",
+            "hideOthers": "隱藏其他",
+            "hideAll": "隱藏所有",
+            "show": "顯示",
+            "showOthers": "隱藏選項並顯示其他",
+            "showAll": "顯示所有",
+            "xray": "X光",
+            "undoXray": "取消X光",
+            "xrayOthers": "對其他物件進行X光",
+            "xrayAll": "X光所有",
+            "xrayNone": "取消所有X光",
+            "select": "選擇",
+            "undoSelect": "取消選擇",
+            "selectNone": "取消全部選擇",
+            "clearSlices": "取消剖面",
+            "measurements": "量度", // **** added
+            "clearMeasurements": "取消量度", // **** added
+            "hideMeasurementAxisWires": "隱藏量度軸線", // **** added
+            "showMeasurementAxisWires": "顯示量度軸線", // **** added
+            "disableMeasurementSnapping": "不用邊角對準", // **** added
+            "enableMeasurementSnapping": "選用邊角對準", // **** added
+        },
+        "sectionToolContextMenu": {
+            "slice": "剖面",
+            "clearSlices": "清除剖面",
+            "flipSlices": "翻轉剖面",
+            "edit": "編輯",
+            "flip": "翻轉",
+            "delete": "刪除"
         }
     }
 };

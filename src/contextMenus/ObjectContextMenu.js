@@ -65,7 +65,7 @@ class ObjectContextMenu extends ContextMenu {
             },
             {
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("canvasContextMenu.viewFitSelection") || "View Fit Selected";
+                    return context.viewer.localeService.translate("objectContextMenu.viewFitSelection") || "View Fit Selected";
                 },
                 getEnabled: (context) => {
                     return (context.viewer.scene.numSelectedObjects > 0);
@@ -101,7 +101,7 @@ class ObjectContextMenu extends ContextMenu {
         if (enableMeasurements) {
             measurementItems.push(...[{
                 getTitle: (context) => {
-                    return context.viewer.localeService.translate("canvasContextMenu.measurements") || "Measurements";
+                    return context.viewer.localeService.translate("objectContextMenu.measurements") || "Measurements";
                 },
                 doAction: function (context) {
                     // Does nothing
@@ -109,7 +109,7 @@ class ObjectContextMenu extends ContextMenu {
                 items: [ // Sub-menu
                     [{
                         getTitle: (context) => {
-                            return context.viewer.localeService.translate("canvasContextMenu.clearMeasurements") || "Clear";
+                            return context.viewer.localeService.translate("objectContextMenu.clearMeasurements") || "Clear";
                         }, getEnabled: (context) => {
                             return (context.bimViewer.getNumMeasurements() > 0);
                         }, doAction: (context) => {
@@ -117,7 +117,7 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     }, {
                         getTitle: (context) => {
-                            return context.bimViewer.getMeasurementsAxisVisible() ? context.viewer.localeService.translate("canvasContextMenu.hideMeasurementAxisWires") || "Hide Axis Wires" : context.viewer.localeService.translate("canvasContextMenu.showMeasurementAxisWires") || "Show Axis Wires"
+                            return context.bimViewer.getMeasurementsAxisVisible() ? context.viewer.localeService.translate("objectContextMenu.hideMeasurementAxisWires") || "Hide Axis Wires" : context.viewer.localeService.translate("objectContextMenu.showMeasurementAxisWires") || "Show Axis Wires"
                         }, getEnabled: (context) => {
                             return (context.bimViewer.getNumMeasurements() > 0);
                         }, doAction: (context) => {
@@ -125,7 +125,7 @@ class ObjectContextMenu extends ContextMenu {
                         }
                     }, {
                         getTitle: (context) => {
-                            return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate("canvasContextMenu.disableMeasurementSnapping") || "Disable Snapping" : context.viewer.localeService.translate("canvasContextMenu.enableMeasurementSnapping") || "Enable Snapping"
+                            return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate("objectContextMenu.disableMeasurementSnapping") || "Disable Snapping" : context.viewer.localeService.translate("objectContextMenu.enableMeasurementSnapping") || "Enable Snapping"
                         }, getEnabled: (context) => {
                             return (context.bimViewer.getNumMeasurements() > 0);
                         }, doAction: (context) => {
