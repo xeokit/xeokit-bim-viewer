@@ -135,14 +135,14 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
             html += "<div class='xeokit-form-check'>";
-            html += "<input id='" + modelInfo.id + "' type='checkbox' value=''><span id='span-" + modelInfo.id + "' class='disabled'>" + modelInfo.name + "</span>";
+            html += "<input id='input-" + modelInfo.id + "' type='checkbox' value=''><span id='span-" + modelInfo.id + "' class='disabled'>" + modelInfo.name + "</span>";
             html += "</div>";
         }
         this._modelsElement.innerHTML = html;
         for (let i = 0, len = modelsInfo.length; i < len; i++) {
             const modelInfo = modelsInfo[i];
             const modelId = modelInfo.id;
-            const checkBox = this._containerElement.querySelector("#" + modelId);
+            const checkBox = this._containerElement.querySelector("#input-" + modelId);
             const span = this._containerElement.querySelector("#span-" + modelId);
             checkBox.addEventListener("click", () => {
                 if (checkBox.checked) {
@@ -299,7 +299,7 @@ class ModelsExplorer extends Controller {
     _loadGeometry(modelId, modelInfo, json, done, error) {
 
         const modelLoaded = () => {
-            const checkbox = this._containerElement.querySelector("#" + modelId);
+            const checkbox = this._containerElement.querySelector("#input-" + modelId);
             checkbox.checked = true;
             this._numModelsLoaded++;
             this._unloadModelsButtonElement.classList.remove("disabled");
@@ -415,7 +415,7 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const checkbox = this._containerElement.querySelector("#" + modelId);
+        const checkbox = this._containerElement.querySelector("#input-" + modelId);
         checkbox.checked = false;
         const span = this._containerElement.querySelector("#span-" + modelId);
         this._numModelsLoaded--;
