@@ -417,7 +417,8 @@ class BIMViewer extends Controller {
             counterElement: toolbarElement.querySelector(".xeokit-section-counter"),
             menuButtonElement: toolbarElement.querySelector(".xeokit-section-menu-button"),
             menuButtonArrowElement: toolbarElement.querySelector(".xeokit-section-menu-button-arrow"),
-            active: false
+            active: false,
+            containerElement: this._containerElement
         });
 
         if (this._enableMeasurements) {
