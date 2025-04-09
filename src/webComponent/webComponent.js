@@ -48,6 +48,7 @@ const innerHtml = `
         <canvas id="myCanvas"></canvas>
         <canvas id="myNavCubeCanvas"></canvas>
     </div>
+    <div class="xeokit-marker"></div>
     <link
       rel="stylesheet"
       href="./xeokit-bim-viewer.css"
@@ -288,6 +289,24 @@ const innerHtml = `
             right: 0;
             width: calc(100% - var(--left));
         }
+
+        :host .xeokit-camera-pivot-marker {
+            display: none !important;
+        }
+
+        :host .xeokit-marker {
+            color: #ffffff;
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 100%;
+            border: 1px solid #ebebeb;
+            background: #444444;
+            box-shadow: 3px 3px 5px 1px #212529;
+            z-index: 10000;
+            pointer-events: none;
+            display: none;
+        }
     </style>
 `
 
@@ -395,7 +414,7 @@ class BimViewerWebComponent extends HTMLElement {
             });
 
 
-
+        this.handlePivot();
         window.bimViewer = bimViewer;
     }
 
@@ -500,6 +519,25 @@ class BimViewerWebComponent extends HTMLElement {
             }
         }, 400);
     }
+
+    handlePivot() {
+        const pivot = this.shadowRoot.querySelector(".xeokit-marker");
+        const canvas = this.shadowRoot.querySelector("#myCanvas");
+        const onMouseMove = () => {
+            pivot.style.display = "block";
+        };
+        
+        canvas.addEventListener("mousedown", (e) => {
+            pivot.style.left = `${e.pageX - this.shadowRoot.host.getBoundingClientRect().left}px`;
+            pivot.style.top = `${e.pageY - this.shadowRoot.host.getBoundingClientRect().top}px`;
+            canvas.addEventListener("mousemove", onMouseMove);
+        });
+
+        document.addEventListener("mouseup", () => {
+            pivot.style.display = "none";
+            canvas.removeEventListener("mousemove", onMouseMove);
+        });
+    };
 }
 
 export default BimViewerWebComponent;

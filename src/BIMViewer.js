@@ -613,7 +613,7 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.dollyProximityThreshold = 30.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
-        document.body.appendChild(cameraPivotElement);
+        this._containerElement.appendChild(cameraPivotElement);
         this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
         scene.camera.perspective.near = 0.01;
