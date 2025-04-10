@@ -163,6 +163,14 @@ const messages = {
             "edit": "Edit", // Sub-menu option to edit a single slice
             "flip": "Flip", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Delete" // Sub-menu option to delete a single slice
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "Hide Measurement Axis", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "Show Measurement Axis", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "Hide Measurement Labels", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "Show Measurement Labels", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "Clear Measurements" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     },
 
@@ -326,6 +334,14 @@ const messages = {
             "edit": "Bearbeiten", // Sub-menu option to edit a single slice
             "flip": "Umdrehen", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Löschen" // Sub-menu option to delete a single slice
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "Messachse ausblenden", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "Messachse anzeigen", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "Messbeschriftungen ausblenden", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "Maßbeschriftungen anzeigen", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "Klare Messungen" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     },
 
@@ -488,6 +504,14 @@ const messages = {
             "edit": "Editer", // Sub-menu option to edit a single slice
             "flip": "Inverser", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Supprimer" // Sub-menu option to delete a single slice
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "Afficher l'axe de mesure", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "Masquer les étiquettes de mesure", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "Afficher les étiquettes de mesure", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "Mesures claires" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     },
 
@@ -650,6 +674,14 @@ const messages = {
             "edit": "Edytuj", // Sub-menu option to edit a single slice
             "flip": "Obróć", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Usuń" // Sub-menu option to delete a single slice
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "Masquer l'axe de mesure", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "Pokaż oś pomiaru", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "Ukryj etykiety pomiarowe", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "Pokaż etykiety pomiarowe", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "Wyraźne pomiary" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     },
 
@@ -826,6 +858,14 @@ const messages = {
             "edit": "Редактировать", // Sub-menu option to edit a single slice
             "flip": "Развернуть", // Sub-menu option to reverse the cutting direction of a single slice
             "delete": "Удалить", // Sub-menu option to delete a single slice
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "Скрыть ось измерения", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "Показать ось измерения", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "Скрыть метки измерений", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "Показать метки измерений", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "Очистить измерение" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     },
 
@@ -989,6 +1029,14 @@ const messages = {
             "edit": "編輯",
             "flip": "翻轉",
             "delete": "刪除"
+        },
+
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "隱藏量度軸線", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementAxisWires": "顯示量度軸線", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "hideMeasurementLabels": "隱藏量度", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "showMeasurementLabels": "顯示量度", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
+            "clearMeasurements": "刪除量度" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
     }
 };

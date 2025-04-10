@@ -19,7 +19,7 @@ export class MeasureAngleTool extends Controller {
                 [
                     {
                         getTitle: (context) => {
-                            return context.measurement.labelsVisible ? "Hide Measurement Label" : "Show Measurement Label";
+                            return context.measurement.labelsVisible ? (this.viewer.localeService.translate("measureContextMenu.hideMeasurementLabels") || "Hide Measurement Labels") : (this.viewer.localeService.translate("measureContextMenu.showMeasurementLabels") || "Show Measurement Labels");
                         },
                         doAction: function (context) {
                             context.measurement.labelsVisible = !context.measurement.labelsVisible;
@@ -27,7 +27,9 @@ export class MeasureAngleTool extends Controller {
                     }
                 ], [
                     {
-                        title: "Delete Measurement",
+                        getTitle: (context) => {
+                            return this.viewer.localeService.translate("measureContextMenu.clearMeasurements") || "Clear Measurements";
+                        },
                         doAction: function (context) {
                             context.measurement.destroy();
                         }

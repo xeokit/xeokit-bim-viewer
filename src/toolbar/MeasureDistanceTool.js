@@ -19,7 +19,7 @@ export class MeasureDistanceTool extends Controller {
                 [
                     {
                         getTitle: (context) => {
-                            return context.measurement.axisVisible ? "Hide Measurement Axis" : "Show Measurement Axis";
+                            return context.measurement.axisVisible ? (this.viewer.localeService.translate("measureContextMenu.hideMeasurementAxisWires") || "Hide Measurement Axis") : (this.viewer.localeService.translate("measureContextMenu.showMeasurementAxisWires") || "Show Measurement Axis");
                         },
                         doAction: function (context) {
                             context.measurement.axisVisible = !context.measurement.axisVisible;
@@ -27,7 +27,7 @@ export class MeasureDistanceTool extends Controller {
                     },
                     {
                         getTitle: (context) => {
-                            return context.measurement.labelsVisible ? "Hide Measurement Labels" : "Show Measurement Labels";
+                            return context.measurement.labelsVisible ? (this.viewer.localeService.translate("measureContextMenu.hideMeasurementLabels") || "Hide Measurement Labels") : (this.viewer.localeService.translate("measureContextMenu.showMeasurementLabels") || "Show Measurement Labels");
                         },
                         doAction: function (context) {
                             context.measurement.labelsVisible = !context.measurement.labelsVisible;
@@ -35,7 +35,9 @@ export class MeasureDistanceTool extends Controller {
                     }
                 ], [
                     {
-                        title: "Delete Measurement",
+                        getTitle: (context) => {
+                            return this.viewer.localeService.translate("measureContextMenu.clearMeasurements") || "Clear Measurements";
+                        },
                         doAction: function (context) {
                             context.measurement.destroy();
                         }
