@@ -92,7 +92,7 @@ class SectionTool extends Controller { // XX
 
                     const rect = this._menuButtonElement.getBoundingClientRect();
 
-                    this._sectionToolContextMenu.show(rect.left, rect.bottom + window.scrollY + 5);
+                    this._sectionToolContextMenu.show(rect.left + scrollX, rect.bottom + window.scrollY + 5);
                 }
                 return;
             }
