@@ -519,7 +519,7 @@ class BimViewerWebComponent extends HTMLElement {
             }
         }, 400);
     }
-
+    //temporary workaround
     handlePivot() {
         const pivot = this.shadowRoot.querySelector(".xeokit-marker");
         const canvas = this.shadowRoot.querySelector("#myCanvas");
@@ -528,8 +528,8 @@ class BimViewerWebComponent extends HTMLElement {
         };
         
         canvas.addEventListener("mousedown", (e) => {
-            pivot.style.left = `${e.pageX - this.shadowRoot.host.getBoundingClientRect().left}px`;
-            pivot.style.top = `${e.pageY - this.shadowRoot.host.getBoundingClientRect().top}px`;
+            pivot.style.left = `${e.pageX - this.shadowRoot.host.getBoundingClientRect().left - window.scrollX}px`;
+            pivot.style.top = `${e.pageY - this.shadowRoot.host.getBoundingClientRect().top - window.scrollY}px`;
             canvas.addEventListener("mousemove", onMouseMove);
         });
 
