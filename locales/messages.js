@@ -1038,6 +1038,176 @@ const messages = {
             "showMeasurementLabels": "顯示量度", // **** added & previous bug fixed in zeokit-bim-viewer.es.js
             "clearMeasurements": "刪除量度" // **** added & previous bug fixed in zeokit-bim-viewer.es.js
         }
+    },
+
+    // Simplified Chinese
+
+    "cn": {
+        "busyModal": {
+            "loading": "加载中"
+        },
+        "NavCube": {
+            "front": "前",
+            "back": "后",
+            "top": "上",
+            "bottom": "下",
+            "left": "左",
+            "right": "右"
+        },
+        "modelsExplorer": {
+            "title": "模組",
+            "loadAll": "全部加载",
+            "loadAllTip": "加载项目中的所有模組",
+            "unloadAll": "全部卸载",
+            "unloadAllTip": "卸载项目中的所有模組",
+            "add": "加载",
+            "addTip": "加载模組"
+        },
+        "objectsExplorer": {
+            "title": "物件",
+            "showAll": "全部显示",
+            "showAllTip": "显示所有物件",
+            "hideAll": "全部隐藏",
+            "hideAllTip": "隐藏所有物件"
+        },
+        "classesExplorer": {
+            "title": "类别",
+            "showAll": "全部显示",
+            "showAllTip": "显示所有类别",
+            "hideAll": "全部隐藏",
+            "hideAllTip": "隐藏所有类别"
+        },
+        "storeysExplorer": {
+            "title": "楼层",
+            "showAll": "全部显示",
+            "showAllTip": "显示所有楼层",
+            "hideAll": "全部隐藏",
+            "hideAllTip": "隐藏所有楼层"
+        },
+        "propertiesInspector": {
+            "title": "属性",
+            "noObjectSelectedWarning": "未选择物件进行检查。右键点击或长按物件并选择“检查属性”以查看其属性。",
+            "noPropSetWarning": "未找到此物件的属性集。"
+        },
+        "toolbar": {
+            "toggleExplorer": "项目树状查看器",
+            "toggleProperties": "物件属性查看",
+            "resetViewTip": "重置视角",
+            "toggle2d3dTip": "切换二维/三维视角",
+            "togglePerspectiveTip": "切换透视/平行视图",
+            "viewFitTip": "全盘视角显示",
+            "firstPersonTip": "切换第一人漫游模式",
+            "hideObjectsTip": "隐藏物件",
+            "selectObjectsTip": "选择物件",
+            "queryObjectsTip": "检查物件",
+            "sliceObjectsTip": "创建剖面",
+            "slicesMenuTip": "剖面工具",
+            "showSpacesTip": "显示 IFCSpace 物件",
+            "numSlicesTip": "现有剖面数量",
+            "measureDistanceTip": "量度距离",
+            "measureAngleTip": "量度角度",
+            "marqueeSelectTip": "框选物件"
+        },
+        "canvasContextMenu": {
+            "viewFitSelection": "选择集视角显示",
+            "viewFitAll": "全盘视角显示",
+            "hideAll": "隐藏所有",
+            "showAll": "显示所有",
+            "xRayAll": "全盘X光显示",
+            "xRayNone": "取消X光显示",
+            "selectNone": "取消所有选择",
+            "resetView": "重置视图",
+            "clearSlices": "取消剖面",
+            "measurements": "量度",
+            "clearMeasurements": "删除量度",
+            "hideMeasurementAxisWires": "隐藏量度轴线",
+            "showMeasurementAxisWires": "显示量度轴线",
+            "disableMeasurementSnapping": "不用边角对准",
+            "enableMeasurementSnapping": "选用边角对准"
+        },
+        "modelsContextMenu": {
+            "loadModel": "加载模型",
+            "unloadModel": "模型卸载",
+            "editModel": "编辑模型",
+            "deleteModel": "删除模型",
+            "loadAllModels": "加载所有模型",
+            "unloadAllModels": "卸载所有模型",
+            "clearSlices": "取消剖面",
+            "measurements": "量度",
+            "clearMeasurements": "删除量度",
+            "hideMeasurementAxisWires": "隐藏量度轴线",
+            "showMeasurementAxisWires": "显示量度轴线",
+            "disableMeasurementSnapping": "不用边角对准",
+            "enableMeasurementSnapping": "选用边角对准"
+        },
+        "objectContextMenu": {
+            "inspectProperties": "检查属性",
+            "viewFit": "物件视角显示",
+            "viewFitSelection": "选择集视角显示",
+            "viewFitAll": "全盘物件视角显示",
+            "showInTree": "在树状查看器中显示",
+            "hide": "隐藏",
+            "hideOthers": "隐藏其他物件",
+            "hideAll": "隐藏所有物件",
+            "showAll": "显示所有物件",
+            "xray": "X光",
+            "xrayOthers": "对其他物件进行X光",
+            "xrayAll": "X光所有物件",
+            "xrayNone": "取消所有X光",
+            "select": "选择",
+            "undoSelect": "取消选择",
+            "selectNone": "取消全部选择",
+            "clearSlices": "取消剖面",
+            "measurements": "量度",
+            "clearMeasurements": "删除量度",
+            "hideMeasurementAxisWires": "隐藏量度轴线",
+            "showMeasurementAxisWires": "显示量度轴线",
+            "disableMeasurementSnapping": "不用边角对准",
+            "enableMeasurementSnapping": "选用边角对准"
+        },
+        "treeViewContextMenu": {
+            "inspectProperties": "检查属性",
+            "viewFit": "集中视角显示",
+            "viewFitSelection": "选择集视角显示",
+            "viewFitAll": "全盘视角显示",
+            "isolate": "孤立",
+            "hide": "隐藏",
+            "hideOthers": "隐藏其他",
+            "hideAll": "隐藏所有",
+            "show": "显示",
+            "showOthers": "隐藏选项并显示其他",
+            "showAll": "显示所有",
+            "xray": "X光",
+            "undoXray": "取消X光",
+            "xrayOthers": "对其他物件进行X光",
+            "xrayAll": "X光所有",
+            "xrayNone": "取消所有X光",
+            "select": "选择",
+            "undoSelect": "取消选择",
+            "selectNone": "取消全部选择",
+            "clearSlices": "取消剖面",
+            "measurements": "量度",
+            "clearMeasurements": "删除量度",
+            "hideMeasurementAxisWires": "隐藏量度轴线",
+            "showMeasurementAxisWires": "显示量度轴线",
+            "disableMeasurementSnapping": "不用边角对准",
+            "enableMeasurementSnapping": "选用边角对准"
+        },
+        "sectionToolContextMenu": {
+            "slice": "剖面",
+            "clearSlices": "清除剖面",
+            "flipSlices": "翻转剖面",
+            "edit": "编辑",
+            "flip": "翻转",
+            "delete": "删除"
+        },
+        "measureContextMenu": {
+            "hideMeasurementAxisWires": "隐藏量度轴线",
+            "showMeasurementAxisWires": "显示量度轴线",
+            "hideMeasurementLabels": "隐藏量度",
+            "showMeasurementLabels": "显示量度",
+            "clearMeasurements": "删除量度"
+        }
     }
 };
 
