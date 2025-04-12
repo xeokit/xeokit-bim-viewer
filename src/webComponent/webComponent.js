@@ -2,35 +2,49 @@ import { BIMViewer } from '../../src/BIMViewer.js';
 import { Server } from '../../src/server/Server.js';
 import faRegularWoff from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2';
 import faSolidWoff from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2';
+import faBrandsWoff from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2';
 import faRegularTtf from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf';
 import faSolidTtf from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf';
-import style from '@fortawesome/fontawesome-free/css/fontawesome.css';
+import faBrandsTtf from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf';
+import style from '@fortawesome/fontawesome-free/css/all.css';
 
 const headStyleinnerHtml = `
     @font-face {
         font-family: 'Font Awesome 6 Free';
         font-display: block;
         font-weight: 900;
-        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype"); 
+        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype");
     }
     @font-face {
         font-family: 'Font Awesome 6 Free';
         font-display: block;
         font-weight: 400;
-        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype")
-    }; 
+        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype");
+    }
     @font-face {
         font-family: 'Font Awesome 5 Free';
         font-display: block;
         font-weight: 900;
-        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype"); 
+        src: url(${faSolidWoff}) format("woff2"), url(${faSolidTtf}) format("truetype");
     }
     @font-face {
         font-family: 'Font Awesome 5 Free';
         font-display: block;
         font-weight: 400;
-        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype")
-    }; 
+        src: url(${faRegularWoff}) format("woff2"), url(${faRegularTtf}) format("truetype");
+    }
+    @font-face {
+        font-family: 'Font Awesome 6 Brands';
+        font-display: block;
+        font-weight: 400;
+        src: url(${faBrandsWoff}) format("woff2"), url(${faBrandsTtf}) format("truetype");
+    }
+    @font-face {
+        font-family: 'Font Awesome 5 Brands';
+        font-display: block;
+        font-weight: 400;
+        src: url(${faBrandsWoff}) format("woff2"), url(${faBrandsTtf}) format("truetype");
+    }
 `
 
 const innerHtml = `
