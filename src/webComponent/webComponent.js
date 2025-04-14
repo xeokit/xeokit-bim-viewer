@@ -332,7 +332,7 @@ class BimViewerWebComponent extends HTMLElement {
             "tab",
             "configs",
             "openExplorer",
-            "enableEditModels",
+            "enableEditModels"
         ];
     }
 
@@ -351,8 +351,22 @@ class BimViewerWebComponent extends HTMLElement {
         customElements.define(name, this);
     }
 
+    dispatchEvent(event) {
+        super.dispatchEvent(event);
+
+        const attrName = 'on' + event.type;
+        const handler = this.getAttribute(attrName);
+        if (handler) {
+            try {
+                const func = new Function('event', handler);
+                func.call(this, event);
+            } catch (e) {
+                console.error('Error executing inline event handler:', e);
+            }
+        }
+    }
+
     connectedCallback() {
-        const requestParams = this.getRequestParams();
         const projectId = this.getAttribute("projectId");
 
         if (!projectId) {
@@ -384,6 +398,21 @@ class BimViewerWebComponent extends HTMLElement {
             busyModelBackdropElement: this.shadowRoot.getElementById("myViewer"),
             enableEditModels: enableEditModels,
             containerElement: this.shadowRoot
+        });
+
+        // Set up object selection event handling
+        bimViewer.viewer.cameraControl.on("picked", (pickResult) => {
+            if (pickResult && pickResult.entity) {
+                const objectId = pickResult.entity.id;
+                const metaObject = bimViewer.viewer.metaScene.metaObjects[objectId];
+                if (metaObject) {
+                    this.dispatchEvent(new CustomEvent('objectSelected', {
+                        detail: metaObject,
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            }
         });
 
         bimViewer.setConfigs({
@@ -434,7 +463,6 @@ class BimViewerWebComponent extends HTMLElement {
             if (tab) {
                 bimViewer.openTab(tab);
             }
-            this.watchHashParams();
         },
             (errorMsg) => {
                 console.error(errorMsg);
