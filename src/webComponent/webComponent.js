@@ -468,8 +468,6 @@ class BimViewerWebComponent extends HTMLElement {
             (errorMsg) => {
                 console.error(errorMsg);
             });
-
-        this.handlePivot();
         this.bimViewer = bimViewer;
     }
 
@@ -486,26 +484,6 @@ class BimViewerWebComponent extends HTMLElement {
             toggle.checked = inspectorOpen;
         }
     }
-
-    //temporary workaround
-    handlePivot() {
-        const pivot = this.shadowRoot.querySelector(".xeokit-marker");
-        const canvas = this.shadowRoot.querySelector("#myCanvas");
-        const onMouseMove = () => {
-            pivot.style.display = "block";
-        };
-        
-        canvas.addEventListener("mousedown", (e) => {
-            pivot.style.left = `${e.pageX - this.shadowRoot.host.getBoundingClientRect().left - window.scrollX}px`;
-            pivot.style.top = `${e.pageY - this.shadowRoot.host.getBoundingClientRect().top - window.scrollY}px`;
-            canvas.addEventListener("mousemove", onMouseMove);
-        });
-
-        document.addEventListener("mouseup", () => {
-            pivot.style.display = "none";
-            canvas.removeEventListener("mousemove", onMouseMove);
-        });
-    };
 }
 
 export default BimViewerWebComponent;
