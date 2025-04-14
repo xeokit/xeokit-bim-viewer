@@ -83,7 +83,6 @@ const innerHtml = `
             margin: 0;
             overflow: hidden;
             background: #f2f2f2;
-            overflow: hidden;
         }
 
         :host #myViewer {
@@ -118,7 +117,6 @@ const innerHtml = `
         :host #myCanvas {
             width: 100%;
             height: 100%;
-            background: #f2f2f2;
             cursor: default;
             pointer-events: all;
             margin: 0;
@@ -326,6 +324,18 @@ const innerHtml = `
 
 
 class BimViewerWebComponent extends HTMLElement {
+    static get observedAttributes() {
+        return [
+            "projectId",
+            "modelId",
+            "dataDir",
+            "tab",
+            "configs",
+            "openExplorer",
+            "enableEditModels",
+        ];
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -343,7 +353,7 @@ class BimViewerWebComponent extends HTMLElement {
 
     connectedCallback() {
         const requestParams = this.getRequestParams();
-        const projectId = requestParams.projectId;
+        const projectId = this.getAttribute("projectId");
 
         if (!projectId) {
             return;
@@ -351,13 +361,16 @@ class BimViewerWebComponent extends HTMLElement {
         const style = document.createElement('style');
         style.innerHTML = headStyleinnerHtml;
         document.getElementsByTagName('head')[0].appendChild(style);
-        const openExplorer = requestParams.openExplorer;
+
+        const openExplorer = this.getAttribute("openExplorer");
+
         this.setExplorerOpen(openExplorer === "true");
 
-        const enableEditModels = (requestParams.enableEditModels === "true");
+        const enableEditModels = this.getAttribute("enableEditModels") === "true";
+        const dataDir = this.getAttribute("dataDir") || "/app/data";
 
         const server = new Server({
-            dataDir: requestParams.dataDir || "/app/data"
+            dataDir: dataDir
         });
 
         const bimViewer = new BIMViewer(server, {
@@ -400,9 +413,9 @@ class BimViewerWebComponent extends HTMLElement {
             console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
         });
 
-        const viewerConfigs = requestParams.configs;
+        const viewerConfigs = this.getAttribute("configs");
         if (viewerConfigs) {
-            const configNameVals = viewerConfigs.split(",");
+            const configNameVals = viewerConfigs.split(/,(?![^\[\]]*\])/);
             for (let i = 0, len = configNameVals.length; i < len; i++) {
                 const configNameValStr = configNameVals[i];
                 const configNameVal = configNameValStr.split(":");
@@ -413,11 +426,11 @@ class BimViewerWebComponent extends HTMLElement {
         }
 
         bimViewer.loadProject(projectId, () => {
-            const modelId = requestParams.modelId;
+            const modelId = this.getAttribute("modelId");
             if (modelId) {
                 bimViewer.loadModel(modelId);
             }
-            const tab = requestParams.tab;
+            const tab = this.getAttribute("tab");
             if (tab) {
                 bimViewer.openTab(tab);
             }
@@ -427,63 +440,8 @@ class BimViewerWebComponent extends HTMLElement {
                 console.error(errorMsg);
             });
 
-
         this.handlePivot();
         window.bimViewer = bimViewer;
-    }
-
-    parseHashParams() {
-        const params = getHashParams();
-        const actionsStr = params.actions;
-        if (!actionsStr) {
-            return;
-        }
-        const actions = actionsStr.split(",");
-        if (actions.length === 0) {
-            return;
-        }
-        for (let i = 0, len = actions.length; i < len; i++) {
-            const action = actions[i];
-            switch (action) {
-                case "focusObject":
-                    const objectId = params.objectId;
-                    if (!objectId) {
-                        console.error("Param expected for `focusObject` action: 'objectId'");
-                        break;
-                    }
-                    bimViewer.setAllObjectsSelected(false);
-                    bimViewer.setObjectsSelected([objectId], true);
-                    break;
-                case "focusObjects":
-                    const objectIds = params.objectIds;
-                    if (!objectIds) {
-                        console.error("Param expected for `focusObjects` action: 'objectIds'");
-                        break;
-                    }
-                    const objectIdArray = objectIds.split(",");
-                    bimViewer.setAllObjectsSelected(false);
-                    bimViewer.setObjectsSelected(objectIdArray, true);
-                    bimViewer.viewFitObjects(objectIdArray, () => {
-                    });
-                    break;
-                case "clearFocusObjects":
-                    bimViewer.setAllObjectsSelected(false);
-                    bimViewer.viewFitAll();
-                    // TODO: view fit nothing?
-                    break;
-                case "openTab":
-                    const tabId = params.tabId;
-                    if (!tabId) {
-                        console.error("Param expected for `openTab` action: 'tabId'");
-                        break;
-                    }
-                    bimViewer.openTab(tabId);
-                    break;
-                default:
-                    console.error("Action not supported: '" + action + "'");
-                    break;
-            }
-        }
     }
 
     setExplorerOpen(explorerOpen) {
@@ -500,39 +458,6 @@ class BimViewerWebComponent extends HTMLElement {
         }
     }
 
-    getRequestParams() {
-        const vars = {};
-        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
-            vars[key] = value;
-        });
-        return vars;
-    }
-
-    getHashParams() {
-        const hashParams = {};
-        let e;
-        const a = /\+/g;  // Regex for replacing addition symbol with a space
-        const r = /([^&;=]+)=?([^&;]*)/g;
-        const d = function (s) {
-            return decodeURIComponent(s.replace(a, " "));
-        };
-        const q = window.location.hash.substring(1);
-        while (e = r.exec(q)) {
-            hashParams[d(e[1])] = d(e[2]);
-        }
-        return hashParams;
-    }
-
-    watchHashParams() {
-        let lastHash = "";
-        window.setInterval(() => {
-            const currentHash = window.location.hash;
-            if (currentHash !== lastHash) {
-                parseHashParams();
-                lastHash = currentHash;
-            }
-        }, 400);
-    }
     //temporary workaround
     handlePivot() {
         const pivot = this.shadowRoot.querySelector(".xeokit-marker");
