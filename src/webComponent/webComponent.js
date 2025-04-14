@@ -340,6 +340,7 @@ class BimViewerWebComponent extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = innerHtml;
+        this.bimViewer = null;
     }
 
     /**
@@ -469,7 +470,7 @@ class BimViewerWebComponent extends HTMLElement {
             });
 
         this.handlePivot();
-        window.bimViewer = bimViewer;
+        this.bimViewer = bimViewer;
     }
 
     setExplorerOpen(explorerOpen) {
