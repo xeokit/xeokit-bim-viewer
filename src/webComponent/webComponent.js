@@ -81,7 +81,7 @@ const innerHtml = `
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             margin: 0;
-            overflow: hidden;
+            overflow: clip;
             background: #f2f2f2;
         }
 
@@ -91,7 +91,7 @@ const innerHtml = `
             height: 100%;
             align-items: stretch;
             z-index: 10000;
-            /*overflow: hidden;*/
+            overflow: clip;
             position: absolute;
             left: 0;
             right: 0;
