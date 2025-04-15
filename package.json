@@ -69,9 +69,9 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@xeokit/xeokit-sdk": "file:///~/Documents/projekty/xeokit-sdk",
-    "http-server": "^13.0.2",
     "rollup": "^4.39.0",
-    "rollup-plugin-import-css": "^3.5.8"
+    "rollup-plugin-import-css": "^3.5.8",
+    "@xeokit/xeokit-sdk": "2.6.69",
+    "http-server": "^13.0.2"
   }
 }
