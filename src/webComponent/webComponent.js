@@ -346,6 +346,12 @@ class BimViewerWebComponent extends HTMLElement {
         this.configs = "";
         this.openExplorer = false;
         this.enableEditModels = false;
+
+        const canvas = this.shadowRoot.getElementById("myCanvas");
+
+        canvas.addEventListener("wheel", (e) => {
+            e.preventDefault();
+        });
     }
 
         /**
