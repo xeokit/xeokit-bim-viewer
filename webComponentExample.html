@@ -6,12 +6,32 @@
   </head>
 
   <body>
+    <script>
+      function onObjectSelected(event) {
+        alert(`name: ${event.detail.name}, id: ${event.detail.id}`);
+      }
+    </script>
     <script type="module">
       import { BimViewerWebComponent } from "../dist/xeokit-bim-viewer.es.js";
+
       BimViewerWebComponent.register();
+      const bimViewerComponent = document.querySelector("xeokit-bim-viewer");
+      bimViewerComponent.bimViewer.viewer.cameraControl.on("picked", () => { 
+        console.log(bimViewerComponent.projectId)
+      });
     </script>
+
+    <h1 class="heading">My BIM Viewer</h1>
     <div class="container">
-      <xeokit-bim-viewer class="viewer"></xeokit-bim-viewer>
+      <xeokit-bim-viewer 
+        class="viewer"
+        projectId="OTCConferenceCenter"
+        dataDir="/app/data/"
+        tab="models"
+        configs="showSpaces:true"
+        onobjectselected="onObjectSelected(event)"
+        >
+      </xeokit-bim-viewer>
     </div>
   </body>
   <style>
@@ -23,12 +43,15 @@
         margin: 0;
     }
 
+    .heading {
+      text-align: center;
+    }
+
     .container {
       width: 100vw;
       height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
     }
 
     .viewer {
