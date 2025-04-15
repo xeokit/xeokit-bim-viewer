@@ -65,12 +65,12 @@
     "copyfiles": "^2.4.1",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "puppeteer": "^10.1.0"
+    "puppeteer": "^10.1.0",
+    "rollup": "^4.39.0",
+    "rollup-plugin-import-css": "^3.5.8"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "rollup": "^4.39.0",
-    "rollup-plugin-import-css": "^3.5.8",
     "@xeokit/xeokit-sdk": "2.6.69",
     "http-server": "^13.0.2"
   }
