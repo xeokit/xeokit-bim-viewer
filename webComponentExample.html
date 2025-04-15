@@ -8,7 +8,7 @@
   <body>
     <script>
       function onObjectSelected(event) {
-        alert(`name: ${event.detail.name}, id: ${event.detail.id}`);
+        console.log(`name: ${event.detail.name}, id: ${event.detail.id}`);
       }
     </script>
     <script type="module">
@@ -16,6 +16,7 @@
 
       BimViewerWebComponent.register();
       const bimViewerComponent = document.querySelector("xeokit-bim-viewer");
+      
       bimViewerComponent.bimViewer.viewer.cameraControl.on("picked", () => { 
         console.log(bimViewerComponent.projectId)
       });
@@ -23,7 +24,7 @@
 
     <h1 class="heading">My BIM Viewer</h1>
     <div class="container">
-      <xeokit-bim-viewer 
+      <xeokit-bim-viewer
         class="viewer"
         projectId="OTCConferenceCenter"
         dataDir="/app/data/"
