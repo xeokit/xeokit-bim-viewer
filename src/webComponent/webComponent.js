@@ -321,8 +321,6 @@ const innerHtml = `
         }
     </style>
 `
-
-
 class BimViewerWebComponent extends HTMLElement {
     static get observedAttributes() {
         return [
@@ -341,9 +339,16 @@ class BimViewerWebComponent extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = innerHtml;
         this.bimViewer = null;
+        this.projectId = "";
+        this.modelId = "";
+        this.dataDir = "/app/data";
+        this.tab = "";
+        this.configs = "";
+        this.openExplorer = false;
+        this.enableEditModels = false;
     }
 
-    /**
+        /**
      * Register a custom HTMLElement.
      *
      * @param {String} name Element's name, defaults to 'xeokit-bim-viewer', must be lowercase and contain at least one hyphen.
@@ -368,24 +373,24 @@ class BimViewerWebComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        const projectId = this.getAttribute("projectId");
+        this.projectId = this.getAttribute("projectId");
 
-        if (!projectId) {
+        if (!this.projectId) {
             return;
         }
         const style = document.createElement('style');
         style.innerHTML = headStyleinnerHtml;
         document.getElementsByTagName('head')[0].appendChild(style);
 
-        const openExplorer = this.getAttribute("openExplorer");
+        this.openExplorer = this.getAttribute("openExplorer");
 
-        this.setExplorerOpen(openExplorer === "true");
+        this.setExplorerOpen(this.openExplorer === "true");
 
-        const enableEditModels = this.getAttribute("enableEditModels") === "true";
-        const dataDir = this.getAttribute("dataDir") || "/app/data";
+        this.enableEditModels = this.getAttribute("enableEditModels") === "true";
+        this.dataDir = this.getAttribute("dataDir") || "/app/data";
 
         const server = new Server({
-            dataDir: dataDir
+            dataDir: this.dataDir
         });
 
         const bimViewer = new BIMViewer(server, {
@@ -397,11 +402,10 @@ class BimViewerWebComponent extends HTMLElement {
             inspectorElement: this.shadowRoot.getElementById("myInspector"), // Right panel
             navCubeCanvasElement: this.shadowRoot.getElementById("myNavCubeCanvas"),
             busyModelBackdropElement: this.shadowRoot.getElementById("myViewer"),
-            enableEditModels: enableEditModels,
+            enableEditModels: this.enableEditModels,
             containerElement: this.shadowRoot
         });
 
-        // Set up object selection event handling
         bimViewer.viewer.cameraControl.on("picked", (pickResult) => {
             if (pickResult && pickResult.entity) {
                 const objectId = pickResult.entity.id;
@@ -443,9 +447,9 @@ class BimViewerWebComponent extends HTMLElement {
             console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
         });
 
-        const viewerConfigs = this.getAttribute("configs");
-        if (viewerConfigs) {
-            const configNameVals = viewerConfigs.split(/,(?![^\[\]]*\])/);
+        this.configs = this.getAttribute("configs");
+        if (this.configs) {
+            const configNameVals = this.configs.split(/,(?![^\[\]]*\])/);
             for (let i = 0, len = configNameVals.length; i < len; i++) {
                 const configNameValStr = configNameVals[i];
                 const configNameVal = configNameValStr.split(":");
@@ -455,14 +459,14 @@ class BimViewerWebComponent extends HTMLElement {
             }
         }
 
-        bimViewer.loadProject(projectId, () => {
-            const modelId = this.getAttribute("modelId");
-            if (modelId) {
-                bimViewer.loadModel(modelId);
+        bimViewer.loadProject(this.projectId, () => {
+            this.modelId = this.getAttribute("modelId");
+            if (this.modelId) {
+                bimViewer.loadModel(this.modelId);
             }
-            const tab = this.getAttribute("tab");
-            if (tab) {
-                bimViewer.openTab(tab);
+            this.tab = this.getAttribute("tab");
+            if (this.tab) {
+                bimViewer.openTab(this.tab);
             }
         },
             (errorMsg) => {
