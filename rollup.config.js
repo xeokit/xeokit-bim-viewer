@@ -1,5 +1,7 @@
 import {nodeResolve} from '@rollup/plugin-node-resolve';
-import {terser} from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
+import css from "rollup-plugin-import-css";
+import url from "@rollup/plugin-url";
 
 export default {
     input: './index.js',
@@ -7,14 +9,16 @@ export default {
         file: './dist/xeokit-bim-viewer.min.es.js',
         format: 'es',
         name: 'bundle'
-    },
-    {
-        file: './dist/xeokit-bim-viewer.min.umd.js',
-        format: 'umd',
-        name: 'bundle'
-    }],
+    },],
     plugins: [
+        css(),
         nodeResolve(),
-         terser()
+        terser(),
+        url(
+            {
+                include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
+                limit: 1024 * 1024,
+            }
+        )
     ]
 }

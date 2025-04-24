@@ -19,6 +19,7 @@ class SectionTool extends Controller { // XX
 
         this._buttonElement = cfg.buttonElement;
         this._counterElement = cfg.counterElement;
+        this._containerElement = cfg.containerElement;
         this._menuButtonElement = cfg.menuButtonElement;
         this._menuButtonArrowElement = cfg.menuButtonArrowElement;
 
@@ -27,7 +28,8 @@ class SectionTool extends Controller { // XX
         this._sectionToolContextMenu = new SectionToolContextMenu({
             sectionPlanesPlugin: this._sectionPlanesPlugin,
             hideOnMouseDown: false,
-            hideOnAction: false
+            hideOnAction: false,
+            parentNode: this._containerElement
         });
 
         this._sectionPlanesPlugin.setOverviewVisible(false);
@@ -90,7 +92,7 @@ class SectionTool extends Controller { // XX
 
                     const rect = this._menuButtonElement.getBoundingClientRect();
 
-                    this._sectionToolContextMenu.show(rect.left, rect.bottom + 5);
+                    this._sectionToolContextMenu.show(rect.left + scrollX, rect.bottom + window.scrollY + 5);
                 }
                 return;
             }
@@ -127,12 +129,11 @@ class SectionTool extends Controller { // XX
 
     _initSectionMode() {
 
-        document.addEventListener('mouseup', (e) => {
+        this._containerElement.addEventListener('mouseup', (e) => {
 
             if (e.which === 1) {
 
                 const coords = getMouseCanvasPos(e);
-
                 if (!this.getActive() || !this.getEnabled()) {
                     return;
                 }

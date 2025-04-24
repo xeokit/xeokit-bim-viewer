@@ -75,7 +75,7 @@
     padding: 0;
     /*padding-left: 10px;*/
     height: 100%;
-    overflow: hidden;
+    overflow: clip;
 }
 
 .xeokit-tabs::before, .xeokit-tabs::after {
@@ -472,7 +472,7 @@
 
 .xeokit-tree-panel {
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     height: calc(100% - 150px);
 }
 

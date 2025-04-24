@@ -187,6 +187,7 @@ class BIMViewer extends Controller {
      * @param {Boolean} [cfg.enableEditModels=false] Set ````true```` to show "Add", "Edit" and "Delete" options in the Models tab's context menu.
      * @param {Boolean} [cfg.enableMeasurements=true] Set ````true```` to enable distance and angle measurements with the BIMViewer.
      * @param {Boolean} [cfg.keyboardEventsElement] Optional reference to HTML element on which key events should be handled. Defaults to the HTML Document.
+     * @param {Node | undefined} [cfg.containerElement] Optional reference of an existing DOM Node (e.g. ShadowRoot), which encapsulates all HTML elements related to viewer plugins, defaults to ````document.body````. 
      */
     constructor(server, cfg = {}) {
 
@@ -250,6 +251,7 @@ class BIMViewer extends Controller {
 
         super(null, cfg, server, viewer);
 
+        this._containerElement = cfg.containerElement || document.body;
         this._configs = {};
 
         this._enableAddModels = !!cfg.enableEditModels;
@@ -271,7 +273,7 @@ class BIMViewer extends Controller {
         this._initCanvasContextMenus();
 
         explorerElement.innerHTML = createExplorerTemplate(cfg);
-        toolbarElement.innerHTML = createToolbarTemplate({enableMeasurements: this._enableMeasurements});
+        toolbarElement.innerHTML = createToolbarTemplate({ enableMeasurements: this._enableMeasurements });
         if (this._enablePropertiesInspector) {
             inspectorElement.innerHTML = createInspectorTemplate();
         }
@@ -291,7 +293,8 @@ class BIMViewer extends Controller {
             unloadModelsButtonElement: explorerElement.querySelector(".xeokit-unloadAllModels"),
             addModelButtonElement: explorerElement.querySelector(".xeokit-addModel"), // Can be undefined
             modelsElement: explorerElement.querySelector(".xeokit-models"),
-            enableEditModels: this._enableAddModels
+            enableEditModels: this._enableAddModels,
+            containerElement: this._containerElement
         });
 
         this._objectsExplorer = new ObjectsExplorer(this, {
@@ -299,7 +302,8 @@ class BIMViewer extends Controller {
             objectsTabElement: explorerElement.querySelector(".xeokit-objectsTab"),
             showAllObjectsButtonElement: explorerElement.querySelector(".xeokit-showAllObjects"),
             hideAllObjectsButtonElement: explorerElement.querySelector(".xeokit-hideAllObjects"),
-            objectsElement: explorerElement.querySelector(".xeokit-objects")
+            objectsElement: explorerElement.querySelector(".xeokit-objects"),
+            containerElement: this._containerElement
         });
 
         this._classesExplorer = new ClassesExplorer(this, {
@@ -307,7 +311,8 @@ class BIMViewer extends Controller {
             classesTabElement: explorerElement.querySelector(".xeokit-classesTab"),
             showAllClassesButtonElement: explorerElement.querySelector(".xeokit-showAllClasses"),
             hideAllClassesButtonElement: explorerElement.querySelector(".xeokit-hideAllClasses"),
-            classesElement: explorerElement.querySelector(".xeokit-classes")
+            classesElement: explorerElement.querySelector(".xeokit-classes"),
+            containerElement: this._containerElement
         });
 
         this._storeysExplorer = new StoreysExplorer(this, {
@@ -315,7 +320,8 @@ class BIMViewer extends Controller {
             storeysTabElement: explorerElement.querySelector(".xeokit-storeysTab"),
             showAllStoreysButtonElement: explorerElement.querySelector(".xeokit-showAllStoreys"),
             hideAllStoreysButtonElement: explorerElement.querySelector(".xeokit-hideAllStoreys"),
-            storeysElement: explorerElement.querySelector(".xeokit-storeys")
+            storeysElement: explorerElement.querySelector(".xeokit-storeys"),
+            containerElement: this._containerElement
         });
 
         if (this._enablePropertiesInspector) {
@@ -411,7 +417,8 @@ class BIMViewer extends Controller {
             counterElement: toolbarElement.querySelector(".xeokit-section-counter"),
             menuButtonElement: toolbarElement.querySelector(".xeokit-section-menu-button"),
             menuButtonArrowElement: toolbarElement.querySelector(".xeokit-section-menu-button-arrow"),
-            active: false
+            active: false,
+            containerElement: this._containerElement
         });
 
         if (this._enableMeasurements) {
@@ -465,7 +472,7 @@ class BIMViewer extends Controller {
             this._marqueeSelectionTool,
             this._sectionTool,
             this._enableMeasurements ? this._measureDistanceTool : null,
-            this._enableMeasurements ? this._measureAngleTool: null
+            this._enableMeasurements ? this._measureAngleTool : null
         ]);
 
         explorerElement.querySelector(".xeokit-showAllObjects").addEventListener("click", (event) => {
@@ -606,7 +613,7 @@ class BIMViewer extends Controller {
         this.viewer.cameraControl.dollyProximityThreshold = 30.0;
 
         const cameraPivotElement = document.createRange().createContextualFragment("<div class='xeokit-camera-pivot-marker'></div>").firstChild;
-        document.body.appendChild(cameraPivotElement);
+        this._containerElement.appendChild(cameraPivotElement);
         this.viewer.cameraControl.pivotElement = cameraPivotElement;
 
         scene.camera.perspective.near = 0.01;
@@ -627,11 +634,13 @@ class BIMViewer extends Controller {
 
         this._canvasContextMenu = new CanvasContextMenu(this, {
             hideOnAction: true,
-            enableMeasurements: this._enableMeasurements
+            enableMeasurements: this._enableMeasurements,
+            parentNode: this._containerElement
         });
         this._objectContextMenu = new ObjectContextMenu(this, {
             hideOnAction: true,
-            enableMeasurements: this._enableMeasurements
+            enableMeasurements: this._enableMeasurements,
+            parentNode: this._containerElement
         });
 
         const getCanvasPosFromEvent = function (event) {

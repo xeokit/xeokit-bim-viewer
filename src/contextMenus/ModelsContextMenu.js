@@ -150,7 +150,8 @@ class ModelsContextMenu extends ContextMenu {
         super({
             hideOnAction: cfg.hideOnAction,
             context: cfg.context,
-            items: items
+            items: items,
+            parentNode: cfg.parentNode
         });
     }
 }
