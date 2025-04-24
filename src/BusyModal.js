@@ -3,11 +3,11 @@ import {Controller} from "./Controller.js";
 /** @private */
 class BusyModal extends Controller {
 
-    constructor(parent, cfg = {}) {
+    constructor(parent, cfg = {}, rootDOMNode = document) {
 
         super(parent, cfg);
 
-        const busyModalBackdropElement = cfg.busyModalBackdropElement || document.body;
+        const busyModalBackdropElement = cfg.busyModalBackdropElement || rootDOMNode;
 
         if (!busyModalBackdropElement) {
             throw "Missing config: busyModalBackdropElement";
