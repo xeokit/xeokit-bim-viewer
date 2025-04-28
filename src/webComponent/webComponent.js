@@ -393,7 +393,8 @@ class BimViewerWebComponent extends HTMLElement {
         this.setExplorerOpen(this.openExplorer === "true");
 
         this.enableEditModels = this.getAttribute("enableEditModels") === "true";
-        this.dataDir = this.getAttribute("dataDir") || "/app/data";
+
+        this.dataDir = this.getAttribute("dataDir") || "./app/data";
 
         const server = new Server({
             dataDir: this.dataDir
