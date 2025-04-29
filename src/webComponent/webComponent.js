@@ -321,13 +321,13 @@ const innerHtml = `
 class BimViewerWebComponent extends HTMLElement {
     static get observedAttributes() {
         return [
-            "projectId",
-            "modelId",
-            "dataDir",
+            "projectid",
+            "modelid",
+            "datadir",
             "tab",
             "configs",
-            "openExplorer",
-            "enableEditModels"
+            "openexplorer",
+            "enableeditmodels"
         ];
     }
 
@@ -343,6 +343,8 @@ class BimViewerWebComponent extends HTMLElement {
         this.configs = "";
         this.openExplorer = false;
         this.enableEditModels = false;
+        this._debounceTimeout = null;
+        this._pendingAttributes = new Map();
 
         const canvas = this.shadowRoot.getElementById("myCanvas");
 
@@ -376,14 +378,13 @@ class BimViewerWebComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.projectId = this.getAttribute("projectId");
 
-        if (!this.projectId) {
-            return;
-        }
         const style = document.createElement('style');
         style.innerHTML = headStyleInnerHtml;
         document.getElementsByTagName('head')[0].appendChild(style);
+
+        this.projectId = this.getAttribute("projectId");
+        this.modelId = this.getAttribute("modelId");
 
         this.openExplorer = this.getAttribute("openExplorer");
 
@@ -451,6 +452,7 @@ class BimViewerWebComponent extends HTMLElement {
             console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
         });
 
+        this.bimViewer = bimViewer;
         this.configs = this.getAttribute("configs");
         if (this.configs) {
             const configNameVals = this.configs.split(/,(?![^\[\]]*\])/);
@@ -461,6 +463,11 @@ class BimViewerWebComponent extends HTMLElement {
                 const configVal = configNameVal[1];
                 bimViewer.setConfig(configName, configVal);
             }
+        }
+
+        if (!this.projectId) {
+            console.log("No projectId attribute found");
+            return;
         }
 
         bimViewer.loadProject(this.projectId, () => {
@@ -476,7 +483,44 @@ class BimViewerWebComponent extends HTMLElement {
             (errorMsg) => {
                 console.error(errorMsg);
             });
-        this.bimViewer = bimViewer;
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "projectid") {
+            console.log("projectid changed: " + newValue);
+            this.projectId = newValue;
+            if (!this.bimViewer || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () => {
+                this.modelId = this.getAttribute("modelId");
+                if (this.modelId) {
+                    this.bimViewer.loadModel(this.modelId);
+                }
+                this.tab = this.getAttribute("tab");
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+        } else if (name === "modelid") {
+            this.modelId = newValue;
+            if (!this.bimViewer || !this.modelId || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () => {
+                this.bimViewer.loadModel(this.modelId);
+                this.tab = this.getAttribute("tab");
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+        }
     }
 
     setExplorerOpen(explorerOpen) {
