@@ -6,9 +6,10 @@ import faBrandsWoff from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.w
 import faRegularTtf from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf';
 import faSolidTtf from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf';
 import faBrandsTtf from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf';
-import style from '@fortawesome/fontawesome-free/css/all.css';
+import fontStyle from '@fortawesome/fontawesome-free/css/all.css';
+import bimViewerStyles from '../../xeokit-bim-viewer.css';
 
-const headStyleinnerHtml = `
+const headStyleInnerHtml = `
     @font-face {
         font-family: 'Font Awesome 6 Free';
         font-display: block;
@@ -63,13 +64,9 @@ const innerHtml = `
         <canvas id="myNavCubeCanvas"></canvas>
     </div>
     <div class="xeokit-marker"></div>
-    <link
-      rel="stylesheet"
-      href="./xeokit-bim-viewer.css"
-      type="text/css"
-    />
     <style type="text/css">
-        ${style}
+        ${fontStyle}
+        ${bimViewerStyles}
 
         :host {
             display: block;
@@ -385,7 +382,7 @@ class BimViewerWebComponent extends HTMLElement {
             return;
         }
         const style = document.createElement('style');
-        style.innerHTML = headStyleinnerHtml;
+        style.innerHTML = headStyleInnerHtml;
         document.getElementsByTagName('head')[0].appendChild(style);
 
         this.openExplorer = this.getAttribute("openExplorer");
