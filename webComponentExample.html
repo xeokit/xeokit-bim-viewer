@@ -3,31 +3,173 @@
   <head>
     <meta charset="utf-8" />
     <title>xeokit-bim-viewer</title>
+    <style>
+      html,
+      body {
+        touch-action: none;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+      }
+
+      .heading {
+        text-align: center;
+      }
+
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .project-selector {
+        margin: 20px 0;
+        padding: 8px;
+        font-size: 16px;
+        min-width: 200px;
+      }
+
+      .model-selector {
+        margin: 20px 0;
+        padding: 8px;
+        font-size: 16px;
+        min-width: 200px;
+      }
+
+      .viewer {
+        width: 80%;
+        height: 80%;
+      }
+    </style>
   </head>
 
   <body>
     <script>
+      let bimViewerComponent = null;
+      let select = null;
+      let modelSelect = null;
+      let projectModels = new Map();
+      let isProgrammaticModelChange = false;
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        select = document.getElementById('projectSelector');
+        modelSelect = document.getElementById('modelSelector');
+        bimViewerComponent = document.querySelector("xeokit-bim-viewer");
+        
+        try {
+          const response = await fetch('./app/data/projects/index.json');
+          const projectsData = await response.json();
+          
+          if (projectsData.projects) {
+            projectsData.projects.forEach(project => {
+              const option = document.createElement('option');
+              option.value = project.id;
+              option.textContent = project.name;
+              select.appendChild(option);
+            });
+          }
+
+          await Promise.all(projectsData.projects.map(async (project) => {
+            try {
+              const projectResponse = await fetch(`./app/data/projects/${project.id}/index.json`);
+              const projectData = await projectResponse.json();
+              projectModels.set(project.id, projectData.models || []);
+            } catch (error) {
+              console.error(`Error loading models for project ${project.id}:`, error);
+              projectModels.set(project.id, []);
+            }
+          }));
+
+          if (select.value) {
+            const initialProjectId = select.value;
+            const initialModels = projectModels.get(initialProjectId) || [];
+            
+            initialModels.forEach(model => {
+              const option = document.createElement('option');
+              option.value = model.id;
+              option.textContent = model.name;
+              modelSelect.appendChild(option);
+            });
+            
+            if (initialModels.length > 0) {
+              const firstModel = initialModels[0];
+              modelSelect.value = firstModel.id;
+              bimViewerComponent.setAttribute('projectId', initialProjectId);
+              setTimeout(() => {
+                bimViewerComponent.setAttribute('modelId', firstModel.id);
+              }, 500);
+            }
+            modelSelect.disabled = false;
+          }
+        } catch (error) {
+          console.error('Error loading projects data:', error);
+        }
+
+        select.addEventListener('change', onProjectChange);
+        modelSelect.addEventListener('change', onModelChange);
+      });
+
+      async function onProjectChange() {
+        const newProjectId = select.value;
+        modelSelect.disabled = true;
+        modelSelect.innerHTML = '';
+        
+        isProgrammaticModelChange = true;
+        bimViewerComponent.setAttribute('projectId', newProjectId);
+        
+        const models = projectModels.get(newProjectId) || [];
+        
+        models.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model.id;
+          option.textContent = model.name;
+          modelSelect.appendChild(option);
+        });
+        
+        if (models.length > 0) {
+          const firstModel = models[0];
+          modelSelect.value = firstModel.id;
+          bimViewerComponent.setAttribute('modelId', firstModel.id);
+        }
+        
+        modelSelect.disabled = false;
+        setTimeout(() => {
+          isProgrammaticModelChange = false;
+        }, 0);
+      }
+
+      function onModelChange() {
+        if (isProgrammaticModelChange) return;
+        
+        const selectedModelId = modelSelect.value;
+        if (selectedModelId) {
+          bimViewerComponent.setAttribute('modelId', selectedModelId);
+        } else {
+          bimViewerComponent.removeAttribute('modelId');
+        }
+      }
+
       function onObjectSelected(event) {
         console.log(`name: ${event.detail.name}, id: ${event.detail.id}`);
       }
     </script>
     <script type="module">
       import { BimViewerWebComponent } from "./dist/xeokit-bim-viewer.es.js";
-
+  
       BimViewerWebComponent.register();
-      const bimViewerComponent = document.querySelector("xeokit-bim-viewer");
-      
-      bimViewerComponent.bimViewer.viewer.cameraControl.on("picked", () => { 
-        console.log(bimViewerComponent.projectId)
-      });
     </script>
 
     <h1 class="heading">My BIM Viewer</h1>
     <div class="container">
+      <select id="projectSelector" class="project-selector">
+      </select>
+      <select id="modelSelector" class="model-selector" disabled>
+      </select>
       <xeokit-bim-viewer
         class="viewer"
-        projectId="OTCConferenceCenter"
-        dataDir="/app/data/"
+        dataDir="./app/data/"
         tab="models"
         configs="showSpaces:true"
         onobjectselected="onObjectSelected(event)"
@@ -35,29 +177,4 @@
       </xeokit-bim-viewer>
     </div>
   </body>
-  <style>
-    html,
-    body {
-        touch-action: none;
-        height: 100%;
-        width: 100%;
-        margin: 0;
-    }
-
-    .heading {
-      text-align: center;
-    }
-
-    .container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-    }
-
-    .viewer {
-      width: 80%;
-      height: 80%;
-    }
-  </style>
 </html>

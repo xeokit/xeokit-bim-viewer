@@ -6,9 +6,10 @@ import faBrandsWoff from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.w
 import faRegularTtf from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf';
 import faSolidTtf from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf';
 import faBrandsTtf from '@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf';
-import style from '@fortawesome/fontawesome-free/css/all.css';
+import fontStyle from '@fortawesome/fontawesome-free/css/all.css';
+import bimViewerStyles from '../../xeokit-bim-viewer.css';
 
-const headStyleinnerHtml = `
+const headStyleInnerHtml = `
     @font-face {
         font-family: 'Font Awesome 6 Free';
         font-display: block;
@@ -63,13 +64,9 @@ const innerHtml = `
         <canvas id="myNavCubeCanvas"></canvas>
     </div>
     <div class="xeokit-marker"></div>
-    <link
-      rel="stylesheet"
-      href="./xeokit-bim-viewer.css"
-      type="text/css"
-    />
     <style type="text/css">
-        ${style}
+        ${fontStyle}
+        ${bimViewerStyles}
 
         :host {
             display: block;
@@ -324,13 +321,13 @@ const innerHtml = `
 class BimViewerWebComponent extends HTMLElement {
     static get observedAttributes() {
         return [
-            "projectId",
-            "modelId",
-            "dataDir",
+            "projectid",
+            "modelid",
+            "datadir",
             "tab",
             "configs",
-            "openExplorer",
-            "enableEditModels"
+            "openexplorer",
+            "enableeditmodels"
         ];
     }
 
@@ -346,6 +343,8 @@ class BimViewerWebComponent extends HTMLElement {
         this.configs = "";
         this.openExplorer = false;
         this.enableEditModels = false;
+        this._debounceTimeout = null;
+        this._pendingAttributes = new Map();
 
         const canvas = this.shadowRoot.getElementById("myCanvas");
 
@@ -379,21 +378,21 @@ class BimViewerWebComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.projectId = this.getAttribute("projectId");
 
-        if (!this.projectId) {
-            return;
-        }
         const style = document.createElement('style');
-        style.innerHTML = headStyleinnerHtml;
+        style.innerHTML = headStyleInnerHtml;
         document.getElementsByTagName('head')[0].appendChild(style);
+
+        this.projectId = this.getAttribute("projectId");
+        this.modelId = this.getAttribute("modelId");
 
         this.openExplorer = this.getAttribute("openExplorer");
 
         this.setExplorerOpen(this.openExplorer === "true");
 
         this.enableEditModels = this.getAttribute("enableEditModels") === "true";
-        this.dataDir = this.getAttribute("dataDir") || "/app/data";
+
+        this.dataDir = this.getAttribute("dataDir") || "./app/data";
 
         const server = new Server({
             dataDir: this.dataDir
@@ -453,6 +452,7 @@ class BimViewerWebComponent extends HTMLElement {
             console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
         });
 
+        this.bimViewer = bimViewer;
         this.configs = this.getAttribute("configs");
         if (this.configs) {
             const configNameVals = this.configs.split(/,(?![^\[\]]*\])/);
@@ -463,6 +463,11 @@ class BimViewerWebComponent extends HTMLElement {
                 const configVal = configNameVal[1];
                 bimViewer.setConfig(configName, configVal);
             }
+        }
+
+        if (!this.projectId) {
+            console.log("No projectId attribute found");
+            return;
         }
 
         bimViewer.loadProject(this.projectId, () => {
@@ -478,7 +483,44 @@ class BimViewerWebComponent extends HTMLElement {
             (errorMsg) => {
                 console.error(errorMsg);
             });
-        this.bimViewer = bimViewer;
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "projectid") {
+            console.log("projectid changed: " + newValue);
+            this.projectId = newValue;
+            if (!this.bimViewer || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () => {
+                this.modelId = this.getAttribute("modelId");
+                if (this.modelId) {
+                    this.bimViewer.loadModel(this.modelId);
+                }
+                this.tab = this.getAttribute("tab");
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+        } else if (name === "modelid") {
+            this.modelId = newValue;
+            if (!this.bimViewer || !this.modelId || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () => {
+                this.bimViewer.loadModel(this.modelId);
+                this.tab = this.getAttribute("tab");
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+        }
     }
 
     setExplorerOpen(explorerOpen) {
