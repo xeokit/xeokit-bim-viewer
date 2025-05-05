@@ -2,6 +2,20 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.7.0](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.6.1...v2.7.0) (2025-05-05)
+
+
+### Features
+
+* add dropdown list of projects/models to web component example ([0cf283c](https://github.com/xeokit/xeokit-bim-viewer/commit/0cf283c144feb4a809284520dde2fa03222d3f63))
+* export viewer as webcomponent ([629a4d7](https://github.com/xeokit/xeokit-bim-viewer/commit/629a4d7d9104af3956abc0c3f369a752f0b37395))
+
+
+### Bug Fixes
+
+* upgrade @xeokit/xeokit-sdk from 2.6.67 to 2.6.68 ([703f268](https://github.com/xeokit/xeokit-bim-viewer/commit/703f268705f2d91cce7f9290ac689dda4129dda8))
+* upgrade @xeokit/xeokit-sdk from 2.6.68 to 2.6.69 ([415100e](https://github.com/xeokit/xeokit-bim-viewer/commit/415100e989ad329ee3faf66dde198364c6614edb))
+
 ## [2.6.1](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.6.0...v2.6.1) (2025-03-07)
 
 
