@@ -633,6 +633,9 @@ MIT License [http://www.opensource.org/licenses/mit-license.php]
 xeokit-sdk contains the following components with MIT and GNU Lesser
 General Public License v3.0:
 
+xeokit also contains the following components with MIT and GNU Lesser
+General Public License v3.0:
+
 Canvas2Image v0.1
 Copyright (c) 2008 Jacob Seidelin, cupboy@gmail.com
 MIT License [http://www.opensource.org/licenses/mit-license.php]
@@ -641,14 +644,17 @@ K3D.js V1.0
 Copyright (c) 2012 Ivan Kuckir
 MIT License [http://www.opensource.org/licenses/mit-license.php]
 
-BIMserver-JavaScript-API
-Copyright (c) The open source BIM collective
-GNU Lesser General Public License v3.0
-[https://github.com/opensourceBIM/BIMserver-JavaScript-API/blob/master/license.txt]
+web-ifc
+Copyright (c) 2020-2022 web-ifc contributors
+MIT License [http://www.opensource.org/licenses/mit-license.php]
 
 Pako
 Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
 MIT License [http://www.opensource.org/licenses/mit-license.php]
+
+Earcut
+Copyright (c) 2024, Mapbox
+ISC License [https://opensource.org/license/isc-license-txt]
 ---
 
 ## 📜 Licensing & Commercial Use
