@@ -2,6 +2,13 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.7.1](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.7.0...v2.7.1) (2025-06-19)
+
+
+### Bug Fixes
+
+* remove not used dependency ([7c771fb](https://github.com/xeokit/xeokit-bim-viewer/commit/7c771fb3c54245cfd90c00125eff7936bb53c2ea))
+
 ## [2.7.0](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.6.1...v2.7.0) (2025-05-05)
 
 
