@@ -1,6 +1,6 @@
 {
   "name": "@xeokit/xeokit-bim-viewer",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "type": "module",
   "description": "BIM viewer built on xeokit",
   "main": "dist/xeokit-bim-viewer.min.es.js",
@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@xeokit/xeokit-sdk": "^2.6.75",
+    "@xeokit/xeokit-sdk": "^2.6.78",
     "http-server": "^13.0.2"
   }
 }
