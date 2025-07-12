@@ -1,2 +1,4 @@
 # .gitignore
+.vscode
 node_modules
+dist
