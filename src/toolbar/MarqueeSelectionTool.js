@@ -179,6 +179,95 @@ export class MarqueeSelectionTool extends Controller {
             this._marquee[2] = Math.max(canvasMarqueeStartX, canvasMarqueeEndX);
             this._marquee[3] = Math.max(canvasMarqueeStartY, canvasMarqueeEndY);
         });
+
+        // ***** below referenced and modded from above (mouse-event-driven) and xeokit-sdk\src\extras\MarqueePicker\MarqueePickerMouseControl.js
+        canvas.addEventListener("touchstart", (e) => {  // modded
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+
+            const input = this.bimViewer.viewer.scene.input;
+            if (!input.keyDown[input.KEY_CTRL]) { // Clear selection unless CTRL down
+                scene.setObjectsSelected(scene.selectedObjectIds, false);
+            }
+            canvasDragStartX = e.touches[0].pageX;  // modded
+            canvasDragStartY = e.touches[0].pageY;  // modded
+            marqueeStyle.visibility = "visible";
+            marqueeStyle.left = `${canvasDragStartX}px`;
+            marqueeStyle.top = `${canvasDragStartY}px`;
+            marqueeStyle.width = "0px";
+            marqueeStyle.height = "0px";
+            marqueeStyle.display = "block";
+            canvasMarqueeStartX = e.touches[0].pageX;  // modded
+            canvasMarqueeStartY = e.touches[0].pageY;  // modded
+            isMouseDragging = true;
+            this.viewer.cameraControl.pointerEnabled = false; // Disable camera rotation
+        });
+
+        canvas.addEventListener("touchend", (e) => {  // modded
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+            if (!isMouseDragging && !mouseWasUpOffCanvas) {
+                return
+            }
+
+            canvasDragEndX = e.changedTouches[0].pageX;  // modded
+            canvasDragEndY = e.changedTouches[0].pageY;  // modded
+            const width = Math.abs(canvasDragEndX - canvasDragStartX);
+            const height = Math.abs(canvasDragEndY - canvasDragStartY);
+            marqueeStyle.width = `${width}px`;
+            marqueeStyle.height = `${height}px`;
+            marqueeStyle.visibility = "hidden";
+            isMouseDragging = false;
+            this.viewer.cameraControl.pointerEnabled = true; // Enable camera rotation
+            if (mouseWasUpOffCanvas) {
+                mouseWasUpOffCanvas = false;
+            }
+            if (width > 3 || height > 3) { // Marquee pick if rectangle big enough
+                this._marqueePick();
+            }
+        }); // Bubbling
+
+        document.addEventListener("touchend", (e) => {  // modded
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+
+            if (!isMouseDragging) {
+                return
+            }
+            marqueeStyle.visibility = "hidden";
+            isMouseDragging = false;
+            mouseWasUpOffCanvas = true;
+            this.viewer.cameraControl.pointerEnabled = true;
+        }, true); // Capturing
+
+        canvas.addEventListener("touchmove", (e) => {  // modded
+            if (!this.getActive() || !this.getEnabled()) {
+                return;
+            }
+
+            if (!isMouseDragging) {
+                return
+            }
+            const x = e.changedTouches[0].pageX;  // modded
+            const y = e.changedTouches[0].pageY;  // modded
+            const width = x - canvasDragStartX;
+            const height = y - canvasDragStartY;
+            marqueeStyle.width = `${Math.abs(width)}px`;
+            marqueeStyle.height = `${Math.abs(height)}px`;
+            marqueeStyle.left = `${Math.min(canvasDragStartX, x)}px`;
+            marqueeStyle.top = `${Math.min(canvasDragStartY, y)}px`;
+            canvasMarqueeEndX = e.changedTouches[0].pageX;  // modded
+            canvasMarqueeEndY = e.changedTouches[0].pageY;  // modded
+            const marqueeDir = (canvasMarqueeStartX < canvasMarqueeEndX) ? LEFT_TO_RIGHT : RIGHT_TO_LEFT;
+            this._setMarqueeDir(marqueeDir);
+            this._marquee[0] = Math.min(canvasMarqueeStartX, canvasMarqueeEndX) - canvas.parentElement.offsetLeft;  // modded : need to manually add parent canvas offset, differet from mouse input
+            this._marquee[1] = Math.min(canvasMarqueeStartY, canvasMarqueeEndY) - canvas.parentElement.offsetTop;  // modded : need to manually add parent canvas offset, differet from mouse input
+            this._marquee[2] = Math.max(canvasMarqueeStartX, canvasMarqueeEndX) - canvas.parentElement.offsetLeft;  // modded : need to manually add parent canvas offset, differet from mouse input
+            this._marquee[3] = Math.max(canvasMarqueeStartY, canvasMarqueeEndY) - canvas.parentElement.offsetTop;  // modded : need to manually add parent canvas offset, differet from mouse input
+        });
     }
 
     _setMarqueeDir(marqueeDir) {
@@ -254,15 +343,46 @@ export class MarqueeSelectionTool extends Controller {
         const top = -this._marquee[1] * yCanvasToClip + 1;
         const near = this.viewer.scene.camera.frustum.near * (NEAR_SCALING * ratio);
         const far = FAR_PLANE;
-        math.frustumMat4(
-            left,
-            right,
-            bottom * ratio,
-            top * ratio,
-            near,
-            far,
-            this._marqueeFrustumProjMat,
-        );
+
+        function ratioToMultipler(x) {  // smooth curve function for adjusting frustum angle according to canvas proportion
+            const a = 1.2;
+            const b = -1.6;
+            const c = 1.4;
+            return a * x * x + b * x + c;  // AI generated quadratic that pass 3 points : f(1)=1, f(1.5)=1.7 , f(2)=3
+        }
+        
+        if (ratio < 1) {  // use ratio, ratioToMultipler and 3 to adjust selection frustum aperture according to canvas proportion
+            math.frustumMat4(
+                left,
+                right,
+                bottom * ratio,
+                top * ratio,
+                near,
+                far,
+                this._marqueeFrustumProjMat,
+            );
+        } else if (ratio < 2) {
+            math.frustumMat4(
+                left * ratioToMultipler(ratio),
+                right * ratioToMultipler(ratio),
+                bottom * ratio * ratioToMultipler(ratio),
+                top * ratio * ratioToMultipler(ratio),
+                near,
+                far,
+                this._marqueeFrustumProjMat,
+            );
+        } else {
+            math.frustumMat4(
+                left * 3,
+                right * 3,
+                bottom * 3 * ratio,
+                top * 3 * ratio,
+                near,
+                far,
+                this._marqueeFrustumProjMat,
+            );
+        }
+        
         setFrustum(this._marqueeFrustum, this.viewer.scene.camera.viewMatrix, this._marqueeFrustumProjMat);
     }
 }
