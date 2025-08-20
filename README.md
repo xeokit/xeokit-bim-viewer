@@ -1,6 +1,6 @@
 # xeokit-bim-viewer
 
-[![npm version](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg)](https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer)
+<a href="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer" target="_blank"><img src="https://badge.fury.io/js/%40xeokit%2Fxeokit-bim-viewer.svg" /></a>
 [![](https://data.jsdelivr.com/v1/package/npm/@xeokit/xeokit-bim-viewer/badge)](https://www.jsdelivr.com/package/npm/@xeokit/xeokit-bim-viewer)
 [![@xeokit/xeokit-bim-viewer](https://snyk.io/advisor/npm-package/@xeokit/xeokit-bim-viewer/badge.svg)](/advisor/npm-package/@xeokit/xeokit-bim-viewer)
 
