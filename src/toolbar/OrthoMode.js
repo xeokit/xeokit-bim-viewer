@@ -57,6 +57,7 @@ class OrthoMode extends Controller {
         this._active = active;
         if (active) {
             this._buttonElement.classList.add("active");
+            this.bimViewer._marqueeSelectionTool.setEnabled(false); // disable marquee selection during ortho mode
             if (done) {
                 this._enterOrthoMode(() => {
                     this.fire("active", this._active);
@@ -68,6 +69,7 @@ class OrthoMode extends Controller {
             }
         } else {
             this._buttonElement.classList.remove("active");
+            this.bimViewer._marqueeSelectionTool.setEnabled(true); // enable marquee selection when exit ortho mode
             if (done) {
                 this._exitOrthoMode(() => {
                     this.fire("active", this._active);
