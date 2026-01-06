@@ -363,8 +363,7 @@ For those older versions,
 > we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
 
 The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
-metadata into the same XKT file, and was introduced in the
-[xeokit v1.9 release](https://www.notion.so/xeokit/What-s-New-in-xeokit-1-9-b7503ca7647e43e4b9c76e1505fa4484).
+metadata into the same XKT file, and was introduced in the xeokit v1.9 release.
 
 XKT versions prior to V8 only contained geometry, and needed to be accompanied by a JSON file that contained the model's
 IFC metadata. In this section, we'll describe how to deploy models that use XKT versions prior to V8.
