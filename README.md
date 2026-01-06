@@ -465,7 +465,7 @@ XKT files.
 
 This feature extends BIMViewer with the option to load models comprised of multiple XKT files, combining the XKT files into a single tree view for each model, and enabling the unloading of the model to unload all its XKT files in one shot. In other words, instead of having a separate model and tree view for each XKT, we can now group a bunch of XKT files together to behave as one model in BIMViewer.
 
-Learn more about the conversion of IFC models into multiple XKT files in [this tutorial](https://www.notion.so/xeokit/Importing-Huge-IFC-Models-as-Multiple-XKT-Files-165fc022e94742cf966ee50003572259).
+Learn more about the conversion of IFC models into multiple XKT files in [this tutorial](https://xeokit.io/blog/automatically-splitting-large-models-for-better-performance).
 
 To show how to deploy one of these multi-XKT models in BIMViewer, let's examine the Karhumaki project.
 
