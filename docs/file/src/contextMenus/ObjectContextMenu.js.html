@@ -32,28 +32,32 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/contextMenus/ObjectContextMenu.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {math, ContextMenu} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {ContextMenu, math} from &quot;@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js&quot;;
 
 /**
  * @private
  */
 class ObjectContextMenu extends ContextMenu {
 
-    constructor(bimViewer, cfg={}) {
+    constructor(bimViewer, cfg = {}) {
         super(cfg);
         this._bimViewer = bimViewer;
-        this._buildMenu();
+        this._buildMenu(cfg);
     }
 
-    _buildMenu() {
+    _buildMenu(cfg) {
 
         const showObjectItems = [];
         const focusObjectItems = [];
+        const measurementItems = [];
+
+        const enableMeasurements = (!!cfg.enableMeasurements);
 
         if (this._bimViewer._enablePropertiesInspector) {
             showObjectItems.push(...[{
@@ -101,7 +105,7 @@ class ObjectContextMenu extends ContextMenu {
             },
             {
                 getTitle: (context) =&gt; {
-                    return context.viewer.localeService.translate(&quot;canvasContextMenu.viewFitSelection&quot;) || &quot;View Fit Selected&quot;;
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.viewFitSelection&quot;) || &quot;View Fit Selected&quot;;
                 },
                 getEnabled: (context) =&gt; {
                     return (context.viewer.scene.numSelectedObjects &gt; 0);
@@ -133,6 +137,43 @@ class ObjectContextMenu extends ContextMenu {
                 }
             }
         ]);
+
+        if (enableMeasurements) {
+            measurementItems.push(...[{
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;objectContextMenu.measurements&quot;) || &quot;Measurements&quot;;
+                },
+                doAction: function (context) {
+                    // Does nothing
+                },
+                items: [ // Sub-menu
+                    [{
+                        getTitle: (context) =&gt; {
+                            return context.viewer.localeService.translate(&quot;objectContextMenu.clearMeasurements&quot;) || &quot;Clear&quot;;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.clearMeasurements();
+                        }
+                    }, {
+                        getTitle: (context) =&gt; {
+                            return context.bimViewer.getMeasurementsAxisVisible() ? context.viewer.localeService.translate(&quot;objectContextMenu.hideMeasurementAxisWires&quot;) || &quot;Hide Axis Wires&quot; : context.viewer.localeService.translate(&quot;objectContextMenu.showMeasurementAxisWires&quot;) || &quot;Show Axis Wires&quot;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.setMeasurementsAxisVisible(!context.bimViewer.getMeasurementsAxisVisible());
+                        }
+                    }, {
+                        getTitle: (context) =&gt; {
+                            return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate(&quot;objectContextMenu.disableMeasurementSnapping&quot;) || &quot;Disable Snapping&quot; : context.viewer.localeService.translate(&quot;objectContextMenu.enableMeasurementSnapping&quot;) || &quot;Enable Snapping&quot;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.setMeasurementsSnappingEnabled(!context.bimViewer.getMeasurementsSnappingEnabled());
+                        }
+                    }]]
+            }]);
+        }
 
         this.items = [
             showObjectItems,
@@ -317,7 +358,8 @@ class ObjectContextMenu extends ContextMenu {
                         context.bimViewer.clearSections();
                     }
                 }
-            ]
+            ],
+            measurementItems
         ];
     }
 }

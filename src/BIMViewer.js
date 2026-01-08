@@ -1555,6 +1555,7 @@ class BIMViewer extends Controller {
     /**
      * Sets the camera to the given position.
      *
+     * @param {Object} params Camera parameters.
      * @param {Number[]} [params.eye] Eye position.
      * @param {Number[]} [params.look] Point of interest.
      * @param {Number[]} [params.up] Direction of "up".

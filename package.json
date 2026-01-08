@@ -13,7 +13,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config rollup.config.js && rollup --config rollup.dev.config.js && copyfiles -f locales/messages.js ./dist && copyfiles -f xeokit-bim-viewer.css ./dist",
-    "docs": "./node_modules/.bin/esdoc",
+    "docs": "./node_modules/.bin/esdoc && node docs/.scripts/fix-doc-links.js",
     "serve": "http-server . -p 8080 ",
     "changelog": "auto-changelog --commit-limit false --package --template changelog-template.hbs"
   },
