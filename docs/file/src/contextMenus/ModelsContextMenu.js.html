@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -49,6 +50,7 @@ class ModelsContextMenu extends ContextMenu {
     constructor(cfg = {}) {
 
         const enableEditModels = (!!cfg.enableEditModels);
+        const enableMeasurements = (!!cfg.enableMeasurements);
 
         const items = [
             [
@@ -148,10 +150,48 @@ class ModelsContextMenu extends ContextMenu {
             }
         ]);
 
+        if (enableMeasurements) {
+            items.push([{
+                getTitle: (context) =&gt; {
+                    return context.viewer.localeService.translate(&quot;modelsContextMenu.measurements&quot;) || &quot;Measurements&quot;;
+                },
+                doAction: function (context) {
+                    // Does nothing
+                },
+                items: [ // Sub-menu
+                    [{
+                        getTitle: (context) =&gt; {
+                            return context.viewer.localeService.translate(&quot;modelsContextMenu.clearMeasurements&quot;) || &quot;Clear&quot;;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.clearMeasurements();
+                        }
+                    }, {
+                        getTitle: (context) =&gt; {
+                            return context.bimViewer.getMeasurementsAxisVisible() ? context.viewer.localeService.translate(&quot;modelsContextMenu.hideMeasurementAxisWires&quot;) || &quot;Hide Axis Wires&quot; : context.viewer.localeService.translate(&quot;modelsContextMenu.showMeasurementAxisWires&quot;) || &quot;Show Axis Wires&quot;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.setMeasurementsAxisVisible(!context.bimViewer.getMeasurementsAxisVisible());
+                        }
+                    }, {
+                        getTitle: (context) =&gt; {
+                            return context.bimViewer.getMeasurementsSnappingEnabled() ? context.viewer.localeService.translate(&quot;modelsContextMenu.disableMeasurementSnapping&quot;) || &quot;Disable Snapping&quot; : context.viewer.localeService.translate(&quot;modelsContextMenu.enableMeasurementSnapping&quot;) || &quot;Enable Snapping&quot;
+                        }, getEnabled: (context) =&gt; {
+                            return (context.bimViewer.getNumMeasurements() &gt; 0);
+                        }, doAction: (context) =&gt; {
+                            context.bimViewer.setMeasurementsSnappingEnabled(!context.bimViewer.getMeasurementsSnappingEnabled());
+                        }
+                    }]]
+            }]);
+        }
+
         super({
             hideOnAction: cfg.hideOnAction,
             context: cfg.context,
-            items: items
+            items: items,
+            parentNode: cfg.parentNode
         });
     }
 }

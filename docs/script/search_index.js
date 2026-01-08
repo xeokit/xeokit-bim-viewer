@@ -6,6 +6,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@xeokit/xeokit-bim-viewer/src/webcomponent/webcomponent.js~bimviewerwebcomponent",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html",
+    "<span>BimViewerWebComponent</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/webComponent/webComponent.js</span>",
+    "class"
+  ],
+  [
     "@xeokit/xeokit-bim-viewer/src/collision/objectskdtree3.js~objectskdtree3",
     "class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html",
     "<span>ObjectsKdTree3</span> <span class=\"search-result-import-path\">@xeokit/xeokit-bim-viewer/src/collision/ObjectsKdTree3.js</span>",
@@ -312,6 +318,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#clearmeasurements",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-clearMeasurements",
+    "src/BIMViewer.js~BIMViewer#clearMeasurements",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#clearsections",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-clearSections",
     "src/BIMViewer.js~BIMViewer#clearSections",
@@ -378,6 +390,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getenablemeasurements",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getEnableMeasurements",
+    "src/BIMViewer.js~BIMViewer#getEnableMeasurements",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getkeyboardenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getKeyboardEnabled",
     "src/BIMViewer.js~BIMViewer#getKeyboardEnabled",
@@ -396,9 +414,27 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/bimviewer.js~bimviewer#getmeasurementsaxisvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getMeasurementsAxisVisible",
+    "src/BIMViewer.js~BIMViewer#getMeasurementsAxisVisible",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#getmeasurementssnappingenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getMeasurementsSnappingEnabled",
+    "src/BIMViewer.js~BIMViewer#getMeasurementsSnappingEnabled",
+    "method"
+  ],
+  [
     "src/bimviewer.js~bimviewer#getmodelids",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-getModelIds",
     "src/BIMViewer.js~BIMViewer#getModelIds",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#getnummeasurements",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-getNumMeasurements",
+    "src/BIMViewer.js~BIMViewer#getNumMeasurements",
     "method"
   ],
   [
@@ -585,6 +621,18 @@ window.esdocSearchIndex = [
     "src/bimviewer.js~bimviewer#setkeyboardenabled",
     "class/src/BIMViewer.js~BIMViewer.html#instance-method-setKeyboardEnabled",
     "src/BIMViewer.js~BIMViewer#setKeyboardEnabled",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setmeasurementsaxisvisible",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setMeasurementsAxisVisible",
+    "src/BIMViewer.js~BIMViewer#setMeasurementsAxisVisible",
+    "method"
+  ],
+  [
+    "src/bimviewer.js~bimviewer#setmeasurementssnappingenabled",
+    "class/src/BIMViewer.js~BIMViewer.html#instance-method-setMeasurementsSnappingEnabled",
+    "src/BIMViewer.js~BIMViewer#setMeasurementsSnappingEnabled",
     "method"
   ],
   [
@@ -900,6 +948,18 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/toolbar/measureangletool.js",
+    "file/src/toolbar/MeasureAngleTool.js.html",
+    "src/toolbar/MeasureAngleTool.js",
+    "file"
+  ],
+  [
+    "src/toolbar/measuredistancetool.js",
+    "file/src/toolbar/MeasureDistanceTool.js.html",
+    "src/toolbar/MeasureDistanceTool.js",
+    "file"
+  ],
+  [
     "src/toolbar/navcubemode.js",
     "file/src/toolbar/NavCubeMode.js.html",
     "src/toolbar/NavCubeMode.js",
@@ -946,5 +1006,107 @@ window.esdocSearchIndex = [
     "file/src/toolbar/ThreeDMode.js.html",
     "src/toolbar/ThreeDMode.js",
     "file"
+  ],
+  [
+    "src/webcomponent/webcomponent.js",
+    "file/src/webComponent/webComponent.js.html",
+    "src/webComponent/webComponent.js",
+    "file"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#attributechangedcallback",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-method-attributeChangedCallback",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#attributeChangedCallback",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#bimviewer",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-bimViewer",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#bimViewer",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#configs",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-configs",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#configs",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#connectedcallback",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-method-connectedCallback",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#connectedCallback",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#constructor",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-constructor-constructor",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#constructor",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#datadir",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-dataDir",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#dataDir",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#dispatchevent",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-method-dispatchEvent",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#dispatchEvent",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#enableeditmodels",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-enableEditModels",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#enableEditModels",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#modelid",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-modelId",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#modelId",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#openexplorer",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-openExplorer",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#openExplorer",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#projectid",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-projectId",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#projectId",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#setexploreropen",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-method-setExplorerOpen",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#setExplorerOpen",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#setinspectoropen",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-method-setInspectorOpen",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#setInspectorOpen",
+    "method"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent#tab",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#instance-member-tab",
+    "src/webComponent/webComponent.js~BimViewerWebComponent#tab",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent.observedattributes",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#static-get-observedAttributes",
+    "src/webComponent/webComponent.js~BimViewerWebComponent.observedAttributes",
+    "member"
+  ],
+  [
+    "src/webcomponent/webcomponent.js~bimviewerwebcomponent.register",
+    "class/src/webComponent/webComponent.js~BimViewerWebComponent.html#static-method-register",
+    "src/webComponent/webComponent.js~BimViewerWebComponent.register",
+    "method"
   ]
 ]

@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -84,12 +85,53 @@ class PropertiesInspector extends Controller {
             if (!e.target.matches(&apos;.xeokit-accordion .xeokit-accordion-button&apos;)) {
                 return;
             } else {
-                if (!e.target.parentElement.classList.contains(&apos;active&apos;)) {
-                    e.target.parentElement.classList.add(&apos;active&apos;);
+                const container = e.target.parentElement;
+                const panel = container.querySelector(&apos;.xeokit-accordion-panel&apos;);
+
+                if (!container.classList.contains(&apos;active&apos;)) {
+                    // Opening the panel
+                    container.classList.add(&apos;active&apos;);
+
+                    // Calculate the full height of the content
+                    const scrollHeight = panel.scrollHeight;
+
+                    // Set the height to the full content height
+                    panel.style.height = scrollHeight + &apos;px&apos;;
                 } else {
-                    e.target.parentElement.classList.remove(&apos;active&apos;);
+                    // Closing the panel
+                    // First set explicit height based on current height
+                    panel.style.height = panel.scrollHeight + &apos;px&apos;;
+
+                    // Force a reflow
+                    panel.offsetHeight;
+
+                    // Now set height to 0 for smooth animation
+                    panel.style.height = &apos;0px&apos;;
+
+                    // Remove active class after transition completes
+                    panel.addEventListener(&apos;transitionend&apos;, function removeActive() {
+                        container.classList.remove(&apos;active&apos;);
+                        panel.removeEventListener(&apos;transitionend&apos;, removeActive);
+                    }, { once: true });
                 }
             }
+        });
+
+        // Add a resize listener to handle content changes
+        window.addEventListener(&apos;resize&apos;, () =&gt; {
+            const activeContainers = document.querySelectorAll(&apos;.xeokit-accordion-container.active&apos;);
+
+            activeContainers.forEach(container =&gt; {
+                const panel = container.querySelector(&apos;.xeokit-accordion-panel&apos;);
+
+                // Temporarily set height to auto to measure true height
+                const originalHeight = panel.style.height;
+                panel.style.height = &apos;auto&apos;;
+                const scrollHeight = panel.scrollHeight;
+
+                // Set back to calculated height
+                panel.style.height = scrollHeight + &apos;px&apos;;
+            });
         });
 
         this.clear();

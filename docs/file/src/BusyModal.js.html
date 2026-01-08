@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -42,11 +43,11 @@
 /** @private */
 class BusyModal extends Controller {
 
-    constructor(parent, cfg = {}) {
+    constructor(parent, cfg = {}, rootDOMNode = document) {
 
         super(parent, cfg);
 
-        const busyModalBackdropElement = cfg.busyModalBackdropElement || document.body;
+        const busyModalBackdropElement = cfg.busyModalBackdropElement || rootDOMNode;
 
         if (!busyModalBackdropElement) {
             throw &quot;Missing config: busyModalBackdropElement&quot;;

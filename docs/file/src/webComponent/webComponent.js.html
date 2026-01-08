@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/webComponent/webComponent.js | xeokit-bim-viewer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="BIM viewer built on xeokit"><meta property="og:type" content="website"><meta property="og:url" content="https://github.com/xeokit/xeokit-bim-viewer"><meta property="og:site_name" content="xeokit-bim-viewer"><meta property="og:title" content="xeokit-bim-viewer"><meta property="og:image" content="./images/logo.jpg"><meta property="og:description" content="BIM viewer built on xeokit"><meta property="og:author" content="http://xeolabs.com"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="xeokit-bim-viewer"><meta property="twitter:description" content="BIM viewer built on xeokit"><meta property="twitter:image" content="./images/logo.jpg"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.jpg" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/xeokit/xeokit-bim-viewer"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/webComponent/webComponent.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { BIMViewer } from &apos;../../src/BIMViewer.js&apos;;
+import { Server } from &apos;../../src/server/Server.js&apos;;
+import faRegularWoff from &apos;@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2&apos;;
+import faSolidWoff from &apos;@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2&apos;;
+import faBrandsWoff from &apos;@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2&apos;;
+import faRegularTtf from &apos;@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf&apos;;
+import faSolidTtf from &apos;@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf&apos;;
+import faBrandsTtf from &apos;@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf&apos;;
+import fontStyle from &apos;@fortawesome/fontawesome-free/css/all.css&apos;;
+import bimViewerStyles from &apos;../../xeokit-bim-viewer.css&apos;;
+
+const headStyleInnerHtml = `
+    @font-face {
+        font-family: &apos;Font Awesome 6 Free&apos;;
+        font-display: block;
+        font-weight: 900;
+        src: url(${faSolidWoff}) format(&quot;woff2&quot;), url(${faSolidTtf}) format(&quot;truetype&quot;);
+    }
+    @font-face {
+        font-family: &apos;Font Awesome 6 Free&apos;;
+        font-display: block;
+        font-weight: 400;
+        src: url(${faRegularWoff}) format(&quot;woff2&quot;), url(${faRegularTtf}) format(&quot;truetype&quot;);
+    }
+    @font-face {
+        font-family: &apos;Font Awesome 5 Free&apos;;
+        font-display: block;
+        font-weight: 900;
+        src: url(${faSolidWoff}) format(&quot;woff2&quot;), url(${faSolidTtf}) format(&quot;truetype&quot;);
+    }
+    @font-face {
+        font-family: &apos;Font Awesome 5 Free&apos;;
+        font-display: block;
+        font-weight: 400;
+        src: url(${faRegularWoff}) format(&quot;woff2&quot;), url(${faRegularTtf}) format(&quot;truetype&quot;);
+    }
+    @font-face {
+        font-family: &apos;Font Awesome 6 Brands&apos;;
+        font-display: block;
+        font-weight: 400;
+        src: url(${faBrandsWoff}) format(&quot;woff2&quot;), url(${faBrandsTtf}) format(&quot;truetype&quot;);
+    }
+    @font-face {
+        font-family: &apos;Font Awesome 5 Brands&apos;;
+        font-display: block;
+        font-weight: 400;
+        src: url(${faBrandsWoff}) format(&quot;woff2&quot;), url(${faBrandsTtf}) format(&quot;truetype&quot;);
+    }
+`
+
+const innerHtml = `
+    &lt;input type=&quot;checkbox&quot; id=&quot;explorer_toggle&quot; /&gt;
+    &lt;label for=&quot;explorer_toggle&quot; class=&quot;xeokit-i18n explorer_toggle_label xeokit-btn fas fa-2x fa-sitemap&quot;
+        data-xeokit-i18ntip=&quot;toolbar.toggleExplorer&quot; data-tippy-content=&quot;Toggle explorer&quot;&gt;&lt;/label&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;inspector_toggle&quot; /&gt;
+    &lt;label id=&quot;inspector_toggle_label&quot; for=&quot;inspector_toggle&quot;
+        class=&quot;xeokit-i18n inspector_toggle_label xeokit-btn fas fa-info-circle fa-2x&quot;
+        data-xeokit-i18ntip=&quot;toolbar.toggleProperties&quot; data-tippy-content=&quot;Toggle properties&quot;&gt;&lt;/label&gt;
+    &lt;div id=&quot;myExplorer&quot;&gt;&lt;/div&gt;
+    &lt;div id=&quot;myToolbar&quot;&gt;&lt;/div&gt;
+    &lt;div id=&quot;myInspector&quot;&gt;&lt;/div&gt;
+    &lt;div id=&quot;myViewer&quot;&gt;
+        &lt;canvas id=&quot;myCanvas&quot;&gt;&lt;/canvas&gt;
+        &lt;canvas id=&quot;myNavCubeCanvas&quot;&gt;&lt;/canvas&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;xeokit-marker&quot;&gt;&lt;/div&gt;
+    &lt;style type=&quot;text/css&quot;&gt;
+        ${fontStyle}
+        ${bimViewerStyles}
+
+        :host {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            font-family: &quot;Roboto&quot;, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            overflow: clip;
+            background: #f2f2f2;
+        }
+
+        :host #myViewer {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+            z-index: 10000;
+            overflow: clip;
+            position: absolute;
+            left: 0;
+            right: 0;
+            --left: 0;
+            --right: 0;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host #myToolbar {
+            font-family: &apos;Font Awesome 6 Free&apos;;
+            min-width: 400px;
+            top: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            z-index: 100000;
+            pointer-events: none;
+            position: absolute;
+            left: 95px;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host #myCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: default;
+            pointer-events: all;
+            margin: 0;
+            position: relative;
+        }
+
+        :host #myNavCubeCanvas {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            bottom: 0;
+            right: 0;
+            z-index: 200000;
+        }
+
+        :host #myExplorer {
+            position: absolute;
+            height: 100%;
+            color: #fff;
+            background: #03103f;
+            overflow: auto;
+            border-right: 2px solid #212529;
+            padding: 0px;
+            padding-bottom: 100px;
+            padding-left: 15px;
+            user-select: none;
+            top: 0;
+            left: -460px;
+            z-index: 10;
+            width: 460px;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host #explorer_toggle {
+            display: none;
+        }
+
+        :host .explorer_toggle_label {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            flex: 1 1 auto;
+            color: #03103f;
+            background-color: white;
+            text-align: center;
+            vertical-align: middle;
+            border: 2px solid #1d2453;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            -webkit-appearance: button;
+            overflow: visible;
+            margin: 0 2px 0 0;
+            box-sizing: border-box;
+            align-items: flex-start;
+            pointer-events: all;
+            z-index: 100000;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host .explorer_toggle_label:hover {
+            cursor: pointer;
+        }
+
+        :host #explorer_toggle:checked + .explorer_toggle_label {
+            left: 480px;
+            color: #fff;
+            background-color: #03103f;
+            border-color: #03103f;
+        }
+
+        :host #explorer_toggle:checked ~ #myExplorer {
+            left: 0;
+        }
+
+        :host #explorer_toggle:checked ~ #myViewer {
+            left: 460px;
+            --left: 460;
+            width: calc(100% - (var(--left) + var(--right)));
+        }
+
+        :host #explorer_toggle:checked ~ #myToolbar {
+            left: 555px;
+        }
+
+        :host #explorer_toggle:not(:checked) + .explorer_toggle_label {
+            left: 20px;
+            color: #fff;
+            background-color: #03103f;
+            border-color: #03103f;
+        }
+
+        :host #explorer_toggle:not(:checked) ~ #myExplorer {
+            left: -460px;
+        }
+
+        :host #explorer_toggle:not(:checked) ~ #myViewer {
+            left: 0;
+            --left: 0;
+            width: calc(100% - var(--right));
+        }
+
+        :host #explorer_toggle:not(:checked) ~ #myToolbar {
+            left: 95px;
+        }
+
+        :host #myInspector {
+            position: absolute;
+            height: 100%;
+            color: #fff;
+            background: #03103f;
+            overflow: auto;
+            border-left: 2px solid #212529;
+            padding: 0;
+            top: 0;
+            right: -360px;
+            z-index: 40;
+            width: 358px;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host #inspector_toggle {
+            display: none;
+        }
+
+        :host .inspector_toggle_label {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            flex: 1 1 auto;
+            color: #03103f;
+            background-color: white;
+            text-align: center;
+            vertical-align: middle;
+            border: 2px solid #1d2453;
+            padding: 0.375rem 0.75rem; /* FIXME */
+            border-radius: 0.25rem;
+            -webkit-appearance: button;
+            overflow: visible;
+            margin: 0 2px 0 0; /* FIXME */
+            box-sizing: border-box;
+            align-items: flex-start;
+            pointer-events: all;
+            z-index: 100000;
+            transition: all 300ms ease-in-out;
+        }
+
+        :host .inspector_toggle_label:hover {
+            cursor: pointer;
+        }
+
+        :host #inspector_toggle:checked + .inspector_toggle_label {
+            right: 380px;
+            color: #fff;
+            background-color: #03103f;
+            border-color: #03103f;
+        }
+
+        :host #inspector_toggle:checked ~ #myViewer {
+            --right: 360;
+            right: 360px;
+            width: calc(100% - (var(--left) + var(--right)));
+        }
+
+        :host #inspector_toggle:checked ~ #myInspector {
+            right: 0;
+            --right: 0;
+        }
+
+        :host #inspector_toggle:not(:checked) ~ #myInspector {
+            right: -380px;
+            --right: -380px;
+        }
+
+        :host #inspector_toggle:not(:checked) ~ #myViewer {
+            --right: 0;
+            right: 0;
+            width: calc(100% - var(--left));
+        }
+
+        :host .xeokit-camera-pivot-marker {
+            display: none !important;
+        }
+
+        :host .xeokit-marker {
+            color: #ffffff;
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 100%;
+            border: 1px solid #ebebeb;
+            background: #444444;
+            box-shadow: 3px 3px 5px 1px #212529;
+            z-index: 10000;
+            pointer-events: none;
+            display: none;
+        }
+    &lt;/style&gt;
+`
+class BimViewerWebComponent extends HTMLElement {
+    static get observedAttributes() {
+        return [
+            &quot;projectid&quot;,
+            &quot;modelid&quot;,
+            &quot;datadir&quot;,
+            &quot;tab&quot;,
+            &quot;configs&quot;,
+            &quot;openexplorer&quot;,
+            &quot;enableeditmodels&quot;
+        ];
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: &quot;open&quot; });
+        this.shadowRoot.innerHTML = innerHtml;
+        this.bimViewer = null;
+        this.projectId = &quot;&quot;;
+        this.modelId = &quot;&quot;;
+        this.dataDir = &quot;/app/data&quot;;
+        this.tab = &quot;&quot;;
+        this.configs = &quot;&quot;;
+        this.openExplorer = false;
+        this.enableEditModels = false;
+        this._debounceTimeout = null;
+        this._pendingAttributes = new Map();
+
+        const canvas = this.shadowRoot.getElementById(&quot;myCanvas&quot;);
+
+        canvas.addEventListener(&quot;wheel&quot;, (e) =&gt; {
+            e.preventDefault();
+        });
+    }
+
+        /**
+     * Register a custom HTMLElement.
+     *
+     * @param {String} name Element&apos;s name, defaults to &apos;xeokit-bim-viewer&apos;, must be lowercase and contain at least one hyphen.
+    */
+    static register(name = &quot;xeokit-bim-viewer&quot;) {
+        customElements.define(name, this);
+    }
+
+    dispatchEvent(event) {
+        super.dispatchEvent(event);
+
+        const attrName = &apos;on&apos; + event.type;
+        const handler = this.getAttribute(attrName);
+        if (handler) {
+            try {
+                const func = new Function(&apos;event&apos;, handler);
+                func.call(this, event);
+            } catch (e) {
+                console.error(&apos;Error executing inline event handler:&apos;, e);
+            }
+        }
+    }
+
+    connectedCallback() {
+
+        const style = document.createElement(&apos;style&apos;);
+        style.innerHTML = headStyleInnerHtml;
+        document.getElementsByTagName(&apos;head&apos;)[0].appendChild(style);
+
+        this.projectId = this.getAttribute(&quot;projectId&quot;);
+        this.modelId = this.getAttribute(&quot;modelId&quot;);
+
+        this.openExplorer = this.getAttribute(&quot;openExplorer&quot;);
+
+        this.setExplorerOpen(this.openExplorer === &quot;true&quot;);
+
+        this.enableEditModels = this.getAttribute(&quot;enableEditModels&quot;) === &quot;true&quot;;
+
+        this.dataDir = this.getAttribute(&quot;dataDir&quot;) || &quot;./app/data&quot;;
+
+        const server = new Server({
+            dataDir: this.dataDir
+        });
+
+        const bimViewer = new BIMViewer(server, {
+            enableMeasurements: true,
+            canvasElement: this.shadowRoot.getElementById(&quot;myCanvas&quot;), // WebGL canvas
+            keyboardEventsElement: this.shadowRoot, // Optional, defaults to this.shadowRoot
+            explorerElement: this.shadowRoot.getElementById(&quot;myExplorer&quot;), // Left panel
+            toolbarElement: this.shadowRoot.getElementById(&quot;myToolbar&quot;), // Toolbar
+            inspectorElement: this.shadowRoot.getElementById(&quot;myInspector&quot;), // Right panel
+            navCubeCanvasElement: this.shadowRoot.getElementById(&quot;myNavCubeCanvas&quot;),
+            busyModelBackdropElement: this.shadowRoot.getElementById(&quot;myViewer&quot;),
+            enableEditModels: this.enableEditModels,
+            containerElement: this.shadowRoot
+        });
+
+        bimViewer.viewer.cameraControl.on(&quot;picked&quot;, (pickResult) =&gt; {
+            if (pickResult &amp;&amp; pickResult.entity) {
+                const objectId = pickResult.entity.id;
+                const metaObject = bimViewer.viewer.metaScene.metaObjects[objectId];
+                if (metaObject) {
+                    this.dispatchEvent(new CustomEvent(&apos;objectSelected&apos;, {
+                        detail: metaObject,
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            }
+        });
+
+        bimViewer.setConfigs({
+            &quot;showSpaces&quot;: false, // Default
+            &quot;selectedGlowThrough&quot;: true,
+            &quot;highlightGlowThrough&quot;: true,
+            &quot;dtxEnabled&quot;: true // Enable data texture scene representation for models - may be slow on low-spec GPUs
+        });
+
+        bimViewer.on(&quot;openExplorer&quot;, () =&gt; {
+            this.setExplorerOpen(true);
+        });
+
+        bimViewer.on(&quot;openInspector&quot;, () =&gt; {
+            this.setInspectorOpen(true);
+        });
+
+        bimViewer.on(&quot;addModel&quot;, (event) =&gt; { // &quot;Add&quot; selected in Models tab&apos;s context menu
+            console.log(&quot;addModel: &quot; + JSON.stringify(event, null, &quot;\t&quot;));
+        });
+
+        bimViewer.on(&quot;editModel&quot;, (event) =&gt; { // &quot;Edit&quot; selected in Models tab&apos;s context menu
+            console.log(&quot;editModel: &quot; + JSON.stringify(event, null, &quot;\t&quot;));
+        });
+
+        bimViewer.on(&quot;deleteModel&quot;, (event) =&gt; { // &quot;Delete&quot; selected in Models tab&apos;s context menu
+            console.log(&quot;deleteModel: &quot; + JSON.stringify(event, null, &quot;\t&quot;));
+        });
+
+        this.bimViewer = bimViewer;
+        this.configs = this.getAttribute(&quot;configs&quot;);
+        if (this.configs) {
+            const configNameVals = this.configs.split(/,(?![^\[\]]*\])/);
+            for (let i = 0, len = configNameVals.length; i &lt; len; i++) {
+                const configNameValStr = configNameVals[i];
+                const configNameVal = configNameValStr.split(&quot;:&quot;);
+                const configName = configNameVal[0];
+                const configVal = configNameVal[1];
+                bimViewer.setConfig(configName, configVal);
+            }
+        }
+
+        if (!this.projectId) {
+            console.log(&quot;No projectId attribute found&quot;);
+            return;
+        }
+
+        bimViewer.loadProject(this.projectId, () =&gt; {
+            this.modelId = this.getAttribute(&quot;modelId&quot;);
+            if (this.modelId) {
+                bimViewer.loadModel(this.modelId);
+            }
+            this.tab = this.getAttribute(&quot;tab&quot;);
+            if (this.tab) {
+                bimViewer.openTab(this.tab);
+            }
+        },
+            (errorMsg) =&gt; {
+                console.error(errorMsg);
+            });
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === &quot;projectid&quot;) {
+            console.log(&quot;projectid changed: &quot; + newValue);
+            this.projectId = newValue;
+            if (!this.bimViewer || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () =&gt; {
+                this.modelId = this.getAttribute(&quot;modelId&quot;);
+                if (this.modelId) {
+                    this.bimViewer.loadModel(this.modelId);
+                }
+                this.tab = this.getAttribute(&quot;tab&quot;);
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) =&gt; {
+                console.error(errorMsg);
+            });
+        } else if (name === &quot;modelid&quot;) {
+            this.modelId = newValue;
+            if (!this.bimViewer || !this.modelId || !this.projectId) {
+                return;
+            }
+            this.bimViewer.loadProject(this.projectId, () =&gt; {
+                this.bimViewer.loadModel(this.modelId);
+                this.tab = this.getAttribute(&quot;tab&quot;);
+                if (this.tab) {
+                    this.bimViewer.openTab(this.tab);
+                }
+            },
+            (errorMsg) =&gt; {
+                console.error(errorMsg);
+            });
+        }
+    }
+
+    setExplorerOpen(explorerOpen) {
+        const toggle = this.shadowRoot.getElementById(&quot;explorer_toggle&quot;);
+        if (toggle) {
+            toggle.checked = explorerOpen;
+        }
+    }
+
+    setInspectorOpen(inspectorOpen) {
+        const toggle = this.shadowRoot.getElementById(&quot;inspector_toggle&quot;);
+        if (toggle) {
+            toggle.checked = inspectorOpen;
+        }
+    }
+}
+
+export default BimViewerWebComponent;</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

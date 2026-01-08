@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/BIMViewer.js~BIMViewer.html">BIMViewer</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#collision">collision</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/collision/ObjectsKdTree3.js~ObjectsKdTree3.html">ObjectsKdTree3</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#server">server</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/server/Server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#webcomponent">webComponent</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/webComponent/webComponent.js~BimViewerWebComponent.html">BimViewerWebComponent</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -95,6 +96,7 @@ class ModelsExplorer extends Controller {
             throw &quot;Missing config: modelsElement&quot;;
         }
 
+        this._containerElement = cfg.containerElement;
         this._enableAddModels = !!cfg.enableEditModels;
         this._modelsTabElement = cfg.modelsTabElement;
         this._loadModelsButtonElement = cfg.loadModelsButtonElement;
@@ -115,7 +117,9 @@ class ModelsExplorer extends Controller {
 
         this._modelsContextMenu = new ModelsContextMenu({
             enableEditModels: cfg.enableEditModels,
-            hideOnAction: true
+            enableMeasurements: cfg.enableMeasurements,
+            hideOnAction: true,
+            parentNode: this._containerElement
         });
 
         this._modelsInfo = {};
@@ -171,15 +175,15 @@ class ModelsExplorer extends Controller {
             const modelInfo = modelsInfo[i];
             this._modelsInfo[modelInfo.id] = modelInfo;
             html += &quot;&lt;div class=&apos;xeokit-form-check&apos;&gt;&quot;;
-            html += &quot;&lt;input id=&apos;&quot; + modelInfo.id + &quot;&apos; type=&apos;checkbox&apos; value=&apos;&apos;&gt;&lt;span id=&apos;span-&quot; + modelInfo.id + &quot;&apos; class=&apos;disabled&apos;&gt;&quot; + modelInfo.name + &quot;&lt;/span&gt;&quot;;
+            html += &quot;&lt;input id=&apos;input-&quot; + modelInfo.id + &quot;&apos; type=&apos;checkbox&apos; value=&apos;&apos;&gt;&lt;span id=&apos;span-&quot; + modelInfo.id + &quot;&apos; class=&apos;disabled&apos;&gt;&quot; + modelInfo.name + &quot;&lt;/span&gt;&quot;;
             html += &quot;&lt;/div&gt;&quot;;
         }
         this._modelsElement.innerHTML = html;
         for (let i = 0, len = modelsInfo.length; i &lt; len; i++) {
             const modelInfo = modelsInfo[i];
             const modelId = modelInfo.id;
-            const checkBox = document.getElementById(&quot;&quot; + modelId);
-            const span = document.getElementById(&quot;span-&quot; + modelId);
+            const checkBox = this._containerElement.querySelector(&quot;#input-&quot; + modelId);
+            const span = this._containerElement.querySelector(&quot;#span-&quot; + modelId);
             checkBox.addEventListener(&quot;click&quot;, () =&gt; {
                 if (checkBox.checked) {
                     this.loadModel(modelId);
@@ -318,8 +322,8 @@ class ModelsExplorer extends Controller {
 
         if (externalMetadata &amp;&amp; !modelInfo.manifest) {
             this.server.getMetadata(this._projectId, modelId, (json) =&gt; {
-                    this._loadGeometry(modelId, modelInfo, json, done, error);
-                },
+                this._loadGeometry(modelId, modelInfo, json, done, error);
+            },
                 (errMsg) =&gt; {
                     this.bimViewer._busyModal.hide();
                     this.error(errMsg);
@@ -335,7 +339,7 @@ class ModelsExplorer extends Controller {
     _loadGeometry(modelId, modelInfo, json, done, error) {
 
         const modelLoaded = () =&gt; {
-            const checkbox = document.getElementById(&quot;&quot; + modelId);
+            const checkbox = this._containerElement.querySelector(&quot;#input-&quot; + modelId);
             checkbox.checked = true;
             this._numModelsLoaded++;
             this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
@@ -401,25 +405,25 @@ class ModelsExplorer extends Controller {
             // Uses the BIMViewer&apos;s Server strategy directly
 
             this.server.getGeometry(this._projectId, modelId, (arraybuffer) =&gt; {
-                    const model = this._xktLoader.load({
-                        id: modelId,
-                        metaModelData: json,
-                        xkt: arraybuffer,
-                        excludeUnclassifiedObjects: true,
-                        origin: modelInfo.origin || modelInfo.position,
-                        scale: modelInfo.scale,
-                        rotation: modelInfo.rotation,
-                        matrix: modelInfo.matrix,
-                        edges: (modelInfo.edges !== false),
-                        saoEnabled: modelInfo.saoEnabled,
-                        pbrEnabled: modelInfo.pbrEnabled,
-                        backfaces: modelInfo.backfaces,
-                        globalizeObjectIds: modelInfo.globalizeObjectIds,
-                        reuseGeometries: (modelInfo.reuseGeometries !== false)
-                    });
-                    model.on(&quot;loaded&quot;, modelLoaded);
-                    model.on(&quot;error&quot;, loadError);
-                }, loadError);
+                const model = this._xktLoader.load({
+                    id: modelId,
+                    metaModelData: json,
+                    xkt: arraybuffer,
+                    excludeUnclassifiedObjects: true,
+                    origin: modelInfo.origin || modelInfo.position,
+                    scale: modelInfo.scale,
+                    rotation: modelInfo.rotation,
+                    matrix: modelInfo.matrix,
+                    edges: (modelInfo.edges !== false),
+                    saoEnabled: modelInfo.saoEnabled,
+                    pbrEnabled: modelInfo.pbrEnabled,
+                    backfaces: modelInfo.backfaces,
+                    globalizeObjectIds: modelInfo.globalizeObjectIds,
+                    reuseGeometries: (modelInfo.reuseGeometries !== false)
+                });
+                model.on(&quot;loaded&quot;, modelLoaded);
+                model.on(&quot;error&quot;, loadError);
+            }, loadError);
         }
     }
 
@@ -451,9 +455,9 @@ class ModelsExplorer extends Controller {
             return;
         }
         model.destroy();
-        const checkbox = document.getElementById(&quot;&quot; + modelId);
+        const checkbox = this._containerElement.querySelector(&quot;#input-&quot; + modelId);
         checkbox.checked = false;
-        const span = document.getElementById(&quot;span-&quot; + modelId);
+        const span = this._containerElement.querySelector(&quot;#span-&quot; + modelId);
         this._numModelsLoaded--;
         if (this._numModelsLoaded &gt; 0) {
             this._unloadModelsButtonElement.classList.remove(&quot;disabled&quot;);
