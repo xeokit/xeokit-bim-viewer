@@ -43,7 +43,7 @@ To view your models with this viewer:
 **Method 1**
 
 1. Fork the [xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer) repository on GitHub.
-1. Convert your IFC STEP files using [open source CLI tools](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee).
+2. Convert your IFC STEP files using [open source CLI tools](https://xeokit.io/blog/xeokit-loaders-&-converters).
 3. Add your converted models to your fork's data directory.
 4. Serve your fork using [GitHub Pages](https://pages.github.com/).
 
