@@ -186,7 +186,7 @@ To view a project, load the viewer with the project's ID on the URL:
 
 > **This section shows how to add your own models to the viewer application. These instructions rely on the most
 > recent versions of XKT (V8 or later) and the conversion tools, which you can learn about
-in  *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
+in  *[Loaders & Converters](https://xeokit.io/blog/xeokit-loaders-&-converters)*
 .**
 
 Let's examine the structure of
@@ -303,7 +303,7 @@ its loaded the initial models. See the complete list of available viewer states 
 
 The ````geometry.xkt```` file for each model is created from an IFC file using open source CLI tools. Learn how to
 create those files
-in *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
+in *[Loaders & Converters](https://xeokit.io/blog/xeokit-loaders-&-converters)*
 .
 
 # Viewer Configurations
