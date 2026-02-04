@@ -2,6 +2,13 @@
 
 # [v2.5.1-beta-37](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.5.1-beta-7...v2.5.1-beta-37)
 
+## [2.7.2](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.7.1...v2.7.2) (2026-02-04)
+
+
+### Bug Fixes
+
+* regenerate documentation with proper links ([5e8028b](https://github.com/xeokit/xeokit-bim-viewer/commit/5e8028b5fe0f3845d63e28b8c3d5f44559c118af))
+
 ## [2.7.1](https://github.com/xeokit/xeokit-bim-viewer/compare/v2.7.0...v2.7.1) (2025-06-19)
 
 
