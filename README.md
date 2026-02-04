@@ -43,7 +43,7 @@ To view your models with this viewer:
 **Method 1**
 
 1. Fork the [xeokit-bim-viewer](https://github.com/xeokit/xeokit-bim-viewer) repository on GitHub.
-1. Convert your IFC STEP files using [open source CLI tools](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee).
+2. Convert your IFC STEP files using [open source CLI tools](https://xeokit.io/blog/xeokit-loaders-&-converters).
 3. Add your converted models to your fork's data directory.
 4. Serve your fork using [GitHub Pages](https://pages.github.com/).
 
@@ -186,7 +186,7 @@ To view a project, load the viewer with the project's ID on the URL:
 
 > **This section shows how to add your own models to the viewer application. These instructions rely on the most
 > recent versions of XKT (V8 or later) and the conversion tools, which you can learn about
-in  *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
+in  *[Loaders & Converters](https://xeokit.io/blog/xeokit-loaders-&-converters)*
 .**
 
 Let's examine the structure of
@@ -303,7 +303,7 @@ its loaded the initial models. See the complete list of available viewer states 
 
 The ````geometry.xkt```` file for each model is created from an IFC file using open source CLI tools. Learn how to
 create those files
-in *[Viewing an IFC Model with xeokit](https://www.notion.so/xeokit/Viewing-an-IFC-Model-with-xeokit-c373e48bc4094ff5b6e5c5700ff580ee)*
+in *[Loaders & Converters](https://xeokit.io/blog/xeokit-loaders-&-converters)*
 .
 
 # Viewer Configurations
@@ -363,8 +363,7 @@ For those older versions,
 > we need a little extra plumbing to deploy an additional JSON metadata file for each model.**
 
 The previous section described how to deploy models that used XKT V8 and later. The XKT V8+ format combines geometry and
-metadata into the same XKT file, and was introduced in the
-[xeokit v1.9 release](https://www.notion.so/xeokit/What-s-New-in-xeokit-1-9-b7503ca7647e43e4b9c76e1505fa4484).
+metadata into the same XKT file, and was introduced in the xeokit v1.9 release.
 
 XKT versions prior to V8 only contained geometry, and needed to be accompanied by a JSON file that contained the model's
 IFC metadata. In this section, we'll describe how to deploy models that use XKT versions prior to V8.
@@ -466,7 +465,7 @@ XKT files.
 
 This feature extends BIMViewer with the option to load models comprised of multiple XKT files, combining the XKT files into a single tree view for each model, and enabling the unloading of the model to unload all its XKT files in one shot. In other words, instead of having a separate model and tree view for each XKT, we can now group a bunch of XKT files together to behave as one model in BIMViewer.
 
-Learn more about the conversion of IFC models into multiple XKT files in [this tutorial](https://www.notion.so/xeokit/Importing-Huge-IFC-Models-as-Multiple-XKT-Files-165fc022e94742cf966ee50003572259).
+Learn more about the conversion of IFC models into multiple XKT files in [this tutorial](https://xeokit.io/blog/automatically-splitting-large-models-for-better-performance).
 
 To show how to deploy one of these multi-XKT models in BIMViewer, let's examine the Karhumaki project.
 
