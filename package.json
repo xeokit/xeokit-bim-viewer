@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@xeokit/xeokit-sdk": "^2.6.78",
+    "@xeokit/xeokit-sdk": "^2.6.101",
     "http-server": "^13.0.2"
   }
 }
