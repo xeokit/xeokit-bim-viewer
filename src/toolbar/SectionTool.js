@@ -1,6 +1,6 @@
 import {Controller} from "../Controller.js";
 import {SectionToolContextMenu} from "./../contextMenus/SectionToolContextMenu.js";
-import {math, SectionPlanesPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
+import {PointerCircle, touchPointSelector, math, SectionPlanesPlugin} from "@xeokit/xeokit-sdk/dist/xeokit-sdk.es.js";
 
 /** @private */
 class SectionTool extends Controller { // XX
@@ -129,14 +129,13 @@ class SectionTool extends Controller { // XX
 
     _initSectionMode() {
 
-        this._containerElement.addEventListener('mouseup', (e) => {
+        this.viewer.scene.input.on("mouseclicked", (coor) => {  // fix: not create section panes when button up after spin
 
-            if (e.which === 1) {
-
-                const coords = getMouseCanvasPos(e);
                 if (!this.getActive() || !this.getEnabled()) {
                     return;
                 }
+
+                const coords = coor;  // fix: not create section panes when button up after spin
 
                 const pickResult = this.viewer.scene.pick({
                     canvasPos: coords,
@@ -152,8 +151,55 @@ class SectionTool extends Controller { // XX
 
                     this._sectionPlanesPlugin.showControl(sectionPlane.id);
                 }
-            }
         });
+
+        // migrated and modfied from xeokit-sdk : example : SectionPlanesPlugin_createWithTouch 
+        const setupTouchSelector = touchPointSelector(
+            this.viewer,
+            new PointerCircle(this.viewer), // needed to indicate tap duration to user
+            (orig, dir) => {
+                // find an intersection of a ray from the camera through the scene entities
+                const pickResult = this.viewer.scene.pick({
+                    origin: orig,
+                    direction: dir,
+                    pickSurface: true
+                });
+                return pickResult;
+            });
+
+        const createPlane = (pickResult) => {  // modded
+            if (pickResult) {
+                const sectionPlane = this._sectionPlanesPlugin.createSectionPlane({  // modded : use BIMViewer's version
+                    // id: "mySectionPlane" + id,  // modded
+                    pos: pickResult.worldPos,
+                    dir: math.mulVec3Scalar(pickResult.worldNormal, -1)
+                });
+                this._sectionPlanesPlugin.showControl(sectionPlane.id);  // modded : use BIMViewer's version
+            }
+        };
+
+        const ifSectionToolActive = () => {  // modded : added checker function and pass into IIFE
+            return (!this.getActive() || !this.getEnabled());
+        }
+
+        (function setupCreateSectionPlane() {
+                setupTouchSelector(
+                    () => null,                               // onCancel do nothing
+                    () => null,                               // onChange do nothing
+                    (canvasPos, worldPos) => {                // onCommit
+                        if (ifSectionToolActive()) {  // modded: add condition if section tool is active
+                            setupCreateSectionPlane();
+                        } else {
+                            if (worldPos) {                       // if the point selected by user was on top
+                                createPlane(worldPos);     // of an attachable surface, then create section plane
+                                setupCreateSectionPlane();  // and move on to the next one
+                            }
+                        }
+                    });
+        }
+        )()
+        // migrate and modfied from xeokit-sdk : example : SectionPlanesPlugin_createWithTouch 
+
 
         this._updateSectionPlanesCount();
     }
